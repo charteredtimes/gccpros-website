@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Events & Media — GCCPROs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#FFFFFF;--muted:#6B7A99;--border:rgba(26,58,107,0.1);--text:#1E2D4A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold-light);}
+.nav-cta{background:var(--gold);color:var(--ink)!important;padding:8px 18px;border-radius:6px;font-weight:600!important;}
+.hero{background:var(--ink);padding:120px 80px 80px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;}
+.hero-glow{position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(35,86,164,0.3) 0%,transparent 70%);border-radius:50%;}
+.hero-content{position:relative;z-index:2;max-width:700px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.25);padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:24px;}
+.eyebrow::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(40px,5.5vw,68px);font-weight:900;line-height:1.05;color:#fff;letter-spacing:-1.5px;margin-bottom:20px;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.55);line-height:1.7;font-weight:300;max-width:520px;}
+section{padding:80px 80px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.15;letter-spacing:-0.8px;color:var(--ink);margin-bottom:12px;}
+.section-sub{font-size:16px;color:var(--muted);line-height:1.7;font-weight:300;margin-bottom:48px;max-width:580px;}
+
+/* EVENTS GRID */
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px;}
+.event-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all 0.25s;}
+.event-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(10,22,40,0.1);}
+.event-header{padding:24px 24px 0;}
+.event-type{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.event-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:12px;}
+.event-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.event-badge{background:var(--blue-light);color:var(--blue-mid);padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;}
+.event-badge.upcoming{background:rgba(201,151,58,0.1);color:var(--gold);}
+.event-body{padding:0 24px 24px;}
+.event-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.event-link{font-size:12px;font-weight:600;color:var(--blue-mid);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:gap 0.2s;}
+.event-link:hover{gap:8px;}
+.event-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.ev1{background:linear-gradient(135deg,#0A1628,#2356A4);}
+.ev2{background:linear-gradient(135deg,#1A3A6B,#0A1628);}
+.ev3{background:linear-gradient(135deg,#C9973A,#A07828);}
+.ev4{background:linear-gradient(135deg,#2356A4,#1A3A6B);}
+.ev5{background:linear-gradient(135deg,#0A1628,#C9973A);}
+.ev6{background:linear-gradient(135deg,#1A3A6B,#2356A4);}
+
+/* SPEAKERS */
+.speakers-section{background:var(--white);}
+.speakers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;}
+.speaker-card{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:20px 16px;text-align:center;transition:all 0.2s;}
+.speaker-card:hover{background:var(--blue-light);border-color:rgba(35,86,164,0.2);transform:translateY(-2px);}
+.speaker-initial{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--blue-mid),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin:0 auto 12px;}
+.speaker-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;line-height:1.3;}
+.speaker-company{font-size:11px;color:var(--muted);}
+
+/* MEDIA */
+.media-section{background:var(--ink);}
+.media-section .section-title{color:#fff;}
+.media-section .section-sub{color:rgba(255,255,255,0.5);}
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.media-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;transition:all 0.2s;}
+.media-card:hover{background:rgba(201,151,58,0.08);border-color:rgba(201,151,58,0.25);}
+.media-icon{font-size:28px;margin-bottom:14px;}
+.media-type{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.media-title{font-size:15px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:8px;}
+.media-desc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.7;}
+
+/* CTA */
+.cta-section{background:var(--cream);text-align:center;padding:80px;}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;color:var(--ink);margin-bottom:16px;}
+.cta-section p{font-size:16px;color:var(--muted);margin-bottom:32px;font-weight:300;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;padding:15px 32px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:all 0.2s;}
+.btn-primary:hover{background:var(--blue);transform:translateY(-1px);}
+.btn-gold{background:var(--gold);color:var(--ink);margin-left:12px;}
+.btn-gold:hover{background:var(--gold-light);background:var(--gold-light);}
+
+footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(201,151,58,0.2);}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:32px;flex-wrap:wrap;}
+.footer-nav{display:flex;gap:24px;flex-wrap:wrap;}
+.footer-nav a{font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;}
+.footer-nav a:hover{color:var(--gold-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;}
+
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  section{padding:60px 24px;}
+  .hero{padding:100px 24px 60px;}
+  .events-grid,.media-grid{grid-template-columns:1fr;}
+  footer{padding:40px 24px 28px;}
+  .cta-section{padding:60px 24px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span>GCC<span>PROs</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="insights.html">Insights</a></li>
+    <li><a href="events.html" style="color:#fff;">Events</a></li>
+    <li><a href="https://www.gccpros.com/2400-gccs-directory">GCC Directory</a></li>
+    <li><a href="https://portal.gccpros.com">Member Portal</a></li>
+    <li><a href="https://portal.gccpros.com/register.html" class="nav-cta">Join →</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="eyebrow">Events & Media</div>
+    <h1>Where GCC leaders<br>meet, <em>learn</em> and lead</h1>
+    <p class="hero-sub">From intimate city chapter gatherings to large-format industry summits — the GCC Industry Council brings its members together in person across India.</p>
+  </div>
+</div>
+
+<!-- UPCOMING EVENTS -->
+<section style="background:var(--white);">
+  <div class="section-label">Upcoming</div>
+  <h2 class="section-title">What's coming next</h2>
+  <p class="section-sub">City chapter meetups, roundtables, and industry summits — exclusively for GCC Industry Council members and invited guests.</p>
+
+  <div class="events-grid">
+    <div class="event-card">
+      <div class="event-img ev1">🏙️</div>
+      <div class="event-header">
+        <div class="event-type">City Chapter</div>
+        <div class="event-title">GCC Leaders Roundtable — Pune</div>
+        <div class="event-meta">
+          <span class="event-badge upcoming">Upcoming</span>
+          <span class="event-badge">Pune</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">An intimate roundtable for GCC heads based in Pune — candid conversations on talent, mandate, and the year ahead.</p>
+        <a href="https://chat.whatsapp.com/Hp1lyheXcuL9XBObL5utR0" target="_blank" class="event-link">Express interest →</a>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-img ev2">🤝</div>
+      <div class="event-header">
+        <div class="event-type">Industry Summit</div>
+        <div class="event-title">GCC Industry Council — Annual Conclave</div>
+        <div class="event-meta">
+          <span class="event-badge upcoming">2025</span>
+          <span class="event-badge">Pan India</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">Bringing together 100+ GCC heads for a full-day programme of peer exchange, policy discussion, and community building.</p>
+        <a href="https://chat.whatsapp.com/Hp1lyheXcuL9XBObL5utR0" target="_blank" class="event-link">Get notified →</a>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-img ev3">🏛️</div>
+      <div class="event-header">
+        <div class="event-type">Government Advisory</div>
+        <div class="event-title">GCC Policy Forum — Industry Input Session</div>
+        <div class="event-meta">
+          <span class="event-badge upcoming">By invitation</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">The GCC Industry Council's advisory engagement with government bodies — shaping policy that impacts India's GCC ecosystem.</p>
+        <a href="mailto:sp@gccpros.com" class="event-link">Contact for details →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAST EVENTS -->
+<section style="background:var(--cream);">
+  <div class="section-label">Past Events</div>
+  <h2 class="section-title">Events we've hosted</h2>
+  <p class="section-sub">A growing calendar of city chapters, roundtables and industry forums across India's GCC hubs.</p>
+
+  <div class="events-grid">
+    <div class="event-card">
+      <div class="event-img ev4">📍</div>
+      <div class="event-header">
+        <div class="event-type">City Chapter</div>
+        <div class="event-title">GCC Leaders Meet — Bengaluru</div>
+        <div class="event-meta">
+          <span class="event-badge">Completed</span>
+          <span class="event-badge">Bengaluru</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">GCC heads from Bengaluru's top organisations gathered for an evening of peer conversation and community building.</p>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-img ev5">💡</div>
+      <div class="event-header">
+        <div class="event-type">Roundtable</div>
+        <div class="event-title">GCC Talent & Leadership — Delhi NCR</div>
+        <div class="event-meta">
+          <span class="event-badge">Completed</span>
+          <span class="event-badge">Delhi NCR</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">A focused roundtable on talent strategy, leadership development and the evolving mandate of GCC heads in India.</p>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-img ev6">🎤</div>
+      <div class="event-header">
+        <div class="event-type">Panel Discussion</div>
+        <div class="event-title">GCC 2025 — What Changed & What Didn't</div>
+        <div class="event-meta">
+          <span class="event-badge">Completed</span>
+          <span class="event-badge">Hyderabad</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <p class="event-desc">Industry leaders reflected on 2025's GCC boom — separating the genuine shifts from the noise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPEAKERS -->
+<section class="speakers-section">
+  <div class="section-label">GCC Community Leaders Board</div>
+  <h2 class="section-title">Speakers & participants</h2>
+  <p class="section-sub">GCC heads from the world's leading organisations — featured across our events, roundtables and advisory forums.</p>
+
+  <div class="speakers-grid">
+    <div class="speaker-card"><div class="speaker-initial">TA</div><div class="speaker-name">Tarun Arora</div><div class="speaker-company">Protiviti India</div></div>
+    <div class="speaker-card"><div class="speaker-initial">SS</div><div class="speaker-name">Sameer Shaikh</div><div class="speaker-company">XPO</div></div>
+    <div class="speaker-card"><div class="speaker-initial">RR</div><div class="speaker-name">Reetu Raina</div><div class="speaker-company">Element Skills</div></div>
+    <div class="speaker-card"><div class="speaker-initial">GY</div><div class="speaker-name">Gangadhar Yasam</div><div class="speaker-company">Ford Motors</div></div>
+    <div class="speaker-card"><div class="speaker-initial">RD</div><div class="speaker-name">Ruchi Dubey</div><div class="speaker-company">Metro</div></div>
+    <div class="speaker-card"><div class="speaker-initial">JP</div><div class="speaker-name">Jayesh Prajapati</div><div class="speaker-company">SLB</div></div>
+    <div class="speaker-card"><div class="speaker-initial">NM</div><div class="speaker-name">Nitin Madan</div><div class="speaker-company">Barclays</div></div>
+    <div class="speaker-card"><div class="speaker-initial">SP</div><div class="speaker-name">Sandeep Poddar</div><div class="speaker-company">Kimberly-Clark</div></div>
+    <div class="speaker-card"><div class="speaker-initial">KK</div><div class="speaker-name">Kapil Kella</div><div class="speaker-company">NCS Group</div></div>
+    <div class="speaker-card"><div class="speaker-initial">AC</div><div class="speaker-name">Atul Chanani</div><div class="speaker-company">Citi Bank</div></div>
+    <div class="speaker-card"><div class="speaker-initial">VS</div><div class="speaker-name">Vandana Saxena</div><div class="speaker-company">THAC</div></div>
+    <div class="speaker-card"><div class="speaker-initial">SS</div><div class="speaker-name">Srinivas Sampath</div><div class="speaker-company">Upland</div></div>
+    <div class="speaker-card"><div class="speaker-initial">VS</div><div class="speaker-name">Vinod Shah</div><div class="speaker-company">Zendesk</div></div>
+    <div class="speaker-card"><div class="speaker-initial">RK</div><div class="speaker-name">Roshan Kumar</div><div class="speaker-company">JetSynthesys</div></div>
+    <div class="speaker-card"><div class="speaker-initial">SG</div><div class="speaker-name">Sundeep Gupta</div><div class="speaker-company">Qualcomm</div></div>
+    <div class="speaker-card" style="background:var(--blue-light);border-color:rgba(35,86,164,0.2);">
+      <div class="speaker-initial" style="background:var(--gold);color:var(--ink);">+</div>
+      <div class="speaker-name" style="color:var(--blue-mid);">35+ Leaders</div>
+      <div class="speaker-company">GCC Industry Council</div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIA -->
+<section class="media-section">
+  <div class="section-label">Media</div>
+  <h2 class="section-title">Coverage & recordings</h2>
+  <p class="section-sub">Event recordings, press coverage, and multimedia from the GCCPROs community.</p>
+  <div class="media-grid">
+    <div class="media-card">
+      <div class="media-icon">🎙️</div>
+      <div class="media-type">Podcast</div>
+      <div class="media-title">GCC Leaders in Conversation</div>
+      <div class="media-desc">Audio conversations with GCC heads on strategy, talent, and India's evolving role in global enterprise.</div>
+    </div>
+    <div class="media-card">
+      <div class="media-icon">📹</div>
+      <div class="media-type">Event Recordings</div>
+      <div class="media-title">Roundtable & Summit Recordings</div>
+      <div class="media-desc">Key moments and full recordings from GCCPROs events — available to community members.</div>
+    </div>
+    <div class="media-card">
+      <div class="media-icon">📰</div>
+      <div class="media-type">Press & Coverage</div>
+      <div class="media-title">GCCPROs in the News</div>
+      <div class="media-desc">Media coverage, press mentions, and industry recognition of the GCC Industry Council and its initiatives.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Be part of the next event</h2>
+  <p>Events are exclusive to GCC Industry Council members and invited guests.<br>Apply for membership or reach out directly.</p>
+  <a href="https://portal.gccpros.com/register.html" class="btn-primary">Apply for membership →</a>
+  <a href="https://wa.me/918506976700" target="_blank" class="btn-primary btn-gold">WhatsApp us</a>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;">GCC<span style="color:#C9973A;">PROs</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:6px;">India's GCC Ecosystem Platform</div>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="insights.html">Insights</a>
+      <a href="events.html">Events</a>
+      <a href="https://portal.gccpros.com">Member Portal</a>
+      <a href="https://www.credologix.com" target="_blank">Credologix</a>
+      <a href="mailto:sp@gccpros.com">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 GCCPROs · Founded by CA. Shammi Prabhakar Singh · sp@gccpros.com · +91-85069-76700</div>
+</footer>
+
+</body>
+</html>
