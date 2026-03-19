@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GCC Database & Directory — GCCPROs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#FFFFFF;--muted:#6B7A99;--border:rgba(26,58,107,0.1);--text:#1E2D4A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;}
+.nav-cta{background:var(--gold);color:var(--ink)!important;padding:8px 18px;border-radius:6px;font-weight:600!important;}
+.nav-cta:hover{background:var(--gold-light)!important;}
+
+/* HERO */
+.hero{background:var(--ink);padding:120px 80px 80px;position:relative;overflow:hidden;min-height:480px;display:flex;align-items:center;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;}
+.hero-glow{position:absolute;top:-100px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(35,86,164,0.35) 0%,transparent 70%);border-radius:50%;}
+.hero-glow2{position:absolute;bottom:-100px;left:5%;width:400px;height:400px;background:radial-gradient(circle,rgba(201,151,58,0.1) 0%,transparent 70%);border-radius:50%;}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;width:100%;}
+.hero-content{}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.25);padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:24px;}
+.eyebrow::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,62px);font-weight:900;line-height:1.05;color:#fff;letter-spacing:-1.5px;margin-bottom:20px;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.55);line-height:1.7;font-weight:300;margin-bottom:36px;max-width:480px;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--ink);padding:14px 28px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:all 0.2s;}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.75);padding:14px 28px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;border:1px solid rgba(255,255,255,0.2);transition:all 0.2s;}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.5);color:#fff;}
+
+/* HERO STATS CARD */
+.hero-stats-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;backdrop-filter:blur(8px);}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.stat-item{text-align:center;padding:16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06);}
+.stat-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--gold);line-height:1;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-top:6px;}
+.stat-sub{font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px;}
+
+/* SECTIONS */
+section{padding:80px 80px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;line-height:1.15;letter-spacing:-0.8px;color:var(--ink);margin-bottom:12px;}
+.section-sub{font-size:16px;color:var(--muted);line-height:1.7;font-weight:300;margin-bottom:48px;max-width:580px;}
+
+/* WHAT'S IN THE DATABASE */
+.fields-section{background:var(--white);}
+.fields-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+.field-card{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:20px;transition:all 0.2s;}
+.field-card:hover{background:var(--blue-light);border-color:rgba(35,86,164,0.15);}
+.field-icon{font-size:24px;margin-bottom:10px;}
+.field-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.field-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* COVERAGE */
+.coverage-section{background:var(--cream);}
+.cities-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+.city-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s;}
+.city-card:hover{background:var(--blue-light);border-color:rgba(35,86,164,0.2);transform:translateX(4px);}
+.city-name{font-size:14px;font-weight:600;color:var(--ink);}
+.city-count{font-size:12px;color:var(--muted);}
+.city-arrow{color:var(--blue-mid);font-size:16px;}
+
+/* HOW IT WORKS */
+.how-section{background:var(--ink);position:relative;overflow:hidden;}
+.how-section::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.04) 1px,transparent 1px);background-size:48px 48px;}
+.how-section .section-title{color:#fff;}
+.how-section .section-sub{color:rgba(255,255,255,0.5);}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;z-index:1;}
+.step{padding:32px;border-right:1px solid rgba(255,255,255,0.06);}
+.step:last-child{border-right:none;}
+.step-num{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;color:rgba(201,151,58,0.2);line-height:1;margin-bottom:16px;}
+.step-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.step-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.7;}
+
+/* ACCESS */
+.access-section{background:var(--white);}
+.access-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.access-card{border-radius:14px;padding:36px;border:1px solid var(--border);}
+.access-card.member{background:linear-gradient(135deg,var(--ink),var(--blue));}
+.access-card.public{background:var(--cream);}
+.access-badge{display:inline-block;padding:4px 12px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
+.member .access-badge{background:rgba(201,151,58,0.2);color:var(--gold-light);border:1px solid rgba(201,151,58,0.3);}
+.public .access-badge{background:var(--blue-light);color:var(--blue-mid);}
+.access-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:12px;}
+.member .access-title{color:#fff;}
+.public .access-title{color:var(--ink);}
+.access-desc{font-size:14px;line-height:1.8;margin-bottom:24px;}
+.member .access-desc{color:rgba(255,255,255,0.6);}
+.public .access-desc{color:var(--muted);}
+.access-features{list-style:none;margin-bottom:28px;}
+.access-features li{font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;}
+.member .access-features li{color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.06);}
+.public .access-features li{color:var(--text);border-color:var(--border);}
+.access-features li::before{content:'✓';font-weight:700;flex-shrink:0;}
+.member .access-features li::before{color:var(--gold);}
+.public .access-features li::before{color:var(--blue-mid);}
+.btn-white{background:#fff;color:var(--ink);padding:13px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;display:inline-block;transition:all 0.2s;}
+.btn-white:hover{background:var(--gold-light);}
+.btn-blue{background:var(--blue-mid);color:#fff;padding:13px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;display:inline-block;transition:all 0.2s;}
+.btn-blue:hover{background:var(--blue);}
+
+/* ACCURACY */
+.accuracy-bar{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:24px 32px;display:flex;align-items:center;gap:32px;margin-top:48px;}
+.acc-label{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
+.acc-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.acc-fill{height:100%;background:linear-gradient(90deg,var(--blue-mid),var(--gold));border-radius:4px;width:95%;animation:fillBar 1.5s ease both;}
+@keyframes fillBar{from{width:0;}to{width:95%;}}
+.acc-pct{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold);white-space:nowrap;}
+.acc-note{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+/* FOOTER */
+footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(201,151,58,0.2);}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:32px;flex-wrap:wrap;}
+.footer-nav{display:flex;gap:24px;flex-wrap:wrap;}
+.footer-nav a{font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;}
+.footer-nav a:hover{color:var(--gold-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;}
+
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  section{padding:60px 24px;}
+  .hero{padding:100px 24px 60px;}
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-stats-card{display:none;}
+  .fields-grid{grid-template-columns:1fr 1fr;}
+  .steps-grid{grid-template-columns:1fr 1fr;}
+  .access-grid{grid-template-columns:1fr;}
+  footer{padding:40px 24px 28px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo"><span>GCC<span>PROs</span></span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="insights.html">Insights</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="database.html" class="active" style="color:#fff;">GCC Database</a></li>
+    <li><a href="https://portal.gccpros.com">Member Portal</a></li>
+    <li><a href="https://portal.gccpros.com/register.html" class="nav-cta">Join →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="eyebrow">GCC Intelligence Database</div>
+      <h1>India's most<br>complete <em>GCC</em><br>directory</h1>
+      <p class="hero-sub">2,400+ verified Global Capability Centres across 18+ cities — searchable by company, city, industry, domain, headcount and leadership. Exclusively for verified GCC professionals.</p>
+      <div class="hero-actions">
+        <a href="https://portal.gccpros.com" class="btn-primary">Search the database →</a>
+        <a href="https://portal.gccpros.com/register.html" class="btn-ghost">Apply for access</a>
+      </div>
+    </div>
+    <div class="hero-stats-card">
+      <div style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(201,151,58,0.8);margin-bottom:20px;">Database at a glance</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num">2,400+</div>
+          <div class="stat-label">GCCs indexed</div>
+          <div class="stat-sub">Pan India</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">18+</div>
+          <div class="stat-label">Cities</div>
+          <div class="stat-sub">Tier 1 & 2</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">25+</div>
+          <div class="stat-label">Industries</div>
+          <div class="stat-sub">All sectors</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">95%</div>
+          <div class="stat-label">Accuracy</div>
+          <div class="stat-sub">Verified data</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT'S IN THE DATABASE -->
+<section class="fields-section">
+  <div class="section-label">Data Fields</div>
+  <h2 class="section-title">What's in every<br>GCC record</h2>
+  <p class="section-sub">9 verified data fields per GCC — updated continuously by our member community and research team.</p>
+
+  <div class="fields-grid">
+    <div class="field-card">
+      <div class="field-icon">🏢</div>
+      <div class="field-name">Company Name</div>
+      <div class="field-desc">The GCC entity name as registered in India</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">🌐</div>
+      <div class="field-name">Group / Parent Company</div>
+      <div class="field-desc">The global parent organisation</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">🗺️</div>
+      <div class="field-name">HQ Country</div>
+      <div class="field-desc">Country of the parent company headquarters</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">📍</div>
+      <div class="field-name">GCC City</div>
+      <div class="field-desc">India city where the GCC operates</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">👥</div>
+      <div class="field-name">Headcount</div>
+      <div class="field-desc">Approximate employee strength band</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">⚙️</div>
+      <div class="field-name">GCC Domains</div>
+      <div class="field-desc">Key capability areas — Tech, Finance, Analytics, HR etc</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">👤</div>
+      <div class="field-name">Leader 1</div>
+      <div class="field-desc">Primary GCC leadership contact</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">👤</div>
+      <div class="field-name">Leader 2</div>
+      <div class="field-desc">Secondary GCC leadership contact</div>
+    </div>
+    <div class="field-card">
+      <div class="field-icon">🏭</div>
+      <div class="field-name">Industry</div>
+      <div class="field-desc">Parent company industry vertical</div>
+    </div>
+  </div>
+
+  <div class="accuracy-bar">
+    <div class="acc-label">Data accuracy target</div>
+    <div class="acc-track"><div class="acc-fill"></div></div>
+    <div class="acc-pct">95%</div>
+    <div class="acc-note">Community-verified · Continuously improved</div>
+  </div>
+</section>
+
+<!-- CITY COVERAGE -->
+<section class="coverage-section">
+  <div class="section-label">Coverage</div>
+  <h2 class="section-title">18+ cities across India</h2>
+  <p class="section-sub">From India's established GCC powerhouses to the rising tier-2 hubs.</p>
+
+  <div class="cities-grid">
+    <div class="city-card"><div><div class="city-name">Bengaluru</div><div class="city-count">Largest GCC hub</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Hyderabad</div><div class="city-count">Fastest growing</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Pune</div><div class="city-count">Engineering depth</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Delhi NCR</div><div class="city-count">465+ GCCs</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Mumbai</div><div class="city-count">Financial services hub</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Chennai</div><div class="city-count">Manufacturing & auto</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Kolkata</div><div class="city-count">Emerging hub</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Ahmedabad</div><div class="city-count">Rising rapidly</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Coimbatore</div><div class="city-count">Tier-2 leader</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Kochi</div><div class="city-count">Kerala's GCC hub</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card"><div><div class="city-name">Noida / Gurugram</div><div class="city-count">NCR ecosystem</div></div><div class="city-arrow">›</div></div>
+    <div class="city-card" style="background:var(--blue-light);border-color:rgba(35,86,164,0.2);"><div><div class="city-name" style="color:var(--blue-mid);">+ 7 more cities</div><div class="city-count">Tier-2 expansion</div></div><div class="city-arrow" style="color:var(--blue-mid);">›</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div style="position:relative;z-index:1;">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title" style="color:#fff;">Search in 4 steps</h2>
+    <p class="section-sub">The member portal gives you full search and filter capability across the entire database.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Apply & get approved</div>
+      <div class="step-desc">Submit your GCC professional profile. Applications reviewed within 2–3 business days.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Log in to the portal</div>
+      <div class="step-desc">Access the secure member portal at portal.gccpros.com with your approved credentials.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Search & filter</div>
+      <div class="step-desc">Filter by city, company, industry, domain, headcount and leadership across 2,400+ GCCs.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Contribute & earn</div>
+      <div class="step-desc">Submit corrections or new GCCs to earn Loyalty Coins — redeemable for enhanced access.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESS TIERS -->
+<section class="access-section">
+  <div class="section-label">Access</div>
+  <h2 class="section-title">Two ways to engage<br>with the database</h2>
+  <p class="section-sub">The full database is exclusive to verified GCC professionals. A public directory listing is available to all.</p>
+
+  <div class="access-grid">
+    <div class="access-card member">
+      <span class="access-badge">Member Access</span>
+      <div class="access-title">Full Database Search</div>
+      <p class="access-desc">Complete access to all 2,400+ GCC records with advanced search, filters, and full company profiles including leadership details.</p>
+      <ul class="access-features">
+        <li>Search by 9 data fields</li>
+        <li>Full company profile with all fields</li>
+        <li>Leader names and details</li>
+        <li>5 searches + 10 profile views per day</li>
+        <li>Suggest corrections & earn Loyalty Coins</li>
+        <li>Submit new GCCs to earn 100 coins</li>
+      </ul>
+      <a href="https://portal.gccpros.com" class="btn-white">Search the database →</a>
+    </div>
+    <div class="access-card public">
+      <span class="access-badge">Public Directory</span>
+      <div class="access-title">GCC Directory Listing</div>
+      <p class="access-desc">A publicly accessible listing of GCCs in India — company names and cities only, without detailed profiles or leadership information.</p>
+      <ul class="access-features">
+        <li>Company name & city</li>
+        <li>Industry & approximate size</li>
+        <li>No leadership details</li>
+        <li>No search or filtering</li>
+        <li>No corrections or contributions</li>
+      </ul>
+      <a href="https://portal.gccpros.com/register.html" class="btn-blue">Apply for full access →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:var(--ink);text-align:center;padding:80px;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.04) 1px,transparent 1px);background-size:48px 48px;"></div>
+  <div style="position:relative;z-index:1;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Get access</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,44px);font-weight:900;color:#fff;letter-spacing:-0.8px;margin-bottom:16px;">India's GCC database is<br>waiting for you</h2>
+    <p style="font-size:16px;color:rgba(255,255,255,0.5);margin-bottom:36px;font-weight:300;">Join 350+ verified GCC professionals already using the portal</p>
+    <a href="https://portal.gccpros.com/register.html" class="btn-primary" style="margin-right:12px;">Apply for membership →</a>
+    <a href="https://portal.gccpros.com" class="btn-ghost">Member login</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;">GCC<span style="color:#C9973A;">PROs</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:6px;">India's GCC Ecosystem Platform</div>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="insights.html">Insights</a>
+      <a href="events.html">Events</a>
+      <a href="database.html">GCC Database</a>
+      <a href="https://portal.gccpros.com">Member Portal</a>
+      <a href="https://www.credologix.com" target="_blank">Credologix</a>
+      <a href="mailto:sp@gccpros.com">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 GCCPROs · Founded by CA. Shammi Prabhakar Singh · sp@gccpros.com · +91-85069-76700</div>
+</footer>
+
+</body>
+</html>
