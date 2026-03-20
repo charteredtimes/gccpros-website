@@ -16,9 +16,8 @@
 <style>
 :root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#FFFFFF;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--ink);color:#1E2D4A;overflow-x:hidden;}
+html,body{font-family:'DM Sans',sans-serif;background:var(--ink);color:#fff;overflow-x:hidden;min-height:100vh;}
 
-/* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;text-decoration:none;}
 .nav-logo span{color:var(--gold);}
@@ -26,8 +25,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,22,40,0.9
 .nav-links a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
 .nav-links a:hover,.nav-links a.active{color:#fff;}
 .nav-cta{background:var(--gold);color:var(--ink)!important;padding:8px 18px;border-radius:6px;font-weight:600!important;}
-
-/* HAMBURGER */
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
 .hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
@@ -39,71 +36,63 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,22,40,0.9
 .mobile-menu a::after{content:"›";color:rgba(255,255,255,0.3);}
 .mobile-menu a.nav-cta{background:var(--gold);color:var(--ink)!important;border-radius:8px;padding:16px 20px;margin-top:16px;font-weight:700;justify-content:center;}
 .mobile-menu a.nav-cta::after{display:none;}
-@media(max-width:900px){
-  .hamburger{display:flex;}
-  .nav-links{display:none!important;}
-  nav{padding:0 20px;}
-}
+@media(max-width:900px){.hamburger{display:flex;}.nav-links{display:none!important;}nav{padding:0 20px;}}
 
-/* HERO BAND — compact */
-.hero-band{padding:80px 80px 0;position:relative;overflow:hidden;background:var(--ink);}
-.hero-band::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;}
-.hero-glow{position:absolute;top:-80px;right:0;width:500px;height:400px;background:radial-gradient(circle,rgba(35,86,164,0.3) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
-.hero-inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:40px;padding-bottom:24px;flex-wrap:wrap;}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.25);padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px;}
-.eyebrow-dot{width:6px;height:6px;background:#22c55e;border-radius:50%;animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
-.hero-band h1{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,46px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:10px;}
-.hero-band h1 em{font-style:italic;color:var(--gold);}
-.hero-sub{font-size:14px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;max-width:460px;}
-.hero-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
-.pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.55);}
-.pill.green{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2);color:#4ade80;}
+/* PAGE */
+.page-wrap{min-height:100vh;display:flex;flex-direction:column;}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 40px 60px;position:relative;overflow:hidden;text-align:center;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(35,86,164,0.25) 0%,transparent 65%);border-radius:50%;pointer-events:none;}
+.hero-content{position:relative;z-index:2;max-width:680px;}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);padding:6px 16px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4ade80;margin-bottom:28px;}
+.live-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px #22c55e;}50%{opacity:0.3;box-shadow:none;}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,64px);font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1.05;margin-bottom:20px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.8;margin-bottom:40px;}
 
-/* POWERED-BY chip */
-.powered-chip{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 20px;flex-shrink:0;}
-.pc-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:3px;}
-.pc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;}
-.pc-desc{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px;}
-.pc-btn{background:var(--gold);color:var(--ink);border-radius:7px;padding:9px 16px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;transition:background 0.2s;}
-.pc-btn:hover{background:var(--gold-light);}
+/* MAIN CTA */
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--ink);padding:18px 36px;border-radius:10px;font-size:16px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 0 40px rgba(201,151,58,0.25);}
+.cta-btn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 40px rgba(201,151,58,0.35);}
+.cta-btn svg{width:18px;height:18px;}
+.cta-note{font-size:12px;color:rgba(255,255,255,0.3);margin-top:14px;}
 
-/* SEAMLESS STATUS BAR */
-.status-bar{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 80px;display:flex;align-items:center;justify-content:space-between;}
-.sb-left{display:flex;align-items:center;gap:8px;}
-.sb-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:blink 2s infinite;}
-.sb-text{font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
-.sb-link{font-size:11px;font-weight:600;color:rgba(201,151,58,0.7);text-decoration:none;transition:color 0.2s;}
-.sb-link:hover{color:var(--gold);}
+/* FEATURES */
+.features{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:48px;}
+.feat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;text-align:left;width:200px;}
+.feat-icon{font-size:22px;margin-bottom:10px;}
+.feat-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+.feat-desc{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;}
 
-/* IFRAME — the main attraction */
-.iframe-wrap{position:relative;width:100%;background:#fff;}
-.iframe-wrap iframe{width:100%;height:calc(100vh - 64px);border:none;display:block;}
+/* POWERED BY */
+.powered-section{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.07);padding:24px 80px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.powered-left{display:flex;align-items:center;gap:14px;}
+.powered-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+.powered-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;}
+.powered-desc{font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.divider{width:1px;height:40px;background:rgba(255,255,255,0.1);}
+.powered-note{font-size:12px;color:rgba(255,255,255,0.3);line-height:1.7;max-width:440px;}
+.powered-link{font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;}
+.powered-link:hover{color:var(--gold-light);}
 
-/* FOOTER STRIP */
-.footer-strip{background:var(--ink);padding:20px 80px;border-top:1px solid rgba(201,151,58,0.15);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
-.footer-strip-left{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:#fff;}
-.footer-strip-left span{color:var(--gold);}
-.footer-strip-note{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;max-width:480px;}
-.footer-strip-links{display:flex;gap:16px;flex-wrap:wrap;}
-.footer-strip-links a{font-size:11px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;}
-.footer-strip-links a:hover{color:var(--gold-light);}
-.footer-bottom{background:var(--ink);padding:0 80px 20px;border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;}
+footer{background:var(--ink);padding:20px 80px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.fn-logo{font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:#fff;}
+.fn-logo span{color:var(--gold);}
+.fn-links{display:flex;gap:16px;flex-wrap:wrap;}
+.fn-links a{font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;}
+.fn-links a:hover{color:var(--gold-light);}
+.fn-copy{font-size:10px;color:rgba(255,255,255,0.2);}
 
-@media(max-width:900px){
-  .hero-band{padding:80px 20px 0;}
-  .hero-inner{flex-direction:column;}
-  .powered-chip{width:100%;}
-  .status-bar{padding:10px 20px;}
-  .iframe-wrap iframe{height:calc(100vh - 64px);}
-  .footer-strip{padding:20px;}
-  .footer-bottom{padding:16px 20px;}
+@media(max-width:768px){
+  .features{flex-direction:column;align-items:center;}
+  .feat{width:100%;max-width:320px;}
+  .powered-section{padding:24px 20px;flex-direction:column;}
+  footer{padding:20px;}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">GCC<span>PROs</span></a>
   <ul class="nav-links">
@@ -129,66 +118,68 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,22,40,0.9
   <a href="https://portal.gccpros.com/register.html" class="nav-cta">Join GCCPROs →</a>
 </div>
 
-<!-- HERO BAND -->
-<div class="hero-band">
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <div>
-      <div class="eyebrow"><span class="eyebrow-dot"></span>GCC Jobs · Live</div>
+<div class="page-wrap">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="live-badge"><span class="live-dot"></span>GCC Jobs · Live Now</div>
       <h1>Deep tech roles built<br>for <em>GCC professionals</em></h1>
-      <p class="hero-sub">Curated GCC-exclusive opportunities — not a generic job board. Roles across engineering, finance, analytics and leadership, matched to India's GCC ecosystem.</p>
-      <div class="hero-pills">
-        <span class="pill green">● Live Now</span>
-        <span class="pill">GCC-only roles</span>
-        <span class="pill">Deep tech matching</span>
-        <span class="pill">Peer referrals</span>
+      <p class="hero-sub">Curated GCC-exclusive opportunities — not a generic job board.<br>Roles across engineering, finance, analytics and leadership.</p>
+
+      <a href="https://credologix.com/#/job" target="_blank" class="cta-btn" id="jobsBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        Browse GCC Jobs
+      </a>
+      <div class="cta-note">Opens Credologix job portal · Powered by GCCPROs</div>
+
+      <div class="features">
+        <div class="feat">
+          <div class="feat-icon">🎯</div>
+          <div class="feat-title">GCC-only roles</div>
+          <div class="feat-desc">Roles posted exclusively from verified GCC organisations — no generic IT jobs</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon">⚡</div>
+          <div class="feat-title">Deep tech matching</div>
+          <div class="feat-desc">Capability-led matching built for GCC talent — not volume hiring</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon">🤝</div>
+          <div class="feat-title">Peer referrals</div>
+          <div class="feat-desc">GCC professionals referring each other within the community</div>
+        </div>
       </div>
     </div>
-    <div class="powered-chip">
+  </div>
+
+  <div class="powered-section">
+    <div class="powered-left">
       <div>
-        <div class="pc-label">Powered by</div>
-        <div class="pc-name">Credologix</div>
-        <div class="pc-desc">Independent deep tech talent platform</div>
+        <div class="powered-label">Powered by</div>
+        <div class="powered-name">Credologix</div>
+        <div class="powered-desc">Independent deep tech talent platform for GCCs</div>
       </div>
-      <a href="https://credologix.com" target="_blank" class="pc-btn">Visit site →</a>
+      <div class="divider"></div>
+      <p class="powered-note">Credologix is an independent commercial venture — separate from GCCPROs community membership and the GCC Industry Council. Jobs are managed directly by Credologix.</p>
     </div>
+    <a href="https://credologix.com" target="_blank" class="powered-link">Visit credologix.com →</a>
   </div>
 </div>
 
-<!-- STATUS BAR -->
-<div class="status-bar">
-  <div class="sb-left">
-    <div class="sb-dot"></div>
-    <span class="sb-text">Credologix Job Portal — Live &amp; updating in real time</span>
-  </div>
-  <a href="https://credologix.com/#/job" target="_blank" class="sb-link">Open full screen ↗</a>
-</div>
-
-<!-- IFRAME -->
-<div class="iframe-wrap">
-  <iframe
-    src="https://credologix.com/#/job"
-    title="GCC Jobs — Powered by Credologix"
-    loading="eager"
-    allow="fullscreen"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
-  ></iframe>
-</div>
-
-<!-- FOOTER -->
-<div class="footer-strip">
-  <div class="footer-strip-left">GCC<span>PROs</span></div>
-  <div class="footer-strip-note">Jobs are managed by Credologix — an independent commercial venture, separate from GCCPROs community membership and the GCC Industry Council.</div>
-  <div class="footer-strip-links">
+<footer>
+  <div class="fn-logo">GCC<span>PROs</span></div>
+  <div class="fn-links">
     <a href="index.html">Home</a>
-    <a href="database.html">GCC Database</a>
+    <a href="insights.html">Insights</a>
     <a href="events.html">Events</a>
+    <a href="database.html">GCC Database</a>
     <a href="https://portal.gccpros.com">Member Portal</a>
     <a href="https://credologix.com" target="_blank">Credologix</a>
     <a href="mailto:sp@gccpros.com">Contact</a>
   </div>
-</div>
-<div class="footer-bottom">© 2026 GCCPROs · Founded by CA. Shammi Prabhakar Singh · sp@gccpros.com</div>
+  <div class="fn-copy">© 2026 GCCPROs · sp@gccpros.com</div>
+</footer>
 
 <script>
 function toggleMenu(){
