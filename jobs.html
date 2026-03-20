@@ -6,6 +6,23 @@
 <title>GCC Jobs — GCCPROs</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+
+/* ── Prevent horizontal overflow on mobile ── */
+html, body { overflow-x: hidden; max-width: 100%; }
+* { box-sizing: border-box; }
+.hero-glow, .hero-glow2, .hero-grid { pointer-events: none; }
+@media(max-width:900px){
+  .hero { overflow: hidden; }
+  .hero-inner { grid-template-columns: 1fr !important; }
+  section { overflow: hidden; }
+  .steps-grid { grid-template-columns: 1fr 1fr !important; }
+  .flagship-card { grid-template-columns: 1fr !important; }
+  .access-grid { grid-template-columns: 1fr !important; }
+  .cs-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr 1fr !important; }
+  .media-grid { grid-template-columns: 1fr !important; }
+  .slide-inner { grid-template-columns: 1fr !important; }
+}
 :root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#FFFFFF;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}body{font-family:'DM Sans',sans-serif;background:var(--cream);color:#1E2D4A;overflow-x:hidden;}
