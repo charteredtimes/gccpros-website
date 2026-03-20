@@ -106,6 +106,25 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   .er{grid-template-columns:1fr;gap:8px;}.er-date{display:none;}
   .cs-grid{grid-template-columns:1fr;}.cta-band{padding:60px 24px;}footer{padding:40px 24px 28px;}
 }
+
+/* ── Mobile Nav ── */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:200;}
+.hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,22,40,0.98);z-index:99;padding:32px 28px;overflow-y:auto;flex-direction:column;gap:4px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;transition:color 0.2s;}
+.mobile-menu a:hover{color:#fff;}
+.mobile-menu a::after{content:"›";color:rgba(255,255,255,0.3);}
+.mobile-menu a.nav-cta{background:var(--gold, #C9973A);color:var(--ink, #0A1628)!important;border-radius:8px;padding:16px 20px;margin-top:16px;font-weight:700;justify-content:center;}
+.mobile-menu a.nav-cta::after{display:none;}
+@media(max-width:900px){
+  .hamburger{display:flex;}
+  .nav-links{display:none!important;}
+}
+
 </style>
 </head>
 <body>
@@ -120,8 +139,19 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
     <li><a href="https://portal.gccpros.com">Member Portal</a></li>
     <li><a href="https://portal.gccpros.com/register.html" class="nav-cta">Join →</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
-
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="insights.html">Insights</a>
+  <a href="events.html">Events</a>
+  <a href="database.html">GCC Database</a>
+  <a href="jobs.html">GCC Jobs</a>
+  <a href="https://portal.gccpros.com" target="_blank">Member Portal</a>
+  <a href="https://portal.gccpros.com/register.html" target="_blank" class="nav-cta">Join GCCPROs →</a>
+</div>
 <div class="hero">
   <div class="hero-grid"></div><div class="hero-glow"></div>
   <div class="hero-content">
@@ -129,9 +159,9 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
     <h1>GCC conversations<br>that <em>matter</em></h1>
     <p class="hero-sub">From India's largest GCC forums to our own community gathering — Shammi Prabhakar and GCCPROs have been at the heart of India's GCC dialogue.</p>
     <div class="hero-stats">
-      <div><div class="hs-num">12+</div><div class="hs-label">Events & talks</div></div>
+      <div><div class="hs-num">15+</div><div class="hs-label">Events & talks</div></div>
       <div><div class="hs-num">6,000+</div><div class="hs-label">Total participants reached</div></div>
-      <div><div class="hs-num">35+</div><div class="hs-label">GCC heads engaged</div></div>
+      <div><div class="hs-num">35+</div><div class="hs-label">GCC leaders engaged</div></div>
     </div>
   </div>
 </div>
@@ -145,7 +175,7 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
       <span class="fv-badge">GCCPROs Community Event</span>
       <div class="fv-heading">India's first <em>GCC-exclusive</em> virtual convergence</div>
       <div class="fv-nums">
-        <div><div class="fvn-num">20+</div><div class="fvn-label">GCC heads</div></div>
+        <div><div class="fvn-num">20+</div><div class="fvn-label">GCC leaders</div></div>
         <div><div class="fvn-num">650+</div><div class="fvn-label">Participants</div></div>
         <div><div class="fvn-num">1</div><div class="fvn-label">Of a kind</div></div>
       </div>
@@ -153,7 +183,7 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
     <div class="fb">
       <div class="fb-type">Virtual Event · GCCPROs Community</div>
       <h3 class="fb-title">GCC Insider Convergence — Our First</h3>
-      <p class="fb-desc">GCCPROs hosted its first community event — a virtual convergence bringing together 20+ GCC heads and 650+ GCC professionals. India's first event designed exclusively by and for the GCC leadership community. Peer knowledge sharing with no vendor pitches, no commercial agenda.</p>
+      <p class="fb-desc">GCCPROs hosted its first community event — a virtual convergence bringing together 20+ GCC leaders and 650+ GCC professionals. India's first event designed exclusively by and for the GCC leadership community. Peer knowledge sharing with no vendor pitches, no commercial agenda.</p>
       <div class="tags">
         <span class="tag">Virtual</span>
         <span class="tag">650+ Participants</span>
@@ -166,72 +196,136 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
 </section>
 
 <!-- SHAMMI SPEAKING -->
+
+<!-- MEDIA COVERAGE -->
+<section style="background:var(--white);">
+  <div class="section-label">Media Coverage</div>
+  <h2 class="section-title">In the media</h2>
+  <p class="section-sub">GCCPROs and Shammi Prabhakar's work featured across industry publications and media platforms.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Media Coverage</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.4;">GCCPROs in the Press</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;">Coverage of GCCPROs and the GCC Industry Council's work across Indian business media and industry publications.</div>
+      </div>
+      <div style="margin-top:20px;font-size:12px;color:var(--muted);">Press · Industry Media</div>
+    </div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Thought Leadership</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.4;">GCC Professional's Research Newsletter</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;">Published on LinkedIn — original research and analysis on India's GCC ecosystem reaching thousands of GCC professionals.</div>
+      </div>
+      <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" style="margin-top:20px;font-size:12px;font-weight:600;color:var(--blue-mid);text-decoration:none;">Read on LinkedIn →</a>
+    </div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">LinkedIn</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.4;">Follow Shammi Prabhakar</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;">Connect with Shammi on LinkedIn for daily GCC insights, industry commentary and community updates.</div>
+      </div>
+      <a href="https://www.linkedin.com/in/casps/" target="_blank" style="margin-top:20px;font-size:12px;font-weight:600;color:var(--blue-mid);text-decoration:none;">Connect on LinkedIn →</a>
+    </div>
+  </div>
+</section>
+
 <section style="background:var(--cream);">
   <div class="section-label">Speaking Record</div>
   <h2 class="section-title">Where Shammi has spoken</h2>
   <p class="section-sub">A track record of GCC thought leadership at India's leading industry forums, academic institutions and professional bodies.</p>
   <div class="events-list">
+
     <div class="er" style="border-left:3px solid var(--gold);background:rgba(201,151,58,0.03);">
       <div class="er-date"><div class="er-month">Mar</div><div class="er-year">2026</div></div>
-      <div><div class="er-org">GCCPROs Community</div><div class="er-name">GCC Insider Convergence — Our Own Event</div><div class="er-role">Host & Moderator · 20+ GCC heads · 650+ participants · Virtual</div></div>
+      <div><div class="er-org">GCCPROs Community</div><div class="er-name">GCC Insider Convergence</div><div class="er-role">Host & Moderator · 20+ GCC leaders · 650+ participants · Virtual</div></div>
       <span class="badge keynote">Host</span>
     </div>
 
     <div class="er">
-      <div class="er-date"><div class="er-month">Jan</div><div class="er-year">2026</div></div>
-      <div><div class="er-org">Leadership Federation</div><div class="er-name">GCC Conclave 2026</div><div class="er-role">Speaker — GCC Strategy & Ecosystem</div></div>
+      <div class="er-date"><div class="er-month">Mar</div><div class="er-year">2026</div></div>
+      <div><div class="er-org">PwC India</div><div class="er-name">Talent, Technology and Transformation in GCCs</div><div class="er-role">Speaker — PricewaterhouseCoopers India</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
+    <div class="er">
+      <div class="er-date"><div class="er-month">Feb</div><div class="er-year">2026</div></div>
+      <div><div class="er-org">YourStory Media</div><div class="er-name">GCC Roundtable</div><div class="er-role">Panelist — YourStory Media GCC Leadership Roundtable</div></div>
+      <span class="badge panelist">Panelist</span>
+    </div>
+
+    <div class="er">
+      <div class="er-date"><div class="er-month">Feb</div><div class="er-year">2026</div></div>
+      <div><div class="er-org">Neeyamo</div><div class="er-name">Roundtable on Risk</div><div class="er-role">Panelist — GCC Risk & Governance Discussion</div></div>
+      <span class="badge panelist">Panelist</span>
+    </div>
+
+    <div class="er">
+      <div class="er-date"><div class="er-month">Jan</div><div class="er-year">2026</div></div>
+      <div><div class="er-org">ICAI · India Expo, Noida</div><div class="er-name">WOFA 2 — World of Accounting</div><div class="er-role">GCC Track — Finance Professionals & Global Capability Centres</div></div>
+      <span class="badge speaker">Speaker</span>
+    </div>
+
+    <div class="er">
+      <div class="er-date"><div class="er-month">Jan</div><div class="er-year">2026</div></div>
+      <div><div class="er-org">Leadership Federation</div><div class="er-name">GCC Conclave</div><div class="er-role">Speaker — GCC Strategy & Ecosystem</div></div>
+      <span class="badge speaker">Speaker</span>
+    </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Dec</div><div class="er-year">2025</div></div>
       <div><div class="er-org">ICAI</div><div class="er-name">GCC Summit — December 2025</div><div class="er-role">Institute of Chartered Accountants of India</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Dec</div><div class="er-year">2025</div></div>
       <div><div class="er-org">MCCIA · Pune</div><div class="er-name">Pune GCC Summit</div><div class="er-role">Mahratta Chamber of Commerce, Industries and Agriculture</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Nov</div><div class="er-year">2025</div></div>
-      <div><div class="er-org">ICAI</div><div class="er-name">GCC Summit — November 2025</div><div class="er-role">GCC Ecosystem & Professional Opportunities</div></div>
+      <div><div class="er-org">ICAI</div><div class="er-name">GCC Summit — November 2025</div><div class="er-role">Institute of Chartered Accountants of India</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Oct</div><div class="er-year">2025</div></div>
       <div><div class="er-org">TAPMI · Manipal</div><div class="er-name">LEAD X AI: GCC</div><div class="er-role">AI & GCC Leadership — T.A. Pai Management Institute</div></div>
       <span class="badge panelist">Academic</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Jul</div><div class="er-year">2025</div></div>
-      <div><div class="er-org">D Y Patil DPU · Pune</div><div class="er-name">Keynote — GCC & Career Pathways</div><div class="er-role">Dr. D.Y. Patil University</div></div>
+      <div><div class="er-org">D Y Patil DPU · Pune</div><div class="er-name">Keynote Address — GCC & Career Pathways</div><div class="er-role">Dr. D.Y. Patil University, Pune</div></div>
       <span class="badge keynote">Keynote</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">May</div><div class="er-year">2025</div></div>
-      <div><div class="er-org">Ramco Systems</div><div class="er-name">AI Reshaping Payroll in GCC</div><div class="er-role">GCC & HR Technology intersection</div></div>
+      <div><div class="er-org">Ramco Systems</div><div class="er-name">AI Reshaping Payroll in GCC</div><div class="er-role">GCC & HR Technology — hosted by Ramco</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">2025</div><div class="er-year"></div></div>
-      <div><div class="er-org">The Mainstream</div><div class="er-name">GCC Converge Summit</div><div class="er-role">GCC Industry Outlook</div></div>
+      <div><div class="er-org">The Mainstream</div><div class="er-name">GCC Converge Summit</div><div class="er-role">GCC Industry Outlook & Strategy</div></div>
       <span class="badge speaker">Speaker</span>
     </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">2024</div><div class="er-year"></div></div>
-      <div><div class="er-org">ICAI · WOFA 2024</div><div class="er-name">World of Accounting — GCC Track</div><div class="er-role">ICAI's flagship global accounting forum · 6,000+ participants</div></div>
+      <div><div class="er-org">ICAI</div><div class="er-name">WOFA 2024 — GCC Track</div><div class="er-role">World of Accounting — ICAI's flagship global forum · 6,000+ participants</div></div>
       <span class="badge big">6,000+ Audience</span>
     </div>
-    <div class="er">
-      <div class="er-date"><div class="er-month">2024</div><div class="er-year"></div></div>
-      <div><div class="er-org">ICAI · India Expo Noida</div><div class="er-name">WOFA 2 — World of Accounting</div><div class="er-role">GCC & Finance Professionals</div></div>
-      <span class="badge speaker">Speaker</span>
-    </div>
+
     <div class="er">
       <div class="er-date"><div class="er-month">Dec</div><div class="er-year">2022</div></div>
-      <div><div class="er-org">ICAI · Nagpur</div><div class="er-name">CFOs Meet on ESG</div><div class="er-role">ESG for Finance Leaders & GCCs</div></div>
+      <div><div class="er-org">ICAI · Nagpur</div><div class="er-name">CFOs Meet on ESG</div><div class="er-role">ESG for Finance Leaders & Global Capability Centres</div></div>
       <span class="badge panelist">Panelist</span>
     </div>
+
   </div>
 </section>
 
@@ -240,23 +334,23 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   <div style="position:relative;z-index:1;">
     <div class="section-label" style="color:var(--gold);">GCC Industry Council</div>
     <h2 class="section-title">Participants & council members</h2>
-    <p class="section-sub">GCC heads from the world's leading organisations — participants in our events, roundtables and community.</p>
+    <p class="section-sub">GCC leaders from the world's leading organisations — participants in our events, roundtables and community.</p>
     <div class="leaders-grid">
-      <div class="lc"><div class="lc-init">TA</div><div class="lc-name">Tarun Arora</div><div class="lc-co">Protiviti India</div></div>
-      <div class="lc"><div class="lc-init">SS</div><div class="lc-name">Sameer Shaikh</div><div class="lc-co">XPO</div></div>
-      <div class="lc"><div class="lc-init">RR</div><div class="lc-name">Reetu Raina</div><div class="lc-co">Element Skills</div></div>
-      <div class="lc"><div class="lc-init">GY</div><div class="lc-name">Gangadhar Yasam</div><div class="lc-co">Ford Motors</div></div>
-      <div class="lc"><div class="lc-init">RD</div><div class="lc-name">Ruchi Dubey</div><div class="lc-co">Metro</div></div>
-      <div class="lc"><div class="lc-init">JP</div><div class="lc-name">Jayesh Prajapati</div><div class="lc-co">SLB</div></div>
-      <div class="lc"><div class="lc-init">NM</div><div class="lc-name">Nitin Madan</div><div class="lc-co">Barclays</div></div>
-      <div class="lc"><div class="lc-init">SP</div><div class="lc-name">Sandeep Poddar</div><div class="lc-co">Kimberly-Clark</div></div>
-      <div class="lc"><div class="lc-init">KK</div><div class="lc-name">Kapil Kella</div><div class="lc-co">NCS Group</div></div>
-      <div class="lc"><div class="lc-init">AC</div><div class="lc-name">Atul Chanani</div><div class="lc-co">Citi Bank</div></div>
-      <div class="lc"><div class="lc-init">VS</div><div class="lc-name">Vandana Saxena</div><div class="lc-co">THAC</div></div>
-      <div class="lc"><div class="lc-init">SS</div><div class="lc-name">Srinivas Sampath</div><div class="lc-co">Upland</div></div>
-      <div class="lc"><div class="lc-init">VS</div><div class="lc-name">Vinod Shah</div><div class="lc-co">Zendesk</div></div>
-      <div class="lc"><div class="lc-init">RK</div><div class="lc-name">Roshan Kumar</div><div class="lc-co">JetSynthesys</div></div>
-      <div class="lc"><div class="lc-init">SG</div><div class="lc-name">Sundeep Gupta</div><div class="lc-co">Qualcomm</div></div>
+      <div class="lc"><div class="lc-init">TA</div><div class="lc-name">Tarun Arora</div><div class="lc-co">Protiviti India</div><a href="https://www.linkedin.com/in/tarun-arora-aba3601a6/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">SS</div><div class="lc-name">Sameer Shaikh</div><div class="lc-co">XPO</div><a href="https://www.linkedin.com/in/sameer1shaikh" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">RR</div><div class="lc-name">Reetu Raina</div><div class="lc-co">Element Skills</div><a href="https://www.linkedin.com/search/results/people/?keywords=Reetu%20Raina%20Element%20Skills" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">GY</div><div class="lc-name">Gangadhar Yasam</div><div class="lc-co">Ford Motors</div><a href="https://www.linkedin.com/search/results/people/?keywords=Gangadhar%20Yasam%20Ford" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">RD</div><div class="lc-name">Ruchi Dubey</div><div class="lc-co">Metro</div><a href="https://www.linkedin.com/in/ruchidubey/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">JP</div><div class="lc-name">Jayesh Prajapati</div><div class="lc-co">SLB</div><a href="https://www.linkedin.com/in/jayesh-prajapati-7418b827/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">NM</div><div class="lc-name">Nitin Madan</div><div class="lc-co">Barclays</div><a href="https://www.linkedin.com/in/nitinmadanca/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">SP</div><div class="lc-name">Sandeep Poddar</div><div class="lc-co">Kimberly-Clark</div><a href="https://www.linkedin.com/in/sandeep-poddar-1a326b1/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">KK</div><div class="lc-name">Kapil Kella</div><div class="lc-co">NCS Group</div><a href="https://www.linkedin.com/in/kapilkella2/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">AC</div><div class="lc-name">Atul Chanani</div><div class="lc-co">Citi Bank</div><a href="https://www.linkedin.com/in/atul-chanani-b4baa04" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">VS</div><div class="lc-name">Vandana Saxena</div><div class="lc-co">THAC</div><a href="https://www.linkedin.com/search/results/people/?keywords=Vandana%20Saxena%20THAC" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">SS</div><div class="lc-name">Srinivas Sampath</div><div class="lc-co">Upland</div><a href="https://www.linkedin.com/in/srinivas-sampath-4807833/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">VS</div><div class="lc-name">Vinod Shah</div><div class="lc-co">Zendesk</div><a href="https://www.linkedin.com/in/vinodshah" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">RK</div><div class="lc-name">Roshan Kumar</div><div class="lc-co">JetSynthesys</div><a href="https://www.linkedin.com/search/results/people/?keywords=Roshan%20Kumar%20JetSynthesys" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
+      <div class="lc"><div class="lc-init">SG</div><div class="lc-name">Sundeep Gupta</div><div class="lc-co">Qualcomm</div><a href="https://www.linkedin.com/search/results/people/?keywords=Sundeep%20Gupta%20Qualcomm" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#0A66C2;text-decoration:none;background:rgba(10,102,194,0.12);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a></div>
       <div class="lc" style="background:rgba(201,151,58,0.1);border-color:rgba(201,151,58,0.25);">
         <div class="lc-init" style="background:var(--gold);color:var(--ink);">+</div>
         <div class="lc-name" style="color:var(--gold-light);">20+ more</div>
@@ -275,12 +369,12 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
     <div class="cs-card">
       <div class="cs-icon">🏙️</div>
       <div class="cs-title">Monthly City Roundtables</div>
-      <div class="cs-desc">Intimate in-person roundtables for GCC heads across Bengaluru, Pune, Hyderabad and Delhi NCR. Small, curated, peer-only — no vendors, no pitches.</div>
+      <div class="cs-desc">Intimate in-person roundtables for GCC leaders across Bengaluru, Pune, Hyderabad and Delhi NCR. Small, curated, peer-only — no vendors, no pitches.</div>
     </div>
     <div class="cs-card">
       <div class="cs-icon">🎙️</div>
       <div class="cs-title">GCC Leaders Podcast</div>
-      <div class="cs-desc">Recorded conversations with GCC heads on leadership, strategy, talent and the realities of running a GCC in India. Honest, unscripted, peer-to-peer.</div>
+      <div class="cs-desc">Recorded conversations with GCC leaders on leadership, strategy, talent and the realities of running a GCC in India. Honest, unscripted, peer-to-peer.</div>
     </div>
     <div class="cs-card">
       <div class="cs-icon">🏛️</div>
@@ -311,5 +405,23 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   </div>
   <div class="fb-bottom">© 2026 GCCPROs · Founded by CA. Shammi Prabhakar Singh · sp@gccpros.com · +91-85069-76700</div>
 </footer>
+
+<script>
+function toggleMenu(){
+  const h=document.getElementById('hamburger');
+  const m=document.getElementById('mobileMenu');
+  h.classList.toggle('open');
+  m.classList.toggle('open');
+  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
+}
+// Close on link click
+document.querySelectorAll('.mobile-menu a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+</script>
 </body>
 </html>

@@ -654,6 +654,25 @@ h1            { animation-delay: 0.2s; }
   .footer-links { gap: 32px; flex-wrap: wrap; }
   footer { padding: 48px 24px 32px; }
 }
+
+/* ── Mobile Nav ── */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:200;}
+.hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,22,40,0.98);z-index:99;padding:32px 28px;overflow-y:auto;flex-direction:column;gap:4px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;transition:color 0.2s;}
+.mobile-menu a:hover{color:#fff;}
+.mobile-menu a::after{content:"›";color:rgba(255,255,255,0.3);}
+.mobile-menu a.nav-cta{background:var(--gold, #C9973A);color:var(--ink, #0A1628)!important;border-radius:8px;padding:16px 20px;margin-top:16px;font-weight:700;justify-content:center;}
+.mobile-menu a.nav-cta::after{display:none;}
+@media(max-width:900px){
+  .hamburger{display:flex;}
+  .nav-links{display:none!important;}
+}
+
 </style>
 </head>
 <body>
@@ -668,8 +687,19 @@ h1            { animation-delay: 0.2s; }
     <li><a href="jobs.html">GCC Jobs</a></li>
     <li><a href="https://portal.gccpros.com" class="nav-cta">Member Portal →</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
-
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="insights.html">Insights</a>
+  <a href="events.html">Events</a>
+  <a href="database.html">GCC Database</a>
+  <a href="jobs.html">GCC Jobs</a>
+  <a href="https://portal.gccpros.com" target="_blank">Member Portal</a>
+  <a href="https://portal.gccpros.com/register.html" target="_blank" class="nav-cta">Join GCCPROs →</a>
+</div>
 <!-- HERO -->
 <div class="hero">
   <div class="hero-grid"></div>
@@ -724,7 +754,7 @@ h1            { animation-delay: 0.2s; }
       <div class="pillar-icon">🤝</div>
       <div class="pillar-tag">GCC Industry Council</div>
       <div class="pillar-name">GCC Industry Council</div>
-      <p class="pillar-desc">An invite-only council of 35+ GCC heads spanning Bengaluru, Hyderabad, Pune, Delhi NCR and Mumbai. Connected through city events, government advisory groups and peer knowledge exchange., curated community of 35+ GCC heads spanning Bengaluru, Hyderabad, Pune, Delhi NCR, Mumbai and beyond. Connected through events, advisory groups and government partnerships.</p>
+      <p class="pillar-desc">An invite-only council of 35+ GCC leaders spanning Bengaluru, Hyderabad, Pune, Delhi NCR and Mumbai. Connected through city events, government advisory groups and peer knowledge exchange., curated community of 35+ GCC leaders spanning Bengaluru, Hyderabad, Pune, Delhi NCR, Mumbai and beyond. Connected through events, advisory groups and government partnerships.</p>
       <span class="pillar-link">View events & community ›</span>
     </a>
 
@@ -755,7 +785,7 @@ h1            { animation-delay: 0.2s; }
 <section class="community" id="community">
   <div class="section-label" style="color:var(--gold);">GCC Industry Council</div>
   <h2 class="section-title">GCC Industry Council —<br>India's most exclusive GCC network</h2>
-  <p class="section-sub">An invite-only, non-commercial council of GCC heads. Every member is a working professional in full-time employment — there are no vendors, consultants or commercial interests inside the Council. Knowledge flows freely because members trust the space.</p>
+  <p class="section-sub">An invite-only, non-commercial council of GCC leaders. Every member is a working professional in full-time employment — there are no vendors, consultants or commercial interests inside the Council. Knowledge flows freely because members trust the space.</p>
 
   <div class="leaders-grid">
     <!-- Leaders from the website -->
@@ -763,76 +793,91 @@ h1            { animation-delay: 0.2s; }
       <div class="leader-initial">TA</div>
       <div class="leader-name">Tarun Arora</div>
       <div class="leader-company">Protiviti India</div>
+      <a href="https://www.linkedin.com/in/tarun-arora-aba3601a6/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">SS</div>
       <div class="leader-name">Sameer Shaikh</div>
       <div class="leader-company">XPO</div>
+      <a href="https://www.linkedin.com/in/sameer1shaikh" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">RR</div>
       <div class="leader-name">Reetu Raina</div>
       <div class="leader-company">Element Skills</div>
+      <a href="https://www.linkedin.com/search/results/people/?keywords=Reetu%20Raina%20Element%20Skills" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">GY</div>
       <div class="leader-name">Gangadhar Yasam</div>
       <div class="leader-company">Ford Motors</div>
+      <a href="https://www.linkedin.com/search/results/people/?keywords=Gangadhar%20Yasam%20Ford" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">RD</div>
       <div class="leader-name">Ruchi Dubey</div>
       <div class="leader-company">Metro</div>
+      <a href="https://www.linkedin.com/in/ruchidubey/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">JP</div>
       <div class="leader-name">Jayesh Prajapati</div>
       <div class="leader-company">SLB (Schlumberger)</div>
+      <a href="https://www.linkedin.com/in/jayesh-prajapati-7418b827/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">NM</div>
       <div class="leader-name">Nitin Madan</div>
       <div class="leader-company">Barclays</div>
+      <a href="https://www.linkedin.com/in/nitinmadanca/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">SP</div>
       <div class="leader-name">Sandeep Poddar</div>
       <div class="leader-company">Kimberly-Clark</div>
+      <a href="https://www.linkedin.com/in/sandeep-poddar-1a326b1/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">KK</div>
       <div class="leader-name">Kapil Kella</div>
       <div class="leader-company">NCS Group</div>
+      <a href="https://www.linkedin.com/in/kapilkella2/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">AC</div>
       <div class="leader-name">Atul Chanani</div>
       <div class="leader-company">Citi Bank</div>
+      <a href="https://www.linkedin.com/in/atul-chanani-b4baa04" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">VS</div>
       <div class="leader-name">Vandana Saxena</div>
       <div class="leader-company">THAC</div>
+      <a href="https://www.linkedin.com/search/results/people/?keywords=Vandana%20Saxena%20THAC" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">SS</div>
       <div class="leader-name">Srinivas Sampath</div>
       <div class="leader-company">Upland</div>
+      <a href="https://www.linkedin.com/in/srinivas-sampath-4807833/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">VS</div>
       <div class="leader-name">Vinod Shah</div>
       <div class="leader-company">Zendesk</div>
+      <a href="https://www.linkedin.com/in/vinodshah" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">RK</div>
       <div class="leader-name">Roshan Kumar</div>
       <div class="leader-company">JetSynthesys</div>
+      <a href="https://www.linkedin.com/search/results/people/?keywords=Roshan%20Kumar%20JetSynthesys" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card">
       <div class="leader-initial">SG</div>
       <div class="leader-name">Sundeep Gupta</div>
       <div class="leader-company">Qualcomm</div>
+      <a href="https://www.linkedin.com/search/results/people/?keywords=Sundeep%20Gupta%20Qualcomm" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;font-weight:600;color:#90CAF9;text-decoration:none;background:rgba(10,102,194,0.2);padding:3px 8px;border-radius:100px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> LinkedIn</a>
     </div>
     <div class="leader-card" style="background:rgba(201,151,58,0.08);border-color:rgba(201,151,58,0.2);">
       <div class="leader-initial" style="background:var(--gold);color:var(--ink);">+</div>
@@ -956,5 +1001,23 @@ h1            { animation-delay: 0.2s; }
   </div>
 </footer>
 
+
+<script>
+function toggleMenu(){
+  const h=document.getElementById('hamburger');
+  const m=document.getElementById('mobileMenu');
+  h.classList.toggle('open');
+  m.classList.toggle('open');
+  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
+}
+// Close on link click
+document.querySelectorAll('.mobile-menu a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+</script>
 </body>
 </html>
