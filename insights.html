@@ -795,8 +795,8 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
   if(!container) return;
 
   try {
-    const res = await fetch('blog.json?v=' + Date.now());
-    if(!res.ok) throw new Error('not found');
+    const res = await fetch('https://script.google.com/macros/s/AKfycbyfhsxJjoNODHGzFMEBJ7e-CU6-Bb9bOwJTOGu5PzeGQjBt-G6RzCUJk7m2njuLTk8AcA/exec?action=getBlogPosts&v=' + Date.now());
+    if(!res.ok) throw new Error('not found'); // data fetched from Google Sheets via Apps Script
     const data = await res.json();
     const articles = (data.articles || []).sort((a,b)=> new Date(b.date)-new Date(a.date));
 

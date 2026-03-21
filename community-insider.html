@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GCC Insiders Community — Apply</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#fff;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+
+nav{background:rgba(10,22,40,0.97);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:#fff;}
+
+.hero{background:var(--ink);padding:64px 40px 48px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;}
+.hero-inner{position:relative;z-index:2;max-width:600px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.25);padding:6px 16px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:14px;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.55);line-height:1.75;font-weight:300;max-width:520px;margin:0 auto 24px;}
+.eligibility-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.chip{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.6);}
+.chip.green{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2);color:#4ade80;}
+
+.form-wrap{max-width:600px;margin:0 auto;padding:32px 20px 60px;}
+.form-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(10,22,40,0.08);border:1px solid var(--border);}
+.form-header{background:var(--ink);padding:20px 28px;display:flex;align-items:center;gap:12px;}
+.form-header-icon{width:36px;height:36px;background:rgba(201,151,58,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.form-header-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;}
+.form-header-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.form-body{padding:28px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue-mid);border-bottom:2px solid var(--blue-light);padding-bottom:8px;margin:24px 0 18px;}
+.section-label:first-child{margin-top:0;}
+.fg{margin-bottom:18px;}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+.req{color:var(--gold);}
+input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;outline:none;transition:border 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(35,86,164,0.08);}
+textarea{resize:vertical;line-height:1.7;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.radio-group{display:flex;flex-direction:column;gap:8px;}
+.radio-opt{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);cursor:pointer;}
+.radio-opt input{width:auto;accent-color:var(--blue-mid);}
+.consent-box{background:var(--blue-light);border:1px solid rgba(35,86,164,0.15);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--blue);line-height:1.7;margin-bottom:20px;}
+.consent-box strong{color:var(--ink);}
+.submit-btn{width:100%;background:var(--gold);color:var(--ink);border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+.submit-btn:disabled{background:#cbd5e1;cursor:not-allowed;transform:none;}
+.error-msg{color:#dc2626;font-size:12px;margin-top:5px;display:none;}
+#success-screen{display:none;text-align:center;padding:48px 28px;}
+#success-screen .tick{font-size:56px;margin-bottom:16px;}
+#success-screen h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--ink);margin-bottom:10px;}
+#success-screen p{font-size:14px;color:var(--muted);line-height:1.8;max-width:360px;margin:0 auto;}
+.note-strip{background:var(--cream);border-top:1px solid var(--border);padding:16px 28px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
+@media(max-width:640px){nav{padding:0 20px;}.row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">GCC<span>PROs</span></a>
+  <a href="index.html" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge">🏢 GCC Insiders Community</div>
+    <h1>Welcome to the<br><em>GCC Inner Circle</em></h1>
+    <p class="hero-sub">A verified community for professionals who have worked inside a GCC in India. Peer knowledge exchange, industry updates, and a network of GCC practitioners — no vendors, no pitches.</p>
+    <div class="eligibility-chips">
+      <span class="chip green">✓ Must have worked in a GCC</span>
+      <span class="chip">Finance · Tech · Ops · HR · Sales</span>
+      <span class="chip">All seniority levels</span>
+      <span class="chip">Verified by team</span>
+    </div>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-header-icon">🔒</div>
+      <div>
+        <div class="form-header-title">GCC Insider Verification Portal</div>
+        <div class="form-header-sub">All applications reviewed by the GCCPROs team before approval</div>
+      </div>
+    </div>
+
+    <div class="form-body" id="form-body">
+      <div class="section-label">Personal details</div>
+
+      <div class="row">
+        <div class="fg">
+          <label>Full name <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="e.g. Priya Sharma">
+        </div>
+        <div class="fg">
+          <label>Current city <span class="req">*</span></label>
+          <input type="text" id="f-city" placeholder="e.g. Bengaluru">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" id="f-email" placeholder="you@company.com">
+      </div>
+
+      <div class="row">
+        <div class="fg">
+          <label>WhatsApp number <span class="req">*</span></label>
+          <input type="tel" id="f-wa" placeholder="+91 98765 43210">
+        </div>
+        <div class="fg">
+          <label>LinkedIn profile <span class="req">*</span></label>
+          <input type="url" id="f-li" placeholder="https://linkedin.com/in/...">
+        </div>
+      </div>
+
+      <div class="section-label">GCC Background</div>
+
+      <div class="fg">
+        <label>GCC(s) you have worked at <span class="req">*</span></label>
+        <input type="text" id="f-gccs" placeholder="e.g. Barclays GCC, HSBC Technology India">
+      </div>
+
+      <div class="row">
+        <div class="fg">
+          <label>Current company / GCC <span class="req">*</span></label>
+          <input type="text" id="f-company" placeholder="e.g. Citi India GCC">
+        </div>
+        <div class="fg">
+          <label>Current role / title <span class="req">*</span></label>
+          <input type="text" id="f-role" placeholder="e.g. Senior Manager — Finance">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Total years of experience <span class="req">*</span></label>
+        <select id="f-exp">
+          <option value="">— Select —</option>
+          <option>1–3 years</option>
+          <option>3–6 years</option>
+          <option>6–10 years</option>
+          <option>10–15 years</option>
+          <option>15+ years</option>
+        </select>
+      </div>
+
+      <div class="fg">
+        <label>Primary domain <span class="req">*</span></label>
+        <select id="f-domain">
+          <option value="">— Select —</option>
+          <option>Finance & Accounting</option>
+          <option>Technology & Engineering</option>
+          <option>Operations</option>
+          <option>Sales & Business Development</option>
+          <option>Human Resources</option>
+          <option>Analytics & Data</option>
+          <option>Legal & Compliance</option>
+          <option>Marketing</option>
+          <option>Supply Chain</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="section-label">Why you belong here</div>
+
+      <div class="fg">
+        <label>What does your GCC experience look like, and what do you hope to get from the community? <span class="req">*</span></label>
+        <textarea id="f-why" rows="4" placeholder="Tell us about your GCC journey — roles, impact, and what you're looking to exchange with peers..."></textarea>
+      </div>
+
+      <div class="consent-box">
+        <strong>Community values:</strong> This is a peer-to-peer space — employer-neutral, confidential by default, no commercial pitches. All members are expected to contribute to the community's collective intelligence.
+      </div>
+
+      <div class="fg">
+        <label>I consent to receiving community updates on WhatsApp and email <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-opt"><input type="radio" name="consent" value="Yes"> <span>Yes, I agree</span></label>
+          <label class="radio-opt"><input type="radio" name="consent" value="No"> <span>No, not now</span></label>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="submitForm()">
+        Submit Application →
+      </button>
+      <div id="err-msg" class="error-msg"></div>
+    </div>
+
+    <div id="success-screen">
+      <div class="tick">🎉</div>
+      <h3>Application received!</h3>
+      <p>Our team will review your profile and reach out within 2–3 business days. If approved, you'll receive a WhatsApp group invite directly.</p>
+      <p style="margin-top:16px;font-size:13px;color:var(--gold);">Welcome to the GCC Inner Circle.</p>
+    </div>
+
+    <div class="note-strip">
+      Managed by GCCPROs · All information is 100% confidential · No commercial use
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfhsxJjoNODHGzFMEBJ7e-CU6-Bb9bOwJTOGu5PzeGQjBt-G6RzCUJk7m2njuLTk8AcA/exec';
+
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  const err = document.getElementById('err-msg');
+  err.style.display = 'none';
+
+  const fields = {
+    fullName:   document.getElementById('f-name').value.trim(),
+    email:      document.getElementById('f-email').value.trim(),
+    whatsapp:   document.getElementById('f-wa').value.trim(),
+    linkedin:   document.getElementById('f-li').value.trim(),
+    city:       document.getElementById('f-city').value.trim(),
+    gccs:       document.getElementById('f-gccs').value.trim(),
+    company:    document.getElementById('f-company').value.trim(),
+    role:       document.getElementById('f-role').value.trim(),
+    experience: document.getElementById('f-exp').value,
+    domain:     document.getElementById('f-domain').value,
+    whyJoin:    document.getElementById('f-why').value.trim(),
+    consent:    (document.querySelector('input[name="consent"]:checked') || {}).value || '',
+  };
+
+  if (!fields.fullName || !fields.email || !fields.whatsapp || !fields.linkedin ||
+      !fields.gccs || !fields.company || !fields.role || !fields.experience ||
+      !fields.domain || !fields.whyJoin || !fields.consent) {
+    err.textContent = 'Please fill in all required fields.';
+    err.style.display = 'block';
+    return;
+  }
+  if (!fields.email.includes('@')) {
+    err.textContent = 'Please enter a valid email address.';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const params = new URLSearchParams({ ...fields, action: 'communityInsider' });
+    const res = await fetch(SCRIPT_URL + '?' + params.toString(), { mode: 'no-cors' });
+    document.getElementById('form-body').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch(e) {
+    err.textContent = 'Submission failed. Please try again or email sp@gccpros.com.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit Application →';
+  }
+}
+</script>
+</body>
+</html>
