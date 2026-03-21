@@ -898,10 +898,34 @@ h1            { animation-delay: 0.2s; }
     </div>
     </div>
 
-  <div class="community-cta">
-    <a href="https://chat.whatsapp.com/LRp7sjJJstzETjwaH3IG8g" class="btn-primary" target="_blank">Join the GCC Leaders Community →</a>
-    <p>Open to professionals who have worked in a GCC in India</p>
+  <div class="community-cta" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px;">
+
+    <!-- GCC Insiders -->
+    <a href="community-insider.html" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:28px 24px;text-decoration:none;transition:all 0.2s;display:block;"
+       onmouseover="this.style.background='rgba(201,151,58,0.08)';this.style.borderColor='rgba(201,151,58,0.3)'"
+       onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.1)'">
+      <div style="font-size:24px;margin-bottom:12px;">🏢</div>
+      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;">GCC Insiders Community</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:16px;">For all GCC professionals — Finance, Tech, Ops, HR and more. Must have worked inside a GCC in India.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--ink);padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;">Apply to join →</span>
+    </a>
+
+    <!-- GCC Industry Council -->
+    <a href="community-leaders.html" style="background:rgba(201,151,58,0.06);border:1px solid rgba(201,151,58,0.2);border-radius:14px;padding:28px 24px;text-decoration:none;transition:all 0.2s;display:block;"
+       onmouseover="this.style.background='rgba(201,151,58,0.12)';this.style.borderColor='rgba(201,151,58,0.4)'"
+       onmouseout="this.style.background='rgba(201,151,58,0.06)';this.style.borderColor='rgba(201,151,58,0.2)'">
+      <div style="font-size:24px;margin-bottom:12px;">👑</div>
+      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold-light);margin-bottom:8px;line-height:1.3;">GCC Industry Council</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:16px;">By invitation only. For GCC Site Heads & Chief Executives with 15+ years experience and a decision-making track record.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(201,151,58,0.15);color:var(--gold-light);border:1px solid rgba(201,151,58,0.35);padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;">Express interest →</span>
+    </a>
+
   </div>
+  <style>
+    @media(max-width:640px){
+      .community-cta[style*="grid"]{grid-template-columns:1fr!important;}
+    }
+  </style>
 </section>
 
 <!-- INSIGHTS -->
