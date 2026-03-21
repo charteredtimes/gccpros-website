@@ -1,0 +1,43 @@
+{
+  "articles": [
+    {
+      "id": "001",
+      "title": "What Really Fails a GCC?",
+      "slug": "what-really-fails-a-gcc",
+      "author": "Shammi Prabhakar Singh",
+      "date": "2026-01-15",
+      "category": "Strategy",
+      "tags": ["GCC", "Leadership", "Failure", "Governance"],
+      "summary": "The invisible killers of GCC performance — governance gaps, mandate misalignment, and the absence of a clear India P&L owner. Most GCC failures are quiet, not dramatic.",
+      "url": "https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh",
+      "featured": true,
+      "image_emoji": "🔍"
+    },
+    {
+      "id": "002",
+      "title": "2025: The Year Everyone Was Talking About GCC",
+      "slug": "2025-year-everyone-talking-gcc",
+      "author": "Shammi Prabhakar Singh",
+      "date": "2025-12-30",
+      "category": "Year in Review",
+      "tags": ["GCC", "2025", "India", "Trends"],
+      "summary": "2025 was the year GCC moved from back-office narrative to board-level conversation. What actually shifted — and what it means for 2026.",
+      "url": "https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/",
+      "featured": false,
+      "image_emoji": "📅"
+    },
+    {
+      "id": "003",
+      "title": "Hyderabad vs Pune: GCC Battle for Scale vs Depth",
+      "slug": "hyderabad-vs-pune-gcc",
+      "author": "Shammi Prabhakar Singh",
+      "date": "2025-11-20",
+      "category": "City Intelligence",
+      "tags": ["Hyderabad", "Pune", "GCC", "Cities"],
+      "summary": "Two of India's fastest-growing GCC cities are taking very different paths. Who wins the next wave of global mandates — and why the answer is more nuanced than the numbers suggest.",
+      "url": "https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/",
+      "featured": false,
+      "image_emoji": "🏙️"
+    }
+  ]
+}

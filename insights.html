@@ -587,51 +587,13 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
   <div class="blog-layout">
     <div class="blog-posts">
-
-      <!-- Blog Post 1 -->
-      <div class="blog-post">
-        <div class="post-type">Opinion · GCC Strategy</div>
-        <h3 class="post-title"><a href="https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh--qtt4c" target="_blank">What Really Fails a GCC? The Invisible Killers Nobody Talks About</a></h3>
-        <p class="post-excerpt">Everyone wants to talk about what makes a GCC succeed — the talent, the city, the tech stack, the executive sponsor. But after working with dozens of GCCs across India, I have noticed that the real failure points are almost never on that list. They are quieter, slower, and by the time they are visible, it is usually too late...</p>
-        <div class="post-meta">
-          <span class="post-author">Shammi Prabhakar Singh</span>
-          <span>·</span>
-          <span>GCC Strategy</span>
-          <span>·</span>
-          <a href="https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh--qtt4c" target="_blank" class="read-more">Read full article →</a>
+      <!-- Static featured article kept as fallback -->
+      <div id="dynamic-articles">
+        <div style="text-align:center;padding:40px;color:var(--muted);">
+          <div style="font-size:24px;margin-bottom:12px;">📝</div>
+          <div style="font-size:14px;">Loading articles...</div>
         </div>
       </div>
-
-      <!-- Blog Post 2 -->
-      <div class="blog-post">
-        <div class="post-type">Year in Review · Market Analysis</div>
-        <h3 class="post-title"><a href="https://www.linkedin.com/pulse/2025-year-everyone-talking-gcc-shammi-prabhakar-singh--85gef" target="_blank">2025: The Year Everyone Was Talking About GCC</a></h3>
-        <p class="post-excerpt">If 2020-2023 was the era of GCC discovery — when global companies first seriously looked at India — then 2025 was the year of GCC conviction. Deals got bigger. Mandates got broader. CEOs started flying in to inaugurate their India centres personally. This is what I observed, what changed, and what it means for 2026...</p>
-        <div class="post-meta">
-          <span class="post-author">Shammi Prabhakar Singh</span>
-          <span>·</span>
-          <span>Market Analysis</span>
-          <span>·</span>
-          <a href="https://www.linkedin.com/pulse/2025-year-everyone-talking-gcc-shammi-prabhakar-singh--85gef" target="_blank" class="read-more">Read full article →</a>
-        </div>
-      </div>
-
-      <!-- Blog Post 3 -->
-      <div class="blog-post">
-        <div class="post-type">City Intelligence · GCC Location</div>
-        <h3 class="post-title"><a href="https://www.linkedin.com/posts/casps_gcc-pune-hyderabad-activity-7401143529026158592-9D3U" target="_blank">Hyderabad vs Pune: The GCC Battle for 2025</a></h3>
-        <p class="post-excerpt">Scale or depth? Hyderabad has been winning on volume — more new GCCs, faster growth, government support at a scale Pune cannot currently match. But Pune has something Hyderabad is still building: a 30-year engineering culture and proximity to Mumbai money. This is how I see the battle playing out...</p>
-        <div class="post-meta">
-          <span class="post-author">Shammi Prabhakar Singh</span>
-          <span>·</span>
-          <span>City Analysis</span>
-          <span>·</span>
-          <a href="https://www.linkedin.com/posts/casps_gcc-pune-hyderabad-activity-7401143529026158592-9D3U" target="_blank" class="read-more">Read full article →</a>
-        </div>
-      </div>
-
-      <!-- Add new blog posts above this comment -->
-
     </div>
 
     <!-- SIDEBAR -->
@@ -825,5 +787,73 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
   });
 });
 </script>
+
+<script>
+// ── Auto-load articles from blog.json ────────────────────────────────────────
+(async function loadBlogPosts(){
+  const container = document.getElementById('dynamic-articles');
+  if(!container) return;
+
+  try {
+    const res = await fetch('blog.json?v=' + Date.now());
+    if(!res.ok) throw new Error('not found');
+    const data = await res.json();
+    const articles = (data.articles || []).sort((a,b)=> new Date(b.date)-new Date(a.date));
+
+    if(!articles.length){ container.innerHTML = ''; return; }
+
+    // Featured article first
+    const featured = articles.find(a=>a.featured);
+    const rest = articles.filter(a=>!a.featured);
+
+    let html_out = '';
+
+    if(featured){
+      html_out += `
+      <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:36px;">
+        <div class="post-type" style="color:var(--gold);">⭐ Featured · ${featured.category}</div>
+        <h3 class="post-title">
+          ${featured.url
+            ? `<a href="${featured.url}" target="_blank">${featured.image_emoji} ${featured.title}</a>`
+            : `${featured.image_emoji} ${featured.title}`
+          }
+        </h3>
+        <p class="post-excerpt">${featured.summary}</p>
+        <div class="post-meta" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;">
+          <span style="font-size:12px;color:var(--muted);">${featured.author}</span>
+          <span style="font-size:12px;color:var(--muted);">${new Date(featured.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
+          ${featured.tags ? featured.tags.map(t=>`<span style="background:var(--blue-light);color:var(--blue-mid);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;">${t}</span>`).join('') : ''}
+        </div>
+        ${featured.url ? `<a href="${featured.url}" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Read article →</a>` : ''}
+      </div>`;
+    }
+
+    rest.forEach(a => {
+      html_out += `
+      <div class="blog-post">
+        <div class="post-type">${a.image_emoji} ${a.category}</div>
+        <h3 class="post-title">
+          ${a.url
+            ? `<a href="${a.url}" target="_blank">${a.title}</a>`
+            : a.title
+          }
+        </h3>
+        <p class="post-excerpt">${a.summary}</p>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px;">
+          <span style="font-size:12px;color:var(--muted);">${a.author} · ${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
+        </div>
+        ${a.url ? `<a href="${a.url}" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>` : ''}
+      </div>`;
+    });
+
+    container.innerHTML = html_out;
+
+  } catch(e) {
+    // blog.json not found yet — silently hide
+    container.innerHTML = '';
+  }
+})();
+</script>
+
 </body>
 </html>

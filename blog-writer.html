@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GCCPROs Blog Writer</title>
+<style>
+:root{--ink:#0A1628;--gold:#C9973A;--blue:#2356A4;--cream:#FAF7F2;--white:#fff;--border:#e2e8f0;--muted:#64748b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+header{background:var(--ink);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);}
+.header-logo{font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+.header-logo span{color:var(--gold);}
+.header-tag{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;}
+.layout{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 60px);}
+.editor-pane{padding:40px;border-right:1px solid var(--border);}
+.sidebar{background:#f8fafc;padding:32px;overflow-y:auto;}
+h2{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:24px;}
+.form-group{margin-bottom:20px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+input,textarea,select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:border 0.2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);}
+textarea{resize:vertical;line-height:1.7;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+.btn-primary{background:var(--ink);color:#fff;}.btn-primary:hover{background:#1e3a5f;}
+.btn-gold{background:var(--gold);color:var(--ink);}.btn-gold:hover{background:#b8832e;}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}.btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
+.btn-danger{background:#fee2e2;color:#dc2626;}.btn-danger:hover{background:#fecaca;}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+/* sidebar */
+.article-list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.article-item{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;}
+.article-item:hover{border-color:var(--blue);background:#f0f7ff;}
+.article-item.featured{border-color:var(--gold);background:#fffbf0;}
+.ai-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3;}
+.ai-meta{font-size:11px;color:var(--muted);}
+.ai-badge{display:inline-block;background:var(--gold);color:var(--ink);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;text-transform:uppercase;}
+/* output */
+.output-box{background:var(--ink);color:#a8edba;border-radius:10px;padding:20px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto;margin-top:12px;}
+.copy-row{display:flex;justify-content:flex-end;margin-top:8px;}
+.section-divider{border:none;border-top:1px solid var(--border);margin:24px 0;}
+.notice{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;font-size:12px;color:#166534;line-height:1.6;margin-bottom:20px;}
+.warning{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;font-size:12px;color:#92400e;line-height:1.6;margin-top:12px;}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.step-num{width:22px;height:22px;background:var(--ink);color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:12px;color:var(--muted);line-height:1.6;}
+.step-text strong{color:var(--ink);}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">GCC<span>PROs</span> <span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.4);">Blog Writer</span></div>
+  <div class="header-tag">Content Management Tool</div>
+</header>
+
+<div class="layout">
+
+  <!-- EDITOR -->
+  <div class="editor-pane">
+    <h2>✍️ Write an Article</h2>
+
+    <div class="notice">
+      This tool generates a JSON entry you paste into <strong>blog.json</strong> on GitHub. The insights page then automatically shows your article.
+    </div>
+
+    <div class="form-group">
+      <label>Article Title *</label>
+      <input type="text" id="title" placeholder="e.g. Why GCC Talent Strategies Are Changing in 2026">
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="category">
+          <option>Strategy</option>
+          <option>Talent & HR</option>
+          <option>Technology & AI</option>
+          <option>City Intelligence</option>
+          <option>Year in Review</option>
+          <option>Leadership</option>
+          <option>Policy & Advocacy</option>
+          <option>GCC Insider</option>
+          <option>Research</option>
+          <option>Industry Trends</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Publish Date *</label>
+        <input type="date" id="date">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Summary (2–3 sentences shown on insights page) *</label>
+      <textarea id="summary" rows="4" placeholder="What is this article about? What will the reader take away?"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Article URL (LinkedIn Pulse, external link, or leave blank for future)</label>
+      <input type="url" id="url" placeholder="https://www.linkedin.com/pulse/...">
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Author</label>
+        <input type="text" id="author" value="Shammi Prabhakar Singh">
+      </div>
+      <div class="form-group">
+        <label>Emoji Icon</label>
+        <input type="text" id="emoji" placeholder="📊" maxlength="4">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Tags (comma separated)</label>
+      <input type="text" id="tags" placeholder="GCC, Leadership, Talent">
+    </div>
+
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="featured" style="width:auto;margin:0;"> &nbsp;Mark as Featured Article (shown prominently at top)
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-gold" onclick="generateJSON()">⚡ Generate JSON Entry</button>
+      <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+    </div>
+
+    <div id="output-section" style="display:none;margin-top:24px;">
+      <hr class="section-divider">
+      <h2>📋 Your JSON Entry</h2>
+      <div class="output-box" id="json-output"></div>
+      <div class="copy-row">
+        <button class="btn btn-primary" onclick="copyJSON()">📋 Copy JSON</button>
+      </div>
+      <div class="warning">
+        <strong>Next step:</strong> Copy this JSON and paste it inside the <code>"articles": [...]</code> array in your <strong>blog.json</strong> file on GitHub, then commit. The insights page will update automatically.
+      </div>
+    </div>
+
+    <hr class="section-divider">
+    <h2>📖 How to publish</h2>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Fill in the form above and click <strong>Generate JSON Entry</strong></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Copy the generated JSON</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Open <strong>blog.json</strong> on GitHub → click the pencil ✏️ to edit → paste your entry inside <code>"articles": [</code> at the top of the list</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Click <strong>Commit changes</strong> — your article appears on the insights page within 2 minutes</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">To invite a council member to write: share them this tool, they generate their JSON, send it to you, and you paste it in</div></div>
+  </div>
+
+  <!-- SIDEBAR: current articles -->
+  <div class="sidebar">
+    <h2>📚 Published Articles</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">From blog.json — load the file to see your articles here.</p>
+
+    <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadJSON(event)">
+    <button class="btn btn-ghost" onclick="document.getElementById('file-input').click()" style="width:100%;justify-content:center;margin-bottom:16px;">
+      📂 Load blog.json to preview
+    </button>
+
+    <div class="article-list" id="article-list">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Set today's date
+document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+let articleCount = 0;
+
+function slugify(text){
+  return text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function generateJSON(){
+  const title = document.getElementById('title').value.trim();
+  const summary = document.getElementById('summary').value.trim();
+  if(!title||!summary){alert('Title and Summary are required.');return;}
+
+  articleCount++;
+  const id = String(Date.now()).slice(-6);
+  const tags = document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+
+  const article = {
+    id,
+    title,
+    slug: slugify(title),
+    author: document.getElementById('author').value.trim()||'Shammi Prabhakar Singh',
+    date: document.getElementById('date').value,
+    category: document.getElementById('category').value,
+    tags,
+    summary,
+    url: document.getElementById('url').value.trim()||null,
+    featured: document.getElementById('featured').checked,
+    image_emoji: document.getElementById('emoji').value.trim()||'📝'
+  };
+
+  document.getElementById('json-output').textContent = JSON.stringify(article, null, 2) + ',';
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({behavior:'smooth'});
+}
+
+function copyJSON(){
+  const text = document.getElementById('json-output').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy JSON',2000);
+  });
+}
+
+function clearForm(){
+  ['title','summary','url','tags','emoji'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('featured').checked=false;
+  document.getElementById('author').value='Shammi Prabhakar Singh';
+  document.getElementById('date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('output-section').style.display='none';
+}
+
+function loadJSON(event){
+  const file = event.target.files[0];
+  if(!file)return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const data = JSON.parse(e.target.result);
+      const list = document.getElementById('article-list');
+      list.innerHTML = '';
+      if(!data.articles||!data.articles.length){
+        list.innerHTML='<p style="font-size:12px;color:var(--muted)">No articles found.</p>';
+        return;
+      }
+      data.articles.forEach(a=>{
+        const div = document.createElement('div');
+        div.className = 'article-item'+(a.featured?' featured':'');
+        div.innerHTML = `
+          <div class="ai-title">${a.image_emoji||'📝'} ${a.title}${a.featured?'<span class="ai-badge">Featured</span>':''}</div>
+          <div class="ai-meta">${a.category} · ${a.date} · ${a.author}</div>
+        `;
+        div.onclick = ()=>{
+          document.getElementById('title').value=a.title;
+          document.getElementById('summary').value=a.summary;
+          document.getElementById('url').value=a.url||'';
+          document.getElementById('author').value=a.author;
+          document.getElementById('emoji').value=a.image_emoji||'';
+          document.getElementById('featured').checked=a.featured||false;
+          document.getElementById('date').value=a.date;
+          document.getElementById('tags').value=(a.tags||[]).join(', ');
+          // set category
+          const sel=document.getElementById('category');
+          for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===a.category)sel.selectedIndex=i;}
+          window.scrollTo({top:0,behavior:'smooth'});
+        };
+        list.appendChild(div);
+      });
+    } catch(err){
+      alert('Invalid JSON file. Please check blog.json.');
+    }
+  };
+  reader.readAsText(file);
+}
+</script>
+</body>
+</html>
