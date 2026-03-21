@@ -795,7 +795,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
   if(!container) return;
 
   try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbyfhsxJjoNODHGzFMEBJ7e-CU6-Bb9bOwJTOGu5PzeGQjBt-G6RzCUJk7m2njuLTk8AcA/exec?action=getBlogPosts&v=' + Date.now());
+    const res = await fetch('https://script.google.com/macros/s/AKfycbxAR0uh-oSKBGq_42xG9tmg95SSi2b5YY2JhgKyQZ79JbQsBbXTYENKBSnOUF45sf4mnw/exec?action=getBlogPosts&v=' + Date.now());
     if(!res.ok) throw new Error('not found'); // data fetched from Google Sheets via Apps Script
     const data = await res.json();
     const articles = (data.articles || []).sort((a,b)=> new Date(b.date)-new Date(a.date));
