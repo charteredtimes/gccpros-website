@@ -1,18 +1,25 @@
 {
   "articles": [
     {
-      "id": "001",
-      "title": "What Really Fails a GCC?",
-      "slug": "what-really-fails-a-gcc",
-      "author": "Shammi Prabhakar Singh",
-      "date": "2026-01-15",
-      "category": "Strategy",
-      "tags": ["GCC", "Leadership", "Failure", "Governance"],
-      "summary": "The invisible killers of GCC performance — governance gaps, mandate misalignment, and the absence of a clear India P&L owner. Most GCC failures are quiet, not dramatic.",
-      "url": "https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh",
-      "featured": true,
-      "image_emoji": "🔍"
-    },
+      "id": "769110",
+  "title": "What Really Fails a GCC?",
+  "slug": "what-really-fails-a-gcc",
+  "author": "Shammi Prabhakar Singh",
+  "date": "2026-03-21",
+  "category": "Strategy",
+  "tags": [
+    "GCC",
+    "Leadership",
+    "Success",
+    "Design",
+    "Globalcapability"
+  ],
+  "summary": "The invisible killers of GCC performance — governance gaps, mandate misalignment, and the absence of a clear India P&L owner. Most GCC failures are quiet, not dramatic.",
+  "url": "https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh--qtt4c/?trackingId=tOUXeQn7RBuFS9c9gCiQqg%3D%3D",
+  "featured": true,
+  "image_emoji": "📝"
+},
+
     {
       "id": "002",
       "title": "2025: The Year Everyone Was Talking About GCC",
