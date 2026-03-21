@@ -789,69 +789,70 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 </script>
 
 <script>
-// ── Auto-load articles from blog.json ────────────────────────────────────────
-(async function loadBlogPosts(){
+// ── Auto-load articles from Apps Script via JSONP ─────────────────────────────
+(function loadBlogPosts(){
   const container = document.getElementById('dynamic-articles');
   if(!container) return;
 
-  try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbxAR0uh-oSKBGq_42xG9tmg95SSi2b5YY2JhgKyQZ79JbQsBbXTYENKBSnOUF45sf4mnw/exec?action=getBlogPosts&v=' + Date.now());
-    if(!res.ok) throw new Error('not found'); // data fetched from Google Sheets via Apps Script
-    const data = await res.json();
-    const articles = (data.articles || []).sort((a,b)=> new Date(b.date)-new Date(a.date));
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);"><div style="font-size:24px;margin-bottom:12px;">📝</div><div style="font-size:14px;">Loading articles...</div></div>';
 
-    if(!articles.length){ container.innerHTML = ''; return; }
+  const callbackName = 'gccprosBlogCallback_' + Date.now();
+  const script = document.createElement('script');
+  const url = 'https://script.google.com/macros/s/AKfycbxjuGGSu7FrdzrNsJaLDIY54yw_lqMlp8hMs2HRzCFEdoIP9Cspe8ch3cbBq5yJ09hhmA/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
 
-    // Featured article first
-    const featured = articles.find(a=>a.featured);
-    const rest = articles.filter(a=>!a.featured);
+  window[callbackName] = function(data) {
+    try {
+      delete window[callbackName];
+      document.head.removeChild(script);
 
-    let html_out = '';
+      const articles = (data.articles || []).sort((a,b) => new Date(b.date) - new Date(a.date));
+      if(!articles.length){ container.innerHTML = ''; return; }
 
-    if(featured){
-      html_out += `
-      <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:36px;">
-        <div class="post-type" style="color:var(--gold);">⭐ Featured · ${featured.category}</div>
-        <h3 class="post-title">
-          ${featured.url
-            ? `<a href="${featured.url}" target="_blank">${featured.image_emoji} ${featured.title}</a>`
-            : `${featured.image_emoji} ${featured.title}`
-          }
-        </h3>
-        <p class="post-excerpt">${featured.summary}</p>
-        <div class="post-meta" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;">
-          <span style="font-size:12px;color:var(--muted);">${featured.author}</span>
-          <span style="font-size:12px;color:var(--muted);">${new Date(featured.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
-          ${featured.tags ? featured.tags.map(t=>`<span style="background:var(--blue-light);color:var(--blue-mid);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;">${t}</span>`).join('') : ''}
-        </div>
-        ${featured.url ? `<a href="${featured.url}" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Read article →</a>` : ''}
-      </div>`;
+      const featured = articles.find(a => a.featured);
+      const rest = articles.filter(a => !a.featured);
+      let html_out = '';
+
+      if(featured){
+        html_out += `
+        <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:36px;">
+          <div class="post-type" style="color:var(--gold);">⭐ Featured · ${featured.category}</div>
+          <h3 class="post-title">
+            ${featured.url ? `<a href="${featured.url}" target="_blank">${featured.image_emoji||'📝'} ${featured.title}</a>` : `${featured.image_emoji||'📝'} ${featured.title}`}
+          </h3>
+          <p class="post-excerpt">${featured.summary}</p>
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;">
+            <span style="font-size:12px;color:var(--muted);">${featured.author}</span>
+            <span style="font-size:12px;color:var(--muted);">${new Date(featured.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
+            ${(featured.tags||[]).map(t=>`<span style="background:var(--blue-light);color:var(--blue-mid);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;">${t}</span>`).join('')}
+          </div>
+          ${featured.url ? `<a href="${featured.url}" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Read article →</a>` : ''}
+        </div>`;
+      }
+
+      rest.forEach(a => {
+        html_out += `
+        <div class="blog-post">
+          <div class="post-type">${a.image_emoji||'📝'} ${a.category}</div>
+          <h3 class="post-title">
+            ${a.url ? `<a href="${a.url}" target="_blank">${a.title}</a>` : a.title}
+          </h3>
+          <p class="post-excerpt">${a.summary}</p>
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px;">
+            <span style="font-size:12px;color:var(--muted);">${a.author} · ${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
+          </div>
+          ${a.url ? `<a href="${a.url}" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>` : ''}
+        </div>`;
+      });
+
+      container.innerHTML = html_out;
+    } catch(err) {
+      container.innerHTML = '';
     }
+  };
 
-    rest.forEach(a => {
-      html_out += `
-      <div class="blog-post">
-        <div class="post-type">${a.image_emoji} ${a.category}</div>
-        <h3 class="post-title">
-          ${a.url
-            ? `<a href="${a.url}" target="_blank">${a.title}</a>`
-            : a.title
-          }
-        </h3>
-        <p class="post-excerpt">${a.summary}</p>
-        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px;">
-          <span style="font-size:12px;color:var(--muted);">${a.author} · ${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
-        </div>
-        ${a.url ? `<a href="${a.url}" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>` : ''}
-      </div>`;
-    });
-
-    container.innerHTML = html_out;
-
-  } catch(e) {
-    // blog.json not found yet — silently hide
-    container.innerHTML = '';
-  }
+  script.onerror = function(){ container.innerHTML = ''; };
+  script.src = url;
+  document.head.appendChild(script);
 })();
 </script>
 
