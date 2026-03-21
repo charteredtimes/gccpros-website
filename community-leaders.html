@@ -205,6 +205,7 @@ textarea{resize:vertical;line-height:1.7;}
           <label class="radio-opt"><input type="radio" name="consent" value="Yes"> <span>Yes, I commit to these values</span></label>
           <label class="radio-opt"><input type="radio" name="consent" value="No"> <span>No</span></label>
         </div>
+        <div id="err-consent" style="color:#dc2626;font-size:12px;margin-top:4px;"></div>
       </div>
 
       <button class="submit-btn" id="submit-btn" onclick="submitForm()">
@@ -229,60 +230,109 @@ textarea{resize:vertical;line-height:1.7;}
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfhsxJjoNODHGzFMEBJ7e-CU6-Bb9bOwJTOGu5PzeGQjBt-G6RzCUJk7m2njuLTk8AcA/exec';
 
-async function submitForm() {
-  const btn = document.getElementById('submit-btn');
-  const err = document.getElementById('err-msg');
-  err.style.display = 'none';
+function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);}
+function isValidPhone(v){const d=v.replace(/[\s\-\(\)\+]/g,'');return /^[0-9]{10,13}$/.test(d);}
+function isValidLinkedIn(v){return /^https?:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/.test(v.trim());}
+function isValidName(v){return v.trim().length>=3;}
+function showErr(id,msg){
+  let el=document.getElementById('err_'+id);
+  if(!el){el=document.createElement('div');el.id='err_'+id;el.style.cssText='color:#dc2626;font-size:12px;margin-top:4px;';
+  const f=document.getElementById(id);if(f)f.parentNode.appendChild(el);}
+  el.textContent=msg;
+  const f=document.getElementById(id);if(f)f.style.borderColor='#fca5a5';
+}
+function clearErr(id){
+  const el=document.getElementById('err_'+id);if(el)el.textContent='';
+  const f=document.getElementById(id);if(f)f.style.borderColor='';
+}
 
-  const fields = {
-    fullName:   document.getElementById('f-name').value.trim(),
-    email:      document.getElementById('f-email').value.trim(),
-    whatsapp:   document.getElementById('f-wa').value.trim(),
-    linkedin:   document.getElementById('f-li').value.trim(),
-    city:       document.getElementById('f-city').value.trim(),
-    company:    document.getElementById('f-company').value.trim(),
-    role:       document.getElementById('f-role').value.trim(),
-    gccs:       document.getElementById('f-gccs').value.trim(),
-    experience: document.getElementById('f-exp').value,
-    domain:     document.getElementById('f-domain').value,
-    whyJoin:    document.getElementById('f-why').value.trim(),
-    contrib:    document.getElementById('f-contrib').value.trim(),
-    consent:    (document.querySelector('input[name="consent"]:checked') || {}).value || '',
+function validateField(id){
+  const el=document.getElementById(id);
+  if(!el)return true;
+  const v=el.value.trim();
+  switch(id){
+    case 'f-name':
+      if(!v||!isValidName(v)){showErr(id,'Full name is required (min 3 characters).');return false;}break;
+    case 'f-email':
+      if(!isValidEmail(v)){showErr(id,'Enter a valid email address (e.g. name@company.com).');return false;}break;
+    case 'f-wa':
+      if(!isValidPhone(v)){showErr(id,'Enter a valid mobile number with country code (e.g. +91 98765 43210).');return false;}break;
+    case 'f-li':
+      if(!isValidLinkedIn(v)){showErr(id,'Must be a valid LinkedIn URL — https://linkedin.com/in/yourname');return false;}break;
+    case 'f-city':
+      if(!v||v.length<2){showErr(id,'City is required.');return false;}break;
+    case 'f-company':
+      if(!v||v.length<2){showErr(id,'Organisation name is required.');return false;}break;
+    case 'f-role':
+      if(!v||v.length<3){showErr(id,'Designation is required.');return false;}break;
+    case 'f-gccs':
+      if(!v||v.length<10){showErr(id,'Please describe the GCCs you have led — include names, your role, and scale (min 10 chars).');return false;}break;
+    case 'f-exp':
+      if(!v){showErr(id,'Please select your years of experience.');return false;}break;
+    case 'f-domain':
+      if(!v){showErr(id,'Please select your primary domain.');return false;}break;
+    case 'f-why':
+      if(!v||v.length<80){showErr(id,'This is a key question. Please write at least 80 characters — be specific about the GCC challenge and your impact.');return false;}break;
+    case 'f-contrib':
+      if(!v||v.length<60){showErr(id,'Please describe what you would contribute (min 60 characters).');return false;}break;
+  }
+  clearErr(id);return true;
+}
+
+function validateAll(){
+  const ids=['f-name','f-email','f-wa','f-li','f-city','f-company','f-role','f-gccs','f-exp','f-domain','f-why','f-contrib'];
+  let valid=true;
+  ids.forEach(id=>{if(!validateField(id))valid=false;});
+  const consent=document.querySelector('input[name="consent"]:checked');
+  if(!consent||consent.value!=='Yes'){
+    document.getElementById('err-consent').textContent='You must agree to the Council charter values to apply.';
+    valid=false;
+  } else {document.getElementById('err-consent').textContent='';}
+  return valid;
+}
+
+async function submitForm(){
+  if(!validateAll()){
+    const firstErr=document.querySelector('[style*="fca5a5"]');
+    if(firstErr)firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  btn.textContent='Submitting...';
+  const fields={
+    action:'communityLeaders',
+    fullName:document.getElementById('f-name').value.trim(),
+    email:document.getElementById('f-email').value.trim().toLowerCase(),
+    whatsapp:document.getElementById('f-wa').value.trim(),
+    linkedin:document.getElementById('f-li').value.trim(),
+    city:document.getElementById('f-city').value.trim(),
+    company:document.getElementById('f-company').value.trim(),
+    role:document.getElementById('f-role').value.trim(),
+    gccs:document.getElementById('f-gccs').value.trim(),
+    experience:document.getElementById('f-exp').value,
+    domain:document.getElementById('f-domain').value,
+    whyJoin:document.getElementById('f-why').value.trim(),
+    contrib:document.getElementById('f-contrib').value.trim(),
+    consent:document.querySelector('input[name="consent"]:checked').value,
   };
-
-  if (!fields.fullName || !fields.email || !fields.whatsapp || !fields.linkedin ||
-      !fields.company || !fields.role || !fields.gccs || !fields.experience ||
-      !fields.domain || !fields.whyJoin || !fields.contrib || !fields.consent) {
-    err.textContent = 'Please complete all required fields — the Council values thoroughness.';
-    err.style.display = 'block';
-    return;
-  }
-  if (fields.consent !== 'Yes') {
-    err.textContent = 'You must agree to the Council charter values to apply.';
-    err.style.display = 'block';
-    return;
-  }
-  if (!fields.email.includes('@')) {
-    err.textContent = 'Please enter a valid email address.';
-    err.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
-
-  try {
-    const params = new URLSearchParams({ ...fields, action: 'communityLeaders' });
-    await fetch(SCRIPT_URL + '?' + params.toString(), { mode: 'no-cors' });
-    document.getElementById('form-body').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-  } catch(e) {
-    err.textContent = 'Submission failed. Please email sp@gccpros.com directly.';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = '⚜️ Submit Expression of Interest';
+  try{
+    await fetch(SCRIPT_URL+'?'+new URLSearchParams(fields).toString(),{mode:'no-cors'});
+    document.getElementById('form-body').style.display='none';
+    document.getElementById('success-screen').style.display='block';
+  }catch(e){
+    document.getElementById('err-msg').textContent='Submission failed. Please email sp@gccpros.com directly.';
+    document.getElementById('err-msg').style.display='block';
+    btn.disabled=false;
+    btn.textContent='⚜️ Submit Expression of Interest';
   }
 }
+
+window.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('input,select,textarea').forEach(el=>{
+    el.addEventListener('blur',()=>validateField(el.id));
+  });
+});
 </script>
 </body>
 </html>
