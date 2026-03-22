@@ -269,32 +269,6 @@ footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(20
   </div>
 </div>
 
-<!-- FEATURED ARTICLE -->
-<section class="featured">
-  <div class="section-label">Featured</div>
-  <h2 class="section-title">Editor's pick</h2>
-  <div class="featured-card">
-    <div class="featured-img">
-      <span class="featured-badge">Latest Article</span>
-      <div class="featured-title-img">What Really<br><em>Fails</em> a GCC?</div>
-    </div>
-    <div class="featured-body">
-      <div class="featured-type">Analysis · LinkedIn Article</div>
-      <h3 class="featured-title">What Really Fails a GCC?</h3>
-      <p class="featured-excerpt">Most GCC failures are not about strategy, technology, or even talent. They are about the invisible things — governance gaps, misaligned expectations between the parent company and the India leadership, and the absence of a clear mandate. This article unpacks the patterns behind GCC underperformance.</p>
-      <div class="featured-meta">
-        <div class="author-img">SP</div>
-        <div class="author-info">
-          <div class="author-name">Shammi Prabhakar Singh</div>
-          <div class="author-date">Founder, GCCPROs · CA & GCC Strategist</div>
-        </div>
-      </div>
-      <a href="https://www.linkedin.com/pulse/what-really-fails-gcc-shammi-prabhakar-singh--qtt4c" target="_blank" class="btn-read">Read on LinkedIn →</a>
-    </div>
-  </div>
-</section>
-
-
 
 <!-- QUOTES CAROUSEL -->
 <section style="background:var(--white);padding:80px 0 0;">
@@ -589,9 +563,15 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     <div class="blog-posts">
       <!-- Static featured article kept as fallback -->
       <div id="dynamic-articles">
-        <div style="text-align:center;padding:40px;color:var(--muted);">
-          <div style="font-size:24px;margin-bottom:12px;">📝</div>
-          <div style="font-size:14px;">Loading articles...</div>
+        <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
+          <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
+          <h3 class="post-title">
+            <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">
+              GCC Professional's Research — by Shammi Prabhakar
+            </a>
+          </h3>
+          <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
+          <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
         </div>
       </div>
     </div>
