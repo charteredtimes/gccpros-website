@@ -573,30 +573,51 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 </div>
 
 <script>
-// Replace static cards with live data from substack.json (same domain, no CORS)
-fetch('https://www.gccpros.com/substack.json?v=' + Date.now())
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    var arts = (data.articles||[]);
-    if (!arts.length) return;
-    var container = document.getElementById('substack-articles');
-    var out = '';
-    arts.forEach(function(a, i){
-      var isFeat = i === 0;
-      var date = '';
-      try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
-      out += '<div class="blog-post"'+(isFeat?' style="border-left:3px solid var(--gold);padding-left:24px;"':'')+'>'; 
-      out += '<div class="post-type"'+(isFeat?' style="color:var(--gold);"':'')+'>'+( isFeat ? '⭐ Latest' : '📰 GCC Research')+'</div>';
-      out += '<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>';
-      if(a.thumb) out += '<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">';
-      if(a.summary) out += '<p class="post-excerpt">'+a.summary+'</p>';
-      out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'+(date?' <span>&middot; '+date+'</span>':'')+'</div>';
-      out += '<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
-      out += '</div>';
-    });
-    container.innerHTML = out;
-  })
-  .catch(function(){});
+// Fetch substack.json with CORS-proxy fallback chain
+// Direct fetch fails when browser blocks cross-origin requests (CORS).
+// We try direct first, then two public CORS proxies, before keeping the static fallback.
+(function(){
+  var ORIGIN = 'https://www.gccpros.com/substack.json';
+  var urls = [
+    ORIGIN + '?v=' + Date.now(),
+    'https://corsproxy.io/?' + encodeURIComponent(ORIGIN),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(ORIGIN)
+  ];
+
+  function tryFetch(index){
+    if(index >= urls.length) return; // all failed — keep static fallback card
+    fetch(urls[index], {signal: AbortSignal.timeout ? AbortSignal.timeout(6000) : undefined})
+      .then(function(r){
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(data){
+        var arts = (data.articles||[]);
+        if(!arts.length) return;
+        var container = document.getElementById('substack-articles');
+        var out = '';
+        arts.forEach(function(a, i){
+          var isFeat = i === 0;
+          var date = '';
+          try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
+          out += '<div class="blog-post"'+(isFeat?' style="border-left:3px solid var(--gold);padding-left:24px;"':'')+'>'; 
+          out += '<div class="post-type"'+(isFeat?' style="color:var(--gold);"':'')+'>'+( isFeat ? '⭐ Latest' : '📰 GCC Research')+'</div>';
+          out += '<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>';
+          if(a.thumb) out += '<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display=\'none\'">';
+          if(a.summary) out += '<p class="post-excerpt">'+a.summary+'</p>';
+          out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'+(date?' <span>&middot; '+date+'</span>':'')+'</div>';
+          out += '<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
+          out += '</div>';
+        });
+        container.innerHTML = out;
+      })
+      .catch(function(){
+        tryFetch(index + 1); // try next URL in the chain
+      });
+  }
+
+  tryFetch(0);
+})();
 </script>
 
 
@@ -734,13 +755,13 @@ fetch('https://www.gccpros.com/substack.json?v=' + Date.now())
       <a href="https://www.gccpros.com/events-media">Events</a>
       <a href="https://www.linkedin.com/company/gccpros/">LinkedIn</a>
       <a href="https://chat.whatsapp.com/Hp1lyheXcuL9XBObL5utR0">WhatsApp</a>
-      <a href="mailto:sp@gccpros.com">Contact</a>
+      <a href="/cdn-cgi/l/email-protection#16656656717575666479653875797b">Contact</a>
     </div>
   </div>
-  <div class="footer-bottom">© 2025 GCCPROs. All rights reserved. · sp@gccpros.com · +91-85069-76700</div>
+  <div class="footer-bottom">© 2025 GCCPROs. All rights reserved. · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1360635374707063617c603d707c7e">[email&#160;protected]</a> · +91-85069-76700</div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function subscribeNewsletter(btn) {
   const input = btn.previousElementSibling;
   const email = input.value.trim();
@@ -765,17 +786,4 @@ function toggleMenu(){
   document.body.style.overflow=m.classList.contains('open')?'hidden':'';
 }
 // Close on link click
-document.querySelectorAll('.mobile-menu a').forEach(a=>{
-  a.addEventListener('click',()=>{
-    document.getElementById('hamburger').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.body.style.overflow='';
-  });
-});
-</script>
-
-
-
-
-</body>
-</html>
+document.querySelectorAll('.mobile-menu a'
