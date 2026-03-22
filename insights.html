@@ -125,6 +125,16 @@ section{padding:80px 80px;}
 .blog-posts{}
 .blog-post{border-bottom:1px solid var(--border);padding-bottom:40px;margin-bottom:40px;}
 .blog-post:last-child{border-bottom:none;}
+.post-thumb{width:100%;border-radius:12px;overflow:hidden;margin:14px 0 18px;position:relative;max-height:240px;}
+.post-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;}
+.post-thumb:hover img{transform:scale(1.03);}
+.post-thumb-placeholder{width:100%;height:160px;border-radius:12px;margin:14px 0 18px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.post-thumb-placeholder .pt-icon{font-size:48px;opacity:0.35;position:absolute;right:28px;top:50%;transform:translateY(-50%);}
+.post-thumb-placeholder .pt-label{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:rgba(255,255,255,0.85);padding:0 32px;line-height:1.35;position:relative;z-index:1;max-width:70%;}
+.post-thumb-placeholder .pt-badge{position:absolute;top:14px;left:16px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;}
+.pt-grad-1{background:linear-gradient(135deg,#0A1628 0%,#2356A4 60%,#C9973A 100%);}
+.pt-grad-2{background:linear-gradient(135deg,#1A3A6B 0%,#0A1628 100%);}
+.pt-grad-3{background:linear-gradient(135deg,#C9973A 0%,#A07828 50%,#0A1628 100%);}
 .post-type{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
 .post-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:12px;}
 .post-title a{text-decoration:none;color:inherit;transition:color 0.2s;}
@@ -567,6 +577,11 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
     <div class="post-type" style="color:var(--gold);">⭐ Latest</div>
     <h3 class="post-title"><a href="https://open.substack.com/pub/shammip/p/role-of-gcc-policies-in-decision?utm_campaign=post-expanded-share&utm_medium=web" target="_blank">Role of GCC Policies, in decision making</a></h3>
+    <div class="post-thumb-placeholder pt-grad-1">
+      <span class="pt-badge">GCCPROs Research</span>
+      <span class="pt-label">Role of GCC Policies, in decision making</span>
+      <span class="pt-icon">📋</span>
+    </div>
     <p class="post-excerpt">Role of GCC Policies in attracting the new units to setup, with GCC head of Qualcomm and talent expert from Quess</p>
     <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
     <a href="https://open.substack.com/pub/shammip/p/role-of-gcc-policies-in-decision?utm_campaign=post-expanded-share&utm_medium=web" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
@@ -574,6 +589,11 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="blog-post">
     <div class="post-type">📰 GCC Research</div>
     <h3 class="post-title"><a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank">Transforming GCCs: The 5 Essential Shifts</a></h3>
+    <div class="post-thumb-placeholder pt-grad-2">
+      <span class="pt-badge">GCCPROs Research</span>
+      <span class="pt-label">Transforming GCCs: The 5 Essential Shifts</span>
+      <span class="pt-icon">🔄</span>
+    </div>
     <p class="post-excerpt">The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.</p>
     <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
     <a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
@@ -581,7 +601,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="blog-post">
     <div class="post-type">📰 GCC Research</div>
     <h3 class="post-title"><a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank">What Really Fails a GCC?</a></h3>
-    <img src="https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">
+    <div class="post-thumb"><img src="https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png" alt="What Really Fails a GCC?" onerror="this.parentElement.className='post-thumb-placeholder pt-grad-3';this.parentElement.innerHTML='<span class=pt-badge>GCCPROs Research</span><span class=pt-label>What Really Fails a GCC?</span><span class=pt-icon>⚠️</span>';"></div>
     <p class="post-excerpt">Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.</p>
     <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
     <a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
@@ -615,6 +635,8 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         var staticCount = container.querySelectorAll('.blog-post').length;
         if(arts.length < staticCount) return; // stale cache — keep static fallback
         var out = '';
+        var gradients = ['pt-grad-1','pt-grad-2','pt-grad-3'];
+        var icons = ['📋','🔄','⚠️','📊','🏢','🎯'];
         arts.forEach(function(a, i){
           var isFeat = i === 0;
           var date = '';
@@ -622,7 +644,11 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
           out += '<div class="blog-post"'+(isFeat?' style="border-left:3px solid var(--gold);padding-left:24px;"':'')+'>'; 
           out += '<div class="post-type"'+(isFeat?' style="color:var(--gold);"':'')+'>'+( isFeat ? '⭐ Latest' : '📰 GCC Research')+'</div>';
           out += '<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>';
-          if(a.thumb) out += '<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display=\'none\'">';
+          if(a.thumb) {
+            out += '<div class="post-thumb"><img src="'+a.thumb+'" alt="'+a.title+'" onerror="this.parentElement.className=\'post-thumb-placeholder '+gradients[i%3]+'\';this.parentElement.innerHTML=\'<span class=pt-badge>GCCPROs Research</span><span class=pt-label>'+a.title.replace(/'/g,'\\\'')+'</span><span class=pt-icon>'+icons[i%6]+'</span>\';"></div>';
+          } else {
+            out += '<div class="post-thumb-placeholder '+gradients[i%3]+'"><span class="pt-badge">GCCPROs Research</span><span class="pt-label">'+a.title+'</span><span class="pt-icon">'+icons[i%6]+'</span></div>';
+          }
           if(a.summary) out += '<p class="post-excerpt">'+a.summary+'</p>';
           out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'+(date?' <span>&middot; '+date+'</span>':'')+'</div>';
           out += '<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
