@@ -789,54 +789,62 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 </script>
 
 <script>
-// ── Blog loader — shows LinkedIn card immediately, upgrades with live articles ─
+// ── Blog loader — fetches /blogs.json (same domain, no CORS) ─────────────────
 (function(){
   const container = document.getElementById('dynamic-articles');
-  if(!container) return;
+  if (!container) return;
 
-  const FALLBACK = `<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
-          <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
-          <h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research — by Shammi Prabhakar</a></h3>
-          <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
-          <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
-        </div>`;
+  const LINKEDIN_FALLBACK = `
+    <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
+      <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
+      <h3 class="post-title">
+        <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">
+          GCC Professional's Research — by Shammi Prabhakar
+        </a>
+      </h3>
+      <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
+      <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
+    </div>`;
 
-  // Show fallback immediately — never show "loading" to the visitor
-  container.innerHTML = FALLBACK;
+  fetch('/blogs.json?v=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error('not found'); return r.json(); })
+    .then(function(data){
+      const arts = (data.articles || [])
+        .filter(function(a){ return a.status === 'Published'; })
+        .sort(function(a,b){ return new Date(b.date||0) - new Date(a.date||0); });
 
-  // Try JSONP in background — if articles exist, replace the fallback
-  const cbName = 'gccBlog_' + Date.now();
-  const s = document.createElement('script');
+      if (!arts.length) { container.innerHTML = LINKEDIN_FALLBACK; return; }
 
-  window[cbName] = function(data){
-    try {
-      if(window[cbName]) delete window[cbName];
-      try { document.head.removeChild(s); } catch(e){}
-      const articles = (data.articles||[]).filter(a=>a.status==='Published'||a.title).sort((a,b)=>new Date(b.date)-new Date(a.date));
-      if(!articles.length) return; // keep fallback
       let out = '';
-      articles.forEach(function(a,i){
-        const isFeatured = a.featured && i===0;
-        out += '<div class="blog-post"' + (isFeatured?' style="border-left:3px solid var(--gold);padding-left:24px;"':'') + '>';
-        if(isFeatured) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · '+a.category+'</div>';
-        else out += '<div class="post-type">'+(a.image_emoji||'📝')+' '+a.category+'</div>';
+      arts.forEach(function(a, i) {
+        const isFeat = a.featured && i === 0;
+        out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:32px;"' : '') + '>';
+        if (isFeat) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · ' + (a.category||'') + '</div>';
+        else out += '<div class="post-type">' + (a.image_emoji||'📝') + ' ' + (a.category||'Article') + '</div>';
+
         out += '<h3 class="post-title">';
-        out += a.url ? '<a href="'+a.url+'" target="_blank">'+(a.image_emoji||'')+(isFeatured?'':' ')+a.title+'</a>' : a.title;
+        if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
+        else out += a.title;
         out += '</h3>';
-        out += '<p class="post-excerpt">'+a.summary+'</p>';
-        out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;">'+a.author;
-        if(a.date){ try{out +=' · '+new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});}catch(e){} }
+
+        if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin:14px 0;" onerror="this.style.display='none'">';
+
+        out += '<p class="post-excerpt">' + (a.summary||'') + '</p>';
+        out += '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted);">';
+        out += '<span>' + (a.author||'') + '</span>';
+        if (a.date) { try { out += '<span>· ' + new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e){} }
+        if (a.readtime) out += '<span>· ' + a.readtime + '</span>';
         out += '</div>';
-        if(a.url) out += '<a href="'+a.url+'" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>';
+        if ((a.tags||[]).length) out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' + a.tags.map(function(t){ return '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; }).join('') + '</div>';
+        if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article →</a>';
         out += '</div>';
       });
-      container.innerHTML = out;
-    } catch(e){}
-  };
 
-  s.onerror = function(){ /* keep fallback */ };
-  s.src =  + SCRIPT_URL +  + '?action=getBlogPosts&callback='+cbName+'&v='+Date.now();
-  setTimeout(function(){ document.head.appendChild(s); }, 100);
+      container.innerHTML = out;
+    })
+    .catch(function(){
+      container.innerHTML = LINKEDIN_FALLBACK;
+    });
 })();
 </script>
 
