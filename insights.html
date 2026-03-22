@@ -596,49 +596,41 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
       </div>
 
-      <script>
-      // Auto-load any NEW articles from Substack RSS — silently upgrades the list
-      (function(){
-        var KNOWN = [
-          'transforming-gccs-the-5-essential',
-          'what-really-fails-a-gcc'
-        ];
-        var API = 'https://api.rss2json.com/v1/api.json?rss_url='
-          + encodeURIComponent('https://shammip.substack.com/feed') + '&count=20';
-        fetch(API)
-          .then(function(r){ return r.json(); })
-          .then(function(data){
-            if (!data.items || !data.items.length) return;
-            var container = document.getElementById('substack-articles');
-            var hasNew = false;
-            var newHTML = '';
-            data.items.forEach(function(item){
-              // Only add articles NOT already shown as static cards
-              var slug = (item.link || '').split('/p/')[1] || '';
-              var isKnown = KNOWN.some(function(k){ return slug.indexOf(k) === 0; });
-              if (isKnown) return;
-              hasNew = true;
-              var date = '';
-              try { date = new Date(item.pubDate).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); } catch(e){}
-              var excerpt = (item.description||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,200) + '...';
-              newHTML += '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
-                + '<div class="post-type" style="color:var(--gold);">&#11088; New</div>'
-                + '<h3 class="post-title"><a href="' + item.link + '" target="_blank">' + item.title + '</a></h3>'
-                + (item.thumbnail ? '<img src="' + item.thumbnail + '" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">' : '')
-                + '<p class="post-excerpt">' + excerpt + '</p>'
-                + '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'
-                + (date ? '<span> &middot; ' + date + '</span>' : '') + '</div>'
-                + '<a href="' + item.link + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>'
-                + '</div>';
-            });
-            if (hasNew) {
-              // Prepend new articles before the existing static ones
-              container.insertAdjacentHTML('afterbegin', newHTML);
-            }
-          })
-          .catch(function(){});
-      })();
-      </script>
+<script>
+// Fetch substack.json (same domain — generated hourly by GitHub Action)
+(function(){
+  fetch('/substack.json?v=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+    .then(function(data){
+      var KNOWN = [
+        'transforming-gccs-the-5-essential',
+        'what-really-fails-a-gcc'
+      ];
+      var container = document.getElementById('substack-articles');
+      if (!container || !data.articles) return;
+      var newHTML = '';
+      data.articles.forEach(function(a){
+        var slug = (a.link||'').split('/p/')[1]||'';
+        if(KNOWN.some(function(k){ return slug.indexOf(k)===0; })) return;
+        var date = '';
+        try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
+        var summary = (a.summary||'').replace(/<[^>]+>/g,'').slice(0,200)+'...';
+        newHTML += '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
+          +'<div class="post-type" style="color:var(--gold);">&#11088; New</div>'
+          +'<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>'
+          +(a.thumb?'<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">':'')
+          +'<p class="post-excerpt">'+summary+'</p>'
+          +'<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'
+          +(date?' &middot; '+date:'')+'</div>'
+          +'<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>'
+          +'</div>';
+      });
+      if(newHTML) container.insertAdjacentHTML('afterbegin', newHTML);
+    })
+    .catch(function(){});
+})();
+</script>
+
 
       <!-- Substack subscribe embed -->
       <div style="background:var(--cream);border-radius:14px;padding:32px;border:1px solid var(--border);">
