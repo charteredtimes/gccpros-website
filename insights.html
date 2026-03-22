@@ -762,63 +762,56 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 });
 </script>
 
+<script src="/blogs.js"></script>
 <script>
-(function loadBlog() {
+(function() {
   var container = document.getElementById('dynamic-articles');
   if (!container) return;
 
   var FALLBACK = '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
-    + '<div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>'
-    + '<h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional&#39;s Research &#8212; by Shammi Prabhakar</a></h3>'
-    + '<p class="post-excerpt">Original data-backed research on India&#39;s GCC ecosystem &#8212; talent trends, leadership benchmarks, and strategic insights.</p>'
-    + '<a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn &rarr;</a>'
+    + '<div class="post-type" style="color:var(--gold);">&#128240; LinkedIn Newsletter</div>'
+    + '<h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional Research &#8212; by Shammi Prabhakar</a></h3>'
+    + '<p class="post-excerpt">Original data-backed research on India GCC ecosystem &#8212; talent trends, leadership benchmarks, and strategic insights.</p>'
+    + '<a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn &#8594;</a>'
     + '</div>';
 
-  function renderArticles(articles) {
-    var published = articles.filter(function(a) { return a.status === 'Published'; });
-    published.sort(function(a,b) { return new Date(b.date||0) - new Date(a.date||0); });
-    if (!published.length) { container.innerHTML = FALLBACK; return; }
+  if (typeof GCCPROS_BLOG === 'undefined') { container.innerHTML = FALLBACK; return; }
 
-    var out = '';
-    published.forEach(function(a, i) {
-      var isFeat = a.featured && i === 0;
-      out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
-      if (isFeat) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · ' + (a.category||'') + '</div>';
-      else out += '<div class="post-type">' + (a.category || 'Article') + '</div>';
-      out += '<h3 class="post-title">';
-      if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
-      else out += a.title;
-      out += '</h3>';
-      if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin:12px 0 16px;" onerror="this.style.display='none'">';
-      out += '<p class="post-excerpt">' + (a.summary||'') + '</p>';
-      out += '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;">';
-      out += '<span>' + (a.author||'Shammi Prabhakar Singh') + '</span>';
-      if (a.date) { try { out += '<span>· ' + new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e){} }
-      if (a.readtime) out += '<span>· ' + a.readtime + '</span>';
-      out += '</div>';
-      if (a.tags && a.tags.length) {
-        out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">';
-        a.tags.forEach(function(t){ out += '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; });
-        out += '</div>';
-      }
-      if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article →</a>';
-      out += '</div>';
-    });
-    container.innerHTML = out;
-  }
+  var articles = (GCCPROS_BLOG.articles || []).filter(function(a) {
+    return a.status === 'Published';
+  }).sort(function(a, b) {
+    return new Date(b.date || 0) - new Date(a.date || 0);
+  });
 
-  // Try same-domain fetch first (works when deployed on gccpros.com)
-  fetch('https://www.gccpros.com/blogs.json?v=' + Date.now(), {cache:'no-store'})
-    .then(function(r) {
-      if (!r.ok) throw new Error('not ok');
-      return r.json();
-    })
-    .then(function(data) {
-      renderArticles(data.articles || []);
-    })
-    .catch(function() {
-      container.innerHTML = FALLBACK;
-    });
+  if (!articles.length) { container.innerHTML = FALLBACK; return; }
+
+  var out = '';
+  articles.forEach(function(a, i) {
+    var isFeat = a.featured && i === 0;
+    out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
+    if (isFeat) out += '<div class="post-type" style="color:var(--gold);">&#11088; Featured &middot; ' + (a.category || '') + '</div>';
+    else out += '<div class="post-type">' + (a.category || 'Article') + '</div>';
+    out += '<h3 class="post-title">';
+    if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
+    else out += a.title;
+    out += '</h3>';
+    if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin:12px 0 16px;" onerror="this.style.display='none'">';
+    out += '<p class="post-excerpt">' + (a.summary || '') + '</p>';
+    out += '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;">';
+    out += '<span>' + (a.author || 'Shammi Prabhakar Singh') + '</span>';
+    if (a.date) { try { out += '<span>&middot; ' + new Date(a.date).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e) {} }
+    if (a.readtime) out += '<span>&middot; ' + a.readtime + '</span>';
+    out += '</div>';
+    if (a.tags && a.tags.length) {
+      out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">';
+      a.tags.forEach(function(t) { out += '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; });
+      out += '</div>';
+    }
+    if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article &#8594;</a>';
+    out += '</div>';
+  });
+
+  container.innerHTML = out;
 })();
 </script>
 
