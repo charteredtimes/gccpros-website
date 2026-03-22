@@ -789,82 +789,54 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 </script>
 
 <script>
-// ── Auto-load articles from Apps Script via JSONP ─────────────────────────────
-(function loadBlogPosts(){
+// ── Blog loader — shows LinkedIn card immediately, upgrades with live articles ─
+(function(){
   const container = document.getElementById('dynamic-articles');
   if(!container) return;
 
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);"><div style="font-size:24px;margin-bottom:12px;">📝</div><div style="font-size:14px;">Loading articles...</div></div>';
+  const FALLBACK = `<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
+          <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
+          <h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research — by Shammi Prabhakar</a></h3>
+          <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
+          <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
+        </div>`;
 
-  const callbackName = 'gccprosBlogCallback_' + Date.now();
-  const script = document.createElement('script');
-  const url = 'https://script.google.com/macros/s/AKfycbz6HJbg2PBAGSc-dNNTEREyk49E6c5nemgW4T4QmHVMpNMvX9GF1uCNxgmG0TwQxxa3hA/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
+  // Show fallback immediately — never show "loading" to the visitor
+  container.innerHTML = FALLBACK;
 
-  window[callbackName] = function(data) {
+  // Try JSONP in background — if articles exist, replace the fallback
+  const cbName = 'gccBlog_' + Date.now();
+  const s = document.createElement('script');
+
+  window[cbName] = function(data){
     try {
-      delete window[callbackName];
-      document.head.removeChild(script);
-
-      const articles = (data.articles || []).sort((a,b) => new Date(b.date) - new Date(a.date));
-      if(!articles.length){
-        // No articles yet — show a placeholder
-        container.innerHTML = '<div class="blog-post"><div class="post-type">📝 From the founder</div><h3 class="post-title"><a href="https://www.linkedin.com/in/casps/" target="_blank">Articles coming soon — follow on LinkedIn</a></h3><p class="post-excerpt">Original research and insights on India's GCC ecosystem — published regularly. Follow Shammi Prabhakar on LinkedIn to get every piece in your feed.</p></div>';
-        return;
-      }
-
-      const featured = articles.find(a => a.featured);
-      const rest = articles.filter(a => !a.featured);
-      let html_out = '';
-
-      if(featured){
-        html_out += `
-        <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:36px;">
-          <div class="post-type" style="color:var(--gold);">⭐ Featured · ${featured.category}</div>
-          <h3 class="post-title">
-            ${featured.url ? `<a href="${featured.url}" target="_blank">${featured.image_emoji||'📝'} ${featured.title}</a>` : `${featured.image_emoji||'📝'} ${featured.title}`}
-          </h3>
-          <p class="post-excerpt">${featured.summary}</p>
-          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;">
-            <span style="font-size:12px;color:var(--muted);">${featured.author}</span>
-            <span style="font-size:12px;color:var(--muted);">${new Date(featured.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
-            ${(featured.tags||[]).map(t=>`<span style="background:var(--blue-light);color:var(--blue-mid);padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;">${t}</span>`).join('')}
-          </div>
-          ${featured.url ? `<a href="${featured.url}" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Read article →</a>` : ''}
-        </div>`;
-      }
-
-      rest.forEach(a => {
-        html_out += `
-        <div class="blog-post">
-          <div class="post-type">${a.image_emoji||'📝'} ${a.category}</div>
-          <h3 class="post-title">
-            ${a.url ? `<a href="${a.url}" target="_blank">${a.title}</a>` : a.title}
-          </h3>
-          <p class="post-excerpt">${a.summary}</p>
-          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px;">
-            <span style="font-size:12px;color:var(--muted);">${a.author} · ${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>
-          </div>
-          ${a.url ? `<a href="${a.url}" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>` : ''}
-        </div>`;
+      if(window[cbName]) delete window[cbName];
+      try { document.head.removeChild(s); } catch(e){}
+      const articles = (data.articles||[]).filter(a=>a.status==='Published'||a.title).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      if(!articles.length) return; // keep fallback
+      let out = '';
+      articles.forEach(function(a,i){
+        const isFeatured = a.featured && i===0;
+        out += '<div class="blog-post"' + (isFeatured?' style="border-left:3px solid var(--gold);padding-left:24px;"':'') + '>';
+        if(isFeatured) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · '+a.category+'</div>';
+        else out += '<div class="post-type">'+(a.image_emoji||'📝')+' '+a.category+'</div>';
+        out += '<h3 class="post-title">';
+        out += a.url ? '<a href="'+a.url+'" target="_blank">'+(a.image_emoji||'')+(isFeatured?'':' ')+a.title+'</a>' : a.title;
+        out += '</h3>';
+        out += '<p class="post-excerpt">'+a.summary+'</p>';
+        out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;">'+a.author;
+        if(a.date){ try{out +=' · '+new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});}catch(e){} }
+        out += '</div>';
+        if(a.url) out += '<a href="'+a.url+'" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Read →</a>';
+        out += '</div>';
       });
-
-      container.innerHTML = html_out;
-    } catch(err) {
-      container.innerHTML = '';
-    }
+      container.innerHTML = out;
+    } catch(e){}
   };
 
-  script.onerror = function(){
-    container.innerHTML = '<div class="blog-post"><div class="post-type">📝 Thought Leadership</div><h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research Newsletter</a></h3><p class="post-excerpt">Original research on India's GCC ecosystem — published on LinkedIn. Follow to get every edition directly in your feed.</p><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Follow on LinkedIn →</a></div>';
-  };
-  script.src = url;
-  document.head.appendChild(script);
-  // Timeout fallback — if JSONP doesn't respond in 5s, show LinkedIn link
-  setTimeout(function(){
-    if(container.innerHTML.indexOf('Loading articles') > -1){
-      container.innerHTML = '<div class="blog-post"><div class="post-type">📝 Thought Leadership</div><h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research Newsletter</a></h3><p class="post-excerpt">Original research on India's GCC ecosystem — published on LinkedIn. Follow to get every edition directly in your feed.</p><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Follow on LinkedIn →</a></div>';
-    }
-  }, 5000);
+  s.onerror = function(){ /* keep fallback */ };
+  s.src =  + SCRIPT_URL +  + '?action=getBlogPosts&callback='+cbName+'&v='+Date.now();
+  setTimeout(function(){ document.head.appendChild(s); }, 100);
 })();
 </script>
 
