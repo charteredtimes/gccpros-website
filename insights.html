@@ -798,7 +798,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 
   const callbackName = 'gccprosBlogCallback_' + Date.now();
   const script = document.createElement('script');
-  const url = 'https://script.google.com/macros/s/AKfycbxjuGGSu7FrdzrNsJaLDIY54yw_lqMlp8hMs2HRzCFEdoIP9Cspe8ch3cbBq5yJ09hhmA/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
+  const url = 'https://script.google.com/macros/s/AKfycbzQ93OIW0QYySL_peDn1pfdptBq2Sj5cLNBmC6IXJosW_Ndry3-zlO9uxKynoP0WOxS_Q/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
 
   window[callbackName] = function(data) {
     try {
@@ -806,7 +806,11 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
       document.head.removeChild(script);
 
       const articles = (data.articles || []).sort((a,b) => new Date(b.date) - new Date(a.date));
-      if(!articles.length){ container.innerHTML = ''; return; }
+      if(!articles.length){
+        // No articles yet — show a placeholder
+        container.innerHTML = '<div class="blog-post"><div class="post-type">📝 From the founder</div><h3 class="post-title"><a href="https://www.linkedin.com/in/casps/" target="_blank">Articles coming soon — follow on LinkedIn</a></h3><p class="post-excerpt">Original research and insights on India's GCC ecosystem — published regularly. Follow Shammi Prabhakar on LinkedIn to get every piece in your feed.</p></div>';
+        return;
+      }
 
       const featured = articles.find(a => a.featured);
       const rest = articles.filter(a => !a.featured);
@@ -850,9 +854,17 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
     }
   };
 
-  script.onerror = function(){ container.innerHTML = ''; };
+  script.onerror = function(){
+    container.innerHTML = '<div class="blog-post"><div class="post-type">📝 Thought Leadership</div><h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research Newsletter</a></h3><p class="post-excerpt">Original research on India's GCC ecosystem — published on LinkedIn. Follow to get every edition directly in your feed.</p><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Follow on LinkedIn →</a></div>';
+  };
   script.src = url;
   document.head.appendChild(script);
+  // Timeout fallback — if JSONP doesn't respond in 5s, show LinkedIn link
+  setTimeout(function(){
+    if(container.innerHTML.indexOf('Loading articles') > -1){
+      container.innerHTML = '<div class="blog-post"><div class="post-type">📝 Thought Leadership</div><h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research Newsletter</a></h3><p class="post-excerpt">Original research on India's GCC ecosystem — published on LinkedIn. Follow to get every edition directly in your feed.</p><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:12px;display:inline-block;">Follow on LinkedIn →</a></div>';
+    }
+  }, 5000);
 })();
 </script>
 
