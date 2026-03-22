@@ -563,15 +563,9 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     <div class="blog-posts">
       <!-- Static featured article kept as fallback -->
       <div id="dynamic-articles">
-        <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
-          <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
-          <h3 class="post-title">
-            <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">
-              GCC Professional's Research — by Shammi Prabhakar
-            </a>
-          </h3>
-          <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
-          <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
+        <div style="text-align:center;padding:48px 0;color:var(--muted);">
+          <div style="font-size:28px;margin-bottom:12px;">📝</div>
+          <div style="font-size:14px;">Loading articles...</div>
         </div>
       </div>
     </div>
@@ -769,61 +763,65 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 </script>
 
 <script>
-// ── Blog loader — fetches /blogs.json (same domain, no CORS) ─────────────────
-(function(){
-  const container = document.getElementById('dynamic-articles');
+(function loadBlog() {
+  var container = document.getElementById('dynamic-articles');
   if (!container) return;
 
-  const LINKEDIN_FALLBACK = `
-    <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
-      <div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>
-      <h3 class="post-title">
-        <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">
-          GCC Professional's Research — by Shammi Prabhakar
-        </a>
-      </h3>
-      <p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights. Trusted by GCC leaders across India.</p>
-      <a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>
-    </div>`;
+  var FALLBACK = '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
+    + '<div class="post-type" style="color:var(--gold);">📰 LinkedIn Newsletter</div>'
+    + '<h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional's Research — by Shammi Prabhakar</a></h3>'
+    + '<p class="post-excerpt">Original data-backed research on India's GCC ecosystem — talent trends, leadership benchmarks, and strategic insights.</p>'
+    + '<a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn →</a>'
+    + '</div>';
 
+  function renderArticles(articles) {
+    var published = articles.filter(function(a) { return a.status === 'Published'; });
+    published.sort(function(a,b) { return new Date(b.date||0) - new Date(a.date||0); });
+    if (!published.length) { container.innerHTML = FALLBACK; return; }
+
+    var out = '';
+    published.forEach(function(a, i) {
+      var isFeat = a.featured && i === 0;
+      out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
+      if (isFeat) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · ' + (a.category||'') + '</div>';
+      else out += '<div class="post-type">' + (a.category || 'Article') + '</div>';
+      out += '<h3 class="post-title">';
+      if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
+      else out += a.title;
+      out += '</h3>';
+      if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin:12px 0 16px;" onerror="this.style.display='none'">';
+      out += '<p class="post-excerpt">' + (a.summary||'') + '</p>';
+      out += '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;">';
+      out += '<span>' + (a.author||'Shammi Prabhakar Singh') + '</span>';
+      if (a.date) { try { out += '<span>· ' + new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e){} }
+      if (a.readtime) out += '<span>· ' + a.readtime + '</span>';
+      out += '</div>';
+      if (a.tags && a.tags.length) {
+        out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">';
+        a.tags.forEach(function(t){ out += '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; });
+        out += '</div>';
+      }
+      if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article →</a>';
+      out += '</div>';
+    });
+    container.innerHTML = out;
+  }
+
+  // Try same-domain fetch first (works when deployed on gccpros.com)
   fetch('/blogs.json?v=' + Date.now())
-    .then(function(r){ if(!r.ok) throw new Error('not found'); return r.json(); })
-    .then(function(data){
-      const arts = (data.articles || [])
-        .filter(function(a){ return a.status === 'Published'; })
-        .sort(function(a,b){ return new Date(b.date||0) - new Date(a.date||0); });
-
-      if (!arts.length) { container.innerHTML = LINKEDIN_FALLBACK; return; }
-
-      let out = '';
-      arts.forEach(function(a, i) {
-        const isFeat = a.featured && i === 0;
-        out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:32px;"' : '') + '>';
-        if (isFeat) out += '<div class="post-type" style="color:var(--gold);">⭐ Featured · ' + (a.category||'') + '</div>';
-        else out += '<div class="post-type">' + (a.image_emoji||'📝') + ' ' + (a.category||'Article') + '</div>';
-
-        out += '<h3 class="post-title">';
-        if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
-        else out += a.title;
-        out += '</h3>';
-
-        if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin:14px 0;" onerror="this.style.display='none'">';
-
-        out += '<p class="post-excerpt">' + (a.summary||'') + '</p>';
-        out += '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted);">';
-        out += '<span>' + (a.author||'') + '</span>';
-        if (a.date) { try { out += '<span>· ' + new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e){} }
-        if (a.readtime) out += '<span>· ' + a.readtime + '</span>';
-        out += '</div>';
-        if ((a.tags||[]).length) out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' + a.tags.map(function(t){ return '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; }).join('') + '</div>';
-        if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article →</a>';
-        out += '</div>';
-      });
-
-      container.innerHTML = out;
+    .then(function(r) {
+      if (!r.ok) throw new Error('not ok');
+      return r.json();
     })
-    .catch(function(){
-      container.innerHTML = LINKEDIN_FALLBACK;
+    .then(function(data) {
+      renderArticles(data.articles || []);
+    })
+    .catch(function() {
+      // Fallback: try absolute URL for local testing
+      fetch('https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/blogs.json?v=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) { renderArticles(data.articles || []); })
+        .catch(function() { container.innerHTML = FALLBACK; });
     });
 })();
 </script>
