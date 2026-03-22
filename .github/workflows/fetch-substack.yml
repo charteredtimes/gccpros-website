@@ -2,8 +2,8 @@ name: Fetch Substack RSS
 
 on:
   schedule:
-    - cron: '0 * * * *'   # every hour
-  workflow_dispatch:        # manual trigger button in GitHub
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   fetch:
@@ -14,13 +14,17 @@ jobs:
 
       - name: Fetch Substack RSS and save as JSON
         run: |
+          curl -s -L \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" \
+            -H "Accept: application/rss+xml, application/xml, text/xml, */*" \
+            "https://shammip.substack.com/feed" \
+            -o feed.xml
+          echo "Feed size: $(wc -c < feed.xml) bytes"
           python3 << 'PYEOF'
-          import urllib.request, json, xml.etree.ElementTree as ET, os
+          import json, xml.etree.ElementTree as ET, re, datetime
 
-          url = 'https://shammip.substack.com/feed'
-          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-          with urllib.request.urlopen(req, timeout=15) as r:
-              xml_data = r.read()
+          with open('feed.xml', 'r', encoding='utf-8') as f:
+              xml_data = f.read()
 
           root = ET.fromstring(xml_data)
           ns = {'media': 'http://search.yahoo.com/mrss/'}
@@ -34,23 +38,33 @@ jobs:
               thumb = ''
               enc = item.find('enclosure')
               if enc is not None:
-                  thumb = enc.get('url','')
+                  thumb = enc.get('url', '')
               media = item.find('media:content', ns)
               if not thumb and media is not None:
-                  thumb = media.get('url','')
+                  thumb = media.get('url', '')
+
+              desc = t('description')
+              desc_clean = re.sub('<[^>]+>', '', desc).strip()[:300]
 
               items.append({
                   'title':   t('title'),
                   'link':    t('link'),
                   'date':    t('pubDate'),
-                  'summary': t('description')[:300] if t('description') else '',
+                  'summary': desc_clean,
                   'thumb':   thumb,
               })
 
-          out = json.dumps({'articles': items, 'updated': __import__('datetime').datetime.utcnow().isoformat()}, indent=2)
-          with open('substack.json','w') as f:
+          out = json.dumps({
+              'articles': items,
+              'updated': datetime.datetime.utcnow().isoformat()
+          }, indent=2, ensure_ascii=False)
+
+          with open('substack.json', 'w') as f:
               f.write(out)
-          print(f"Saved {len(items)} articles to substack.json")
+
+          print(f"Saved {len(items)} articles:")
+          for a in items:
+              print(f"  - {a['title']}")
           PYEOF
 
       - name: Commit and push if changed
@@ -58,5 +72,5 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add substack.json
-          git diff --staged --quiet || git commit -m "Auto: update Substack feed"
+          git diff --staged --quiet || git commit -m "Auto: update Substack feed [skip ci]"
           git push
