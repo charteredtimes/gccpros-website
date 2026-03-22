@@ -798,7 +798,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 
   const callbackName = 'gccprosBlogCallback_' + Date.now();
   const script = document.createElement('script');
-  const url = 'https://script.google.com/macros/s/AKfycbzQ93OIW0QYySL_peDn1pfdptBq2Sj5cLNBmC6IXJosW_Ndry3-zlO9uxKynoP0WOxS_Q/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
+  const url = 'https://script.google.com/macros/s/AKfycbz6HJbg2PBAGSc-dNNTEREyk49E6c5nemgW4T4QmHVMpNMvX9GF1uCNxgmG0TwQxxa3hA/exec' + '?action=getBlogPosts&callback=' + callbackName + '&v=' + Date.now();
 
   window[callbackName] = function(data) {
     try {
