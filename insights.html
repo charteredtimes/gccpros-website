@@ -554,20 +554,38 @@ document.querySelector('.carousel-wrap').addEventListener('touchstart',e=>touchS
 document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const diff=touchStartX-e.changedTouches[0].clientX;if(Math.abs(diff)>50)diff>0?nextSlide():prevSlide();});
 </script>
 
-<!-- BLOG + SIDEBAR -->
+<!-- BLOG — Substack integration -->
 <section class="blog" id="blog">
-  <div class="section-label">Blog</div>
-  <h2 class="section-title">From the desk of<br>the GCCPROs founder</h2>
+  <div class="section-label">From the desk of the GCCPROs Founder</div>
+  <h2 class="section-title">Insights &amp; Research</h2>
 
   <div class="blog-layout">
     <div class="blog-posts">
-      <!-- Static featured article kept as fallback -->
-      <div id="dynamic-articles">
-        <div style="text-align:center;padding:48px 0;color:var(--muted);">
-          <div style="font-size:28px;margin-bottom:12px;">📝</div>
-          <div style="font-size:14px;">Loading articles...</div>
-        </div>
+
+      <!-- Substack embed card -->
+      <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:32px;">
+        <div class="post-type" style="color:var(--gold);">📰 GCC Research Newsletter</div>
+        <h3 class="post-title">
+          <a href="https://shammip.substack.com" target="_blank">
+            GCC Professional's Research — by Shammi Prabhakar Singh
+          </a>
+        </h3>
+        <p class="post-excerpt">
+          In-depth, independent research on India's GCC ecosystem — talent benchmarks, city analysis, leadership trends, and strategic perspectives. Published on Substack. Free to subscribe.
+        </p>
+        <a href="https://shammip.substack.com" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">
+          Read all articles →
+        </a>
       </div>
+
+      <!-- Substack subscribe embed -->
+      <div style="background:var(--cream);border-radius:14px;padding:32px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Subscribe — it's free</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);margin-bottom:10px;line-height:1.3;">Get every new article in your inbox</h3>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6;">No vendors. No sponsored content. Just original GCC research — delivered directly to you.</p>
+        <iframe src="https://shammip.substack.com/embed" width="100%" height="150" style="border:none;border-radius:8px;background:transparent;" frameborder="0" scrolling="no"></iframe>
+      </div>
+
     </div>
 
     <!-- SIDEBAR -->
@@ -581,60 +599,32 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
           Follow GCCPROs
         </a>
-        <p style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;">Also follow Shammi Prabhakar on <a href="https://www.linkedin.com/in/shammiprabhakar/" target="_blank" style="color:rgba(255,255,255,0.5);">LinkedIn</a></p>
+        <p style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;">Also follow <a href="https://www.linkedin.com/in/shammiprabhakar/" target="_blank" style="color:rgba(255,255,255,0.5);">Shammi Prabhakar</a> on LinkedIn</p>
+      </div>
+
+      <!-- Substack link -->
+      <div class="sidebar-widget" style="background:#FF6719;border-color:rgba(255,103,25,0.3);">
+        <div class="widget-title" style="color:#fff;">On Substack</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:16px;">All GCC research articles, essays and insights — published free on Substack.</p>
+        <a href="https://shammip.substack.com" target="_blank"
+           style="display:block;text-align:center;background:#fff;color:#FF6719;font-weight:700;font-size:13px;padding:10px;border-radius:8px;text-decoration:none;">
+          Open Substack →
+        </a>
       </div>
 
       <!-- Topics -->
       <div class="sidebar-widget">
         <div class="widget-title">Topics</div>
         <div class="topic-tags">
-          <a href="#" class="topic-tag">GCC Strategy</a>
-          <a href="#" class="topic-tag">India GCC</a>
-          <a href="#" class="topic-tag">City Analysis</a>
-          <a href="#" class="topic-tag">Talent</a>
-          <a href="#" class="topic-tag">Leadership</a>
-          <a href="#" class="topic-tag">Market Trends</a>
-          <a href="#" class="topic-tag">Policy</a>
-          <a href="#" class="topic-tag">Innovation</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">GCC Strategy</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">India GCC</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">City Analysis</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">Talent</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">Leadership</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">Market Trends</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">Policy</a>
+          <a href="https://shammip.substack.com" target="_blank" class="topic-tag">Innovation</a>
         </div>
-      </div>
-
-      <!-- Newsletter -->
-      <div class="sidebar-widget">
-        <div class="widget-title">GCC Intelligence Newsletter</div>
-        <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Monthly insights on India's GCC ecosystem — delivered to your inbox.</p>
-        <div class="newsletter-form">
-          <input type="email" placeholder="your@email.com">
-          <button onclick="subscribeNewsletter(this)">Subscribe →</button>
-        </div>
-      </div>
-
-
-      <!-- Credologix -->
-      <div class="sidebar-widget" style="background:linear-gradient(135deg,#0A1628 0%,#1A3A6B 100%);border:1px solid rgba(201,151,58,0.25);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <div style="width:36px;height:36px;background:rgba(201,151,58,0.15);border:1px solid rgba(201,151,58,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">⚡</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#fff;letter-spacing:-0.2px;">Credologix</div>
-            </div>
-        </div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.75;margin-bottom:12px;">Not another talent firm. <strong style="color:rgba(255,255,255,0.85);">Credologix</strong> is deep tech talent enabler purpose-built for GCCs — connecting capability requirements with rare, verified technical talent that generic platforms cannot surface.</p><p style="font-size:11px;color:rgba(255,255,255,0.3);line-height:1.7;margin-bottom:16px;font-style:italic;">⚠️ Independent commercial venture — fully separate from the GCC Industry Council and GCCPROs community.</p>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 14px;margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(201,151,58,0.7);margin-bottom:6px;">What makes it different</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;">
-            ◆ Built exclusively for GCC talent needs<br>
-            ◆ Deep tech — not volume hiring<br>
-            ◆ Backed by the GCCPROs network
-          </div>
-        </div>
-        <a href="https://www.credologix.com" target="_blank" style="display:block;text-align:center;border:1px solid rgba(201,151,58,0.4);color:rgba(201,151,58,0.9);padding:10px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;letter-spacing:0.3px;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,151,58,0.1)'" onmouseout="this.style.background='transparent'">Get early access →</a>
-      </div>
-
-      <!-- GCC Portal CTA -->
-      <div class="sidebar-widget" style="background:linear-gradient(135deg,var(--ink),var(--blue));border:none;text-align:center;">
-        <div class="widget-title" style="color:var(--gold);">Member Portal</div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:16px;">Search 2,400+ verified GCCs. Exclusive to approved members.</p>
-        <a href="https://portal.gccpros.com" style="display:block;background:var(--gold);color:var(--ink);padding:11px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#F0C87A'" onmouseout="this.style.background='#C9973A'">Access the portal →</a>
       </div>
 
     </div>
@@ -762,58 +752,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 });
 </script>
 
-<script src="/blogs.js"></script>
-<script>
-(function() {
-  var container = document.getElementById('dynamic-articles');
-  if (!container) return;
 
-  var FALLBACK = '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
-    + '<div class="post-type" style="color:var(--gold);">&#128240; LinkedIn Newsletter</div>'
-    + '<h3 class="post-title"><a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank">GCC Professional Research &#8212; by Shammi Prabhakar</a></h3>'
-    + '<p class="post-excerpt">Original data-backed research on India GCC ecosystem &#8212; talent trends, leadership benchmarks, and strategic insights.</p>'
-    + '<a href="https://www.linkedin.com/newsletters/gcc-professional-s-research-7411493749656227840/" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Subscribe on LinkedIn &#8594;</a>'
-    + '</div>';
-
-  if (typeof GCCPROS_BLOG === 'undefined') { container.innerHTML = FALLBACK; return; }
-
-  var articles = (GCCPROS_BLOG.articles || []).filter(function(a) {
-    return a.status === 'Published';
-  }).sort(function(a, b) {
-    return new Date(b.date || 0) - new Date(a.date || 0);
-  });
-
-  if (!articles.length) { container.innerHTML = FALLBACK; return; }
-
-  var out = '';
-  articles.forEach(function(a, i) {
-    var isFeat = a.featured && i === 0;
-    out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
-    if (isFeat) out += '<div class="post-type" style="color:var(--gold);">&#11088; Featured &middot; ' + (a.category || '') + '</div>';
-    else out += '<div class="post-type">' + (a.category || 'Article') + '</div>';
-    out += '<h3 class="post-title">';
-    if (a.url) out += '<a href="' + a.url + '" target="_blank">' + a.title + '</a>';
-    else out += a.title;
-    out += '</h3>';
-    if (a.cover) out += '<img src="' + a.cover + '" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin:12px 0 16px;" onerror="this.style.display='none'">';
-    out += '<p class="post-excerpt">' + (a.summary || '') + '</p>';
-    out += '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;">';
-    out += '<span>' + (a.author || 'Shammi Prabhakar Singh') + '</span>';
-    if (a.date) { try { out += '<span>&middot; ' + new Date(a.date).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) + '</span>'; } catch(e) {} }
-    if (a.readtime) out += '<span>&middot; ' + a.readtime + '</span>';
-    out += '</div>';
-    if (a.tags && a.tags.length) {
-      out += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">';
-      a.tags.forEach(function(t) { out += '<span style="background:#f3f4f6;color:var(--muted);padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;">' + t + '</span>'; });
-      out += '</div>';
-    }
-    if (a.url) out += '<a href="' + a.url + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read full article &#8594;</a>';
-    out += '</div>';
-  });
-
-  container.innerHTML = out;
-})();
-</script>
 
 </body>
 </html>
