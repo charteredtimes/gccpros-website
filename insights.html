@@ -562,20 +562,11 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="blog-layout">
     <div class="blog-posts">
 
-      <!-- Substack embed card -->
-      <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;margin-bottom:32px;">
-        <div class="post-type" style="color:var(--gold);">📰 GCC Research Newsletter</div>
-        <h3 class="post-title">
-          <a href="https://shammip.substack.com" target="_blank">
-            GCC Professional's Research — by Shammi Prabhakar Singh
-          </a>
-        </h3>
-        <p class="post-excerpt">
-          In-depth, independent research on India's GCC ecosystem — talent benchmarks, city analysis, leadership trends, and strategic perspectives. Published on Substack. Free to subscribe.
-        </p>
-        <a href="https://shammip.substack.com" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">
-          Read all articles →
-        </a>
+      <!-- Dynamic Substack articles via RSS -->
+      <div id="substack-articles">
+        <div style="text-align:center;padding:32px;color:var(--muted);">
+          <div style="font-size:13px;">Loading latest articles...</div>
+        </div>
       </div>
 
       <!-- Substack subscribe embed -->
@@ -754,5 +745,56 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
 
 
 
+
+<script>
+// Load Substack articles via rss2json API (handles CORS, free, reliable)
+(function() {
+  var container = document.getElementById('substack-articles');
+  if (!container) return;
+
+  var RSS_URL = 'https://shammip.substack.com/feed';
+  var API = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS_URL) + '&count=10';
+
+  var FALLBACK = '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
+    + '<div class="post-type" style="color:var(--gold);">&#128240; GCC Research Newsletter</div>'
+    + '<h3 class="post-title"><a href="https://shammip.substack.com" target="_blank">GCC Research by Shammi Prabhakar Singh</a></h3>'
+    + '<p class="post-excerpt">In-depth research on India GCC ecosystem published on Substack.</p>'
+    + '<a href="https://shammip.substack.com" target="_blank" class="read-more" style="margin-top:16px;display:inline-block;">Read all articles &#8594;</a>'
+    + '</div>';
+
+  fetch(API)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.items || !data.items.length) {
+        container.innerHTML = FALLBACK; return;
+      }
+      var out = '';
+      data.items.forEach(function(item, i) {
+        var isFeatured = i === 0;
+        var date = '';
+        try { date = new Date(item.pubDate).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}); } catch(e) {}
+        var thumb = item.thumbnail || item.enclosure && item.enclosure.link || '';
+        var excerpt = item.description
+          ? item.description.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0, 200) + '...'
+          : '';
+
+        out += '<div class="blog-post"' + (isFeatured ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
+        if (isFeatured) out += '<div class="post-type" style="color:var(--gold);">&#11088; Latest Article</div>';
+        else out += '<div class="post-type">&#128240; GCC Research</div>';
+        out += '<h3 class="post-title"><a href="' + item.link + '" target="_blank">' + item.title + '</a></h3>';
+        if (thumb && isFeatured) out += '<img src="' + thumb + '" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin:12px 0 16px;" onerror="this.style.display='none'">';
+        if (excerpt) out += '<p class="post-excerpt">' + excerpt + '</p>';
+        out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;">';
+        out += '<span>Shammi Prabhakar Singh</span>';
+        if (date) out += '<span> &middot; ' + date + '</span>';
+        out += '</div>';
+        out += '<a href="' + item.link + '" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &#8594;</a>';
+        out += '</div>';
+      });
+      container.innerHTML = out;
+    })
+    .catch(function() { container.innerHTML = FALLBACK; });
+})();
+</script>
 </body>
 </html>
