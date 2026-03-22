@@ -5,12 +5,17 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Substack RSS and save as JSON
         run: |
@@ -18,8 +23,6 @@ jobs:
           import json, re, datetime, subprocess
 
           SUBSTACK_URL = 'https://shammip.substack.com'
-
-          # Use Substack's public API endpoint — more reliable than RSS
           api_url = f'{SUBSTACK_URL}/api/v1/posts/?limit=20&offset=0'
 
           result = subprocess.run([
@@ -30,60 +33,29 @@ jobs:
               api_url
           ], capture_output=True, text=True, timeout=30)
 
-          print(f"API response length: {len(result.stdout)} chars")
-          print(f"First 200 chars: {result.stdout[:200]}")
+          print(f"API response: {result.stdout[:200]}")
 
           try:
               posts = json.loads(result.stdout)
           except json.JSONDecodeError:
-              print("API failed, trying RSS...")
-              # Fallback: try RSS with different approach
-              rss_result = subprocess.run([
-                  'curl', '-s', '-L', '--max-redirs', '5',
-                  '-H', 'User-Agent: Feedfetcher-Google; (+http://www.google.com/feedfetcher.html)',
-                  '-H', 'Accept: application/rss+xml,application/xml,text/xml',
-                  f'{SUBSTACK_URL}/feed'
-              ], capture_output=True, text=True, timeout=30)
+              print("API failed, using known articles fallback")
+              posts = [
+                  {
+                      'title': 'Transforming GCCs: The 5 Essential Shifts',
+                      'canonical_url': 'https://shammip.substack.com/p/transforming-gccs-the-5-essential',
+                      'post_date': '2026-03-22T00:00:00.000Z',
+                      'subtitle': 'The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.',
+                      'cover_image': ''
+                  },
+                  {
+                      'title': 'What Really Fails a GCC?',
+                      'canonical_url': 'https://shammip.substack.com/p/what-really-fails-a-gcc',
+                      'post_date': '2026-03-22T00:00:00.000Z',
+                      'subtitle': 'Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.',
+                      'cover_image': 'https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png'
+                  }
+              ]
 
-              print(f"RSS response: {rss_result.stdout[:300]}")
-
-              # If RSS returns HTML, create fallback from known articles
-              if '<html' in rss_result.stdout.lower() or not rss_result.stdout.strip().startswith('<?xml'):
-                  print("Both API and RSS blocked — using known articles as fallback")
-                  posts = [
-                      {
-                          'title': 'Transforming GCCs: The 5 Essential Shifts',
-                          'canonical_url': 'https://shammip.substack.com/p/transforming-gccs-the-5-essential',
-                          'post_date': '2026-03-22T00:00:00.000Z',
-                          'subtitle': 'The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.',
-                          'cover_image': ''
-                      },
-                      {
-                          'title': 'What Really Fails a GCC?',
-                          'canonical_url': 'https://shammip.substack.com/p/what-really-fails-a-gcc',
-                          'post_date': '2026-03-22T00:00:00.000Z',
-                          'subtitle': 'Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.',
-                          'cover_image': 'https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png'
-                      }
-                  ]
-              else:
-                  import xml.etree.ElementTree as ET
-                  root = ET.fromstring(rss_result.stdout)
-                  posts = []
-                  for item in root.findall('.//item'):
-                      def t(tag):
-                          el = item.find(tag)
-                          return el.text.strip() if el is not None and el.text else ''
-                      desc = re.sub('<[^>]+>', '', t('description')).strip()[:300]
-                      posts.append({
-                          'title': t('title'),
-                          'canonical_url': t('link'),
-                          'post_date': t('pubDate'),
-                          'subtitle': desc,
-                          'cover_image': ''
-                      })
-
-          # Normalize to consistent format
           articles = []
           if isinstance(posts, list):
               for p in posts:
@@ -92,7 +64,7 @@ jobs:
                       'link':    p.get('canonical_url', p.get('link', '')),
                       'date':    p.get('post_date', p.get('pubDate', '')),
                       'summary': p.get('subtitle', p.get('summary', ''))[:300],
-                      'thumb':   p.get('cover_image', p.get('thumb', '')) or '',
+                      'thumb':   p.get('cover_image', '') or '',
                   })
 
           out = json.dumps({
@@ -103,7 +75,7 @@ jobs:
           with open('substack.json', 'w') as f:
               f.write(out)
 
-          print(f"\nSaved {len(articles)} articles to substack.json:")
+          print(f"Saved {len(articles)} articles to substack.json")
           for a in articles:
               print(f"  - {a['title']}")
           PYEOF
