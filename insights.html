@@ -611,6 +611,9 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         var arts = (data.articles||[]);
         if(!arts.length) return;
         var container = document.getElementById('substack-articles');
+        // Guard: only replace static HTML if fetched data has at least as many articles
+        var staticCount = container.querySelectorAll('.blog-post').length;
+        if(arts.length < staticCount) return; // stale cache — keep static fallback
         var out = '';
         arts.forEach(function(a, i){
           var isFeat = i === 0;
