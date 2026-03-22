@@ -563,11 +563,18 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     <div class="blog-posts">
 
       <!-- Substack articles: fully dynamic from substack.json -->
-      <div id="substack-articles"></div>
+      <div id="substack-articles">
+  <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
+    <div class="post-type" style="color:var(--gold);">📰 GCC Research Newsletter</div>
+    <h3 class="post-title"><a href="https://shammip.substack.com" target="_blank">Latest articles from Shammi Prabhakar Singh</a></h3>
+    <p class="post-excerpt">Research and insights on India's GCC ecosystem — strategy, talent, leadership and more. Published free on Substack.</p>
+    <a href="https://shammip.substack.com" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">View all on Substack &rarr;</a>
+  </div>
+</div>
 
 <script>
 // Replace static cards with live data from substack.json (same domain, no CORS)
-fetch('/substack.json?v=' + Date.now())
+fetch('https://www.gccpros.com/substack.json?v=' + Date.now())
   .then(function(r){ return r.json(); })
   .then(function(data){
     var arts = (data.articles||[]);
