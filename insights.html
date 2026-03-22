@@ -562,73 +562,54 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="blog-layout">
     <div class="blog-posts">
 
-      <!-- Substack articles: static baseline + auto-loads new ones via RSS -->
+      <!-- Substack articles: fully dynamic from substack.json -->
       <div id="substack-articles">
-
         <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
           <div class="post-type" style="color:var(--gold);">⭐ Latest</div>
           <h3 class="post-title">
             <a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank">Transforming GCCs: The 5 Essential Shifts</a>
           </h3>
-          <p class="post-excerpt">The GCC model is evolving fast. The organisations winning in this space are not just running leaner operations — they are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.</p>
-          <div style="font-size:12px;color:var(--muted);margin-top:10px;">
-            <span>Shammi Prabhakar Singh</span>
-            <span> &middot; March 2026</span>
-          </div>
+          <p class="post-excerpt">The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.</p>
+          <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; March 2026</span></div>
           <a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
         </div>
-
         <div class="blog-post">
           <div class="post-type">📰 GCC Strategy</div>
           <h3 class="post-title">
             <a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank">What Really Fails a GCC?</a>
           </h3>
-          <img src="https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png"
-               style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;"
-               onerror="this.style.display='none'">
-          <p class="post-excerpt">Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years — not because they collapse overnight, but because they slowly stop mattering.</p>
-          <div style="font-size:12px;color:var(--muted);margin-top:10px;">
-            <span>Shammi Prabhakar Singh</span>
-            <span> &middot; March 2026</span>
-          </div>
+          <img src="https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">
+          <p class="post-excerpt">Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.</p>
+          <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; March 2026</span></div>
           <a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
         </div>
-
       </div>
 
 <script>
-// Fetch substack.json (same domain — generated hourly by GitHub Action)
-(function(){
-  fetch('/substack.json?v=' + Date.now())
-    .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
-    .then(function(data){
-      var KNOWN = [
-        'transforming-gccs-the-5-essential',
-        'what-really-fails-a-gcc'
-      ];
-      var container = document.getElementById('substack-articles');
-      if (!container || !data.articles) return;
-      var newHTML = '';
-      data.articles.forEach(function(a){
-        var slug = (a.link||'').split('/p/')[1]||'';
-        if(KNOWN.some(function(k){ return slug.indexOf(k)===0; })) return;
-        var date = '';
-        try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
-        var summary = (a.summary||'').replace(/<[^>]+>/g,'').slice(0,200)+'...';
-        newHTML += '<div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">'
-          +'<div class="post-type" style="color:var(--gold);">&#11088; New</div>'
-          +'<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>'
-          +(a.thumb?'<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">':'')
-          +'<p class="post-excerpt">'+summary+'</p>'
-          +'<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'
-          +(date?' &middot; '+date:'')+'</div>'
-          +'<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>'
-          +'</div>';
-      });
-      if(newHTML) container.insertAdjacentHTML('afterbegin', newHTML);
-    })
-    .catch(function(){});
-})();
+// Replace static cards with live data from substack.json (same domain, no CORS)
+fetch('/substack.json?v=' + Date.now())
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var arts = (data.articles||[]);
+    if (!arts.length) return;
+    var container = document.getElementById('substack-articles');
+    var out = '';
+    arts.forEach(function(a, i){
+      var isFeat = i === 0;
+      var date = '';
+      try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
+      out += '<div class="blog-post"'+(isFeat?' style="border-left:3px solid var(--gold);padding-left:24px;"':'')+'>'; 
+      out += '<div class="post-type"'+(isFeat?' style="color:var(--gold);"':'')+'>'+( isFeat ? '⭐ Latest' : '📰 GCC Research')+'</div>';
+      out += '<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>';
+      if(a.thumb) out += '<img src="'+a.thumb+'" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin:12px 0 14px;" onerror="this.style.display='none'">';
+      if(a.summary) out += '<p class="post-excerpt">'+a.summary+'</p>';
+      out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'+(date?' <span>&middot; '+date+'</span>':'')+'</div>';
+      out += '<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
+      out += '</div>';
+    });
+    container.innerHTML = out;
+  })
+  .catch(function(){});
 </script>
 
 
