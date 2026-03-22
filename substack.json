@@ -1,17 +1,9 @@
 {
   "articles": [
     {
-      "title": "Role of GCC Policies, in decision making",
-      "link": "https://open.substack.com/pub/shammip/p/role-of-gcc-policies-in-decision?utm_campaign=post-expanded-share&utm_medium=web",
-      "date": "2026-03-22",
-      "summary": "Role of GCC Policies in attracting the new units to setup, with GCC head of Qualcomm and talent expert from Quess",
-      "thumb": "",
-      "type": "post"
-    },
-    {
       "title": "Transforming GCCs: The 5 Essential Shifts",
       "link": "https://shammip.substack.com/p/transforming-gccs-the-5-essential",
-      "date": "2026-03-22",
+      "date": "2026-03-22T00:00:00Z",
       "summary": "The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.",
       "thumb": "",
       "type": "post"
@@ -19,11 +11,11 @@
     {
       "title": "What Really Fails a GCC?",
       "link": "https://shammip.substack.com/p/what-really-fails-a-gcc",
-      "date": "2026-03-22",
+      "date": "2026-03-22T00:00:00Z",
       "summary": "Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.",
       "thumb": "https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png",
       "type": "post"
     }
   ],
-  "updated": "2026-03-22T14:20:57.629Z"
+  "updated": "2026-03-22T14:57:49.427967"
 }
