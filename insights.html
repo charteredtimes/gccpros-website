@@ -808,7 +808,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
   }
 
   // Try same-domain fetch first (works when deployed on gccpros.com)
-  fetch('/blogs.json?v=' + Date.now())
+  fetch('https://www.gccpros.com/blogs.json?v=' + Date.now(), {cache:'no-store'})
     .then(function(r) {
       if (!r.ok) throw new Error('not ok');
       return r.json();
@@ -817,11 +817,7 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
       renderArticles(data.articles || []);
     })
     .catch(function() {
-      // Fallback: try absolute URL for local testing
-      fetch('https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/blogs.json?v=' + Date.now())
-        .then(function(r) { return r.json(); })
-        .then(function(data) { renderArticles(data.articles || []); })
-        .catch(function() { container.innerHTML = FALLBACK; });
+      container.innerHTML = FALLBACK;
     });
 })();
 </script>
