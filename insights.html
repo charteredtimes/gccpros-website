@@ -49,7 +49,7 @@ html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-decoration:none;}
 .nav-logo span{color:var(--gold);}
 .nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
@@ -206,12 +206,13 @@ footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(20
 }
 
 /* ── Mobile Nav ── */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:200;}
+html.menu-open{overflow:hidden;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:250;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
 .hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
 .hamburger.open span:nth-child(2){opacity:0;}
 .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
-.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,22,40,0.98);z-index:99;padding:32px 28px;overflow-y:auto;flex-direction:column;gap:4px;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,22,40,0.98);z-index:200;padding:32px 28px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;gap:4px;}
 .mobile-menu.open{display:flex;}
 .mobile-menu a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;transition:color 0.2s;}
 .mobile-menu a:hover{color:#fff;}
@@ -223,6 +224,16 @@ footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(20
   .nav-links{display:none!important;}
 }
 
+
+/* ── Substack loading skeleton ── */
+#substack-articles.loading .blog-post{display:none;}
+.sk-post{padding-bottom:40px;margin-bottom:40px;border-bottom:1px solid var(--border);}
+.sk-post:last-child{border-bottom:none;}
+.sk-line{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:sk-shimmer 1.4s infinite;border-radius:4px;height:14px;margin-bottom:10px;}
+.sk-line.sk-w60{width:60%;}.sk-line.sk-w80{width:80%;}.sk-line.sk-w40{width:40%;}.sk-line.sk-thumb{height:160px;border-radius:12px;margin:14px 0 18px;}
+@keyframes sk-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Substack embed panel */
+.substack-embed-wrap{background:var(--cream);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -240,7 +251,7 @@ footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(20
     <li><a href="https://portal.gccpros.com">Member Portal</a></li>
     <li><a href="https://portal.gccpros.com/register.html" class="nav-cta">Join →</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+  <button class="hamburger" id="hamburger" aria-label="Menu" type="button">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -575,95 +586,147 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     <div class="blog-posts">
 
       <!-- Substack articles: static default with all 3 articles, dynamically refreshed by JS below -->
-      <div id="substack-articles">
-  <div class="blog-post" style="border-left:3px solid var(--gold);padding-left:24px;">
-    <div class="post-type" style="color:var(--gold);">⭐ Latest</div>
-    <h3 class="post-title"><a href="https://open.substack.com/pub/shammip/p/role-of-gcc-policies-in-decision?utm_campaign=post-expanded-share&utm_medium=web" target="_blank">Role of GCC Policies, in decision making</a></h3>
-    <div class="post-thumb-placeholder pt-grad-1">
-      <span class="pt-badge">GCCPROs Research</span>
-      <span class="pt-label">Role of GCC Policies, in decision making</span>
-      <span class="pt-icon">📋</span>
-    </div>
-    <p class="post-excerpt">Role of GCC Policies in attracting the new units to setup, with GCC head of Qualcomm and talent expert from Quess</p>
-    <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
-    <a href="https://open.substack.com/pub/shammip/p/role-of-gcc-policies-in-decision?utm_campaign=post-expanded-share&utm_medium=web" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
-  </div>
-  <div class="blog-post">
-    <div class="post-type">📰 GCC Research</div>
-    <h3 class="post-title"><a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank">Transforming GCCs: The 5 Essential Shifts</a></h3>
-    <div class="post-thumb-placeholder pt-grad-2">
-      <span class="pt-badge">GCCPROs Research</span>
-      <span class="pt-label">Transforming GCCs: The 5 Essential Shifts</span>
-      <span class="pt-icon">🔄</span>
-    </div>
-    <p class="post-excerpt">The GCC model is evolving fast. The organisations winning in this space are fundamentally rethinking what a GCC is for, who leads it, and how it creates value.</p>
-    <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
-    <a href="https://shammip.substack.com/p/transforming-gccs-the-5-essential" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
-  </div>
-  <div class="blog-post">
-    <div class="post-type">📰 GCC Research</div>
-    <h3 class="post-title"><a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank">What Really Fails a GCC?</a></h3>
-    <div class="post-thumb"><img src="https://raw.githubusercontent.com/charteredtimes/gccpros-website/main/Images/Why%20GCCs%20fail.png" alt="What Really Fails a GCC?" onerror="this.parentElement.className='post-thumb-placeholder pt-grad-3';this.parentElement.innerHTML='<span class=pt-badge>GCCPROs Research</span><span class=pt-label>What Really Fails a GCC?</span><span class=pt-icon>⚠️</span>';"></div>
-    <p class="post-excerpt">Not cost. Not talent. Not location. The real story is far more uncomfortable. Many GCCs stall or become irrelevant within just a few years.</p>
-    <div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span> <span>&middot; 22 March 2026</span></div>
-    <a href="https://shammip.substack.com/p/what-really-fails-a-gcc" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>
-  </div>
+      <div id="substack-articles" class="loading">
+  <!-- Skeleton shown while fetching -->
+  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
+  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
+  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
 </div>
 
 <script>
-// Fetch substack.json with CORS-proxy fallback chain
-// Direct fetch fails when browser blocks cross-origin requests (CORS).
-// We try direct first, then two public CORS proxies, before keeping the static fallback.
+// ── GCCPROs Substack Live Feed ──
+// Fetches the Substack RSS feed directly. Uses multiple CORS proxy fallbacks.
+// New posts on shammip.substack.com appear automatically — no manual updates needed.
 (function(){
-  var ORIGIN = 'https://www.gccpros.com/substack.json';
-  var urls = [
-    ORIGIN + '?v=' + Date.now(),
-    'https://corsproxy.io/?' + encodeURIComponent(ORIGIN),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(ORIGIN)
+  var RSS = 'https://shammip.substack.com/feed';
+  var PROXIES = [
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS) + '&count=10',
+    'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS),
+    'https://corsproxy.io/?' + encodeURIComponent(RSS)
   ];
 
-  function tryFetch(index){
-    if(index >= urls.length) return; // all failed — keep static fallback card
-    fetch(urls[index], {signal: AbortSignal.timeout ? AbortSignal.timeout(6000) : undefined})
-      .then(function(r){
-        if(!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
+  var gradients = ['pt-grad-1','pt-grad-2','pt-grad-3'];
+  var icons = ['📋','🔄','⚠️','📊','🏢','🎯'];
+
+  function fmtDate(str){
+    try{ return new Date(str).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; }
+  }
+
+  function stripHtml(h){ return h ? h.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim() : ''; }
+
+  function extractThumb(item){
+    // rss2json provides thumbnail field; RSS raw needs parsing
+    if(item.thumbnail && item.thumbnail !== 'self') return item.thumbnail;
+    if(item.enclosure && item.enclosure.link) return item.enclosure.link;
+    // Try extracting img src from content
+    var m = (item.content||item.description||'').match(/<img[^>]+src=["']([^"']+)["']/i);
+    return m ? m[1] : '';
+  }
+
+  function renderArticles(items){
+    var container = document.getElementById('substack-articles');
+    if(!items || !items.length){
+      container.classList.remove('loading');
+      return;
+    }
+    var out = '';
+    items.forEach(function(item, i){
+      var isFeat = i === 0;
+      var title = stripHtml(item.title || '');
+      var link = item.link || item.url || '#';
+      var date = fmtDate(item.pubDate || item.published || '');
+      var summary = stripHtml(item.description || item.summary || '').substring(0,200);
+      if(summary.length === 200) summary += '…';
+      var thumb = extractThumb(item);
+      var grad = gradients[i % 3];
+      var icon = icons[i % 6];
+
+      out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
+      out += '<div class="post-type"' + (isFeat ? ' style="color:var(--gold);"' : '') + '>' + (isFeat ? '⭐ Latest' : '📰 GCC Research') + '</div>';
+      out += '<h3 class="post-title"><a href="' + link + '" target="_blank" rel="noopener">' + title + '</a></h3>';
+      if(thumb){
+        var safe = title.replace(/'/g,"\'").replace(/"/g,'&quot;');
+        out += '<div class="post-thumb"><img src="' + thumb + '" alt="' + title + '" loading="lazy" onerror="this.parentElement.className='post-thumb-placeholder ' + grad + '';this.parentElement.innerHTML='<span class=pt-badge>GCCPROs Research<\/span><span class=pt-label>' + safe + '<\/span><span class=pt-icon>' + icon + '<\/span>'"></div>';
+      } else {
+        out += '<div class="post-thumb-placeholder ' + grad + '"><span class="pt-badge">GCCPROs Research</span><span class="pt-label">' + title + '</span><span class="pt-icon">' + icon + '</span></div>';
+      }
+      if(summary) out += '<p class="post-excerpt">' + summary + '</p>';
+      out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>' + (date ? ' <span>&middot; ' + date + '</span>' : '') + '</div>';
+      out += '<a href="' + link + '" target="_blank" rel="noopener" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
+      out += '</div>';
+    });
+
+    container.innerHTML = out;
+    container.classList.remove('loading');
+  }
+
+  // ── Proxy 0: rss2json (returns clean JSON) ──
+  function tryRss2Json(){
+    fetch(PROXIES[0], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){
+        if(d.status !== 'ok' || !d.items || !d.items.length) throw new Error('empty');
+        renderArticles(d.items);
       })
-      .then(function(data){
-        var arts = (data.articles||[]);
-        if(!arts.length) return;
-        var container = document.getElementById('substack-articles');
-        // Guard: only replace static HTML if fetched data has at least as many articles
-        var staticCount = container.querySelectorAll('.blog-post').length;
-        if(arts.length < staticCount) return; // stale cache — keep static fallback
-        var out = '';
-        var gradients = ['pt-grad-1','pt-grad-2','pt-grad-3'];
-        var icons = ['📋','🔄','⚠️','📊','🏢','🎯'];
-        arts.forEach(function(a, i){
-          var isFeat = i === 0;
-          var date = '';
-          try{ date = new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){}
-          out += '<div class="blog-post"'+(isFeat?' style="border-left:3px solid var(--gold);padding-left:24px;"':'')+'>'; 
-          out += '<div class="post-type"'+(isFeat?' style="color:var(--gold);"':'')+'>'+( isFeat ? '⭐ Latest' : '📰 GCC Research')+'</div>';
-          out += '<h3 class="post-title"><a href="'+a.link+'" target="_blank">'+a.title+'</a></h3>';
-          if(a.thumb) {
-            out += '<div class="post-thumb"><img src="'+a.thumb+'" alt="'+a.title+'" onerror="this.parentElement.className=\'post-thumb-placeholder '+gradients[i%3]+'\';this.parentElement.innerHTML=\'<span class=pt-badge>GCCPROs Research</span><span class=pt-label>'+a.title.replace(/'/g,'\\\'')+'</span><span class=pt-icon>'+icons[i%6]+'</span>\';"></div>';
-          } else {
-            out += '<div class="post-thumb-placeholder '+gradients[i%3]+'"><span class="pt-badge">GCCPROs Research</span><span class="pt-label">'+a.title+'</span><span class="pt-icon">'+icons[i%6]+'</span></div>';
-          }
-          if(a.summary) out += '<p class="post-excerpt">'+a.summary+'</p>';
-          out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>'+(date?' <span>&middot; '+date+'</span>':'')+'</div>';
-          out += '<a href="'+a.link+'" target="_blank" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
-          out += '</div>';
-        });
-        container.innerHTML = out;
+      .catch(tryAllorigins);
+  }
+
+  // ── Proxy 1: allorigins (returns raw RSS XML) ──
+  function tryAllorigins(){
+    fetch(PROXIES[1], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){
+        var xml = d.contents || '';
+        if(!xml) throw new Error('empty');
+        var items = parseRssXml(xml);
+        if(!items.length) throw new Error('no items');
+        renderArticles(items);
+      })
+      .catch(tryCorsproxy);
+  }
+
+  // ── Proxy 2: corsproxy.io (returns raw RSS XML) ──
+  function tryCorsproxy(){
+    fetch(PROXIES[2], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function(xml){
+        if(!xml) throw new Error('empty');
+        var items = parseRssXml(xml);
+        if(!items.length) throw new Error('no items');
+        renderArticles(items);
       })
       .catch(function(){
-        tryFetch(index + 1); // try next URL in the chain
+        // All proxies failed — remove loading state, static skeleton disappears gracefully
+        var container = document.getElementById('substack-articles');
+        container.classList.remove('loading');
+        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted);"><p>Visit <a href="https://shammip.substack.com" target="_blank" rel="noopener" style="color:var(--gold);">GCCPROs on Substack</a> for all articles.</p></div>';
       });
   }
 
-  tryFetch(0);
+  // ── Parse raw RSS XML ──
+  function parseRssXml(xml){
+    var items = [];
+    try{
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(xml, 'text/xml');
+      var nodes = doc.querySelectorAll('item');
+      nodes.forEach(function(node){
+        function txt(tag){ var el = node.querySelector(tag); return el ? el.textContent : ''; }
+        var encEl = node.querySelector('enclosure');
+        items.push({
+          title: txt('title'),
+          link: txt('link'),
+          pubDate: txt('pubDate'),
+          description: txt('description'),
+          thumbnail: encEl ? encEl.getAttribute('url') : '',
+          content: txt('content\\:encoded') || txt('encoded')
+        });
+      });
+    }catch(e){}
+    return items;
+  }
+
+  tryRss2Json();
 })();
 </script>
 
@@ -824,22 +887,29 @@ function subscribeNewsletter(btn) {
 </script>
 
 
-<script>
-function toggleMenu(){
-  const h=document.getElementById('hamburger');
-  const m=document.getElementById('mobileMenu');
-  h.classList.toggle('open');
-  m.classList.toggle('open');
-  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
-}
-// Close on link click
-document.querySelectorAll('.mobile-menu a').forEach(a=>{
-  a.addEventListener('click',()=>{
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('hamburger').classList.remove('open');
-    document.body.style.overflow='';
+<script data-cfasync="false">
+(function(){
+  function toggleMenu(){
+    var h=document.getElementById('hamburger');
+    var m=document.getElementById('mobileMenu');
+    var opening=!m.classList.contains('open');
+    h.classList.toggle('open');
+    m.classList.toggle('open');
+    document.documentElement.classList.toggle('menu-open',opening);
+  }
+  window.toggleMenu=toggleMenu;
+  document.addEventListener('DOMContentLoaded',function(){
+    var btn=document.getElementById('hamburger');
+    if(btn) btn.addEventListener('click',toggleMenu);
+    document.querySelectorAll('.mobile-menu a').forEach(function(a){
+      a.addEventListener('click',function(){
+        document.getElementById('hamburger').classList.remove('open');
+        document.getElementById('mobileMenu').classList.remove('open');
+        document.documentElement.classList.remove('menu-open');
+      });
+    });
   });
-});
+})();
 </script>
 </body>
 </html>
