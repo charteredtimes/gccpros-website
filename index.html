@@ -715,7 +715,7 @@ html.menu-open{overflow:hidden;}
     <li><a href="https://portal.gccpros.com">Member Portal</a></li>
     <li><a href="https://portal.gccpros.com/register.html" class="nav-cta">Join →</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+  <button class="hamburger" id="hamburger" aria-label="Menu" type="button">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -987,19 +987,31 @@ html.menu-open{overflow:hidden;}
 </footer>
 
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function toggleMenu(){
-  var h=document.getElementById('hamburger');
-  var m=document.getElementById('mobileMenu');
-  var opening=!m.classList.contains('open');
-  h.classList.toggle('open');
-  m.classList.toggle('open');
-  document.documentElement.classList.toggle('menu-open',opening);
-}
-document.querySelectorAll('.mobile-menu a').forEach(function(a){
-  a.addEventListener('click',function(){
-    document.getElementById('hamburger').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.documentElement.classList.remove('menu-open');
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false">
+(function(){
+  function toggleMenu(){
+    var h=document.getElementById('hamburger');
+    var m=document.getElementById('mobileMenu');
+    var opening=!m.classList.contains('open');
+    h.classList.toggle('open');
+    m.classList.toggle('open');
+    document.documentElement.classList.toggle('menu-open',opening);
+  }
+  // Expose globally (fallback for any remaining onclick refs)
+  window.toggleMenu=toggleMenu;
+  // Wire via event listener — runs after DOM ready, immune to Rocket Loader timing
+  document.addEventListener('DOMContentLoaded',function(){
+    var btn=document.getElementById('hamburger');
+    if(btn) btn.addEventListener('click',toggleMenu);
+    document.querySelectorAll('.mobile-menu a').forEach(function(a){
+      a.addEventListener('click',function(){
+        document.getElementById('hamburger').classList.remove('open');
+        document.getElementById('mobileMenu').classList.remove('open');
+        document.documentElement.classList.remove('menu-open');
+      });
+    });
   });
-});
+})();
+</script>
+</body>
+</html>
