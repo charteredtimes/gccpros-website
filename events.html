@@ -436,4 +436,13 @@ function toggleMenu(){
   document.body.style.overflow=m.classList.contains('open')?'hidden':'';
 }
 // Close on link click
-document.querySelectorAll('.mobile-men
+document.querySelectorAll('.mobile-menu a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+</script>
+</body>
+</html>
