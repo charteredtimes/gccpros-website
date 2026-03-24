@@ -168,7 +168,7 @@ footer{background:var(--ink);padding:20px 80px;border-top:1px solid rgba(255,255
 </div>
 
 <footer>
-  <div class="fn-logo">GCC<span>PROs</span></div>
+  <a href="index.html" class="fn-logo" style="text-decoration:none;">GCC<span>PROs</span></a>
   <div class="fn-links">
     <a href="index.html">Home</a>
     <a href="insights.html">Insights</a>
@@ -176,9 +176,8 @@ footer{background:var(--ink);padding:20px 80px;border-top:1px solid rgba(255,255
     <a href="database.html">GCC Database</a>
     <a href="https://portal.gccpros.com">Member Portal</a>
     <a href="https://credologix.com" target="_blank">Credologix</a>
-    <a href="mailto:sp@gccpros.com">Contact</a>
   </div>
-  <div class="fn-copy">© 2026 GCCPROs · sp@gccpros.com</div>
+  <div class="fn-copy">© 2026 GCCPROs</div>
 </footer>
 
 <script>
@@ -189,13 +188,4 @@ function toggleMenu(){
   m.classList.toggle('open');
   document.body.style.overflow=m.classList.contains('open')?'hidden':'';
 }
-document.querySelectorAll('.mobile-menu a').forEach(a=>{
-  a.addEventListener('click',()=>{
-    document.getElementById('hamburger').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.body.style.overflow='';
-  });
-});
-</script>
-</body>
-</html>
+document.querySelectorAll('.mobile-men
