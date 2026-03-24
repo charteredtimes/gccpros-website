@@ -6,38 +6,35 @@
 <title>GCC Industry Council — Apply</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#fff;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
+:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--cream:#FAF7F2;--white:#fff;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
-
+html,body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;width:100%;}
 nav{background:rgba(10,22,40,0.97);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;text-decoration:none;}
 .nav-logo span{color:var(--gold);}
 .nav-back{font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s;}
 .nav-back:hover{color:#fff;}
-
 .hero{background:linear-gradient(135deg,#050e1a 0%,var(--ink) 60%,#0d2040 100%);padding:72px 40px 56px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.06) 1px,transparent 1px);background-size:56px 56px;}
 .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,151,58,0.08) 0%,transparent 70%);pointer-events:none;}
-.hero-inner{position:relative;z-index:2;max-width:620px;margin:0 auto;}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
 .crown{font-size:36px;margin-bottom:16px;}
 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.12);border:1px solid rgba(201,151,58,0.35);padding:7px 18px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px;}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;}
 .hero h1 em{font-style:italic;color:var(--gold);}
 .hero-sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.8;font-weight:300;max-width:520px;margin:0 auto 24px;}
-.criteria-box{background:rgba(201,151,58,0.07);border:1px solid rgba(201,151,58,0.2);border-radius:12px;padding:20px 24px;text-align:left;max-width:460px;margin:0 auto;}
+.criteria-box{background:rgba(201,151,58,0.07);border:1px solid rgba(201,151,58,0.2);border-radius:12px;padding:20px 24px;text-align:left;max-width:500px;margin:0 auto;}
 .criteria-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
 .criteria-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;}
 .criteria-item::before{content:'✦';color:var(--gold);flex-shrink:0;margin-top:1px;}
-
-.form-wrap{max-width:620px;margin:0 auto;padding:32px 20px 60px;}
-.form-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(10,22,40,0.12);border:1px solid var(--border);}
-.form-header{background:linear-gradient(135deg,var(--ink),#0d2040);padding:22px 28px;display:flex;align-items:center;gap:14px;}
+.form-wrap{max-width:100%;width:100%;margin:0;padding:40px 60px 60px;}
+.form-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(10,22,40,0.12);border:1px solid var(--border);max-width:900px;margin:0 auto;}
+.form-header{background:linear-gradient(135deg,var(--ink),#0d2040);padding:22px 32px;display:flex;align-items:center;gap:14px;}
 .form-header-icon{width:40px;height:40px;background:rgba(201,151,58,0.2);border:1px solid rgba(201,151,58,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .form-header-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;}
 .form-header-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;line-height:1.5;}
-.form-body{padding:28px;}
-.section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-bottom:2px solid rgba(201,151,58,0.15);padding-bottom:8px;margin:26px 0 18px;}
+.form-body{padding:32px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-bottom:2px solid rgba(201,151,58,0.15);padding-bottom:8px;margin:28px 0 18px;}
 .section-label:first-child{margin-top:0;}
 .fg{margin-bottom:18px;}
 .fg label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
@@ -51,26 +48,30 @@ textarea{resize:vertical;line-height:1.7;}
 .council-charter ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
 .council-charter ul li{font-size:13px;color:rgba(255,255,255,0.6);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
 .council-charter ul li::before{content:'—';color:var(--gold);flex-shrink:0;}
-.radio-group{display:flex;flex-direction:column;gap:8px;}
-.radio-opt{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);cursor:pointer;}
-.radio-opt input{width:auto;accent-color:var(--gold);}
-.submit-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.radio-group{display:flex;flex-direction:column;gap:10px;}
+.radio-opt{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink);cursor:pointer;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;transition:all 0.15s;}
+.radio-opt:hover{border-color:var(--gold);background:rgba(201,151,58,0.04);}
+.radio-opt input{width:auto;accent-color:var(--gold);margin-top:2px;flex-shrink:0;}
+.wa-box{background:rgba(37,211,102,0.05);border:1px solid rgba(37,211,102,0.2);border-radius:10px;padding:16px 18px;margin-bottom:10px;}
+.wa-box p{font-size:13px;color:#4b5563;line-height:1.7;margin-bottom:12px;}
+.submit-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;}
 .submit-btn:hover{background:var(--blue);transform:translateY(-1px);}
 .submit-btn:disabled{background:#94a3b8;cursor:not-allowed;transform:none;}
-.error-msg{color:#dc2626;font-size:12px;margin-top:8px;display:none;}
-#success-screen{display:none;text-align:center;padding:56px 28px;}
+.err-field{color:#dc2626;font-size:12px;margin-top:5px;display:none;}
+.error-msg{color:#dc2626;font-size:13px;margin-top:10px;display:none;padding:10px 14px;background:#fee2e2;border-radius:7px;}
+#success-screen{display:none;text-align:center;padding:56px 32px;}
 #success-screen .icon{font-size:52px;margin-bottom:18px;}
 #success-screen h3{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);margin-bottom:12px;}
-#success-screen p{font-size:14px;color:var(--muted);line-height:1.8;max-width:380px;margin:0 auto;}
+#success-screen p{font-size:14px;color:var(--muted);line-height:1.8;max-width:420px;margin:0 auto;}
 .note-strip{background:var(--ink);padding:16px 28px;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;line-height:1.7;}
-@media(max-width:640px){nav{padding:0 20px;}.row{grid-template-columns:1fr;}}
+@media(max-width:640px){nav{padding:0 20px;}.row{grid-template-columns:1fr;}.form-wrap{padding:20px 16px 40px;}.form-body{padding:20px;}} @media(min-width:641px){.form-wrap{padding:40px 5% 60px;}}
 </style>
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="nav-logo">GCC<span>PROs</span></a>
-  <a href="industry-council.html" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">← Industry Council</a>
+  <a href="index.html" class="nav-back">← Back to home</a>
 </nav>
 
 <div class="hero">
@@ -80,7 +81,6 @@ textarea{resize:vertical;line-height:1.7;}
     <div class="badge">GCC Industry Council</div>
     <h1>An invitation to<br><em>India's most exclusive</em><br>GCC community</h1>
     <p class="hero-sub">The GCC Industry Council is a closed peer forum for senior leaders who have shaped Global Capability Centres in India — not a networking group, not a WhatsApp forward chain. A genuine leadership collective.</p>
-
     <div class="criteria-box">
       <div class="criteria-title">Membership criteria</div>
       <div class="criteria-item">Currently serving or has served as a GCC Site Head, Country Head, or equivalent decision-making role</div>
@@ -102,21 +102,26 @@ textarea{resize:vertical;line-height:1.7;}
     </div>
 
     <div class="form-body" id="form-body">
+
+      <!-- Section 1: Profile -->
       <div class="section-label">Your profile</div>
 
       <div class="fg">
         <label>Full name <span class="req">*</span></label>
         <input type="text" id="f-name" placeholder="e.g. Jayesh Prajapati">
+        <div class="err-field" id="err-name"></div>
       </div>
 
       <div class="row">
         <div class="fg">
           <label>Email address <span class="req">*</span></label>
           <input type="email" id="f-email" placeholder="you@company.com">
+          <div class="err-field" id="err-email"></div>
         </div>
         <div class="fg">
           <label>Mobile / WhatsApp <span class="req">*</span></label>
           <input type="tel" id="f-wa" placeholder="+91 98765 43210">
+          <div class="err-field" id="err-wa"></div>
         </div>
       </div>
 
@@ -124,99 +129,110 @@ textarea{resize:vertical;line-height:1.7;}
         <div class="fg">
           <label>LinkedIn profile <span class="req">*</span></label>
           <input type="url" id="f-li" placeholder="https://linkedin.com/in/...">
+          <div class="err-field" id="err-li"></div>
         </div>
         <div class="fg">
           <label>City <span class="req">*</span></label>
           <input type="text" id="f-city" placeholder="e.g. Pune">
+          <div class="err-field" id="err-city"></div>
         </div>
       </div>
 
+      <!-- Section 2: Leadership record -->
       <div class="section-label">Leadership record</div>
 
       <div class="row">
         <div class="fg">
           <label>Current organisation <span class="req">*</span></label>
           <input type="text" id="f-company" placeholder="e.g. SLB India GCC">
+          <div class="err-field" id="err-company"></div>
         </div>
         <div class="fg">
           <label>Current designation <span class="req">*</span></label>
           <input type="text" id="f-role" placeholder="e.g. Head of Pune Technology Center">
+          <div class="err-field" id="err-role"></div>
         </div>
       </div>
 
       <div class="fg">
         <label>GCCs you have led or significantly shaped <span class="req">*</span></label>
         <textarea id="f-gccs" rows="3" placeholder="List the GCCs, your role, and the scale of the centre (headcount, function, years)..."></textarea>
+        <div class="err-field" id="err-gccs"></div>
       </div>
 
-      <div class="fg">
-        <label>Total years of professional experience <span class="req">*</span></label>
-        <select id="f-exp">
-          <option value="">— Select —</option>
-          <option>15–20 years</option>
-          <option>20–25 years</option>
-          <option>25+ years</option>
-        </select>
+      <div class="row">
+        <div class="fg">
+          <label>Total years of professional experience <span class="req">*</span></label>
+          <select id="f-exp">
+            <option value="">— Select —</option>
+            <option>15–20 years</option>
+            <option>20–25 years</option>
+            <option>25+ years</option>
+          </select>
+          <div class="err-field" id="err-exp"></div>
+        </div>
+        <div class="fg">
+          <label>Primary domain / function <span class="req">*</span></label>
+          <select id="f-domain">
+            <option value="">— Select —</option>
+            <option>Technology & Engineering</option>
+            <option>Finance & Accounting</option>
+            <option>Operations & Shared Services</option>
+            <option>Sales & Business Development</option>
+            <option>Human Resources</option>
+            <option>Analytics & Data</option>
+            <option>Legal & Risk</option>
+            <option>General Management / P&L</option>
+            <option>Other</option>
+          </select>
+          <div class="err-field" id="err-domain"></div>
+        </div>
       </div>
 
-      <div class="fg">
-        <label>Primary domain / function <span class="req">*</span></label>
-        <select id="f-domain">
-          <option value="">— Select —</option>
-          <option>Technology & Engineering</option>
-          <option>Finance & Accounting</option>
-          <option>Operations & Shared Services</option>
-          <option>Sales & Business Development</option>
-          <option>Human Resources</option>
-          <option>Analytics & Data</option>
-          <option>Legal & Risk</option>
-          <option>General Management / P&L</option>
-          <option>Other</option>
-        </select>
-      </div>
-
+      <!-- Section 3: Council fit -->
       <div class="section-label">Council fit</div>
 
       <div class="fg">
         <label>What is the most significant contribution you have made to a GCC's growth or transformation? <span class="req">*</span></label>
         <textarea id="f-why" rows="5" placeholder="Share a specific example — the challenge, what you did, and the outcome. Be specific rather than broad."></textarea>
+        <div class="err-field" id="err-why"></div>
       </div>
 
       <div class="fg">
         <label>What do you hope to contribute to the GCC Industry Council — and what would you expect from it? <span class="req">*</span></label>
         <textarea id="f-contrib" rows="4" placeholder="We are looking for leaders who give, not just take from the community..."></textarea>
+        <div class="err-field" id="err-contrib"></div>
       </div>
 
-      <!-- Engagement interests -->
+      <!-- Section 4: Interests -->
       <div class="section-label">Your interests in the Council ecosystem</div>
 
       <div class="fg">
         <label>Which of these opportunities interest you? <span class="req">*</span></label>
-        <div class="radio-group" style="gap:10px;">
+        <div class="radio-group">
           <label class="radio-opt"><input type="radio" name="interest" value="Paid speaking engagements"> <span>💬 Paid speaking engagements</span></label>
           <label class="radio-opt"><input type="radio" name="interest" value="Paid consulting"> <span>🤝 Paid consulting</span></label>
           <label class="radio-opt"><input type="radio" name="interest" value="Paid referral for senior leadership roles"> <span>🎯 Paid referral for senior leadership roles</span></label>
           <label class="radio-opt"><input type="radio" name="interest" value="All of the above"> <span>⭐ All of the above</span></label>
           <label class="radio-opt"><input type="radio" name="interest" value="Not interested"> <span>Not interested in any of these</span></label>
         </div>
-        <div id="err-interest" style="color:#dc2626;font-size:12px;margin-top:4px;"></div>
+        <div class="err-field" id="err-interest"></div>
       </div>
 
-      <!-- WhatsApp group consent -->
+      <!-- Section 5: WhatsApp consent -->
       <div class="fg">
-        <label>WhatsApp Community <span class="req">*</span></label>
-        <div style="background:rgba(37,211,102,0.05);border:1px solid rgba(37,211,102,0.2);border-radius:10px;padding:16px;margin-bottom:10px;">
-          <p style="font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:12px;">
-            The GCC Industry Council has a private WhatsApp group exclusively for Site Heads and CXOs. It is a peer-only, confidential space — no vendors, no promotions.
-          </p>
-          <div class="radio-group" style="gap:10px;">
-            <label class="radio-opt"><input type="radio" name="wa_consent" value="Yes"> <span>✅ Yes, add me to the WhatsApp group if approved</span></label>
+        <label>WhatsApp community <span class="req">*</span></label>
+        <div class="wa-box">
+          <p>The GCC Industry Council has a private WhatsApp group exclusively for Site Heads and CXOs. It is a peer-only, confidential space — no vendors, no promotions, no broadcast messages.</p>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="wa_consent" value="Yes"> <span>✅ Yes, add me to the WhatsApp group if my application is approved</span></label>
             <label class="radio-opt"><input type="radio" name="wa_consent" value="No"> <span>No, I prefer not to join the WhatsApp group</span></label>
           </div>
         </div>
-        <div id="err-wa-consent" style="color:#dc2626;font-size:12px;margin-top:4px;"></div>
+        <div class="err-field" id="err-wa-consent"></div>
       </div>
 
+      <!-- Section 6: Charter -->
       <div class="section-label">Council charter agreement</div>
 
       <div class="council-charter">
@@ -235,221 +251,134 @@ textarea{resize:vertical;line-height:1.7;}
           <label class="radio-opt"><input type="radio" name="consent" value="Yes"> <span>Yes, I commit to these values</span></label>
           <label class="radio-opt"><input type="radio" name="consent" value="No"> <span>No</span></label>
         </div>
-        <div id="err-consent" style="color:#dc2626;font-size:12px;margin-top:4px;"></div>
+        <div class="err-field" id="err-consent"></div>
       </div>
 
       <button class="submit-btn" id="submit-btn" onclick="submitForm()">
-        &#9856; Submit Expression of Interestad>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GCC Industry Council — Apply</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--ink:#0A1628;--gold:#C9973A;--gold-light:#F0C87A;--blue:#1A3A6B;--blue-mid:#2356A4;--blue-light:#EBF1FB;--cream:#FAF7F2;--white:#fff;--muted:#6B7A99;--border:rgba(26,58,107,0.1);}
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+        ⚜️ Submit Expression of Interest
+      </button>
+      <div id="err-msg" class="error-msg"></div>
 
-nav{background:rgba(10,22,40,0.97);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
-.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;text-decoration:none;}
-.nav-logo span{color:var(--gold);}
-.nav-back{font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s;}
-.nav-back:hover{color:#fff;}
+    </div><!-- end form-body -->
 
-.hero{background:linear-gradient(135deg,#050e1a 0%,var(--ink) 60%,#0d2040 100%);padding:72px 40px 56px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.06) 1px,transparent 1px);background-size:56px 56px;}
-.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,151,58,0.08) 0%,transparent 70%);pointer-events:none;}
-.hero-inner{position:relative;z-index:2;max-width:620px;margin:0 auto;}
-.crown{font-size:36px;margin-bottom:16px;}
-.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,151,58,0.12);border:1px solid rgba(201,151,58,0.35);padding:7px 18px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px;}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;}
-.hero h1 em{font-style:italic;color:var(--gold);}
-.hero-sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.8;font-weight:300;max-width:520px;margin:0 auto 24px;}
-.criteria-box{background:rgba(201,151,58,0.07);border:1px solid rgba(201,151,58,0.2);border-radius:12px;padding:20px 24px;text-align:left;max-width:460px;margin:0 auto;}
-.criteria-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
-.criteria-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;}
-.criteria-item::before{content:'✦';color:var(--gold);flex-shrink:0;margin-top:1px;}
+    <div id="success-screen">
+      <div class="icon">⚜️</div>
+      <h3>Expression of interest received</h3>
+      <p>Shammi will personally review your profile within 5–7 business days. If your experience aligns with the Council's direction, you will hear from him directly.</p>
+      <p style="margin-top:18px;font-size:13px;color:var(--muted);">Thank you for your interest in building India's GCC community.</p>
+    </div>
 
-.form-wrap{max-width:620px;margin:0 auto;padding:32px 20px 60px;}
-.form-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(10,22,40,0.12);border:1px solid var(--border);}
-.form-header{background:linear-gradient(135deg,var(--ink),#0d2040);padding:22px 28px;display:flex;align-items:center;gap:14px;}
-.form-header-icon{width:40px;height:40px;background:rgba(201,151,58,0.2);border:1px solid rgba(201,151,58,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.form-header-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;}
-.form-header-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;line-height:1.5;}
-.form-body{padding:28px;}
-.section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-bottom:2px solid rgba(201,151,58,0.15);padding-bottom:8px;margin:26px 0 18px;}
-.section-label:first-child{margin-top:0;}
-.fg{margin-bottom:18px;}
-.fg label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
-.req{color:var(--gold);}
-input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;outline:none;transition:border 0.2s;}
-input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,151,58,0.1);}
-textarea{resize:vertical;line-height:1.7;}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.council-charter{background:var(--ink);border-radius:10px;padding:18px 20px;margin-bottom:20px;}
-.council-charter-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
-.council-charter ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
-.council-charter ul li{font-size:13px;color:rgba(255,255,255,0.6);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
-.council-charter ul li::before{content:'—';color:var(--gold);flex-shrink:0;}
-.radio-group{display:flex;flex-direction:column;gap:8px;}
-.radio-opt{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);cursor:pointer;}
-.radio-opt input{width:auto;accent-color:var(--gold);}
-.submit-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.submit-btn:hover{background:var(--blue);transform:translateY(-1px);}
-.submit-btn:disabled{background:#94a3b8;cursor:not-allowed;transform:none;}
-.error-msg{color:#dc2626;font-size:12px;margin-top:8px;display:none;}
-#success-screen{display:none;text-align:center;padding:56px 28px;}
-#success-screen .icon{font-size:52px;margin-bottom:18px;}
-#success-screen h3{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);margin-bottom:12px;}
-#success-screen p{font-size:14px;color:var(--muted);line-height:1.8;max-width:380px;margin:0 auto;}
-.note-strip{background:var(--ink);padding:16px 28px;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;line-height:1.7;}
-@media(max-width:640px){nav{padding:0 20px;}.row{grid-template-columns:1fr;}}
-</style>
-</head>
-<body>
-
-<nav>
-  <a href="index.html" class="nav-logo">GCC<span>PROs</span></a>
-  <a href="index.html" class="nav-back">← Back to home</a>
-</nav>
-
-<div class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <div class="crown">👑</div>
-    <div class="badge">GCC Industry Council</div>
-    <h1>An invitation to<br><em>India's most exclusive</em><br>GCC community</h1>
-    <p class="hero-sub">The GCC Industry Council is a closed peer forum for senior leaders who have shaped Global Capability Centres in India — not a networking group, not a WhatsApp forward chain. A genuine leadership collective.</p>
-
-    <div class="criteria-box">
-      <div class="criteria-title">Membership criteria</div>
-      <div class="criteria-item">Currently serving or has served as a GCC Site Head, Country Head, or equivalent decision-making role</div>
-      <div class="criteria-item">Minimum 15 years of total professional experience</div>
-      <div class="criteria-item">Meaningful contribution to GCC strategy, culture or institutional building</div>
-      <div class="criteria-item">Commitment to peer-only, confidential exchange — no vendor introductions</div>
+    <div class="note-strip">
+      GCC Industry Council · Managed by GCCPROs · Applications reviewed personally · All information strictly confidential
     </div>
   </div>
 </div>
 
-
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6HJbg2PBAGSc-dNNTEREyk49E6c5nemgW4T4QmHVMpNMvX9GF1uCNxgmG0TwQxxa3hA/exec';
 
-function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);}
-function isValidPhone(v){const d=v.replace(/[\s\-\(\)\+]/g,'');return /^[0-9]{10,13}$/.test(d);}
-function isValidLinkedIn(v){return /^https?:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/.test(v.trim());}
-function isValidName(v){return v.trim().length>=3;}
-function showErr(id,msg){
-  let el=document.getElementById('err_'+id);
-  if(!el){el=document.createElement('div');el.id='err_'+id;el.style.cssText='color:#dc2626;font-size:12px;margin-top:4px;';
-  const f=document.getElementById(id);if(f)f.parentNode.appendChild(el);}
-  el.textContent=msg;
-  const f=document.getElementById(id);if(f)f.style.borderColor='#fca5a5';
-}
-function clearErr(id){
-  const el=document.getElementById('err_'+id);if(el)el.textContent='';
-  const f=document.getElementById(id);if(f)f.style.borderColor='';
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
 }
 
-function validateField(id){
-  const el=document.getElementById(id);
-  if(!el)return true;
-  const v=el.value.trim();
-  switch(id){
-    case 'f-name':
-      if(!v||!isValidName(v)){showErr(id,'Full name is required (min 3 characters).');return false;}break;
-    case 'f-email':
-      if(!isValidEmail(v)){showErr(id,'Enter a valid email address (e.g. name@company.com).');return false;}break;
-    case 'f-wa':
-      if(!isValidPhone(v)){showErr(id,'Enter a valid mobile number with country code (e.g. +91 98765 43210).');return false;}break;
-    case 'f-li':
-      if(!isValidLinkedIn(v)){showErr(id,'Must be a valid LinkedIn URL — https://linkedin.com/in/yourname');return false;}break;
-    case 'f-city':
-      if(!v||v.length<2){showErr(id,'City is required.');return false;}break;
-    case 'f-company':
-      if(!v||v.length<2){showErr(id,'Organisation name is required.');return false;}break;
-    case 'f-role':
-      if(!v||v.length<3){showErr(id,'Designation is required.');return false;}break;
-    case 'f-gccs':
-      if(!v||v.length<10){showErr(id,'Please describe the GCCs you have led — include names, your role, and scale (min 10 chars).');return false;}break;
-    case 'f-exp':
-      if(!v){showErr(id,'Please select your years of experience.');return false;}break;
-    case 'f-domain':
-      if(!v){showErr(id,'Please select your primary domain.');return false;}break;
-    case 'f-why':
-      if(!v||v.length<80){showErr(id,'This is a key question. Please write at least 80 characters — be specific about the GCC challenge and your impact.');return false;}break;
-    case 'f-contrib':
-      if(!v||v.length<60){showErr(id,'Please describe what you would contribute (min 60 characters).');return false;}break;
+function validateAll() {
+  let valid = true;
+  const req = [
+    ['f-name','err-name','Full name is required.'],
+    ['f-email','err-email','Valid email is required.'],
+    ['f-wa','err-wa','Mobile number is required.'],
+    ['f-li','err-li','LinkedIn URL is required.'],
+    ['f-city','err-city','City is required.'],
+    ['f-company','err-company','Organisation is required.'],
+    ['f-role','err-role','Designation is required.'],
+    ['f-gccs','err-gccs','Please describe the GCCs you have led.'],
+    ['f-exp','err-exp','Please select your years of experience.'],
+    ['f-domain','err-domain','Please select your primary domain.'],
+    ['f-why','err-why','This field is required — please be specific.'],
+    ['f-contrib','err-contrib','Please describe your expected contribution.'],
+  ];
+  req.forEach(function(r) {
+    const v = document.getElementById(r[0]).value.trim();
+    if (!v) { showErr(r[1], r[2]); valid = false; }
+    else showErr(r[1], '');
+  });
+  // Email format
+  const email = document.getElementById('f-email').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('err-email', 'Please enter a valid email address.'); valid = false;
   }
-  clearErr(id);return true;
-}
-
-function validateAll(){
-  const ids=['f-name','f-email','f-wa','f-li','f-city','f-company','f-role','f-gccs','f-exp','f-domain','f-why','f-contrib'];
-  let valid=true;
-  ids.forEach(id=>{if(!validateField(id))valid=false;});
-  const consent=document.querySelector('input[name="consent"]:checked');
-  if(!consent||consent.value!=='Yes'){
-    document.getElementById('err-consent').textContent='You must agree to the Council charter values to apply.';
-    valid=false;
-  } else {document.getElementById('err-consent').textContent='';}
-
-  const interest=document.querySelector('input[name="interest"]:checked');
-  if(!interest){
-    document.getElementById('err-interest').textContent='Please select your area of interest — this helps us tailor opportunities for you.';
-    valid=false;
-  } else {document.getElementById('err-interest').textContent='';}
-
-  const waConsent=document.querySelector('input[name="wa_consent"]:checked');
-  if(!waConsent){
-    document.getElementById('err-wa-consent').textContent='Please indicate your WhatsApp group preference.';
-    valid=false;
-  } else {document.getElementById('err-wa-consent').textContent='';}
-
+  // LinkedIn
+  const li = document.getElementById('f-li').value.trim();
+  if (li && !li.includes('linkedin.com')) {
+    showErr('err-li', 'Please enter your LinkedIn profile URL.'); valid = false;
+  }
+  // Min length for essays
+  const why = document.getElementById('f-why').value.trim();
+  if (why && why.length < 80) { showErr('err-why', 'Please write at least 80 characters.'); valid = false; }
+  const contrib = document.getElementById('f-contrib').value.trim();
+  if (contrib && contrib.length < 60) { showErr('err-contrib', 'Please write at least 60 characters.'); valid = false; }
+  // Radio fields
+  if (!document.querySelector('input[name="interest"]:checked')) {
+    showErr('err-interest', 'Please select your area of interest.'); valid = false;
+  } else showErr('err-interest', '');
+  if (!document.querySelector('input[name="wa_consent"]:checked')) {
+    showErr('err-wa-consent', 'Please indicate your WhatsApp group preference.'); valid = false;
+  } else showErr('err-wa-consent', '');
+  if (!document.querySelector('input[name="consent"]:checked') ||
+      document.querySelector('input[name="consent"]:checked').value !== 'Yes') {
+    showErr('err-consent', 'You must agree to the Council charter values to apply.'); valid = false;
+  } else showErr('err-consent', '');
   return valid;
 }
 
-async function submitForm(){
-  if(!validateAll()){
-    const firstErr=document.querySelector('[style*="fca5a5"]');
-    if(firstErr)firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+async function submitForm() {
+  if (!validateAll()) {
+    const firstErr = document.querySelector('.err-field[style*="block"]');
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
-  const btn=document.getElementById('submit-btn');
-  btn.disabled=true;
-  btn.textContent='Submitting...';
-  const fields={
-    action:'communityLeaders',
-    fullName:document.getElementById('f-name').value.trim(),
-    email:document.getElementById('f-email').value.trim().toLowerCase(),
-    whatsapp:document.getElementById('f-wa').value.trim(),
-    linkedin:document.getElementById('f-li').value.trim(),
-    city:document.getElementById('f-city').value.trim(),
-    company:document.getElementById('f-company').value.trim(),
-    role:document.getElementById('f-role').value.trim(),
-    gccs:document.getElementById('f-gccs').value.trim(),
-    experience:document.getElementById('f-exp').value,
-    domain:document.getElementById('f-domain').value,
-    whyJoin:document.getElementById('f-why').value.trim(),
-    contrib:document.getElementById('f-contrib').value.trim(),
-    consent:document.querySelector('input[name="consent"]:checked').value,
-    interest:document.querySelector('input[name="interest"]:checked').value,
-    waConsent:document.querySelector('input[name="wa_consent"]:checked').value,
+  const btn = document.getElementById('submit-btn');
+  const errMsg = document.getElementById('err-msg');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  errMsg.style.display = 'none';
+
+  const fields = {
+    action:     'communityLeaders',
+    fullName:   document.getElementById('f-name').value.trim(),
+    email:      document.getElementById('f-email').value.trim().toLowerCase(),
+    whatsapp:   document.getElementById('f-wa').value.trim(),
+    linkedin:   document.getElementById('f-li').value.trim(),
+    city:       document.getElementById('f-city').value.trim(),
+    company:    document.getElementById('f-company').value.trim(),
+    role:       document.getElementById('f-role').value.trim(),
+    gccs:       document.getElementById('f-gccs').value.trim(),
+    experience: document.getElementById('f-exp').value,
+    domain:     document.getElementById('f-domain').value,
+    whyJoin:    document.getElementById('f-why').value.trim(),
+    contrib:    document.getElementById('f-contrib').value.trim(),
+    interest:   document.querySelector('input[name="interest"]:checked').value,
+    waConsent:  document.querySelector('input[name="wa_consent"]:checked').value,
+    consent:    document.querySelector('input[name="consent"]:checked').value,
   };
-  try{
-    await fetch(SCRIPT_URL+'?'+new URLSearchParams(fields).toString(),{mode:'no-cors'});
-    document.getElementById('form-body').style.display='none';
-    document.getElementById('success-screen').style.display='block';
-  }catch(e){
-    document.getElementById('err-msg').textContent='Submission failed. Please email sp@gccpros.com directly.';
-    document.getElementById('err-msg').style.display='block';
-    btn.disabled=false;
-    btn.textContent='⚜️ Submit Expression of Interest';
+
+  try {
+    await fetch(SCRIPT_URL + '?' + new URLSearchParams(fields).toString(), { mode: 'no-cors' });
+    document.getElementById('form-body').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch(e) {
+    errMsg.textContent = 'Submission failed. Please email sp@gccpros.com directly.';
+    errMsg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '⚜️ Submit Expression of Interest';
   }
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('input,select,textarea').forEach(el=>{
-    el.addEventListener('blur',()=>validateField(el.id));
+// Live validation on blur
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input,select,textarea').forEach(function(el) {
+    el.addEventListener('blur', validateAll);
   });
 });
 </script>
