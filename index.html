@@ -60,7 +60,7 @@ body {
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 200;
+  z-index: 300;
   background: rgba(10,22,40,0.96);
   backdrop-filter: blur(12px);
   display: flex;
@@ -987,28 +987,30 @@ h1            { animation-delay: 0.2s; }
 
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+var _menuScrollY=0;
+function closeMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.position='';
+  document.body.style.top='';
+  document.body.style.width='';
+  window.scrollTo(0,_menuScrollY);
+}
 function toggleMenu(){
   const h=document.getElementById('hamburger');
   const m=document.getElementById('mobileMenu');
+  const opening=!m.classList.contains('open');
   h.classList.toggle('open');
   m.classList.toggle('open');
-  if(m.classList.contains('open')){
+  if(opening){
+    _menuScrollY=window.scrollY;
     document.body.style.position='fixed';
+    document.body.style.top='-'+_menuScrollY+'px';
     document.body.style.width='100%';
-    document.body.style.overflowY='scroll';
   } else {
-    document.body.style.position='';
-    document.body.style.width='';
-    document.body.style.overflowY='';
+    closeMenu();
   }
 }
-// Close on link click
-document.querySelectorAll('.mobile-menu a').forEach(a=>{
-  a.addEventListener('click',()=>{
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('hamburger').classList.remove('open');
-    document.body.style.position='';
-    document.body.style.width='';
-    document.body.style.overflowY='';
-  });
+document.querySelectorAll('.mobile-menu a').forEach(function(a){
+  a.addEventListener('click',closeMenu);
 });
