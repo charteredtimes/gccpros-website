@@ -593,10 +593,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
 </div>
 
-<script>
-// ── GCCPROs Substack Live Feed ──
-// Fetches the Substack RSS feed directly. Uses multiple CORS proxy fallbacks.
-// New posts on shammip.substack.com appear automatically — no manual updates needed.
+<script data-cfasync="false">
 (function(){
   var RSS = 'https://shammip.substack.com/feed';
   var PROXIES = [
@@ -604,126 +601,162 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS),
     'https://corsproxy.io/?' + encodeURIComponent(RSS)
   ];
-
-  var gradients = ['pt-grad-1','pt-grad-2','pt-grad-3'];
-  var icons = ['📋','🔄','⚠️','📊','🏢','🎯'];
+  var GRADS = ['pt-grad-1','pt-grad-2','pt-grad-3'];
 
   function fmtDate(str){
-    try{ return new Date(str).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; }
+    try{ return new Date(str).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }
+    catch(e){ return ''; }
   }
-
-  function stripHtml(h){ return h ? h.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim() : ''; }
-
+  function stripHtml(h){
+    return h ? h.replace(/<[^>]+>/g,'')
+               .replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+               .replace(/&gt;/g,'>').replace(/&quot;/g,'"')
+               .replace(/&#39;/g,"'").trim() : '';
+  }
   function extractThumb(item){
-    // rss2json provides thumbnail field; RSS raw needs parsing
     if(item.thumbnail && item.thumbnail !== 'self') return item.thumbnail;
     if(item.enclosure && item.enclosure.link) return item.enclosure.link;
-    // Try extracting img src from content
-    var m = (item.content||item.description||'').match(/<img[^>]+src=["']([^"']+)["']/i);
+    var m = (item.content || item.description || '').match(/<img[^>]+src=["']([^"']+)["']/i);
     return m ? m[1] : '';
+  }
+
+  // Named global — no inline quote escaping needed in onerror attr
+  window._gcThumbFallback = function(img, grad){
+    var wrap = img.parentElement;
+    wrap.className = 'post-thumb-placeholder ' + grad;
+    wrap.innerHTML = '<span class="pt-badge">GCCPROs Research</span>';
+  };
+
+  function makeCard(item, i){
+    var isFeat  = i === 0;
+    var title   = stripHtml(item.title || 'Untitled');
+    var link    = item.link || item.url || 'https://shammip.substack.com';
+    var date    = fmtDate(item.pubDate || item.published || '');
+    var thumb   = extractThumb(item);
+    var grad    = GRADS[i % 3];
+    var summary = stripHtml(item.description || item.summary || '');
+    if(summary.length > 220) summary = summary.substring(0,220) + '...';
+
+    var div = document.createElement('div');
+    div.className = 'blog-post';
+    if(isFeat) div.style.cssText = 'border-left:3px solid var(--gold);padding-left:24px;';
+
+    var typeDiv = document.createElement('div');
+    typeDiv.className = 'post-type';
+    if(isFeat) typeDiv.style.color = 'var(--gold)';
+    typeDiv.textContent = isFeat ? 'Latest' : 'GCC Research';
+
+    var h3 = document.createElement('h3');
+    h3.className = 'post-title';
+    var a = document.createElement('a');
+    a.href = link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = title;
+    h3.appendChild(a);
+
+    var thumbDiv = document.createElement('div');
+    if(thumb){
+      thumbDiv.className = 'post-thumb';
+      var img = document.createElement('img');
+      img.src = thumb; img.alt = title; img.loading = 'lazy';
+      img.setAttribute('data-grad', grad);
+      img.setAttribute('onerror', '_gcThumbFallback(this,this.getAttribute("data-grad"))');
+      thumbDiv.appendChild(img);
+    } else {
+      thumbDiv.className = 'post-thumb-placeholder ' + grad;
+      thumbDiv.innerHTML = '<span class="pt-badge">GCCPROs Research</span><span class="pt-label">' + title + '</span>';
+    }
+
+    var metaDiv = document.createElement('div');
+    metaDiv.style.cssText = 'font-size:12px;color:var(--muted);margin-top:10px;';
+    metaDiv.innerHTML = '<span>Shammi Prabhakar Singh</span>' +
+      (date ? ' <span>&middot; ' + date + '</span>' : '');
+
+    var readMore = document.createElement('a');
+    readMore.href = link; readMore.target = '_blank'; readMore.rel = 'noopener';
+    readMore.className = 'read-more';
+    readMore.style.cssText = 'margin-top:14px;display:inline-block;';
+    readMore.textContent = 'Read on Substack';
+
+    div.appendChild(typeDiv);
+    div.appendChild(h3);
+    div.appendChild(thumbDiv);
+    if(summary){
+      var p = document.createElement('p');
+      p.className = 'post-excerpt'; p.textContent = summary;
+      div.appendChild(p);
+    }
+    div.appendChild(metaDiv);
+    div.appendChild(readMore);
+    return div;
   }
 
   function renderArticles(items){
     var container = document.getElementById('substack-articles');
-    if(!items || !items.length){
-      container.classList.remove('loading');
-      return;
-    }
-    var out = '';
-    items.forEach(function(item, i){
-      var isFeat = i === 0;
-      var title = stripHtml(item.title || '');
-      var link = item.link || item.url || '#';
-      var date = fmtDate(item.pubDate || item.published || '');
-      var summary = stripHtml(item.description || item.summary || '').substring(0,200);
-      if(summary.length === 200) summary += '…';
-      var thumb = extractThumb(item);
-      var grad = gradients[i % 3];
-      var icon = icons[i % 6];
-
-      out += '<div class="blog-post"' + (isFeat ? ' style="border-left:3px solid var(--gold);padding-left:24px;"' : '') + '>';
-      out += '<div class="post-type"' + (isFeat ? ' style="color:var(--gold);"' : '') + '>' + (isFeat ? '⭐ Latest' : '📰 GCC Research') + '</div>';
-      out += '<h3 class="post-title"><a href="' + link + '" target="_blank" rel="noopener">' + title + '</a></h3>';
-      if(thumb){
-        var safe = title.replace(/'/g,"\'").replace(/"/g,'&quot;');
-        out += '<div class="post-thumb"><img src="' + thumb + '" alt="' + title + '" loading="lazy" onerror="this.parentElement.className='post-thumb-placeholder ' + grad + '';this.parentElement.innerHTML='<span class=pt-badge>GCCPROs Research<\/span><span class=pt-label>' + safe + '<\/span><span class=pt-icon>' + icon + '<\/span>'"></div>';
-      } else {
-        out += '<div class="post-thumb-placeholder ' + grad + '"><span class="pt-badge">GCCPROs Research</span><span class="pt-label">' + title + '</span><span class="pt-icon">' + icon + '</span></div>';
-      }
-      if(summary) out += '<p class="post-excerpt">' + summary + '</p>';
-      out += '<div style="font-size:12px;color:var(--muted);margin-top:10px;"><span>Shammi Prabhakar Singh</span>' + (date ? ' <span>&middot; ' + date + '</span>' : '') + '</div>';
-      out += '<a href="' + link + '" target="_blank" rel="noopener" class="read-more" style="margin-top:14px;display:inline-block;">Read on Substack &rarr;</a>';
-      out += '</div>';
-    });
-
-    container.innerHTML = out;
     container.classList.remove('loading');
+    if(!items || !items.length) return showFallback();
+    container.innerHTML = '';
+    items.forEach(function(item, i){ container.appendChild(makeCard(item, i)); });
   }
 
-  // ── Proxy 0: rss2json (returns clean JSON) ──
-  function tryRss2Json(){
-    fetch(PROXIES[0], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
-      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(d){
-        if(d.status !== 'ok' || !d.items || !d.items.length) throw new Error('empty');
-        renderArticles(d.items);
-      })
-      .catch(tryAllorigins);
+  function showFallback(){
+    var c = document.getElementById('substack-articles');
+    c.classList.remove('loading');
+    c.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted);">' +
+      '<p>Visit <a href="https://shammip.substack.com" target="_blank" rel="noopener" ' +
+      'style="color:var(--gold);font-weight:600;">GCCPROs on Substack</a> for all articles.</p></div>';
   }
 
-  // ── Proxy 1: allorigins (returns raw RSS XML) ──
-  function tryAllorigins(){
-    fetch(PROXIES[1], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
-      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(d){
-        var xml = d.contents || '';
-        if(!xml) throw new Error('empty');
-        var items = parseRssXml(xml);
-        if(!items.length) throw new Error('no items');
-        renderArticles(items);
-      })
-      .catch(tryCorsproxy);
-  }
-
-  // ── Proxy 2: corsproxy.io (returns raw RSS XML) ──
-  function tryCorsproxy(){
-    fetch(PROXIES[2], {signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined})
-      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
-      .then(function(xml){
-        if(!xml) throw new Error('empty');
-        var items = parseRssXml(xml);
-        if(!items.length) throw new Error('no items');
-        renderArticles(items);
-      })
-      .catch(function(){
-        // All proxies failed — remove loading state, static skeleton disappears gracefully
-        var container = document.getElementById('substack-articles');
-        container.classList.remove('loading');
-        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted);"><p>Visit <a href="https://shammip.substack.com" target="_blank" rel="noopener" style="color:var(--gold);">GCCPROs on Substack</a> for all articles.</p></div>';
-      });
-  }
-
-  // ── Parse raw RSS XML ──
   function parseRssXml(xml){
     var items = [];
     try{
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(xml, 'text/xml');
-      var nodes = doc.querySelectorAll('item');
-      nodes.forEach(function(node){
-        function txt(tag){ var el = node.querySelector(tag); return el ? el.textContent : ''; }
+      var doc = new DOMParser().parseFromString(xml, 'text/xml');
+      doc.querySelectorAll('item').forEach(function(node){
+        function get(tag){
+          var els = node.getElementsByTagName(tag);
+          return els.length ? (els[0].textContent || '') : '';
+        }
         var encEl = node.querySelector('enclosure');
         items.push({
-          title: txt('title'),
-          link: txt('link'),
-          pubDate: txt('pubDate'),
-          description: txt('description'),
-          thumbnail: encEl ? encEl.getAttribute('url') : '',
-          content: txt('content\\:encoded') || txt('encoded')
+          title:       get('title'),
+          link:        get('link'),
+          pubDate:     get('pubDate'),
+          description: get('description'),
+          content:     get('encoded') || get('content'),
+          thumbnail:   encEl ? (encEl.getAttribute('url') || '') : ''
         });
       });
-    }catch(e){}
+    } catch(e){}
     return items;
+  }
+
+  function sig(ms){ return AbortSignal.timeout ? AbortSignal.timeout(ms) : undefined; }
+
+  function tryRss2Json(){
+    fetch(PROXIES[0], {signal: sig(8000)})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        if(d.status !== 'ok' || !d.items || !d.items.length) throw 0;
+        renderArticles(d.items);
+      }).catch(tryAllorigins);
+  }
+
+  function tryAllorigins(){
+    fetch(PROXIES[1], {signal: sig(8000)})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        var items = parseRssXml(d.contents || '');
+        if(!items.length) throw 0;
+        renderArticles(items);
+      }).catch(tryCorsproxy);
+  }
+
+  function tryCorsproxy(){
+    fetch(PROXIES[2], {signal: sig(8000)})
+      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+      .then(function(xml){
+        var items = parseRssXml(xml);
+        if(!items.length) throw 0;
+        renderArticles(items);
+      }).catch(showFallback);
   }
 
   tryRss2Json();
