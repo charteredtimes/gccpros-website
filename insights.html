@@ -851,21 +851,23 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   /* ── Fetch chain: Substack API → rss2json → allorigins → corsproxy ── */
 
   /* 1. Substack public JSON API — direct, no proxy, fastest & most reliable */
-  function trySubstackApi(){
-    fetch(API_URL, {signal: sig(8000)})
+  /* ── PRIMARY: codetabs CORS proxy → Substack JSON API ──────────
+     Tested working: returns all published posts as JSON array.
+     codetabs.com is a free CORS proxy with no daily rate limits.  */
+  function tryCodetabs(){
+    var proxied = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(API_URL);
+    fetch(proxied, {signal: sig(10000)})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(data){
-        /* Response is an array of post objects */
         var posts = Array.isArray(data) ? data : (data.posts || []);
-        /* Keep only public newsletter posts (exclude podcasts, videos, etc.) */
         posts = posts.filter(function(p){ return p.type === 'newsletter' || !p.type; });
         if(!posts.length) throw 0;
         renderArticles(posts.map(normaliseApiPost));
       })
-      .catch(tryRss2Json);   /* graceful fallback */
+      .catch(tryRss2Json);
   }
 
-  /* 2. rss2json (free tier — 100 req/day; kept as first RSS fallback) */
+  /* ── FALLBACK 1: rss2json RSS proxy ─────────────────────────── */
   function tryRss2Json(){
     fetch(PROXIES[0], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
@@ -875,7 +877,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(tryAllorigins);
   }
 
-  /* 3. allorigins raw XML proxy */
+  /* ── FALLBACK 2: allorigins RSS proxy ───────────────────────── */
   function tryAllorigins(){
     fetch(PROXIES[1], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
@@ -886,7 +888,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(tryCorsproxy);
   }
 
-  /* 4. corsproxy.io */
+  /* ── FALLBACK 3: corsproxy.io RSS proxy ─────────────────────── */
   function tryCorsproxy(){
     fetch(PROXIES[2], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.text(); })
@@ -897,8 +899,8 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(showFallback);
   }
 
-  /* Kick off with the Substack API — fastest path, no external dependency */
-  trySubstackApi();
+  /* Kick off fetch chain */
+  tryCodetabs();
 })();
 </script>
 
