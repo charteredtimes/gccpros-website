@@ -120,57 +120,98 @@ section{padding:80px 80px;}
 .article-tag{background:var(--blue-light);color:var(--blue-mid);padding:3px 10px;border-radius:100px;font-weight:600;}
 
 /* BLOG SECTION */
-.blog{background:#f0f2f5;}
+.blog{background:#f4f5f7;}
 .blog-layout{display:block;}
 .blog-posts{}
 
-/* ── News tile grid ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   News-site article grid
+   Layout: featured (col-span-2) | 2 secondary | then 4-col
+   ══════════════════════════════════════════════════════════ */
 #substack-articles{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:20px;
-  align-items:start;
+  gap:1px;
+  background:#d8dce3;
+  border:1px solid #d8dce3;
+  border-radius:10px;
+  overflow:hidden;
 }
+
+/* featured = first card spans 2 cols × 2 rows */
 #substack-articles .blog-post:first-child{
   grid-column:span 2;
   grid-row:span 2;
 }
-#substack-articles .blog-post:first-child .post-thumb,
-#substack-articles .blog-post:first-child .post-thumb-placeholder{height:240px;}
-#substack-articles .blog-post:first-child .post-title{font-size:21px;margin-bottom:10px;}
-#substack-articles .blog-post:first-child .post-excerpt{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+#substack-articles .blog-post:first-child .post-thumb{height:260px;}
+#substack-articles .blog-post:first-child .post-title{font-size:20px;line-height:1.3;margin-bottom:10px;}
+#substack-articles .blog-post:first-child .post-excerpt{
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:13px;
+}
+#substack-articles .blog-post:first-child .post-body-wrap{padding:18px 20px 20px;}
 
+/* cards */
 .blog-post{
   background:var(--white);
-  border:1px solid var(--border);
-  border-radius:10px;
-  overflow:hidden;
   display:flex;flex-direction:column;
-  transition:box-shadow 0.2s,transform 0.2s;
-  padding:0;
-  margin:0;
+  transition:background 0.15s;
+  border-radius:0;
+  border:none;
+  overflow:hidden;
+  padding:0; margin:0;
 }
-.blog-post:hover{box-shadow:0 6px 24px rgba(10,22,40,0.1);transform:translateY(-2px);}
+.blog-post:hover{background:#f9fafb;}
 
-.post-thumb{width:100%;height:148px;overflow:hidden;margin:0;border-radius:0;flex-shrink:0;position:relative;}
-.post-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;}
-.post-thumb:hover img{transform:scale(1.05);}
-.post-thumb-placeholder{width:100%;height:148px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin:0;border-radius:0;flex-shrink:0;}
-.post-thumb-placeholder .pt-icon{font-size:40px;opacity:0.3;position:absolute;right:20px;top:50%;transform:translateY(-50%);}
-.post-thumb-placeholder .pt-label{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:rgba(255,255,255,0.85);padding:0 20px;line-height:1.35;position:relative;z-index:1;max-width:80%;}
-.post-thumb-placeholder .pt-badge{position:absolute;top:10px;left:12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:3px 9px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;}
-.post-body-wrap{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1;}
+/* image — only shown when a real cover_image exists */
+.post-thumb{
+  width:100%;height:156px;overflow:hidden;
+  flex-shrink:0;position:relative;
+}
+.post-thumb img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 0.35s ease;
+}
+.blog-post:hover .post-thumb img{transform:scale(1.04);}
+
+/* body */
+.post-body-wrap{
+  padding:13px 15px 15px;
+  display:flex;flex-direction:column;flex:1;
+  border-top:2px solid var(--gold);
+}
+/* featured body has stronger top bar */
+#substack-articles .blog-post:first-child .post-body-wrap{
+  border-top:3px solid var(--gold);
+}
 .pt-grad-1{background:linear-gradient(135deg,#0A1628 0%,#2356A4 60%,#C9973A 100%);}
 .pt-grad-2{background:linear-gradient(135deg,#1A3A6B 0%,#0A1628 100%);}
 .pt-grad-3{background:linear-gradient(135deg,#C9973A 0%,#A07828 50%,#0A1628 100%);}
-.post-type{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
-.post-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:8px;}
+.post-type{
+  font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+}
+.post-title{
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:700;
+  color:var(--ink);line-height:1.35;margin-bottom:6px;
+}
 .post-title a{text-decoration:none;color:inherit;transition:color 0.2s;}
 .post-title a:hover{color:var(--blue-mid);}
-.post-excerpt{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;font-weight:300;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.post-meta{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted);margin-top:auto;}
+.post-excerpt{
+  font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px;font-weight:300;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.post-meta{
+  display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);
+  margin-top:auto;padding-top:8px;border-top:1px solid var(--border);
+}
 .post-author{font-weight:600;color:var(--text);}
-.read-more{font-size:11px;font-weight:600;color:var(--blue-mid);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:gap 0.2s;margin-top:auto;}
+.read-more{
+  font-size:10px;font-weight:700;letter-spacing:0.5px;color:var(--blue-mid);
+  text-decoration:none;display:inline-flex;align-items:center;gap:3px;
+  transition:color 0.2s;margin-top:6px;
+}
+.read-more:hover{color:var(--ink);}
 .read-more:hover{gap:8px;}
 
 /* SIDEBAR */
@@ -229,8 +270,9 @@ footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(20
   .featured-body{padding:28px;}
   .articles-grid{grid-template-columns:1fr;}
   .blog-layout{grid-template-columns:1fr;}
-  #substack-articles{grid-template-columns:1fr 1fr;}
+  #substack-articles{grid-template-columns:1fr 1fr;gap:1px;}
   #substack-articles .blog-post:first-child{grid-column:span 2;grid-row:auto;}
+  #substack-articles .blog-post:first-child .post-title{font-size:17px;}
   .li-posts-grid{grid-template-columns:1fr;}
   footer{padding:40px 24px 28px;}
 }
@@ -257,6 +299,8 @@ html.menu-open{overflow:hidden;}
 
 /* ── Substack loading skeleton ── */
 #substack-articles.loading .blog-post{display:none;}
+.sk-tile{background:var(--white);padding:16px 18px;display:flex;flex-direction:column;gap:0;}
+.sk-tile-feat{grid-column:span 2;grid-row:span 2;padding:22px 22px;}
 .sk-post{padding-bottom:40px;margin-bottom:40px;border-bottom:1px solid var(--border);}
 .sk-post:last-child{border-bottom:none;}
 .sk-line{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:sk-shimmer 1.4s infinite;border-radius:4px;height:14px;margin-bottom:10px;}
@@ -609,16 +653,22 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
 <!-- BLOG — Substack integration -->
 <section class="blog" id="blog">
-  <div class="section-label">From the desk of the GCCPROs Founder</div>
-  <h2 class="section-title">Insights &amp; Research</h2>
+  <div class="section-label">GCCPROs Editorial</div>
+  <h2 class="section-title">News, Insights &amp; Research</h2>
 
-  <!-- news-site date/filter bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;border-bottom:2px solid var(--ink);padding-bottom:10px;">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span style="background:var(--ink);color:var(--gold);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:4px;">Latest</span>
-      <span style="font-size:12px;color:var(--muted);font-weight:500;" id="insights-date"></span>
+  <!-- news-site section divider bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:3px solid var(--ink);padding-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink);letter-spacing:-0.3px;">All Articles</span>
+      <span style="width:1px;height:14px;background:#ccc;display:inline-block;"></span>
+      <span style="font-size:11px;color:var(--muted);font-weight:500;" id="insights-date"></span>
     </div>
-    <a href="https://shammip.substack.com" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;color:var(--blue-mid);text-decoration:none;display:flex;align-items:center;gap:4px;">All articles on Substack →</a>
+    <a href="https://shammip.substack.com" target="_blank" rel="noopener"
+       style="font-size:11px;font-weight:700;color:var(--blue-mid);text-decoration:none;letter-spacing:0.3px;display:flex;align-items:center;gap:4px;border:1px solid var(--blue-mid);padding:5px 12px;border-radius:5px;transition:all 0.2s;"
+       onmouseover="this.style.background='var(--blue-mid)';this.style.color='#fff';"
+       onmouseout="this.style.background='transparent';this.style.color='var(--blue-mid)';">
+      Subscribe on Substack →
+    </a>
   </div>
   <script>document.getElementById('insights-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});</script>
 
@@ -627,10 +677,13 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
       <!-- Substack articles: dynamically fetched -->
       <div id="substack-articles" class="loading">
-  <!-- Skeleton shown while fetching -->
-  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
-  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
-  <div class="sk-post"><div class="sk-line sk-w40"></div><div class="sk-line sk-w80" style="height:20px;margin-bottom:14px;"></div><div class="sk-line sk-thumb"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w60"></div></div>
+  <!-- Skeleton tiles while fetching -->
+  <div class="sk-tile sk-tile-feat"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:16px;margin-bottom:8px;"></div><div class="sk-line sk-w70" style="height:16px;margin-bottom:14px;"></div><div class="sk-line sk-w80" style="height:10px;margin-bottom:6px;"></div><div class="sk-line sk-w60" style="height:10px;"></div></div>
+  <div class="sk-tile"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:14px;margin-bottom:6px;"></div><div class="sk-line sk-w70" style="height:14px;margin-bottom:12px;"></div><div class="sk-line sk-w50" style="height:10px;"></div></div>
+  <div class="sk-tile"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:14px;margin-bottom:6px;"></div><div class="sk-line sk-w70" style="height:14px;margin-bottom:12px;"></div><div class="sk-line sk-w50" style="height:10px;"></div></div>
+  <div class="sk-tile"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:14px;margin-bottom:6px;"></div><div class="sk-line sk-w70" style="height:14px;margin-bottom:12px;"></div><div class="sk-line sk-w50" style="height:10px;"></div></div>
+  <div class="sk-tile"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:14px;margin-bottom:6px;"></div><div class="sk-line sk-w50" style="height:10px;"></div></div>
+  <div class="sk-tile"><div class="sk-line sk-w30" style="height:10px;margin-bottom:10px;"></div><div class="sk-line sk-w90" style="height:14px;margin-bottom:6px;"></div><div class="sk-line sk-w50" style="height:10px;"></div></div>
 </div>
 
 <script data-cfasync="false">
@@ -703,20 +756,17 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     var div = document.createElement('div');
     div.className = 'blog-post';
 
-    /* ── thumbnail (full-bleed top of card) ── */
-    var thumbDiv = document.createElement('div');
+    /* ── thumbnail: ONLY when a real cover image URL exists ── */
     if(thumb){
+      var thumbDiv = document.createElement('div');
       thumbDiv.className = 'post-thumb';
-      var img = document.createElement('img');
-      img.src = thumb; img.alt = title; img.loading = 'lazy';
-      img.setAttribute('data-grad', grad);
-      img.setAttribute('onerror', '_gcThumbFallback(this,this.getAttribute("data-grad"))');
-      thumbDiv.appendChild(img);
-    } else {
-      thumbDiv.className = 'post-thumb-placeholder ' + grad;
-      thumbDiv.innerHTML = '<span class="pt-badge">GCCPROs</span><span class="pt-label">' + title + '</span>';
+      var imgEl = document.createElement('img');
+      imgEl.src = thumb; imgEl.alt = title; imgEl.loading = 'lazy';
+      /* If image fails to load, remove the thumb div entirely */
+      imgEl.onerror = function(){ this.parentElement.remove(); };
+      thumbDiv.appendChild(imgEl);
+      div.appendChild(thumbDiv);
     }
-    div.appendChild(thumbDiv);
 
     /* ── card body ── */
     var body = document.createElement('div');
@@ -724,7 +774,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
     var typeDiv = document.createElement('div');
     typeDiv.className = 'post-type';
-    typeDiv.textContent = isFeat ? '★ Featured' : 'GCC Research';
+    typeDiv.textContent = isFeat ? '★ Latest' : 'GCC Research';
     body.appendChild(typeDiv);
 
     var h3 = document.createElement('h3');
@@ -743,13 +793,13 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     var metaDiv = document.createElement('div');
     metaDiv.className = 'post-meta';
     metaDiv.innerHTML = '<span class="post-author">Shammi Prabhakar Singh</span>' +
-      (date ? '<span>&middot; ' + date + '</span>' : '');
+      (date ? '<span style="margin-left:4px;">&middot; ' + date + '</span>' : '');
     body.appendChild(metaDiv);
 
     var readMore = document.createElement('a');
     readMore.href = link; readMore.target = '_blank'; readMore.rel = 'noopener';
     readMore.className = 'read-more';
-    readMore.textContent = 'Read on Substack →';
+    readMore.textContent = 'Read full article →';
     body.appendChild(readMore);
 
     div.appendChild(body);
