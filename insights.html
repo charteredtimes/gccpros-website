@@ -595,14 +595,22 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
 <script data-cfasync="false">
 (function(){
-  var RSS = 'https://shammip.substack.com/feed';
-  var PROXIES = [
-    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS) + '&count=10',
-    'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS),
-    'https://corsproxy.io/?' + encodeURIComponent(RSS)
+  /* ── Config ─────────────────────────────────────────────────── */
+  var PUB      = 'shammip';                         // Substack subdomain
+  var BASE_URL = 'https://' + PUB + '.substack.com';
+  var RSS      = BASE_URL + '/feed';
+  /* Substack's own public JSON API — works without any CORS proxy,
+     always returns the latest published posts in one round-trip.    */
+  var API_URL  = BASE_URL + '/api/v1/posts/?limit=12&offset=0';
+  /* Proxy chain kept only as deep fallbacks */
+  var PROXIES  = [
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS) + '&count=12',
+    'https://api.allorigins.win/get?url='            + encodeURIComponent(RSS),
+    'https://corsproxy.io/?'                         + encodeURIComponent(RSS)
   ];
   var GRADS = ['pt-grad-1','pt-grad-2','pt-grad-3'];
 
+  /* ── Helpers ─────────────────────────────────────────────────── */
   function fmtDate(str){
     try{ return new Date(str).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }
     catch(e){ return ''; }
@@ -614,23 +622,38 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
                .replace(/&#39;/g,"'").trim() : '';
   }
   function extractThumb(item){
-    if(item.thumbnail && item.thumbnail !== 'self') return item.thumbnail;
-    if(item.enclosure && item.enclosure.link) return item.enclosure.link;
+    if(item.cover_image)                              return item.cover_image;
+    if(item.thumbnail && item.thumbnail !== 'self')   return item.thumbnail;
+    if(item.enclosure && item.enclosure.link)         return item.enclosure.link;
     var m = (item.content || item.description || '').match(/<img[^>]+src=["']([^"']+)["']/i);
     return m ? m[1] : '';
   }
 
-  // Named global — no inline quote escaping needed in onerror attr
+  /* Normalise a Substack API post object into the same shape used
+     by the RSS path so makeCard() can handle both transparently.   */
+  function normaliseApiPost(p){
+    return {
+      title:       p.title       || '',
+      link:        p.canonical_url || (BASE_URL + '/p/' + (p.slug || '')),
+      pubDate:     p.post_date   || '',
+      description: p.subtitle    || p.description || '',
+      thumbnail:   p.cover_image || '',
+      content:     ''
+    };
+  }
+
+  /* Named global — fallback thumbnail handler referenced in onerror */
   window._gcThumbFallback = function(img, grad){
     var wrap = img.parentElement;
     wrap.className = 'post-thumb-placeholder ' + grad;
     wrap.innerHTML = '<span class="pt-badge">GCCPROs Research</span>';
   };
 
+  /* ── Card builder ────────────────────────────────────────────── */
   function makeCard(item, i){
     var isFeat  = i === 0;
     var title   = stripHtml(item.title || 'Untitled');
-    var link    = item.link || item.url || 'https://shammip.substack.com';
+    var link    = item.link || item.url || BASE_URL;
     var date    = fmtDate(item.pubDate || item.published || '');
     var thumb   = extractThumb(item);
     var grad    = GRADS[i % 3];
@@ -689,6 +712,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     return div;
   }
 
+  /* ── Render / fallback ───────────────────────────────────────── */
   function renderArticles(items){
     var container = document.getElementById('substack-articles');
     container.classList.remove('loading');
@@ -701,7 +725,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     var c = document.getElementById('substack-articles');
     c.classList.remove('loading');
     c.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted);">' +
-      '<p>Visit <a href="https://shammip.substack.com" target="_blank" rel="noopener" ' +
+      '<p>Visit <a href="' + BASE_URL + '" target="_blank" rel="noopener" ' +
       'style="color:var(--gold);font-weight:600;">GCCPROs on Substack</a> for all articles.</p></div>';
   }
 
@@ -730,6 +754,24 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
   function sig(ms){ return AbortSignal.timeout ? AbortSignal.timeout(ms) : undefined; }
 
+  /* ── Fetch chain: Substack API → rss2json → allorigins → corsproxy ── */
+
+  /* 1. Substack public JSON API — direct, no proxy, fastest & most reliable */
+  function trySubstackApi(){
+    fetch(API_URL, {signal: sig(8000)})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(data){
+        /* Response is an array of post objects */
+        var posts = Array.isArray(data) ? data : (data.posts || []);
+        /* Keep only public newsletter posts (exclude podcasts, videos, etc.) */
+        posts = posts.filter(function(p){ return p.type === 'newsletter' || !p.type; });
+        if(!posts.length) throw 0;
+        renderArticles(posts.map(normaliseApiPost));
+      })
+      .catch(tryRss2Json);   /* graceful fallback */
+  }
+
+  /* 2. rss2json (free tier — 100 req/day; kept as first RSS fallback) */
   function tryRss2Json(){
     fetch(PROXIES[0], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
@@ -739,6 +781,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(tryAllorigins);
   }
 
+  /* 3. allorigins raw XML proxy */
   function tryAllorigins(){
     fetch(PROXIES[1], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
@@ -749,6 +792,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(tryCorsproxy);
   }
 
+  /* 4. corsproxy.io */
   function tryCorsproxy(){
     fetch(PROXIES[2], {signal: sig(8000)})
       .then(function(r){ if(!r.ok) throw 0; return r.text(); })
@@ -759,7 +803,8 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }).catch(showFallback);
   }
 
-  tryRss2Json();
+  /* Kick off with the Substack API — fastest path, no external dependency */
+  trySubstackApi();
 })();
 </script>
 
