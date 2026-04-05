@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-05-v6">
+    <meta name="version" content="2026-04-06-v7">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -5111,7 +5111,10 @@
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No active opportunities found right now. Check back soon!</p>';
                 return;
             }
-            // Build cards WITHOUT buttons first
+            // Build cards with <a> tag Apply buttons (links are the most clickable HTML element)
+            // Three click paths: 1) data-apply-job attribute caught by isolated script
+            //                     2) href=#apply-JOBID caught by hashchange listener
+            //                     3) programmatic onclick added after render
             container.innerHTML = displayJobs.map((job, idx) => `
                 <div class="recommended-job-card" data-card-index="${idx}">
                     <div class="rec-job-header">
@@ -5127,32 +5130,19 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
+                    <a href="#apply-${job.id}" class="rec-job-apply-btn" data-apply-job="${job.id}" data-job-id="${job.id}" style="display:block;text-align:center;text-decoration:none;color:white;">Apply Now</a>
                 </div>
             `).join('');
 
-            // Now programmatically create and append Apply buttons to each card
-            // This guarantees .onclick is bound as a JS property, not parsed from HTML
-            container.querySelectorAll('.recommended-job-card').forEach(card => {
-                const idx = parseInt(card.getAttribute('data-card-index'));
-                const job = displayJobs[idx];
-                if (!job) return;
-
-                const btn = document.createElement('button');
-                btn.className = 'rec-job-apply-btn';
-                btn.setAttribute('data-job-id', job.id);
-                btn.textContent = 'Apply Now';
-                btn.style.cursor = 'pointer';
-
-                // Direct .onclick property — most reliable, cannot be blocked by CSP or innerHTML parsing issues
+            // ALSO attach programmatic onclick as third layer
+            container.querySelectorAll('.rec-job-apply-btn').forEach(function(btn) {
                 btn.onclick = function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    console.log('[GCCPROs] Apply btn onclick property fired, jobId:', job.id);
-                    applyForJob(job.id);
+                    var jid = this.getAttribute('data-apply-job') || this.getAttribute('data-job-id');
+                    console.log('[GCCPROs] Apply <a> onclick fired, jobId:', jid);
+                    applyForJob(jid);
                     return false;
                 };
-
-                card.appendChild(btn);
             });
 
             console.log('[GCCPROs] renderRecommendedJobs complete. Buttons:', container.querySelectorAll('.rec-job-apply-btn').length);
@@ -5387,32 +5377,63 @@
             }, 3000);
         }
 
-        // Global delegated click handler for Apply Now buttons — registered immediately (not inside DOMContentLoaded)
-        // Uses capture phase to ensure it fires before any other handler can block it
-        document.addEventListener('click', function(e) {
-            const applyBtn = e.target.closest('.rec-job-apply-btn');
-            if (applyBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                const jobId = applyBtn.getAttribute('data-job-id');
-                console.log('[GCCPROs] Apply button clicked (delegated), jobId:', jobId);
-                if (typeof applyForJob === 'function') {
-                    applyForJob(jobId);
-                } else {
-                    console.error('[GCCPROs] applyForJob function not found!');
-                    alert('Application system loading... please try again in a moment.');
-                }
-            }
-        }, true); // <-- capture phase = fires FIRST before any other handlers
-
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('GCCPROs landing page loaded v6');
+            console.log('GCCPROs landing page loaded v7');
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 showUserConsole();
             }
         });
+    </script>
+
+    <!-- ISOLATED Apply Button Handler — separate script so main script errors can't break it -->
+    <script>
+    (function() {
+        // Click spy: log EVERY click target in the console area so we can diagnose
+        document.addEventListener('click', function(e) {
+            var el = e.target;
+            var path = el.tagName + (el.className ? '.' + String(el.className).split(' ').join('.') : '');
+            // Only log clicks inside the user console area
+            if (el.closest && el.closest('.user-console')) {
+                console.log('[CLICK-SPY] Clicked:', path, '| Tag:', el.tagName, '| Text:', (el.textContent || '').substring(0, 30));
+            }
+            // Handle Apply Now — check both the element and its parents
+            var applyEl = null;
+            if (el.closest) {
+                applyEl = el.closest('[data-apply-job]') || el.closest('.rec-job-apply-btn');
+            }
+            if (!applyEl && el.getAttribute && el.getAttribute('data-apply-job')) {
+                applyEl = el;
+            }
+            if (!applyEl && el.parentElement && el.parentElement.getAttribute && el.parentElement.getAttribute('data-apply-job')) {
+                applyEl = el.parentElement;
+            }
+            if (applyEl) {
+                e.preventDefault();
+                var jobId = applyEl.getAttribute('data-apply-job') || applyEl.getAttribute('data-job-id');
+                console.log('[GCCPROs] Apply handler fired! jobId:', jobId);
+                if (typeof applyForJob === 'function') {
+                    applyForJob(jobId);
+                } else {
+                    alert('applyForJob not ready. jobId=' + jobId);
+                }
+            }
+        }, false);
+
+        // Also listen for hashchange as ultimate fallback (card links use #apply-JOBID)
+        window.addEventListener('hashchange', function() {
+            var hash = location.hash;
+            if (hash.startsWith('#apply-')) {
+                var jobId = hash.replace('#apply-', '');
+                console.log('[GCCPROs] Hash-based apply triggered, jobId:', jobId);
+                location.hash = '';
+                if (typeof applyForJob === 'function') {
+                    applyForJob(jobId);
+                }
+            }
+        });
+    })();
     </script>
 </body>
 </html>
