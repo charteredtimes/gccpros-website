@@ -813,6 +813,92 @@
             border: 1.5px solid var(--gold);
         }
 
+        /* Phone Input with Country Code */
+        .phone-input-group {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .phone-input-group:focus-within {
+            border-color: var(--brand-blue);
+        }
+        .country-code-select {
+            padding: 10px 8px;
+            border: none;
+            background: #F8FAFC;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: var(--ink);
+            cursor: pointer;
+            min-width: 90px;
+            border-right: 1px solid var(--border);
+            outline: none;
+        }
+        .phone-input-group input[type="tel"] {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            min-width: 0;
+        }
+
+        /* Validation error styles */
+        .field-error {
+            color: #DC2626;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+        .field-error.show {
+            display: block;
+        }
+        .input-error {
+            border-color: #DC2626 !important;
+        }
+
+        /* CAPTCHA styles */
+        .captcha-group {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .captcha-question {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+        }
+        .captcha-input {
+            width: 70px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            text-align: center;
+            font-family: inherit;
+        }
+        .captcha-refresh {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--muted);
+            padding: 4px;
+        }
+        .captcha-refresh:hover {
+            color: var(--brand-blue);
+        }
+
         /* Referral Coin Styles */
         .referral-coin-badge {
             background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
@@ -2274,17 +2360,50 @@
 
                 <div class="form-group">
                     <label>Phone <span class="required">*</span></label>
-                    <input type="tel" name="phone" placeholder="+91 XXXXXXXXXX" required>
+                    <div class="phone-input-group">
+                        <select name="phoneCode" class="country-code-select">
+                            <option value="+91" selected>+91 IN</option>
+                            <option value="+1">+1 US</option>
+                            <option value="+44">+44 UK</option>
+                            <option value="+971">+971 UAE</option>
+                            <option value="+65">+65 SG</option>
+                            <option value="+49">+49 DE</option>
+                            <option value="+61">+61 AU</option>
+                            <option value="+81">+81 JP</option>
+                            <option value="+86">+86 CN</option>
+                            <option value="+33">+33 FR</option>
+                            <option value="+31">+31 NL</option>
+                            <option value="+46">+46 SE</option>
+                            <option value="+41">+41 CH</option>
+                            <option value="+353">+353 IE</option>
+                            <option value="+60">+60 MY</option>
+                            <option value="+63">+63 PH</option>
+                        </select>
+                        <input type="tel" name="phone" placeholder="10-digit number" required pattern="[0-9]{10,15}" title="Enter at least 10 digits">
+                    </div>
+                    <div class="field-error" id="jsPhoneError">Phone number must be at least 10 digits</div>
                 </div>
 
                 <div class="form-group">
                     <label>Alternate Phone</label>
-                    <input type="tel" name="altPhone" placeholder="+91 XXXXXXXXXX">
+                    <div class="phone-input-group">
+                        <select name="altPhoneCode" class="country-code-select">
+                            <option value="+91" selected>+91 IN</option>
+                            <option value="+1">+1 US</option>
+                            <option value="+44">+44 UK</option>
+                            <option value="+971">+971 UAE</option>
+                            <option value="+65">+65 SG</option>
+                            <option value="+49">+49 DE</option>
+                            <option value="+61">+61 AU</option>
+                        </select>
+                        <input type="tel" name="altPhone" placeholder="10-digit number (optional)" pattern="[0-9]{10,15}">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>LinkedIn Profile <span class="required">*</span></label>
-                    <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                    <input type="url" name="linkedin" placeholder="https://www.linkedin.com/in/your-profile" required pattern="https?://(www\.)?linkedin\.com/in/.+" title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
+                    <div class="field-error" id="jsLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                 </div>
 
                 <div class="form-group">
@@ -2334,13 +2453,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Current CTC <span class="required">*</span></label>
-                    <input type="text" name="currentCTC" placeholder="e.g., ₹50,00,000" required>
+                    <label>Current CTC (LPA) <span class="required">*</span></label>
+                    <input type="number" name="currentCTC" placeholder="e.g. 15" min="0" step="0.1" required>
+                    <span style="font-size:0.75rem; color:var(--muted);">Enter annual salary in Lakhs Per Annum (LPA)</span>
                 </div>
 
                 <div class="form-group">
-                    <label>Expected CTC <span class="required">*</span></label>
-                    <input type="text" name="expectedCTC" placeholder="e.g., ₹60,00,000" required>
+                    <label>Expected CTC (LPA) <span class="required">*</span></label>
+                    <input type="number" name="expectedCTC" placeholder="e.g. 20" min="0" step="0.1" required>
+                    <span style="font-size:0.75rem; color:var(--muted);">Enter expected annual salary in Lakhs Per Annum (LPA)</span>
                 </div>
 
                 <div class="form-group">
@@ -2351,6 +2472,20 @@
                 <div class="form-group">
                     <label>Reason for looking for a change <span class="required">*</span></label>
                     <textarea name="reasonForChange" required></textarea>
+                </div>
+
+                <!-- Honeypot field (hidden from humans, bots fill it) -->
+                <div style="position:absolute;left:-9999px;"><input type="text" name="website_url" tabindex="-1" autocomplete="off"></div>
+
+                <div class="form-group">
+                    <label>Verify you're human <span class="required">*</span></label>
+                    <div class="captcha-group">
+                        <span class="captcha-question" id="jsCaptchaQ"></span>
+                        <span style="font-weight:600;">=</span>
+                        <input type="number" class="captcha-input" id="jsCaptchaA" required>
+                        <button type="button" class="captcha-refresh" onclick="generateCaptcha('js')" title="New question">↻</button>
+                    </div>
+                    <div class="field-error" id="jsCaptchaError">Incorrect answer, please try again</div>
                 </div>
 
                 <div class="form-group">
@@ -2453,17 +2588,39 @@
 
                     <div class="form-group">
                         <label>Phone <span class="required">*</span></label>
-                        <input type="tel" name="phone" placeholder="+91 XXXXXXXXXX" required>
+                        <div class="phone-input-group">
+                            <select name="phoneCode" class="country-code-select">
+                                <option value="+91" selected>+91 IN</option>
+                                <option value="+1">+1 US</option>
+                                <option value="+44">+44 UK</option>
+                                <option value="+971">+971 UAE</option>
+                                <option value="+65">+65 SG</option>
+                                <option value="+49">+49 DE</option>
+                                <option value="+61">+61 AU</option>
+                            </select>
+                            <input type="tel" name="phone" placeholder="10-digit number" required pattern="[0-9]{10,15}" title="Enter at least 10 digits">
+                        </div>
+                        <div class="field-error" id="refPhoneError">Phone number must be at least 10 digits</div>
                     </div>
 
                     <div class="form-group">
                         <label>Alternate Phone</label>
-                        <input type="tel" name="altPhone" placeholder="+91 XXXXXXXXXX">
+                        <div class="phone-input-group">
+                            <select name="altPhoneCode" class="country-code-select">
+                                <option value="+91" selected>+91 IN</option>
+                                <option value="+1">+1 US</option>
+                                <option value="+44">+44 UK</option>
+                                <option value="+971">+971 UAE</option>
+                                <option value="+65">+65 SG</option>
+                            </select>
+                            <input type="tel" name="altPhone" placeholder="10-digit number (optional)" pattern="[0-9]{10,15}">
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label>LinkedIn Profile <span class="required">*</span></label>
-                        <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                        <input type="url" name="linkedin" placeholder="https://www.linkedin.com/in/your-profile" required pattern="https?://(www\.)?linkedin\.com/in/.+" title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
+                        <div class="field-error" id="refLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                     </div>
 
                     <div class="form-group">
@@ -2648,6 +2805,20 @@
                             <label for="refAgreeAgr">I understand that a digital agreement will be sent for signature after admin review <span class="required">*</span></label>
                         </div>
                     </div>
+                </div>
+
+                <!-- Honeypot field (hidden from humans, bots fill it) -->
+                <div style="position:absolute;left:-9999px;"><input type="text" name="company_website" tabindex="-1" autocomplete="off"></div>
+
+                <div class="form-group" id="refCaptchaGroup" style="display:none;">
+                    <label>Verify you're human <span class="required">*</span></label>
+                    <div class="captcha-group">
+                        <span class="captcha-question" id="refCaptchaQ"></span>
+                        <span style="font-weight:600;">=</span>
+                        <input type="number" class="captcha-input" id="refCaptchaA">
+                        <button type="button" class="captcha-refresh" onclick="generateCaptcha('ref')" title="New question">↻</button>
+                    </div>
+                    <div class="field-error" id="refCaptchaError">Incorrect answer, please try again</div>
                 </div>
 
                 <!-- Form Navigation -->
@@ -3167,6 +3338,81 @@
         let currentReferrerStep = 0;
         let currentUser = null;
 
+        // ═══════════ CAPTCHA System ═══════════
+        const captchaData = { js: {}, ref: {} };
+
+        function generateCaptcha(prefix) {
+            const ops = ['+', '-', '×'];
+            const op = ops[Math.floor(Math.random() * ops.length)];
+            let a, b, answer;
+            if (op === '+') {
+                a = Math.floor(Math.random() * 20) + 1;
+                b = Math.floor(Math.random() * 20) + 1;
+                answer = a + b;
+            } else if (op === '-') {
+                a = Math.floor(Math.random() * 20) + 5;
+                b = Math.floor(Math.random() * a) + 1;
+                answer = a - b;
+            } else {
+                a = Math.floor(Math.random() * 10) + 1;
+                b = Math.floor(Math.random() * 10) + 1;
+                answer = a * b;
+            }
+            captchaData[prefix] = { answer };
+            const qEl = document.getElementById(prefix + 'CaptchaQ');
+            const aEl = document.getElementById(prefix + 'CaptchaA');
+            if (qEl) qEl.textContent = a + ' ' + op + ' ' + b;
+            if (aEl) aEl.value = '';
+        }
+
+        function verifyCaptcha(prefix) {
+            const input = document.getElementById(prefix + 'CaptchaA');
+            const errorEl = document.getElementById(prefix + 'CaptchaError');
+            if (!input || !captchaData[prefix].answer) return false;
+            const isCorrect = parseInt(input.value) === captchaData[prefix].answer;
+            if (errorEl) errorEl.classList.toggle('show', !isCorrect);
+            return isCorrect;
+        }
+
+        // Initialize CAPTCHAs on load
+        document.addEventListener('DOMContentLoaded', () => {
+            generateCaptcha('js');
+            generateCaptcha('ref');
+        });
+
+        // ═══════════ Form Validation Helpers ═══════════
+        function validatePhone(input, errorId) {
+            const digits = input.value.replace(/\D/g, '');
+            const errorEl = document.getElementById(errorId);
+            if (digits.length < 10) {
+                if (errorEl) errorEl.classList.add('show');
+                input.classList.add('input-error');
+                return false;
+            }
+            if (errorEl) errorEl.classList.remove('show');
+            input.classList.remove('input-error');
+            return true;
+        }
+
+        function validateLinkedIn(input, errorId) {
+            const url = input.value.trim();
+            const pattern = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i;
+            const errorEl = document.getElementById(errorId);
+            if (!pattern.test(url)) {
+                if (errorEl) errorEl.classList.add('show');
+                input.classList.add('input-error');
+                return false;
+            }
+            if (errorEl) errorEl.classList.remove('show');
+            input.classList.remove('input-error');
+            return true;
+        }
+
+        function checkHoneypot(formEl) {
+            const hp = formEl.querySelector('[name="website_url"]') || formEl.querySelector('[name="company_website"]');
+            return hp && hp.value.length > 0;
+        }
+
         function getJobsForUserDomain() {
             if (!currentUser || !currentUser.domain) return JOBS_DATA;
             return JOBS_DATA.filter(j => j.domain === currentUser.domain || j.domain === 'Cross-Functional');
@@ -3233,12 +3479,6 @@
             const email = document.getElementById(emailField).value;
             if (!email || !email.includes('@')) {
                 showToast('Please enter a valid email', 'error');
-                return;
-            }
-
-            // Check if email is already registered
-            if (registeredEmails.has(email.toLowerCase().trim())) {
-                showToast('This email is already registered. Please login instead.', 'error');
                 return;
             }
 
@@ -3324,6 +3564,13 @@
 
             document.getElementById('refPrevBtn').style.display = currentReferrerStep === 0 ? 'none' : 'block';
 
+            // Show/hide CAPTCHA on last step
+            const captchaGroup = document.getElementById('refCaptchaGroup');
+            if (captchaGroup) {
+                captchaGroup.style.display = (currentReferrerStep === maxSteps - 1) ? 'block' : 'none';
+                if (currentReferrerStep === maxSteps - 1) generateCaptcha('ref');
+            }
+
             if (currentReferrerStep === maxSteps - 1) {
                 document.getElementById('refNextBtn').style.display = 'none';
                 form.querySelector('.form-navigation').innerHTML = `
@@ -3346,17 +3593,44 @@
             }
 
             const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
 
-            // Check for duplicate email
-            if (registeredEmails.has(data.email.toLowerCase().trim())) {
-                showToast('This email is already registered. Please login instead.', 'error');
+            // Honeypot check
+            if (checkHoneypot(form)) { return; }
+
+            // Phone validation
+            const phoneInput = form.querySelector('[name="phone"]');
+            if (!validatePhone(phoneInput, 'jsPhoneError')) {
+                showToast('Please enter a valid phone number (min 10 digits)', 'error');
+                phoneInput.focus();
                 return;
             }
 
+            // LinkedIn validation
+            const linkedinInput = form.querySelector('[name="linkedin"]');
+            if (!validateLinkedIn(linkedinInput, 'jsLinkedinError')) {
+                showToast('Please enter a valid LinkedIn profile URL (linkedin.com/in/...)', 'error');
+                linkedinInput.focus();
+                return;
+            }
+
+            // CAPTCHA validation
+            if (!verifyCaptcha('js')) {
+                showToast('Please solve the CAPTCHA correctly', 'error');
+                document.getElementById('jsCaptchaA').focus();
+                return;
+            }
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Combine phone code + number
+            data.phone = (data.phoneCode || '+91') + ' ' + data.phone;
+            if (data.altPhone) data.altPhone = (data.altPhoneCode || '+91') + ' ' + data.altPhone;
+            // Format CTC as LPA
+            if (data.currentCTC) data.currentCTC = data.currentCTC + ' LPA';
+            if (data.expectedCTC) data.expectedCTC = data.expectedCTC + ' LPA';
+
             data.action = 'submitApplication';
-            trackRegisteredEmail(data.email);
 
             console.log('Job Seeker Registration:', data);
 
@@ -3412,17 +3686,39 @@
             }
 
             const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
 
-            // Check for duplicate email
-            if (registeredEmails.has(data.email.toLowerCase().trim())) {
-                showToast('This email is already registered as a job seeker or partner. Please login instead.', 'error');
+            // Honeypot check
+            if (checkHoneypot(form)) { return; }
+
+            // Phone validation
+            const phoneInput = form.querySelector('[name="phone"]');
+            if (!validatePhone(phoneInput, 'refPhoneError')) {
+                showToast('Please enter a valid phone number (min 10 digits)', 'error');
                 return;
             }
 
+            // LinkedIn validation
+            const linkedinInput = form.querySelector('[name="linkedin"]');
+            if (!validateLinkedIn(linkedinInput, 'refLinkedinError')) {
+                showToast('Please enter a valid LinkedIn profile URL', 'error');
+                return;
+            }
+
+            // CAPTCHA validation
+            if (!verifyCaptcha('ref')) {
+                showToast('Please solve the CAPTCHA correctly', 'error');
+                document.getElementById('refCaptchaA').focus();
+                return;
+            }
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Combine phone code + number
+            data.phone = (data.phoneCode || '+91') + ' ' + data.phone;
+            if (data.altPhone) data.altPhone = (data.altPhoneCode || '+91') + ' ' + data.altPhone;
+
             data.action = 'registerReferrer';
-            trackRegisteredEmail(data.email);
 
             // Attach referral code if visitor came via a partner referral link
             const referredBy = sessionStorage.getItem('referredBy');
@@ -3668,8 +3964,6 @@
             })
             .then(res => res.json())
             .then(userInfo => {
-                trackRegisteredEmail(userInfo.email);
-
                 if (googleSignInType === 'login') {
                     // Login flow — go straight to dashboard
                     currentUser = {
@@ -3817,13 +4111,6 @@
         }
         checkReferralParam();
 
-        // Track registered emails to prevent duplicate invitations
-        const registeredEmails = new Set();
-
-        // Collect emails at registration time
-        function trackRegisteredEmail(email) {
-            if (email) registeredEmails.add(email.toLowerCase().trim());
-        }
 
         function showUserConsole() {
             if (currentUser) {
