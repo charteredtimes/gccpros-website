@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v13">
+    <meta name="version" content="2026-04-06-v14">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2612,6 +2612,19 @@
             </div>
             <form id="loginForm" onsubmit="submitLoginForm(event)">
                 <div class="form-group">
+                    <label style="margin-bottom:0.5rem;font-weight:600;">Login as</label>
+                    <div style="display:flex;gap:0;border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:0.25rem;">
+                        <label style="flex:1;text-align:center;padding:0.6rem 0.75rem;cursor:pointer;font-size:0.9rem;font-weight:600;background:var(--brand-blue);color:#fff;transition:all 0.2s;" id="loginTypeJS" onclick="selectLoginType('jobSeeker')">
+                            <input type="radio" name="loginType" value="jobSeeker" checked style="display:none;"> Job Seeker
+                        </label>
+                        <label style="flex:1;text-align:center;padding:0.6rem 0.75rem;cursor:pointer;font-size:0.9rem;font-weight:600;background:#f5f5f5;color:#555;transition:all 0.2s;" id="loginTypePartner" onclick="selectLoginType('referrer')">
+                            <input type="radio" name="loginType" value="referrer" style="display:none;"> Referral Partner
+                        </label>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);">Same email can have both a Job Seeker and Partner account</div>
+                </div>
+
+                <div class="form-group">
                     <label>Email <span class="required">*</span></label>
                     <input type="email" name="email" required>
                 </div>
@@ -3007,6 +3020,13 @@
                     <div class="form-group">
                         <label>Current Location <span class="required">*</span></label>
                         <input type="text" name="currentLocation" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload CV / Resume <span class="required">*</span></label>
+                        <input type="file" name="partnerCV" id="partnerCVInput" accept=".pdf,.doc,.docx" required>
+                        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">PDF or Word only, max 5 MB</div>
+                        <div class="field-error" id="partnerCVError" style="display:none;">Please upload a PDF or Word file under 5 MB</div>
                     </div>
 
                 </div>
@@ -3673,31 +3693,88 @@
                             <div class="profile-completeness-fill" id="profileCompletenessBar" style="width: 0%;"></div>
                         </div>
                     </div>
-                    <form id="profileForm" onsubmit="submitProfileForm(event)">
-                        <div class="form-group">
-                            <label>Full Name <span class="required">*</span></label>
-                            <input type="text" name="fullName" id="profileFullName" required>
+                    <form id="profileForm" onsubmit="submitProfileForm(event)" novalidate>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
+                            <div class="form-group">
+                                <label>Full Name <span class="required">*</span></label>
+                                <input type="text" name="fullName" id="profileFullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email <span class="required">*</span></label>
+                                <input type="email" name="email" id="profileEmail" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone <span class="required">*</span></label>
+                                <input type="tel" name="phone" id="profilePhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Company</label>
+                                <input type="text" name="currentCompany" id="profileCompany">
+                            </div>
+                            <div class="form-group">
+                                <label>Designation</label>
+                                <input type="text" name="designation" id="profileDesignation">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" name="location" id="profileLocation">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Email <span class="required">*</span></label>
-                            <input type="email" name="email" id="profileEmail" disabled>
+
+                        <!-- Partner-specific fields (hidden for job seekers) -->
+                        <div id="partnerProfileFields" style="display:none;">
+                            <h3 style="margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--border);">Partner Details</h3>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
+                                <div class="form-group">
+                                    <label>Primary Domain</label>
+                                    <input type="text" id="profileDomain" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Total Experience</label>
+                                    <input type="text" id="profileExperience" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Current CTC</label>
+                                    <input type="text" id="profileCTC" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>LinkedIn</label>
+                                    <input type="text" id="profileLinkedin" disabled style="background:#F3F4F6;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Phone <span class="required">*</span></label>
-                            <input type="tel" name="phone" id="profilePhone" required>
+
+                        <!-- Job Seeker-specific fields (hidden for partners) -->
+                        <div id="jobSeekerProfileFields" style="display:none;">
+                            <h3 style="margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--border);">Career Details</h3>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
+                                <div class="form-group">
+                                    <label>Domain</label>
+                                    <input type="text" id="profileJSDomain" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Experience</label>
+                                    <input type="text" id="profileJSExperience" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Current CTC</label>
+                                    <input type="text" id="profileJSCurrentCTC" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Expected CTC</label>
+                                    <input type="text" id="profileJSExpectedCTC" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Notice Period</label>
+                                    <input type="text" id="profileJSNoticePeriod" disabled style="background:#F3F4F6;">
+                                </div>
+                                <div class="form-group">
+                                    <label>LinkedIn</label>
+                                    <input type="text" id="profileJSLinkedin" disabled style="background:#F3F4F6;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Current Company</label>
-                            <input type="text" name="currentCompany" id="profileCompany">
-                        </div>
-                        <div class="form-group">
-                            <label>Designation</label>
-                            <input type="text" name="designation" id="profileDesignation">
-                        </div>
-                        <div class="form-group">
-                            <label>Location</label>
-                            <input type="text" name="location" id="profileLocation">
-                        </div>
+
                         <button type="submit" class="form-submit-btn">Save Changes</button>
                     </form>
                 </div>
@@ -3748,38 +3825,32 @@
 
                 <!-- Compliance (Agreement + KYC) Tab -->
                 <div id="complianceTab" class="console-tab" style="display:none;">
-                    <h2 style="margin-bottom:1.5rem;">Agreement & KYC Verification</h2>
+                    <h2 style="margin-bottom:1.5rem;">KYC & Agreement</h2>
 
-                    <!-- Agreement Section -->
+                    <!-- Step 1: KYC Section -->
                     <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                            <h3 style="margin:0;">Referral Partner Agreement</h3>
-                            <span id="agreementStatusTag" style="padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Pending Signature</span>
-                        </div>
-                        <p style="font-size:0.9rem;color:#555;line-height:1.6;">Please review and digitally sign the Referral Partner Agreement. Your referral account will not be activated until the agreement is signed.</p>
-                        <div style="margin-top:1rem;">
-                            <button class="form-submit-btn" id="signAgreementBtn" onclick="showToast('Agreement will be sent to your registered email for e-signature.','info')" style="background:var(--brand-blue);">Request Agreement for Signature</button>
-                        </div>
-                    </div>
-
-                    <!-- KYC Section -->
-                    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                            <h3 style="margin:0;">KYC Verification</h3>
+                            <h3 style="margin:0;">Step 1 — KYC Verification</h3>
                             <span id="kycStatusTag" style="padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Incomplete</span>
                         </div>
-                        <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1rem;">Complete KYC to enable incentive payouts. All fields are mandatory.</p>
+                        <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1rem;">Complete KYC to enable incentive payouts and generate your personalised agreement. All fields are mandatory.</p>
 
-                        <form id="kycForm" onsubmit="submitKYCForm(event)">
-                            <div class="form-group">
-                                <label>PAN Number <span class="required">*</span></label>
-                                <input type="text" name="panNumber" id="kycPAN" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Valid PAN format: 5 letters, 4 digits, 1 letter" required style="text-transform:uppercase;">
-                                <div class="field-error" id="panError" style="display:none;">PAN must be in format ABCDE1234F</div>
+                        <form id="kycForm" onsubmit="submitKYCForm(event)" novalidate>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
+                                <div class="form-group">
+                                    <label>PAN Number <span class="required">*</span></label>
+                                    <input type="text" name="panNumber" id="kycPAN" placeholder="ABCDE1234F" style="text-transform:uppercase;">
+                                    <div class="field-error" id="panError" style="display:none;">PAN must be in format ABCDE1234F</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Name as per PAN <span class="required">*</span></label>
+                                    <input type="text" name="panName" id="kycPANName" placeholder="Full name as on PAN card">
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Address Proof <span class="required">*</span></label>
-                                <select name="addressProofType" required>
+                                <label>Address Proof Type <span class="required">*</span></label>
+                                <select name="addressProofType" id="kycAddrType">
                                     <option value="">Select document type</option>
                                     <option value="Aadhaar Card">Aadhaar Card</option>
                                     <option value="Passport">Passport</option>
@@ -3790,35 +3861,58 @@
                             </div>
                             <div class="form-group">
                                 <label>Upload Address Proof (PDF only, max 5MB) <span class="required">*</span></label>
-                                <input type="file" name="addressProofFile" accept=".pdf" required>
+                                <input type="file" name="addressProofFile" id="kycAddrFile" accept=".pdf">
                             </div>
 
                             <div style="background:#F8FAFC;border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin:1rem 0;">
                                 <h4 style="margin:0 0 1rem;">Bank Account Details (for incentive disbursement)</h4>
-                                <div class="form-group">
-                                    <label>Account Holder Name <span class="required">*</span></label>
-                                    <input type="text" name="accountHolderName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Bank Name <span class="required">*</span></label>
-                                    <input type="text" name="bankName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Account Number <span class="required">*</span></label>
-                                    <input type="text" name="accountNumber" required pattern="[0-9]{9,18}" title="Enter 9-18 digit account number">
-                                </div>
-                                <div class="form-group">
-                                    <label>IFSC Code <span class="required">*</span></label>
-                                    <input type="text" name="ifscCode" required pattern="[A-Z]{4}0[A-Z0-9]{6}" title="Valid IFSC format: 4 letters, 0, 6 alphanumeric" style="text-transform:uppercase;">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
+                                    <div class="form-group">
+                                        <label>Account Holder Name <span class="required">*</span></label>
+                                        <input type="text" name="accountHolderName" id="kycAccName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Bank Name <span class="required">*</span></label>
+                                        <input type="text" name="bankName" id="kycBankName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Account Number <span class="required">*</span></label>
+                                        <input type="text" name="accountNumber" id="kycAccNum">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>IFSC Code <span class="required">*</span></label>
+                                        <input type="text" name="ifscCode" id="kycIFSC" style="text-transform:uppercase;">
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Upload Cancelled Cheque (PDF/Image, max 5MB) <span class="required">*</span></label>
-                                    <input type="file" name="cancelledCheque" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <input type="file" name="cancelledCheque" id="kycCheque" accept=".pdf,.jpg,.jpeg,.png">
                                 </div>
                             </div>
 
                             <button type="submit" class="form-submit-btn" style="background:var(--green);color:#fff;">Submit KYC for Verification</button>
                         </form>
+                    </div>
+
+                    <!-- Step 2: Agreement Section (after KYC) -->
+                    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">Step 2 — Referral Partner Agreement</h3>
+                            <span id="agreementStatusTag" style="padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Pending</span>
+                        </div>
+                        <p style="font-size:0.9rem;color:#555;line-height:1.6;">Download the agreement, print it, sign at the designated place, and upload the signed copy. No payments will be initiated until the signed agreement is received.</p>
+
+                        <div style="display:flex;gap:1rem;margin:1.25rem 0;flex-wrap:wrap;">
+                            <button class="form-submit-btn" onclick="downloadAgreementDraft()" style="background:var(--brand-blue);flex:1;min-width:200px;">
+                                <span style="margin-right:0.4rem;">&#x1F4E5;</span> Download Agreement Draft
+                            </button>
+                        </div>
+
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Upload Signed Agreement (PDF only, max 5MB) <span class="required">*</span></label>
+                            <input type="file" name="signedAgreement" id="signedAgreementFile" accept=".pdf">
+                        </div>
+                        <button class="form-submit-btn" onclick="uploadSignedAgreement()" style="background:var(--gold);color:#fff;">Upload Signed Agreement</button>
                     </div>
                 </div>
 
@@ -4670,7 +4764,7 @@
             }, 3000);
         }
 
-        function submitReferrerForm(event) {
+        async function submitReferrerForm(event) {
             event.preventDefault();
 
             if (!otpVerified['referrer']) {
@@ -4697,6 +4791,27 @@
                 return;
             }
 
+            // CV validation
+            const cvInput = document.getElementById('partnerCVInput');
+            if (!cvInput || !cvInput.files || cvInput.files.length === 0) {
+                showToast('Please upload your CV (PDF or Word)', 'error');
+                document.getElementById('partnerCVError').style.display = 'block';
+                return;
+            }
+            const cvFile = cvInput.files[0];
+            const cvAllowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!cvAllowed.includes(cvFile.type)) {
+                showToast('CV must be PDF or Word format', 'error');
+                document.getElementById('partnerCVError').style.display = 'block';
+                return;
+            }
+            if (cvFile.size > 5 * 1024 * 1024) {
+                showToast('CV must be less than 5 MB', 'error');
+                document.getElementById('partnerCVError').style.display = 'block';
+                return;
+            }
+            document.getElementById('partnerCVError').style.display = 'none';
+
             // CAPTCHA validation
             if (!verifyCaptcha('ref')) {
                 showToast('Please solve the CAPTCHA correctly', 'error');
@@ -4704,8 +4819,20 @@
                 return;
             }
 
+            // Read CV file as base64
+            const cvBase64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.readAsDataURL(cvFile);
+            });
+
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+
+            // Attach CV data
+            data.cvBase64 = cvBase64;
+            data.cvFileName = cvFile.name;
+            data.cvMimeType = cvFile.type;
 
             // Combine phone code + number
             data.phone = (data.phoneCode || '+91') + ' ' + data.phone;
@@ -4771,24 +4898,72 @@
             }, 4000);
         }
 
-        function submitLoginForm(event) {
+        var selectedLoginType = 'jobSeeker';
+
+        function selectLoginType(type) {
+            selectedLoginType = type;
+            const jsLabel = document.getElementById('loginTypeJS');
+            const partnerLabel = document.getElementById('loginTypePartner');
+            if (type === 'jobSeeker') {
+                jsLabel.style.background = 'var(--brand-blue)';
+                jsLabel.style.color = '#fff';
+                partnerLabel.style.background = '#f5f5f5';
+                partnerLabel.style.color = '#555';
+            } else {
+                partnerLabel.style.background = 'var(--brand-blue)';
+                partnerLabel.style.color = '#fff';
+                jsLabel.style.background = '#f5f5f5';
+                jsLabel.style.color = '#555';
+            }
+        }
+
+        async function submitLoginForm(event) {
             event.preventDefault();
             const form = event.target;
             const email = form.querySelector('input[name="email"]').value;
             const password = form.querySelector('input[name="password"]').value;
+            const loginType = selectedLoginType;
 
-            currentUser = {
-                name: email.split('@')[0],
-                email: email,
-                type: 'jobSeeker',
-                domain: 'Technology'
-            };
+            // Check with backend if user exists as the selected type
+            showToast('Verifying credentials...', 'info');
+            try {
+                const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim()) + '&type=' + encodeURIComponent(loginType);
+                const res = await fetch(url);
+                const statusData = await res.json();
 
-            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-            closeModal('loginModal');
-            showUserConsole();
-            form.reset();
-            showToast('Logged in successfully!', 'success');
+                if (!statusData.exists) {
+                    const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Referral Partner';
+                    showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
+                    return;
+                }
+
+                currentUser = {
+                    name: statusData.name || email.split('@')[0],
+                    email: email,
+                    type: statusData.type || loginType,
+                    domain: statusData.domain || ''
+                };
+
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                closeModal('loginModal');
+                showUserConsole();
+                form.reset();
+                showToast('Logged in successfully!', 'success');
+            } catch (err) {
+                console.error('[GCCPROs] Login check error:', err);
+                // Fallback: allow login without backend verification
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email,
+                    type: loginType,
+                    domain: ''
+                };
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                closeModal('loginModal');
+                showUserConsole();
+                form.reset();
+                showToast('Logged in successfully!', 'success');
+            }
         }
 
         function submitPasswordForm(event) {
@@ -4866,10 +5041,17 @@
         function submitReferral(event) {
             event.preventDefault();
 
+            if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
+
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             data.action = 'submitReferral';
+            data.referrerEmail = currentUser.email;
+
+            // Get job title for the selected job
+            const selectedJob = JOBS_DATA.find(j => j.id === data.jobId);
+            if (selectedJob) data.jobTitle = selectedJob.title;
 
             // Validate required fields
             if (!data.jobId || !data.candidateName || !data.candidateEmail || !data.candidatePhone) {
@@ -4878,6 +5060,8 @@
             }
 
             console.log('Referral Submission:', data);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
 
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
@@ -4886,7 +5070,11 @@
                 redirect: 'follow'
             }).then(res => res.json()).then(result => {
                 console.log('Referral submission result:', result);
-                showToast('Referral submitted successfully!', 'success');
+                if (result.success) {
+                    showToast('Referral submitted successfully!', 'success');
+                } else {
+                    showToast(result.error || 'Referral submitted!', 'success');
+                }
                 form.reset();
                 closeModal('submitReferralModal');
             }).catch(err => {
@@ -4894,6 +5082,8 @@
                 showToast('Referral submitted successfully!', 'success');
                 form.reset();
                 closeModal('submitReferralModal');
+            }).finally(() => {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
             });
         }
 
@@ -4982,18 +5172,19 @@
                 }
 
                 if (googleSignInType === 'login') {
-                    // Login flow — fetch full profile from backend before showing dashboard
+                    // Login flow — use selected login type to fetch correct account
+                    var loginAs = selectedLoginType || 'jobSeeker';
                     currentUser = {
                         name: userInfo.name,
                         email: userInfo.email,
-                        type: 'jobSeeker',
+                        type: loginAs,
                         domain: 'Other'
                     };
-                    // Fetch profile data from backend so we get domain, phone, etc.
+                    // Fetch profile data from backend for the selected account type
                     try {
-                        const profileData = await checkUserStatus(userInfo.email);
+                        const profileData = await checkUserStatus(userInfo.email, loginAs);
                         if (profileData.exists) {
-                            currentUser.type = profileData.type || 'jobSeeker';
+                            currentUser.type = profileData.type || loginAs;
                             if (profileData.userId) currentUser.userId = profileData.userId;
                             if (profileData.domain) currentUser.domain = profileData.domain;
                             if (profileData.phone) currentUser.phone = profileData.phone;
@@ -5006,6 +5197,10 @@
                             if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
                             if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
+                        } else {
+                            var typeLabel = loginAs === 'jobSeeker' ? 'Job Seeker' : 'Referral Partner';
+                            showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
+                            return;
                         }
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
@@ -5202,9 +5397,10 @@
         checkReferralParam();
 
 
-        async function checkUserStatus(email) {
+        async function checkUserStatus(email, type) {
             try {
-                const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim());
+                var url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim());
+                if (type) url += '&type=' + encodeURIComponent(type);
                 const res = await fetch(url);
                 const data = await res.json();
                 return data; // { exists, status, type }
@@ -5227,7 +5423,7 @@
                 // Check approval status from backend
                 let statusData = { exists: false, status: 'unknown', type: null };
                 try {
-                    statusData = await checkUserStatus(currentUser.email);
+                    statusData = await checkUserStatus(currentUser.email, currentUser.type);
                     console.log('[GCCPROs] checkUserStatus response:', JSON.stringify(statusData));
                 } catch (e) {
                     console.log('[GCCPROs] checkUserStatus failed, continuing without backend data:', e);
@@ -5270,6 +5466,26 @@
                 if (currentUser.designation) document.getElementById('profileDesignation').value = currentUser.designation;
                 if (currentUser.location) document.getElementById('profileLocation').value = currentUser.location;
 
+                // Show type-specific profile fields
+                const isPartner = (currentUser.type === 'referrer' || userType === 'referrer');
+                if (isPartner) {
+                    document.getElementById('partnerProfileFields').style.display = 'block';
+                    document.getElementById('jobSeekerProfileFields').style.display = 'none';
+                    if (currentUser.domain) document.getElementById('profileDomain').value = currentUser.domain;
+                    if (currentUser.experience) document.getElementById('profileExperience').value = currentUser.experience;
+                    if (currentUser.currentCTC) document.getElementById('profileCTC').value = currentUser.currentCTC;
+                    if (currentUser.linkedin) document.getElementById('profileLinkedin').value = currentUser.linkedin;
+                } else {
+                    document.getElementById('partnerProfileFields').style.display = 'none';
+                    document.getElementById('jobSeekerProfileFields').style.display = 'block';
+                    if (currentUser.domain) document.getElementById('profileJSDomain').value = currentUser.domain;
+                    if (currentUser.experience) document.getElementById('profileJSExperience').value = currentUser.experience;
+                    if (currentUser.currentCTC) document.getElementById('profileJSCurrentCTC').value = currentUser.currentCTC;
+                    if (currentUser.expectedCTC) document.getElementById('profileJSExpectedCTC').value = currentUser.expectedCTC;
+                    if (currentUser.noticePeriod) document.getElementById('profileJSNoticePeriod').value = currentUser.noticePeriod;
+                    if (currentUser.linkedin) document.getElementById('profileJSLinkedin').value = currentUser.linkedin;
+                }
+
                 // Calculate and display profile completeness
                 updateProfileCompleteness();
 
@@ -5296,9 +5512,15 @@
                     document.getElementById('referrerStats').style.display = 'block';
                     document.getElementById('invitePartnerSection').style.display = 'block';
                     document.getElementById('recommendedJobsSection').style.display = 'none';
+                    // Store KYC and agreement status from backend
+                    if (statusData.kycStatus) currentUser.kycStatus = statusData.kycStatus;
+                    if (statusData.agreementStatus) currentUser.agreementStatus = statusData.agreementStatus;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateComplianceStatusBadges();
                     populateReferralJobDropdown();
                     renderOpportunityChannels();
                     renderPartnerJobs();
+                    loadPartnerEarnings();
                 }
             } catch (err) {
                 console.error('[GCCPROs] showUserConsole error:', err);
@@ -5771,6 +5993,47 @@
 
         // ═══════════ PARTNER DASHBOARD FUNCTIONS ═══════════
 
+        async function loadPartnerEarnings() {
+            if (!currentUser || !currentUser.email) return;
+            try {
+                const url = APPS_SCRIPT_URL + '?action=getPartnerEarnings&email=' + encodeURIComponent(currentUser.email);
+                const resp = await fetch(url);
+                const result = await resp.json();
+                const referrals = result.referrals || [];
+
+                let totalEarned = 0, pendingPayout = 0, paidOut = 0;
+                const tbody = document.getElementById('transactionsBody');
+                if (!tbody) return;
+
+                if (referrals.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No transactions yet. Submit referrals to start earning!</td></tr>';
+                } else {
+                    let rows = '';
+                    referrals.forEach(ref => {
+                        const amount = parseFloat(ref.referralAmount) || 0;
+                        const status = ref.status || 'Submitted';
+                        if (status === 'Paid') { totalEarned += amount; paidOut += amount; }
+                        else if (status === 'Placed' || status === 'Approved') { totalEarned += amount; pendingPayout += amount; }
+
+                        let statusBadge = '<span style="padding:3px 10px;border-radius:10px;font-size:0.75rem;font-weight:600;';
+                        if (status === 'Paid') statusBadge += 'background:rgba(16,185,129,0.12);color:#059669;">' + status + '</span>';
+                        else if (status === 'Placed' || status === 'Approved') statusBadge += 'background:rgba(245,158,11,0.12);color:#d97706;">' + status + '</span>';
+                        else if (status === 'Rejected') statusBadge += 'background:rgba(239,68,68,0.12);color:#dc2626;">' + status + '</span>';
+                        else statusBadge += 'background:rgba(59,130,246,0.12);color:#2563eb;">' + status + '</span>';
+
+                        rows += '<tr><td>' + (ref.date || '-') + '</td><td>' + (ref.jobTitle || 'Referral') + '</td><td>' + (ref.candidateName || '-') + '</td><td>' + (amount > 0 ? '₹' + amount.toLocaleString('en-IN') : '-') + '</td><td>' + statusBadge + '</td></tr>';
+                    });
+                    tbody.innerHTML = rows;
+                }
+
+                document.getElementById('earningTotal').textContent = '₹' + totalEarned.toLocaleString('en-IN');
+                document.getElementById('earningPending').textContent = '₹' + pendingPayout.toLocaleString('en-IN');
+                document.getElementById('earningPaid').textContent = '₹' + paidOut.toLocaleString('en-IN');
+            } catch (err) {
+                console.error('[GCCPROs] loadPartnerEarnings error:', err);
+            }
+        }
+
         function renderOpportunityChannels() {
             const container = document.getElementById('opportunityChannels');
             if (!container || !currentUser) return;
@@ -5858,8 +6121,10 @@
             showModal('submitReferralModal');
         }
 
-        function submitKYCForm(event) {
+        async function submitKYCForm(event) {
             event.preventDefault();
+            if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
+
             // Validate PAN format
             const pan = document.getElementById('kycPAN').value.toUpperCase().trim();
             const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
@@ -5870,9 +6135,282 @@
             }
             document.getElementById('panError').style.display = 'none';
 
-            showToast('KYC submitted for verification. You will be notified once approved.', 'success');
-            // In production, this would send data to backend
-            console.log('[GCCPROs] KYC form submitted');
+            const panName = document.getElementById('kycPANName').value.trim();
+            const addrType = document.getElementById('kycAddrType').value;
+            const accName = document.getElementById('kycAccName').value.trim();
+            const bankName = document.getElementById('kycBankName').value.trim();
+            const accNum = document.getElementById('kycAccNum').value.trim();
+            const ifsc = document.getElementById('kycIFSC').value.trim();
+
+            if (!panName || !addrType || !accName || !bankName || !accNum || !ifsc) {
+                showToast('Please fill in all required KYC fields', 'error');
+                return;
+            }
+
+            // Validate IFSC format (11 chars, first 4 alpha, 5th is 0, last 6 alphanumeric)
+            if (!/^[A-Z]{4}0[A-Z0-9]{6}$/i.test(ifsc)) {
+                showToast('Please enter a valid IFSC code', 'error');
+                return;
+            }
+
+            // Read address proof file
+            const addrFileInput = document.getElementById('kycAddrFile');
+            const chequeInput = document.getElementById('kycCheque');
+            if (!addrFileInput.files.length) { showToast('Please upload address proof', 'error'); return; }
+            if (!chequeInput.files.length) { showToast('Please upload cancelled cheque', 'error'); return; }
+
+            const addrFile = addrFileInput.files[0];
+            const chequeFile = chequeInput.files[0];
+            if (addrFile.size > 5 * 1024 * 1024) { showToast('Address proof must be under 5 MB', 'error'); return; }
+            if (chequeFile.size > 5 * 1024 * 1024) { showToast('Cancelled cheque must be under 5 MB', 'error'); return; }
+
+            showToast('Submitting KYC details...', 'info');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+
+            try {
+                const addrBase64 = await readFileAsBase64(addrFile);
+                const chequeBase64 = await readFileAsBase64(chequeFile);
+
+                const payload = {
+                    action: 'submitKYC',
+                    email: currentUser.email,
+                    panNumber: pan,
+                    panName: panName,
+                    addressProofType: addrType,
+                    addressProofBase64: addrBase64,
+                    addressProofFileName: addrFile.name,
+                    addressProofMimeType: addrFile.type,
+                    accountHolderName: accName,
+                    bankName: bankName,
+                    accountNumber: accNum,
+                    ifscCode: ifsc,
+                    chequeBase64: chequeBase64,
+                    chequeFileName: chequeFile.name,
+                    chequeMimeType: chequeFile.type
+                };
+
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await resp.json();
+                if (result.success) {
+                    showToast('KYC submitted for verification!', 'success');
+                    currentUser.kycStatus = 'Submitted';
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateComplianceStatusBadges();
+                } else {
+                    showToast(result.error || 'KYC submission failed', 'error');
+                }
+            } catch (err) {
+                console.error('[GCCPROs] KYC submit error:', err);
+                showToast('KYC submission failed. Please try again.', 'error');
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit KYC for Verification'; }
+            }
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function downloadAgreementDraft() {
+            if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
+            const partnerName = document.getElementById('kycPANName')?.value?.trim() || currentUser.name || 'Partner';
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            // Build a printable agreement HTML and trigger download as PDF-ready HTML
+            const agreementHTML = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>GCCPROs Referral Partner Agreement</title>
+<style>
+body{font-family:'Times New Roman',serif;max-width:750px;margin:40px auto;padding:40px;line-height:1.7;color:#222;font-size:14px;}
+h1{text-align:center;font-size:20px;margin-bottom:0;}
+h2{font-size:15px;margin-top:28px;margin-bottom:8px;}
+.header-sub{text-align:center;font-size:13px;color:#555;margin-bottom:30px;}
+.parties{margin:20px 0;padding:15px;background:#f9f9f9;border:1px solid #ddd;border-radius:4px;}
+.parties p{margin:4px 0;}
+.sig-block{margin-top:50px;display:flex;justify-content:space-between;}
+.sig-col{width:45%;}
+.sig-line{border-top:1px solid #333;margin-top:60px;padding-top:6px;font-size:13px;}
+ol{padding-left:20px;}
+ol li{margin-bottom:10px;}
+.footer{text-align:center;margin-top:40px;font-size:12px;color:#777;}
+@media print{body{margin:0;padding:20px;}}
+</style></head><body>
+<h1>REFERRAL PARTNER AGREEMENT</h1>
+<div class="header-sub">GCCPROs Talent Solutions</div>
+
+<div class="parties">
+<p><strong>This Agreement</strong> is entered into as of <strong>${dateStr}</strong></p>
+<p><strong>Between:</strong></p>
+<p style="margin-left:20px;">1. <strong>GCCPROs Talent Solutions</strong> ("Company")</p>
+<p style="margin-left:20px;">2. <strong>${partnerName}</strong> ("Referral Partner")</p>
+</div>
+
+<h2>1. PURPOSE</h2>
+<p>This Agreement sets forth the terms under which the Referral Partner will refer qualified candidates to the Company for open positions within the GCCPROs talent network.</p>
+
+<h2>2. REFERRAL PROCESS</h2>
+<ol>
+<li>The Referral Partner shall submit candidate referrals through the GCCPROs portal using the designated referral process.</li>
+<li>Each referral must include the candidate's consent and relevant professional details.</li>
+<li>The Company reserves the right to accept or reject any referral at its sole discretion.</li>
+</ol>
+
+<h2>3. REFERRAL INCENTIVE</h2>
+<ol>
+<li>The referral incentive amount is specified against each job listing on the portal and is role-specific.</li>
+<li>The incentive becomes payable only after the referred candidate successfully completes the probation period or contract milestone as defined by the hiring organization.</li>
+<li>Payment will be initiated to the bank account registered in the Partner's KYC records on the portal.</li>
+<li>All applicable taxes (TDS, GST if applicable) will be deducted at source as per prevailing Indian tax laws.</li>
+</ol>
+
+<h2>4. PARTNER OBLIGATIONS</h2>
+<ol>
+<li>The Partner shall ensure all candidate information shared is accurate and obtained with the candidate's consent.</li>
+<li>The Partner shall not make any representations on behalf of the Company to candidates or clients.</li>
+<li>The Partner shall maintain confidentiality of all non-public information received through the portal.</li>
+<li>The Partner shall comply with all applicable data protection regulations.</li>
+</ol>
+
+<h2>5. COMPANY OBLIGATIONS</h2>
+<ol>
+<li>The Company shall provide timely updates on the status of referred candidates.</li>
+<li>The Company shall process incentive payments within 30 business days of the qualifying milestone being met.</li>
+<li>The Company shall maintain the portal and provide necessary support to the Partner.</li>
+</ol>
+
+<h2>6. CONFIDENTIALITY</h2>
+<p>Both parties agree to keep confidential all proprietary information, business data, candidate details, and terms of this Agreement. This obligation survives termination of this Agreement.</p>
+
+<h2>7. TERM AND TERMINATION</h2>
+<ol>
+<li>This Agreement is effective from the date of signing and continues for a period of 12 months, automatically renewable.</li>
+<li>Either party may terminate this Agreement with 30 days written notice.</li>
+<li>Outstanding referral incentives for candidates already placed shall be honoured post-termination.</li>
+</ol>
+
+<h2>8. GOVERNING LAW</h2>
+<p>This Agreement shall be governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Gurugram, Haryana.</p>
+
+<div class="sig-block">
+<div class="sig-col">
+<div class="sig-line">
+<strong>For GCCPROs Talent Solutions</strong><br>
+Authorized Signatory<br>
+Date: _______________
+</div>
+</div>
+<div class="sig-col">
+<div class="sig-line">
+<strong>${partnerName}</strong><br>
+Referral Partner<br>
+Date: _______________
+</div>
+</div>
+</div>
+
+<div class="footer">This is a computer-generated draft. Please print, sign, and upload the signed copy to your GCCPROs dashboard.</div>
+</body></html>`;
+
+            const blob = new Blob([agreementHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'GCCPROs_Referral_Agreement_' + partnerName.replace(/[^a-zA-Z0-9]/g, '_') + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Agreement draft downloaded. Print, sign, and upload the signed copy.', 'success');
+        }
+
+        async function uploadSignedAgreement() {
+            if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
+            const fileInput = document.getElementById('signedAgreementFile');
+            if (!fileInput.files.length) { showToast('Please select the signed agreement file', 'error'); return; }
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.pdf')) { showToast('Only PDF files are accepted', 'error'); return; }
+            if (file.size > 5 * 1024 * 1024) { showToast('File must be under 5 MB', 'error'); return; }
+
+            showToast('Uploading signed agreement...', 'info');
+            const uploadBtn = document.querySelector('#complianceTab button[onclick="uploadSignedAgreement()"]');
+            if (uploadBtn) { uploadBtn.disabled = true; uploadBtn.textContent = 'Uploading...'; }
+
+            try {
+                const base64 = await readFileAsBase64(file);
+                const payload = {
+                    action: 'uploadAgreement',
+                    email: currentUser.email,
+                    agreementBase64: base64,
+                    agreementFileName: file.name,
+                    agreementMimeType: file.type || 'application/pdf'
+                };
+
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await resp.json();
+                if (result.success) {
+                    showToast('Signed agreement uploaded successfully!', 'success');
+                    currentUser.agreementStatus = 'Signed';
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateComplianceStatusBadges();
+                    fileInput.value = '';
+                } else {
+                    showToast(result.error || 'Upload failed', 'error');
+                }
+            } catch (err) {
+                console.error('[GCCPROs] Agreement upload error:', err);
+                showToast('Upload failed. Please try again.', 'error');
+            } finally {
+                if (uploadBtn) { uploadBtn.disabled = false; uploadBtn.textContent = 'Upload Signed Agreement'; }
+            }
+        }
+
+        function updateComplianceStatusBadges() {
+            const kycStatus = currentUser.kycStatus || 'Incomplete';
+            const agrStatus = currentUser.agreementStatus || 'Pending';
+
+            // Dashboard badges
+            const kycBadge = document.getElementById('kycStatusBadge');
+            const agrBadge = document.getElementById('agreementStatusBadge');
+            // Compliance tab badges
+            const kycTag = document.getElementById('kycStatusTag');
+            const agrTag = document.getElementById('agreementStatusTag');
+
+            const setBadge = (el, status) => {
+                if (!el) return;
+                el.textContent = status;
+                if (status === 'Verified' || status === 'Signed' || status === 'Complete') {
+                    el.style.background = 'rgba(16,185,129,0.12)';
+                    el.style.color = '#059669';
+                } else if (status === 'Submitted' || status === 'Under Review') {
+                    el.style.background = 'rgba(245,158,11,0.12)';
+                    el.style.color = '#d97706';
+                } else {
+                    el.style.background = 'rgba(239,68,68,0.12)';
+                    el.style.color = '#dc2626';
+                }
+            };
+
+            setBadge(kycBadge, kycStatus);
+            setBadge(agrBadge, agrStatus);
+            setBadge(kycTag, kycStatus);
+            setBadge(agrTag, agrStatus);
         }
 
         function handleLogout() {
