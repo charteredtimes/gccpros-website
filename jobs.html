@@ -3264,7 +3264,7 @@
             <div class="pending-icon">&#9203;</div>
             <h2>Thank You for Registering!</h2>
             <div class="pending-status-badge">Registration Under Review</div>
-            <p>We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.</p>
+            <p id="pendingMessage">We appreciate your interest in joining GCCPROs. Our team is reviewing your application.</p>
             <p style="margin-top: 16px;">You will receive an <strong>email notification within 48 hours</strong> once your registration is accepted. After approval, you'll get full access to your personalized dashboard.</p>
             <p style="margin-top: 16px; font-size: 0.85rem; color: #94a3b8;">For any queries, reach out to <a href="mailto:admin@gccpros.com" style="color: var(--brand-blue);">admin@gccpros.com</a></p>
             <button class="pending-logout-btn" onclick="logoutUser()">Back to Home</button>
@@ -4484,6 +4484,13 @@
 
                 if (statusData.exists && statusData.status !== 'Accepted' && statusData.status !== 'unknown') {
                     // User is registered but NOT yet approved — show pending overlay
+                    const pendingMsg = document.getElementById('pendingMessage');
+                    const userType = statusData.type || currentUser.type;
+                    if (userType === 'jobSeeker') {
+                        pendingMsg.textContent = 'We appreciate your interest in exploring GCC opportunities. Our team is reviewing your candidate profile.';
+                    } else {
+                        pendingMsg.textContent = 'We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.';
+                    }
                     pendingOverlay.classList.add('active');
                     return;
                 } else {
