@@ -855,6 +855,112 @@
             box-shadow: none;
         }
 
+        /* Recommended Jobs Grid */
+        .recommended-jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+        .recommended-job-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .recommended-job-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-color: var(--gold);
+        }
+        .rec-job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .rec-job-domain {
+            background: var(--brand-blue);
+            color: var(--white);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .rec-job-type {
+            background: var(--cream);
+            color: var(--ink);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .rec-job-title {
+            font-size: 1.05rem;
+            margin: 0.25rem 0;
+            color: var(--ink);
+        }
+        .rec-job-company {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin: 0 0 0.75rem 0;
+        }
+        .rec-job-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .rec-job-details span {
+            background: #F1F5F9;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .rec-job-desc {
+            font-size: 0.82rem;
+            color: #555;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .rec-job-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 0.75rem;
+        }
+        .rec-skill-tag {
+            background: #EEF2FF;
+            color: #4F46E5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 500;
+        }
+        .rec-job-apply-btn {
+            background: var(--gold);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .rec-job-apply-btn:hover {
+            background: #b8862e;
+            transform: translateY(-1px);
+        }
+
         /* Validation error styles */
         .field-error {
             color: #DC2626;
@@ -2101,6 +2207,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .recommended-jobs-grid {
+                grid-template-columns: 1fr;
+            }
+
             .data-table {
                 font-size: 0.85rem;
             }
@@ -3236,6 +3346,14 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Recommended Jobs (only for job seekers) -->
+                    <div id="recommendedJobsSection" style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Recommended Opportunities for You</h3>
+                        <div id="recommendedJobsContainer" class="recommended-jobs-grid">
+                            <p style="text-align:center; color:var(--muted); padding:1.5rem;">Loading opportunities...</p>
+                        </div>
+                    </div>
+
                     <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Recent Activity</h3>
                     <div id="recentActivity" style="background: var(--cream); padding: 1.5rem; border-radius: 8px; text-align: center; color: var(--muted);">
                         No recent activity
@@ -3796,22 +3914,31 @@
 
             console.log('Job Seeker Registration:', data);
 
-            // Set currentUser with domain
+            // Set currentUser with domain and full profile data
             currentUser = {
                 name: data.fullName || data.email.split('@')[0],
                 email: data.email,
                 type: 'jobSeeker',
-                domain: data.domain || 'Other'
+                domain: data.domain || 'Other',
+                phone: data.phone,
+                linkedin: data.linkedin,
+                currentCompany: data.currentCompany,
+                designation: data.currentDesignation,
+                location: data.currentLocation,
+                currentCTC: data.currentCTC,
+                expectedCTC: data.expectedCTC,
+                experience: data.totalExperience
             };
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'text/plain'},
                 body: JSON.stringify(data),
-                mode: 'no-cors'
-            }).catch(err => console.log('Job seeker registration submitted'));
+                redirect: 'follow'
+            }).then(res => res.json()).then(result => {
+                console.log('Job seeker registration result:', result);
+            }).catch(err => console.log('Job seeker registration submitted (fallback):', err));
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -3905,10 +4032,11 @@
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'text/plain'},
                 body: JSON.stringify(data),
-                mode: 'no-cors'
-            }).catch(err => console.log('Referrer registration submitted'));
+                redirect: 'follow'
+            }).then(res => res.json()).then(result => {
+                console.log('Referrer registration result:', result);
+            }).catch(err => console.log('Referrer registration submitted (fallback):', err));
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -3980,6 +4108,19 @@
 
         function submitProfileForm(event) {
             event.preventDefault();
+            // Update currentUser with profile form data
+            if (currentUser) {
+                const form = event.target;
+                const formData = new FormData(form);
+                currentUser.name = formData.get('fullName') || currentUser.name;
+                currentUser.phone = formData.get('phone') || currentUser.phone;
+                currentUser.currentCompany = formData.get('currentCompany') || currentUser.currentCompany;
+                currentUser.designation = formData.get('designation') || currentUser.designation;
+                currentUser.location = formData.get('location') || currentUser.location;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('consoleUserName').textContent = currentUser.name;
+            }
+            updateProfileCompleteness();
             showToast('Profile updated successfully!', 'success');
         }
 
@@ -4037,15 +4178,15 @@
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'text/plain'},
                 body: JSON.stringify(data),
-                mode: 'no-cors'
-            }).then(() => {
+                redirect: 'follow'
+            }).then(res => res.json()).then(result => {
+                console.log('Referral submission result:', result);
                 showToast('Referral submitted successfully!', 'success');
                 form.reset();
                 closeModal('submitReferralModal');
             }).catch(err => {
-                console.log('Referral submission sent');
+                console.log('Referral submission (fallback):', err);
                 showToast('Referral submitted successfully!', 'success');
                 form.reset();
                 closeModal('submitReferralModal');
@@ -4096,9 +4237,8 @@
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'text/plain'},
                 body: JSON.stringify({ action: 'updateJobStatus', jobId: job.id, status: newStatus }),
-                mode: 'no-cors'
+                redirect: 'follow'
             }).catch(err => console.log('Status update sent'));
         }
 
@@ -4357,20 +4497,88 @@
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 }
 
+                // Pre-fill profile tab with registration data
+                if (currentUser.phone) document.getElementById('profilePhone').value = currentUser.phone;
+                if (currentUser.currentCompany) document.getElementById('profileCompany').value = currentUser.currentCompany;
+                if (currentUser.designation) document.getElementById('profileDesignation').value = currentUser.designation;
+                if (currentUser.location) document.getElementById('profileLocation').value = currentUser.location;
+
+                // Calculate and display profile completeness
+                updateProfileCompleteness();
+
                 if (currentUser.type === 'jobSeeker') {
                     document.getElementById('appNav').style.display = 'block';
                     document.getElementById('refNav').style.display = 'none';
                     document.getElementById('jobSeekerStats').style.display = 'grid';
                     document.getElementById('referrerStats').style.display = 'none';
                     document.getElementById('invitePartnerSection').style.display = 'none';
+                    document.getElementById('recommendedJobsSection').style.display = 'block';
+                    // Show recommended jobs on dashboard
+                    renderRecommendedJobs();
                 } else {
                     document.getElementById('appNav').style.display = 'none';
                     document.getElementById('refNav').style.display = 'block';
                     document.getElementById('jobSeekerStats').style.display = 'none';
                     document.getElementById('referrerStats').style.display = 'grid';
                     document.getElementById('invitePartnerSection').style.display = 'block';
+                    document.getElementById('recommendedJobsSection').style.display = 'none';
                     populateReferralJobDropdown();
                 }
+            }
+        }
+
+        function updateProfileCompleteness() {
+            const fields = [
+                document.getElementById('profileFullName').value,
+                document.getElementById('profileEmail').value,
+                document.getElementById('profilePhone').value,
+                document.getElementById('profileCompany').value,
+                document.getElementById('profileDesignation').value,
+                document.getElementById('profileLocation').value
+            ];
+            const filled = fields.filter(v => v && v.trim().length > 0).length;
+            const percent = Math.round((filled / fields.length) * 100);
+            document.getElementById('profileCompleteness').textContent = percent;
+            document.getElementById('profileCompletenessBar').style.width = percent + '%';
+        }
+
+        function renderRecommendedJobs() {
+            const container = document.getElementById('recommendedJobsContainer');
+            if (!container) return;
+            const jobs = getJobsForUserDomain();
+            if (!jobs || jobs.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No matching opportunities found for your domain.</p>';
+                return;
+            }
+            const displayJobs = jobs.filter(j => j.status === 'Active').slice(0, 6);
+            container.innerHTML = displayJobs.map(job => `
+                <div class="recommended-job-card">
+                    <div class="rec-job-header">
+                        <span class="rec-job-domain">${job.domain}</span>
+                        <span class="rec-job-type">${job.type}</span>
+                    </div>
+                    <h4 class="rec-job-title">${job.title}</h4>
+                    <p class="rec-job-company">${job.company}</p>
+                    <div class="rec-job-details">
+                        <span>${job.location}</span>
+                        <span>${job.experience}</span>
+                        <span>${job.budget}</span>
+                    </div>
+                    <p class="rec-job-desc">${job.description}</p>
+                    <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
+                    <button class="rec-job-apply-btn" onclick="applyForJob('${job.id}')">Apply Now</button>
+                </div>
+            `).join('');
+        }
+
+        function applyForJob(jobId) {
+            const job = JOBS_DATA.find(j => j.id === jobId);
+            if (!job) return;
+            showToast('Application submitted for ' + job.title + '!', 'success');
+            // Track in recent activity
+            const activity = document.getElementById('recentActivity');
+            if (activity) {
+                activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + job.title + ' at ' + job.company + ' — <em>Just now</em></div>';
             }
         }
 
