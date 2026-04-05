@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v14">
+    <meta name="version" content="2026-04-06-v15">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2618,7 +2618,7 @@
                             <input type="radio" name="loginType" value="jobSeeker" checked style="display:none;"> Job Seeker
                         </label>
                         <label style="flex:1;text-align:center;padding:0.6rem 0.75rem;cursor:pointer;font-size:0.9rem;font-weight:600;background:#f5f5f5;color:#555;transition:all 0.2s;" id="loginTypePartner" onclick="selectLoginType('referrer')">
-                            <input type="radio" name="loginType" value="referrer" style="display:none;"> Referral Partner
+                            <input type="radio" name="loginType" value="referrer" style="display:none;"> Partner
                         </label>
                     </div>
                     <div style="font-size:0.75rem;color:var(--muted);">Same email can have both a Job Seeker and Partner account</div>
@@ -3368,40 +3368,181 @@
 
     <!-- Submit Referral Modal -->
     <div class="modal" id="submitReferralModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width:780px;">
             <div class="modal-header">
-                <h2>Submit New Referral</h2>
+                <h2>Submit Candidate Referral</h2>
                 <button class="modal-close" onclick="closeModal('submitReferralModal')">×</button>
             </div>
-            <form id="referralForm" onsubmit="submitReferral(event)">
-                <div class="form-group">
-                    <label>Job Selection <span class="required">*</span></label>
-                    <select name="jobId" id="referralJobSelect" required>
-                        <option value="">Select a Job</option>
-                    </select>
+            <form id="referralForm" onsubmit="submitReferral(event)" novalidate>
+
+                <!-- Section 1: Job Selection -->
+                <div style="background:#f0f5ff;border:1px solid #c7d7fe;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h3 style="margin:0 0 0.75rem;font-size:1rem;color:var(--brand-blue);">Job Selection</h3>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Select Position <span class="required">*</span></label>
+                        <select name="jobId" id="referralJobSelect" required onchange="onReferralJobChange(this.value)">
+                            <option value="">-- Select a Job --</option>
+                        </select>
+                    </div>
+                    <div id="refJobSummary" style="display:none;margin-top:0.75rem;padding:0.75rem;background:#fff;border-radius:6px;border:1px solid var(--border);font-size:0.85rem;line-height:1.5;"></div>
                 </div>
 
-                <div class="form-group">
-                    <label>Candidate Full Name <span class="required">*</span></label>
-                    <input type="text" name="candidateName" required>
+                <!-- Section 2: Candidate Information -->
+                <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h3 style="margin:0 0 0.75rem;font-size:1rem;color:#333;">Candidate Information</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;">
+                        <div class="form-group">
+                            <label>Full Name <span class="required">*</span></label>
+                            <input type="text" name="candidateName" id="refCandName" placeholder="Candidate's full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" name="candidateEmail" id="refCandEmail" placeholder="candidate@email.com">
+                            <div class="field-error" id="refEmailError" style="display:none;">Please enter a valid email address</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone <span class="required">*</span></label>
+                            <input type="tel" name="candidatePhone" id="refCandPhone" placeholder="+91 XXXXXXXXXX">
+                            <div class="field-error" id="refPhoneError" style="display:none;">Please enter a valid 10-digit phone number</div>
+                        </div>
+                        <div class="form-group">
+                            <label>LinkedIn Profile <span class="required">*</span></label>
+                            <input type="url" name="candidateLinkedIn" id="refCandLinkedIn" placeholder="https://linkedin.com/in/profile">
+                            <div class="field-error" id="refLinkedInError" style="display:none;">Please enter a valid LinkedIn URL</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Company <span class="required">*</span></label>
+                            <input type="text" name="candidateCompany" id="refCandCompany" placeholder="Where they currently work">
+                        </div>
+                        <div class="form-group">
+                            <label>Current Designation <span class="required">*</span></label>
+                            <input type="text" name="candidateDesignation" id="refCandDesignation" placeholder="Current role/title">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Experience (Years) <span class="required">*</span></label>
+                            <input type="number" name="candidateExperience" id="refCandExp" placeholder="e.g. 5" min="0" max="50" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Current CTC (LPA) <span class="required">*</span></label>
+                            <input type="text" name="candidateCTC" id="refCandCTC" placeholder="e.g. 12 or 12.5">
+                            <div class="field-error" id="refCTCError" style="display:none;">Enter numeric CTC value (e.g., 12 or 12.5)</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Expected CTC (LPA)</label>
+                            <input type="text" name="candidateExpectedCTC" id="refCandExpCTC" placeholder="e.g. 15 or Negotiable">
+                        </div>
+                        <div class="form-group">
+                            <label>Notice Period <span class="required">*</span></label>
+                            <select name="candidateNoticePeriod" id="refCandNotice">
+                                <option value="">Select notice period</option>
+                                <option value="Immediate">Immediate / Serving Notice</option>
+                                <option value="15 Days">15 Days</option>
+                                <option value="30 Days">30 Days</option>
+                                <option value="60 Days">60 Days</option>
+                                <option value="90 Days">90 Days</option>
+                                <option value="90+ Days">More than 90 Days</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Candidate Location <span class="required">*</span></label>
+                            <input type="text" name="candidateLocation" id="refCandLocation" placeholder="City, State">
+                        </div>
+                        <div class="form-group">
+                            <label>Highest Qualification</label>
+                            <input type="text" name="candidateQualification" id="refCandQual" placeholder="e.g. MBA, B.Tech, CA">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Candidate Email <span class="required">*</span></label>
-                    <input type="email" name="candidateEmail" required>
+                <!-- Section 3: Referrer's Assessment -->
+                <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h3 style="margin:0 0 0.75rem;font-size:1rem;color:#92400e;">Your Assessment of the Candidate</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;">
+                        <div class="form-group">
+                            <label>Nature of Relationship <span class="required">*</span></label>
+                            <select name="relationship" id="refRelationship">
+                                <option value="">Select relationship</option>
+                                <option value="Managed directly">Worked with them as their Manager</option>
+                                <option value="Reported to them">Reported to them (they were my Manager)</option>
+                                <option value="Peer / Colleague">Worked as a Peer / Colleague</option>
+                                <option value="Cross-functional">Worked in cross-functional team</option>
+                                <option value="Common network">Know through common professional network</option>
+                                <option value="Industry contact">Industry contact / Conference connection</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Relative">Relative</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>How long have you known them? <span class="required">*</span></label>
+                            <select name="knownYears" id="refKnownYears">
+                                <option value="">Select duration</option>
+                                <option value="Less than 1 year">Less than 1 year</option>
+                                <option value="1-2 years">1–2 years</option>
+                                <option value="2-5 years">2–5 years</option>
+                                <option value="5-10 years">5–10 years</option>
+                                <option value="10+ years">10+ years</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Have you directly worked with the candidate on a project or deliverable? <span class="required">*</span></label>
+                        <select name="workedTogether" id="refWorkedTogether">
+                            <option value="">Select</option>
+                            <option value="Yes, extensively">Yes, extensively (multiple projects)</option>
+                            <option value="Yes, on one project">Yes, on one project / assignment</option>
+                            <option value="Briefly">Briefly / Limited overlap</option>
+                            <option value="No, but observed their work">No, but I've observed their work quality</option>
+                            <option value="No">No direct professional interaction</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Why do you find this candidate a good fit for this role? <span class="required">*</span></label>
+                        <textarea name="whyGoodFit" id="refWhyGoodFit" rows="3" placeholder="Describe specific strengths, achievements, or experiences that make them suitable for this position..." style="resize:vertical;"></textarea>
+                        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;" id="refFitCharCount">Min 50 characters required</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Key achievements or highlights you'd like to share about the candidate</label>
+                        <textarea name="candidateHighlights" id="refHighlights" rows="2" placeholder="e.g. Led a team of 20, reduced costs by 30%, delivered a critical migration project ahead of schedule..." style="resize:vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Any concerns or areas of development for the candidate?</label>
+                        <textarea name="candidateConcerns" id="refConcerns" rows="2" placeholder="Being transparent helps us position the candidate better..." style="resize:vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Overall confidence level in this referral <span class="required">*</span></label>
+                        <select name="confidenceLevel" id="refConfidence">
+                            <option value="">Select confidence level</option>
+                            <option value="Very High">Very High — I'd stake my reputation on this candidate</option>
+                            <option value="High">High — Strong candidate, confident they'll do well</option>
+                            <option value="Medium">Medium — Good potential, some unknowns</option>
+                            <option value="Low">Low — Worth considering, but limited visibility</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Candidate Phone <span class="required">*</span></label>
-                    <input type="tel" name="candidatePhone" placeholder="+91 XXXXXXXXXX" required>
+                <!-- Section 4: Skill Assessment (dynamically populated) -->
+                <div id="refSkillAssessmentSection" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h3 style="margin:0 0 0.25rem;font-size:1rem;color:#166534;">Skill Assessment</h3>
+                    <p style="font-size:0.82rem;color:#555;margin:0 0 1rem;line-height:1.4;">Rate the candidate on each skill required for this role (1 = Novice, 10 = Expert). This helps us assess fitment objectively.</p>
+                    <div id="refSkillRatingsContainer"></div>
+                    <div id="refWeightedScoreDisplay" style="display:none;margin-top:1rem;padding:0.75rem 1rem;background:#fff;border:1px solid #86efac;border-radius:8px;text-align:center;">
+                        <span style="font-size:0.85rem;color:#555;">Weighted Average Score: </span>
+                        <span id="refWeightedScoreValue" style="font-size:1.4rem;font-weight:700;color:#166534;">—</span>
+                        <span style="font-size:0.85rem;color:#555;"> / 10</span>
+                    </div>
                 </div>
 
+                <!-- Section 5: Additional Notes -->
                 <div class="form-group">
-                    <label>Candidate LinkedIn</label>
-                    <input type="url" name="candidateLinkedIn" placeholder="https://linkedin.com/in/candidateprofile">
+                    <label>Additional Notes / Comments</label>
+                    <textarea name="additionalNotes" id="refAdditionalNotes" rows="2" placeholder="Any other information that might help evaluate this referral..." style="resize:vertical;"></textarea>
                 </div>
 
-                <button type="submit" class="form-submit-btn">Submit Referral</button>
+                <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+                    <button type="button" class="form-submit-btn" onclick="closeModal('submitReferralModal')" style="background:#e5e7eb;color:#333;flex:0.4;">Cancel</button>
+                    <button type="submit" class="form-submit-btn" style="flex:0.6;">Submit Referral</button>
+                </div>
             </form>
         </div>
     </div>
@@ -4932,7 +5073,7 @@
                 const statusData = await res.json();
 
                 if (!statusData.exists) {
-                    const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Referral Partner';
+                    const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                     showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
                     return;
                 }
@@ -5038,30 +5179,210 @@
             renderJobStatusManager();
         }
 
+        // ── Referral Form: Job Change Handler ──
+        function onReferralJobChange(jobId) {
+            const summaryDiv = document.getElementById('refJobSummary');
+            const skillSection = document.getElementById('refSkillAssessmentSection');
+            const skillContainer = document.getElementById('refSkillRatingsContainer');
+            const scoreDisplay = document.getElementById('refWeightedScoreDisplay');
+
+            if (!jobId) {
+                summaryDiv.style.display = 'none';
+                skillSection.style.display = 'none';
+                skillContainer.innerHTML = '';
+                return;
+            }
+
+            const job = JOBS_DATA.find(j => j.id === jobId);
+            if (!job) return;
+
+            // Show job summary
+            summaryDiv.style.display = 'block';
+            summaryDiv.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 1rem;">'
+                + '<div><strong>Company:</strong> ' + job.company + '</div>'
+                + '<div><strong>Domain:</strong> ' + job.domain + '</div>'
+                + '<div><strong>Experience:</strong> ' + job.experience + '</div>'
+                + '<div><strong>Location:</strong> ' + job.location + ' (' + job.mode + ')</div>'
+                + '<div><strong>Budget:</strong> ' + (job.budget || 'Not disclosed') + '</div>'
+                + '<div><strong>Referral Amount:</strong> <span style="color:var(--green);font-weight:700;">₹' + (job.referralAmount || 0).toLocaleString('en-IN') + '</span></div>'
+                + '</div>';
+
+            // Build skill rating sliders
+            const skills = job.skills || [];
+            if (skills.length === 0) {
+                skillSection.style.display = 'none';
+                return;
+            }
+
+            skillSection.style.display = 'block';
+            scoreDisplay.style.display = 'none';
+            let html = '';
+            skills.forEach((skill, idx) => {
+                html += '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;padding:0.5rem 0.75rem;background:#fff;border-radius:6px;border:1px solid #e5e7eb;">'
+                    + '<div style="flex:1;font-size:0.88rem;font-weight:500;color:#333;min-width:140px;">' + skill + '</div>'
+                    + '<input type="range" min="1" max="10" value="5" name="skillRating_' + idx + '" data-skill="' + skill.replace(/"/g, '&quot;') + '" '
+                    + 'oninput="updateSkillRatingLabel(this)" '
+                    + 'style="flex:1.5;accent-color:var(--green);cursor:pointer;">'
+                    + '<div class="skill-rating-value" style="min-width:45px;text-align:center;font-weight:700;font-size:0.95rem;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,0.1);color:#059669;">5/10</div>'
+                    + '</div>';
+            });
+            skillContainer.innerHTML = html;
+            recalcWeightedScore();
+        }
+
+        function updateSkillRatingLabel(slider) {
+            const val = slider.value;
+            const label = slider.nextElementSibling;
+            label.textContent = val + '/10';
+            // Color coding
+            if (val >= 8) { label.style.background = 'rgba(16,185,129,0.15)'; label.style.color = '#059669'; }
+            else if (val >= 5) { label.style.background = 'rgba(245,158,11,0.15)'; label.style.color = '#d97706'; }
+            else { label.style.background = 'rgba(239,68,68,0.12)'; label.style.color = '#dc2626'; }
+            recalcWeightedScore();
+        }
+
+        function recalcWeightedScore() {
+            const sliders = document.querySelectorAll('#refSkillRatingsContainer input[type="range"]');
+            if (sliders.length === 0) return;
+            let total = 0;
+            sliders.forEach(s => { total += parseInt(s.value) || 0; });
+            const avg = (total / sliders.length).toFixed(1);
+            const scoreEl = document.getElementById('refWeightedScoreValue');
+            const scoreDisplay = document.getElementById('refWeightedScoreDisplay');
+            scoreDisplay.style.display = 'block';
+            scoreEl.textContent = avg;
+            if (avg >= 7.5) { scoreEl.style.color = '#059669'; }
+            else if (avg >= 5) { scoreEl.style.color = '#d97706'; }
+            else { scoreEl.style.color = '#dc2626'; }
+        }
+
+        // ── "Why Good Fit" character counter ──
+        (function() {
+            const ta = document.getElementById('refWhyGoodFit');
+            const counter = document.getElementById('refFitCharCount');
+            if (ta && counter) {
+                ta.addEventListener('input', function() {
+                    const len = ta.value.trim().length;
+                    if (len < 50) {
+                        counter.textContent = 'Min 50 characters required (' + len + '/50)';
+                        counter.style.color = '#dc2626';
+                    } else {
+                        counter.textContent = len + ' characters';
+                        counter.style.color = 'var(--muted)';
+                    }
+                });
+            }
+        })();
+
+        // ── Submit Referral (with full validation) ──
         function submitReferral(event) {
             event.preventDefault();
-
             if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
+
+            // Clear previous errors
+            document.querySelectorAll('#referralForm .field-error').forEach(el => el.style.display = 'none');
+            let hasErrors = false;
 
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             data.action = 'submitReferral';
             data.referrerEmail = currentUser.email;
+            data.referrerName = currentUser.name || '';
 
-            // Get job title for the selected job
+            // Get job details
             const selectedJob = JOBS_DATA.find(j => j.id === data.jobId);
-            if (selectedJob) data.jobTitle = selectedJob.title;
-
-            // Validate required fields
-            if (!data.jobId || !data.candidateName || !data.candidateEmail || !data.candidatePhone) {
-                showToast('Please fill in all required fields', 'error');
-                return;
+            if (selectedJob) {
+                data.jobTitle = selectedJob.title;
+                data.jobDomain = selectedJob.domain;
+                data.jobCompany = selectedJob.company;
             }
+
+            // ── VALIDATIONS ──
+
+            // Job selection
+            if (!data.jobId) { showToast('Please select a job', 'error'); return; }
+
+            // Candidate name
+            if (!data.candidateName || data.candidateName.trim().length < 2) {
+                showToast('Please enter candidate\'s full name', 'error'); hasErrors = true;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!data.candidateEmail || !emailRegex.test(data.candidateEmail)) {
+                document.getElementById('refEmailError').style.display = 'block';
+                hasErrors = true;
+            }
+
+            // Phone validation (Indian: 10 digits, optional +91 prefix)
+            const rawPhone = (data.candidatePhone || '').replace(/[\s\-\(\)]/g, '');
+            const phoneClean = rawPhone.replace(/^\+91/, '').replace(/^91/, '').replace(/^0/, '');
+            if (phoneClean.length !== 10 || !/^\d{10}$/.test(phoneClean)) {
+                document.getElementById('refPhoneError').style.display = 'block';
+                hasErrors = true;
+            }
+
+            // LinkedIn validation
+            if (!data.candidateLinkedIn || !data.candidateLinkedIn.toLowerCase().includes('linkedin.com/')) {
+                document.getElementById('refLinkedInError').style.display = 'block';
+                hasErrors = true;
+            }
+
+            // Company, designation, location
+            if (!data.candidateCompany || !data.candidateCompany.trim()) { showToast('Candidate current company is required', 'error'); hasErrors = true; }
+            if (!data.candidateDesignation || !data.candidateDesignation.trim()) { showToast('Candidate designation is required', 'error'); hasErrors = true; }
+            if (!data.candidateLocation || !data.candidateLocation.trim()) { showToast('Candidate location is required', 'error'); hasErrors = true; }
+
+            // Experience
+            const exp = parseFloat(data.candidateExperience);
+            if (isNaN(exp) || exp < 0 || exp > 50) { showToast('Please enter valid experience (0-50 years)', 'error'); hasErrors = true; }
+
+            // CTC validation (numeric)
+            const ctcVal = data.candidateCTC ? data.candidateCTC.replace(/[₹,\s]/g, '') : '';
+            if (!ctcVal || isNaN(parseFloat(ctcVal))) {
+                document.getElementById('refCTCError').style.display = 'block';
+                hasErrors = true;
+            }
+
+            // Notice period
+            if (!data.candidateNoticePeriod) { showToast('Please select notice period', 'error'); hasErrors = true; }
+
+            // Relationship & duration
+            if (!data.relationship) { showToast('Please select your relationship with the candidate', 'error'); hasErrors = true; }
+            if (!data.knownYears) { showToast('Please select how long you\'ve known the candidate', 'error'); hasErrors = true; }
+            if (!data.workedTogether) { showToast('Please indicate if you\'ve worked together', 'error'); hasErrors = true; }
+
+            // Why good fit (min 50 chars)
+            if (!data.whyGoodFit || data.whyGoodFit.trim().length < 50) {
+                showToast('Please explain why this candidate is a good fit (minimum 50 characters)', 'error');
+                hasErrors = true;
+            }
+
+            // Confidence level
+            if (!data.confidenceLevel) { showToast('Please select your confidence level', 'error'); hasErrors = true; }
+
+            if (hasErrors) return;
+
+            // ── Collect skill ratings ──
+            const skillSliders = document.querySelectorAll('#refSkillRatingsContainer input[type="range"]');
+            const skillRatings = [];
+            let skillTotal = 0;
+            skillSliders.forEach(slider => {
+                const skillName = slider.getAttribute('data-skill');
+                const rating = parseInt(slider.value) || 5;
+                skillRatings.push({ skill: skillName, rating: rating });
+                skillTotal += rating;
+            });
+            const weightedAvg = skillSliders.length > 0 ? (skillTotal / skillSliders.length).toFixed(1) : 'N/A';
+
+            data.skillRatings = JSON.stringify(skillRatings);
+            data.weightedScore = weightedAvg;
+            data.totalSkillsRated = skillSliders.length;
 
             console.log('Referral Submission:', data);
             const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting Referral...'; }
 
             // Send to backend
             fetch(APPS_SCRIPT_URL, {
@@ -5071,11 +5392,14 @@
             }).then(res => res.json()).then(result => {
                 console.log('Referral submission result:', result);
                 if (result.success) {
-                    showToast('Referral submitted successfully!', 'success');
+                    showToast('Referral submitted successfully! Thank you for your detailed assessment.', 'success');
                 } else {
                     showToast(result.error || 'Referral submitted!', 'success');
                 }
                 form.reset();
+                document.getElementById('refJobSummary').style.display = 'none';
+                document.getElementById('refSkillAssessmentSection').style.display = 'none';
+                document.getElementById('refSkillRatingsContainer').innerHTML = '';
                 closeModal('submitReferralModal');
             }).catch(err => {
                 console.log('Referral submission (fallback):', err);
@@ -5198,7 +5522,7 @@
                             if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
                         } else {
-                            var typeLabel = loginAs === 'jobSeeker' ? 'Job Seeker' : 'Referral Partner';
+                            var typeLabel = loginAs === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                             showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
                             return;
                         }
@@ -6117,7 +6441,10 @@
             const job = JOBS_DATA.find(j => j.id === jobId);
             if (!job) return;
             const jobSelect = document.getElementById('referralJobSelect');
-            if (jobSelect) jobSelect.value = jobId;
+            if (jobSelect) {
+                jobSelect.value = jobId;
+                onReferralJobChange(jobId);
+            }
             showModal('submitReferralModal');
         }
 
