@@ -4278,16 +4278,35 @@
                 }
 
                 if (googleSignInType === 'login') {
-                    // Login flow — go straight to dashboard
+                    // Login flow — fetch full profile from backend before showing dashboard
                     currentUser = {
                         name: userInfo.name,
                         email: userInfo.email,
                         type: 'jobSeeker',
                         domain: 'Other'
                     };
+                    // Fetch profile data from backend so we get domain, phone, etc.
+                    try {
+                        const profileData = await checkUserStatus(userInfo.email);
+                        if (profileData.exists) {
+                            currentUser.type = profileData.type || 'jobSeeker';
+                            if (profileData.domain) currentUser.domain = profileData.domain;
+                            if (profileData.phone) currentUser.phone = profileData.phone;
+                            if (profileData.linkedin) currentUser.linkedin = profileData.linkedin;
+                            if (profileData.currentCompany) currentUser.currentCompany = profileData.currentCompany;
+                            if (profileData.designation) currentUser.designation = profileData.designation;
+                            if (profileData.location) currentUser.location = profileData.location;
+                            if (profileData.experience) currentUser.experience = profileData.experience;
+                            if (profileData.currentCTC) currentUser.currentCTC = profileData.currentCTC;
+                            if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
+                            if (profileData.name) currentUser.name = profileData.name;
+                        }
+                    } catch (e) {
+                        console.log('Could not fetch profile on login:', e);
+                    }
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
-                    showToast('Welcome back, ' + userInfo.name + '!', 'success');
+                    showToast('Welcome back, ' + currentUser.name + '!', 'success');
                     setTimeout(() => showUserConsole(), 500);
                     return;
                 }
@@ -4304,18 +4323,36 @@
                 }
 
                 if (emailAlreadyExists) {
-                    // Email already registered — treat as login
+                    // Email already registered — treat as login, fetch full profile
                     currentUser = {
                         name: userInfo.name,
                         email: userInfo.email,
                         type: 'jobSeeker',
                         domain: 'Other'
                     };
+                    try {
+                        const profileData = await checkUserStatus(userInfo.email);
+                        if (profileData.exists) {
+                            currentUser.type = profileData.type || 'jobSeeker';
+                            if (profileData.domain) currentUser.domain = profileData.domain;
+                            if (profileData.phone) currentUser.phone = profileData.phone;
+                            if (profileData.linkedin) currentUser.linkedin = profileData.linkedin;
+                            if (profileData.currentCompany) currentUser.currentCompany = profileData.currentCompany;
+                            if (profileData.designation) currentUser.designation = profileData.designation;
+                            if (profileData.location) currentUser.location = profileData.location;
+                            if (profileData.experience) currentUser.experience = profileData.experience;
+                            if (profileData.currentCTC) currentUser.currentCTC = profileData.currentCTC;
+                            if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
+                            if (profileData.name) currentUser.name = profileData.name;
+                        }
+                    } catch (e) {
+                        console.log('Could not fetch profile on login:', e);
+                    }
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
                     closeModal('jobSeekerModal');
                     closeModal('referrerModal');
-                    showToast('Welcome back, ' + userInfo.name + '! You\'re already registered.', 'success');
+                    showToast('Welcome back, ' + currentUser.name + '! You\'re already registered.', 'success');
                     setTimeout(() => showUserConsole(), 500);
                     return;
                 }
@@ -4498,9 +4535,19 @@
                     pendingOverlay.classList.remove('active');
                 }
 
-                // Update user type from backend if available
-                if (statusData.type) {
-                    currentUser.type = statusData.type;
+                // Update currentUser from backend profile data (covers returning users whose sessionStorage was cleared)
+                if (statusData.exists) {
+                    if (statusData.type) currentUser.type = statusData.type;
+                    if (statusData.domain) currentUser.domain = statusData.domain;
+                    if (statusData.phone) currentUser.phone = statusData.phone;
+                    if (statusData.linkedin) currentUser.linkedin = statusData.linkedin;
+                    if (statusData.currentCompany) currentUser.currentCompany = statusData.currentCompany;
+                    if (statusData.designation) currentUser.designation = statusData.designation;
+                    if (statusData.location) currentUser.location = statusData.location;
+                    if (statusData.experience) currentUser.experience = statusData.experience;
+                    if (statusData.currentCTC) currentUser.currentCTC = statusData.currentCTC;
+                    if (statusData.expectedCTC) currentUser.expectedCTC = statusData.expectedCTC;
+                    if (statusData.name && !currentUser.name) currentUser.name = statusData.name;
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 }
 
