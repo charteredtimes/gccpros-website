@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v10">
+    <meta name="version" content="2026-04-06-v11">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -858,38 +858,30 @@
 
         /* Domain Filter Toggle */
         .domain-filter-toggle {
-            display: inline-flex;
-            gap: 0;
-            background: #E8E4E0;
-            border-radius: 10px;
-            padding: 4px;
-            border: 2px solid var(--gold);
-            box-shadow: 0 2px 8px rgba(212,168,67,0.25);
-        }
-        .domain-radio-label {
-            cursor: pointer;
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
         }
-        .domain-radio-label input[type="radio"] {
-            display: none;
-        }
-        .domain-radio-label span {
-            padding: 8px 22px;
-            border-radius: 7px;
-            font-size: 0.88rem;
-            font-weight: 700;
+        .domain-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
             color: var(--ink);
-            transition: all 0.25s ease;
+            background: #E8E4E0;
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
             white-space: nowrap;
-            letter-spacing: 0.02em;
         }
-        .domain-radio-label:hover span {
-            background: rgba(11,17,32,0.06);
+        .domain-chip:hover {
+            background: rgba(11,17,32,0.08);
+            border-color: var(--gold);
         }
-        .domain-radio-label input[type="radio"]:checked + span {
+        .domain-chip.active {
             background: var(--brand-blue);
             color: var(--white);
+            border-color: var(--brand-blue);
             box-shadow: 0 2px 8px rgba(11,17,32,0.2);
         }
 
@@ -3615,16 +3607,7 @@
                     <div id="recommendedJobsSection" style="margin-top: 2rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
                             <h3 style="margin:0;">Recommended Opportunities for You</h3>
-                            <div id="domainFilterToggle" class="domain-filter-toggle">
-                                <label class="domain-radio-label">
-                                    <input type="radio" name="jobDomainFilter" value="myDomain" checked onchange="onDomainFilterChange()">
-                                    <span>My Domain</span>
-                                </label>
-                                <label class="domain-radio-label">
-                                    <input type="radio" name="jobDomainFilter" value="allDomains" onchange="onDomainFilterChange()">
-                                    <span>All Domains</span>
-                                </label>
-                            </div>
+                            <div id="domainFilterToggle" class="domain-filter-toggle" style="display:flex;flex-wrap:wrap;gap:0.4rem;"></div>
                         </div>
                         <div id="recommendedJobsContainer" class="recommended-jobs-grid">
                             <p style="text-align:center; color:var(--muted); padding:1.5rem;">Loading opportunities...</p>
@@ -3957,22 +3940,73 @@
             return hp && hp.value.length > 0;
         }
 
-        function getJobsForUserDomain() {
-            // Check if "All Domains" radio is selected
-            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
-            const showAll = allDomainsRadio && allDomainsRadio.checked;
+        var activeDomainFilter = 'myDomain'; // 'myDomain', 'all', or a specific domain name
 
-            if (showAll) {
+        function buildDomainFilterChips() {
+            const container = document.getElementById('domainFilterToggle');
+            if (!container) return;
+
+            // Collect unique domains from JOBS_DATA
+            const domainSet = new Set();
+            JOBS_DATA.forEach(j => { if (j.status === 'Active') domainSet.add(j.domain); });
+            const domains = Array.from(domainSet).sort();
+
+            // Count jobs per domain
+            const domainCounts = {};
+            JOBS_DATA.forEach(j => {
+                if (j.status === 'Active') {
+                    domainCounts[j.domain] = (domainCounts[j.domain] || 0) + 1;
+                }
+            });
+            const totalActive = JOBS_DATA.filter(j => j.status === 'Active').length;
+
+            const userDomain = (currentUser && currentUser.domain && currentUser.domain !== 'Other') ? currentUser.domain : '';
+            activeDomainFilter = userDomain ? 'myDomain' : 'all';
+
+            let html = '';
+            // "My Domain" chip (only if user has a domain)
+            if (userDomain) {
+                const myCount = (domainCounts[userDomain] || 0) + (domainCounts['Cross-Functional'] || 0);
+                html += '<button class="domain-chip active" data-domain-filter="myDomain" onclick="setDomainFilter(\'myDomain\')">' + userDomain + ' (' + myCount + ')</button>';
+            }
+            // "All" chip
+            html += '<button class="domain-chip' + (!userDomain ? ' active' : '') + '" data-domain-filter="all" onclick="setDomainFilter(\'all\')">All (' + totalActive + ')</button>';
+            // Per-domain chips
+            domains.forEach(d => {
+                if (d === 'Cross-Functional') return; // included in My Domain
+                html += '<button class="domain-chip" data-domain-filter="' + d + '" onclick="setDomainFilter(\'' + d + '\')">' + d + ' (' + domainCounts[d] + ')</button>';
+            });
+            if (domainCounts['Cross-Functional']) {
+                html += '<button class="domain-chip" data-domain-filter="Cross-Functional" onclick="setDomainFilter(\'Cross-Functional\')">Cross-Functional (' + domainCounts['Cross-Functional'] + ')</button>';
+            }
+            container.innerHTML = html;
+        }
+
+        function setDomainFilter(filter) {
+            activeDomainFilter = filter;
+            // Update active chip styling
+            document.querySelectorAll('.domain-chip').forEach(c => c.classList.remove('active'));
+            const btn = document.querySelector('.domain-chip[data-domain-filter="' + filter + '"]');
+            if (btn) btn.classList.add('active');
+            renderRecommendedJobs();
+        }
+
+        function getJobsForUserDomain() {
+            const userDomain = (currentUser && currentUser.domain && currentUser.domain !== 'Other') ? currentUser.domain : '';
+
+            if (activeDomainFilter === 'all') {
                 console.log('[GCCPROs] All Domains selected, returning all jobs:', JOBS_DATA.length);
                 return JOBS_DATA;
             }
-            if (!currentUser || !currentUser.domain || currentUser.domain === 'Other') {
-                console.log('[GCCPROs] No domain or domain=Other, returning all jobs:', JOBS_DATA.length);
-                return JOBS_DATA;
+            if (activeDomainFilter === 'myDomain') {
+                if (!userDomain) return JOBS_DATA;
+                const filtered = JOBS_DATA.filter(j => j.domain === userDomain || j.domain === 'Cross-Functional');
+                console.log('[GCCPROs] My Domain (' + userDomain + ') jobs:', filtered.length);
+                return filtered;
             }
-            console.log('[GCCPROs] Filtering jobs for domain:', currentUser.domain);
-            const filtered = JOBS_DATA.filter(j => j.domain === currentUser.domain || j.domain === 'Cross-Functional');
-            console.log('[GCCPROs] Filtered jobs count:', filtered.length);
+            // Specific domain filter
+            const filtered = JOBS_DATA.filter(j => j.domain === activeDomainFilter);
+            console.log('[GCCPROs] Domain filter (' + activeDomainFilter + ') jobs:', filtered.length);
             return filtered;
         }
 
@@ -5096,8 +5130,9 @@
                     document.getElementById('referrerStats').style.display = 'none';
                     document.getElementById('invitePartnerSection').style.display = 'none';
                     document.getElementById('recommendedJobsSection').style.display = 'block';
-                    // Show recommended jobs on dashboard
+                    // Build domain filter chips and show recommended jobs
                     console.log('[GCCPROs] About to renderRecommendedJobs. domain=' + currentUser.domain + ', type=' + currentUser.type);
+                    buildDomainFilterChips();
                     renderRecommendedJobs();
                 } else {
                     document.getElementById('appNav').style.display = 'none';
@@ -5113,6 +5148,7 @@
                 // Fallback: still try to render jobs even if something above failed
                 try {
                     document.getElementById('recommendedJobsSection').style.display = 'block';
+                    buildDomainFilterChips();
                     renderRecommendedJobs();
                 } catch (e2) { console.error('[GCCPROs] fallback renderJobs also failed:', e2); }
             }
@@ -5133,12 +5169,13 @@
             document.getElementById('profileCompletenessBar').style.width = percent + '%';
         }
 
-        function renderRecommendedJobs() {
+        var jobsPageSize = 12;
+        var jobsCurrentCount = 12;
+
+        function renderRecommendedJobs(showCount) {
             const container = document.getElementById('recommendedJobsContainer');
             console.log('[GCCPROs] renderRecommendedJobs called. Container found:', !!container);
             if (!container) return;
-            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
-            const showAll = allDomainsRadio && allDomainsRadio.checked;
             const jobs = getJobsForUserDomain();
             if (!jobs || jobs.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No matching opportunities found for your domain.</p>';
@@ -5146,39 +5183,29 @@
             }
             let activeJobs = jobs.filter(j => j.status === 'Active');
 
-            // When showing all domains, distribute evenly across domains so user sees variety
-            let displayJobs;
-            if (showAll && activeJobs.length > 12) {
-                const byDomain = {};
-                activeJobs.forEach(j => {
-                    if (!byDomain[j.domain]) byDomain[j.domain] = [];
-                    byDomain[j.domain].push(j);
-                });
-                const domains = Object.keys(byDomain);
-                displayJobs = [];
-                let round = 0;
-                while (displayJobs.length < 12 && round < 20) {
-                    for (const d of domains) {
-                        if (byDomain[d][round] && displayJobs.length < 12) {
-                            displayJobs.push(byDomain[d][round]);
-                        }
-                    }
-                    round++;
-                }
-            } else {
-                displayJobs = activeJobs.slice(0, showAll ? 12 : 6);
-            }
+            // Sort: user's domain first, then others alphabetically
+            const userDomain = (currentUser && currentUser.domain) ? currentUser.domain : '';
+            activeJobs.sort((a, b) => {
+                const aMatch = a.domain === userDomain ? 0 : 1;
+                const bMatch = b.domain === userDomain ? 0 : 1;
+                if (aMatch !== bMatch) return aMatch - bMatch;
+                return a.domain.localeCompare(b.domain) || a.title.localeCompare(b.title);
+            });
 
-            console.log('[GCCPROs] displayJobs count:', displayJobs.length, 'showAll:', showAll);
+            // Determine how many to show
+            const limit = showCount || jobsPageSize;
+            jobsCurrentCount = limit;
+            const displayJobs = activeJobs.slice(0, limit);
+            const totalActive = activeJobs.length;
+
+            console.log('[GCCPROs] displayJobs:', displayJobs.length, '/ total active:', totalActive);
             if (displayJobs.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No active opportunities found right now. Check back soon!</p>';
                 return;
             }
-            // Build cards with <a> tag Apply buttons (links are the most clickable HTML element)
-            // Three click paths: 1) data-apply-job attribute caught by isolated script
-            //                     2) href=#apply-JOBID caught by hashchange listener
-            //                     3) programmatic onclick added after render
-            container.innerHTML = displayJobs.map((job, idx) => `
+
+            // Build job cards
+            let html = displayJobs.map((job, idx) => `
                 <div class="recommended-job-card" data-card-index="${idx}">
                     <div class="rec-job-header">
                         <span class="rec-job-domain">${job.domain}</span>
@@ -5198,9 +5225,24 @@
                 </div>
             `).join('');
 
-            // Buttons use inline onclick="applyForJob('...')" — confirmed working in v7 console logs
+            // Job count badge
+            html += '<div style="grid-column:1/-1;text-align:center;padding:0.5rem 0 0;"><span style="font-size:0.8rem;color:var(--muted);">Showing ' + displayJobs.length + ' of ' + totalActive + ' active opportunities</span></div>';
 
-            console.log('[GCCPROs] renderRecommendedJobs complete. Buttons:', container.querySelectorAll('.rec-job-apply-btn').length);
+            // Show More / Show Less buttons
+            if (displayJobs.length < totalActive) {
+                const nextCount = Math.min(jobsCurrentCount + jobsPageSize, totalActive);
+                html += '<div style="grid-column:1/-1;text-align:center;padding:0.75rem 0;display:flex;gap:0.75rem;justify-content:center;">';
+                html += '<button onclick="renderRecommendedJobs(' + nextCount + ')" style="padding:0.6rem 1.5rem;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">Show More (' + (totalActive - displayJobs.length) + ' remaining)</button>';
+                html += '<button onclick="renderRecommendedJobs(' + totalActive + ')" style="padding:0.6rem 1.5rem;background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">Show All ' + totalActive + '</button>';
+                html += '</div>';
+            } else if (totalActive > jobsPageSize) {
+                html += '<div style="grid-column:1/-1;text-align:center;padding:0.75rem 0;">';
+                html += '<button onclick="renderRecommendedJobs(' + jobsPageSize + ')" style="padding:0.6rem 1.5rem;background:#fff;color:var(--muted);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.85rem;">Show Less</button>';
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+            console.log('[GCCPROs] renderRecommendedJobs complete. Cards:', container.querySelectorAll('.rec-job-apply-btn').length, '/ Total:', totalActive);
         }
 
         function viewJobDetails(jobId) {
