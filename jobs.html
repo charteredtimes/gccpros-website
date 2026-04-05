@@ -893,6 +893,37 @@
             box-shadow: 0 2px 8px rgba(11,17,32,0.2);
         }
 
+        /* Job Application Skills Grid */
+        .app-skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+        .app-skill-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 6px 14px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            background: var(--white);
+        }
+        .app-skill-chip:hover {
+            border-color: var(--brand-blue);
+            background: #f0f4ff;
+        }
+        .app-skill-chip.selected {
+            border-color: var(--brand-blue);
+            background: var(--brand-blue);
+            color: var(--white);
+        }
+        .app-skill-chip input[type="checkbox"] { display: none; }
+
         /* Recommended Jobs Grid */
         .recommended-jobs-grid {
             display: grid;
@@ -3293,6 +3324,123 @@
         </div>
     </div>
 
+    <!-- Job Application Modal -->
+    <div class="modal" id="jobApplicationModal">
+        <div class="modal-content" style="max-width:700px;">
+            <div class="modal-header">
+                <h2 id="appModalTitle">Apply for Position</h2>
+                <button class="modal-close" onclick="closeModal('jobApplicationModal')">&times;</button>
+            </div>
+            <form id="jobApplicationForm" onsubmit="submitJobApplication(event)">
+                <input type="hidden" id="appJobId" name="jobId">
+                <input type="hidden" id="appJobTitle" name="jobTitle">
+
+                <!-- Section 1: Pre-filled from profile (read-only summary) -->
+                <div style="background:var(--cream);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h4 style="margin:0 0 0.5rem;font-size:0.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;">Your Profile</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1.5rem;font-size:0.88rem;">
+                        <div><strong>Name:</strong> <span id="appProfileName">—</span></div>
+                        <div><strong>Email:</strong> <span id="appProfileEmail">—</span></div>
+                        <div><strong>Phone:</strong> <span id="appProfilePhone">—</span></div>
+                        <div><strong>Location:</strong> <span id="appProfileLocation">—</span></div>
+                        <div><strong>Experience:</strong> <span id="appProfileExp">—</span> yrs</div>
+                        <div><strong>Notice Period:</strong> <span id="appProfileNotice">—</span> days</div>
+                        <div><strong>Current CTC:</strong> <span id="appProfileCTC">—</span> LPA</div>
+                        <div><strong>Expected CTC:</strong> <span id="appProfileExpCTC">—</span> LPA</div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Skills selection (min 3 from job's skill list) -->
+                <div class="form-group">
+                    <label style="font-weight:600;">Select Your Matching Skills <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(Pick at least 3)</span></label>
+                    <div id="appSkillsContainer" class="app-skills-grid"></div>
+                    <p id="appSkillsError" style="color:#dc2626;font-size:0.78rem;display:none;margin-top:0.25rem;">Please select at least 3 skills.</p>
+                </div>
+
+                <!-- Section 3: Eligibility statement -->
+                <div class="form-group">
+                    <label for="appEligibility" style="font-weight:600;">Why are you the right fit for this role? <span style="color:#dc2626;">*</span></label>
+                    <textarea id="appEligibility" name="eligibility" rows="4" required placeholder="Describe your relevant experience, achievements, and what makes you a strong candidate for this position..." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+
+                <!-- Section 4: Availability & Preferences -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label for="appAvailability" style="font-weight:600;">Earliest Joining Date <span style="color:#dc2626;">*</span></label>
+                        <input type="date" id="appAvailability" name="availability" required style="width:100%;padding:0.6rem;border:1px solid var(--border);border-radius:8px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="appWorkMode" style="font-weight:600;">Preferred Work Mode <span style="color:#dc2626;">*</span></label>
+                        <select id="appWorkMode" name="workMode" required style="width:100%;padding:0.6rem;border:1px solid var(--border);border-radius:8px;">
+                            <option value="">Select</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="On-site">On-site</option>
+                            <option value="Flexible">Flexible / Any</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="appWillingRelocate" style="font-weight:600;">Willing to Relocate? <span style="color:#dc2626;">*</span></label>
+                    <select id="appWillingRelocate" name="willingRelocate" required style="width:100%;padding:0.6rem;border:1px solid var(--border);border-radius:8px;">
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="Depends on Location">Depends on Location</option>
+                    </select>
+                </div>
+
+                <!-- Section 5: Professional References (2 required) -->
+                <div style="margin-top:0.5rem;">
+                    <h4 style="margin:0 0 0.75rem;font-size:0.95rem;">Professional References <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(2 required)</span></h4>
+                    <div style="background:#f8f9fa;border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.75rem;">
+                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 1</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="text" id="ref1Name" name="ref1Name" placeholder="Full Name" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref1Designation" name="ref1Designation" placeholder="Designation & Company" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="email" id="ref1Email" name="ref1Email" placeholder="Email" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="tel" id="ref1Phone" name="ref1Phone" placeholder="Phone Number" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                        </div>
+                        <input type="text" id="ref1Relation" name="ref1Relation" placeholder="Professional relationship (e.g. Former Manager at XYZ)" required style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
+                    </div>
+                    <div style="background:#f8f9fa;border-radius:10px;padding:1rem 1.25rem;">
+                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 2</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="text" id="ref2Name" name="ref2Name" placeholder="Full Name" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref2Designation" name="ref2Designation" placeholder="Designation & Company" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="email" id="ref2Email" name="ref2Email" placeholder="Email" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="tel" id="ref2Phone" name="ref2Phone" placeholder="Phone Number" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                        </div>
+                        <input type="text" id="ref2Relation" name="ref2Relation" placeholder="Professional relationship (e.g. Team Lead at ABC)" required style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
+                    </div>
+                </div>
+
+                <!-- Section 6: CV Upload -->
+                <div class="form-group" style="margin-top:1rem;">
+                    <label for="appResume" style="font-weight:600;">Upload Updated CV <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(PDF, DOC, DOCX — max 5MB)</span></label>
+                    <input type="file" id="appResume" name="resume" accept=".pdf,.doc,.docx" required style="width:100%;padding:0.6rem;border:1px solid var(--border);border-radius:8px;background:var(--white);">
+                </div>
+
+                <!-- Section 7: Additional Info -->
+                <div class="form-group">
+                    <label for="appAdditionalInfo" style="font-weight:600;">Anything else you'd like us to know? <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(Optional)</span></label>
+                    <textarea id="appAdditionalInfo" name="additionalInfo" rows="2" placeholder="Portfolio links, certifications, awards, salary expectations, etc." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+
+                <!-- Consent -->
+                <div class="form-group" style="margin-top:0.5rem;">
+                    <label style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="checkbox" id="appConsent" name="consent" required style="margin-top:3px;">
+                        <span>I confirm the information provided is accurate and I consent to GCCPROs sharing my application with the hiring company for this position.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="form-submit-btn" id="appSubmitBtn" style="width:100%;margin-top:0.75rem;">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
     <!-- User Console -->
     <div class="user-console" id="userConsole">
         <!-- Pending Approval Overlay -->
@@ -4356,6 +4504,7 @@
                         const profileData = await checkUserStatus(userInfo.email);
                         if (profileData.exists) {
                             currentUser.type = profileData.type || 'jobSeeker';
+                            if (profileData.userId) currentUser.userId = profileData.userId;
                             if (profileData.domain) currentUser.domain = profileData.domain;
                             if (profileData.phone) currentUser.phone = profileData.phone;
                             if (profileData.linkedin) currentUser.linkedin = profileData.linkedin;
@@ -4365,6 +4514,7 @@
                             if (profileData.experience) currentUser.experience = profileData.experience;
                             if (profileData.currentCTC) currentUser.currentCTC = profileData.currentCTC;
                             if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
+                            if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
                         }
                     } catch (e) {
@@ -4400,6 +4550,7 @@
                         const profileData = await checkUserStatus(userInfo.email);
                         if (profileData.exists) {
                             currentUser.type = profileData.type || 'jobSeeker';
+                            if (profileData.userId) currentUser.userId = profileData.userId;
                             if (profileData.domain) currentUser.domain = profileData.domain;
                             if (profileData.phone) currentUser.phone = profileData.phone;
                             if (profileData.linkedin) currentUser.linkedin = profileData.linkedin;
@@ -4409,6 +4560,7 @@
                             if (profileData.experience) currentUser.experience = profileData.experience;
                             if (profileData.currentCTC) currentUser.currentCTC = profileData.currentCTC;
                             if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
+                            if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
                         }
                     } catch (e) {
@@ -4607,6 +4759,7 @@
                 // Update currentUser from backend profile data (covers returning users whose sessionStorage was cleared)
                 if (statusData.exists) {
                     if (statusData.type) currentUser.type = statusData.type;
+                    if (statusData.userId) currentUser.userId = statusData.userId;
                     if (statusData.domain) currentUser.domain = statusData.domain;
                     if (statusData.phone) currentUser.phone = statusData.phone;
                     if (statusData.linkedin) currentUser.linkedin = statusData.linkedin;
@@ -4616,6 +4769,7 @@
                     if (statusData.experience) currentUser.experience = statusData.experience;
                     if (statusData.currentCTC) currentUser.currentCTC = statusData.currentCTC;
                     if (statusData.expectedCTC) currentUser.expectedCTC = statusData.expectedCTC;
+                    if (statusData.noticePeriod) currentUser.noticePeriod = statusData.noticePeriod;
                     if (statusData.name && !currentUser.name) currentUser.name = statusData.name;
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 }
@@ -4738,12 +4892,156 @@
         function applyForJob(jobId) {
             const job = JOBS_DATA.find(j => j.id === jobId);
             if (!job) return;
-            showToast('Application submitted for ' + job.title + '!', 'success');
-            // Track in recent activity
-            const activity = document.getElementById('recentActivity');
-            if (activity) {
-                activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + job.title + ' at ' + job.company + ' — <em>Just now</em></div>';
+            if (!currentUser || !currentUser.email) {
+                showToast('Please log in to apply.', 'error');
+                return;
             }
+
+            // Set job info in the modal
+            document.getElementById('appJobId').value = job.id;
+            document.getElementById('appJobTitle').value = job.title;
+            document.getElementById('appModalTitle').textContent = 'Apply: ' + job.title;
+
+            // Pre-fill profile info (read-only display)
+            document.getElementById('appProfileName').textContent = currentUser.name || '—';
+            document.getElementById('appProfileEmail').textContent = currentUser.email || '—';
+            document.getElementById('appProfilePhone').textContent = currentUser.phone || '—';
+            document.getElementById('appProfileLocation').textContent = currentUser.location || '—';
+            document.getElementById('appProfileExp').textContent = currentUser.experience || '—';
+            document.getElementById('appProfileNotice').textContent = currentUser.noticePeriod || '—';
+            document.getElementById('appProfileCTC').textContent = currentUser.currentCTC || '—';
+            document.getElementById('appProfileExpCTC').textContent = currentUser.expectedCTC || '—';
+
+            // Populate skills checkboxes from job's skills array
+            const skillsContainer = document.getElementById('appSkillsContainer');
+            skillsContainer.innerHTML = (job.skills || []).map((skill, i) =>
+                `<label class="app-skill-chip" onclick="this.classList.toggle('selected')">
+                    <input type="checkbox" name="appSkill" value="${skill}">
+                    ${skill}
+                </label>`
+            ).join('');
+
+            // Set minimum date for availability (tomorrow)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('appAvailability').min = tomorrow.toISOString().split('T')[0];
+
+            // Reset form state
+            document.getElementById('appSkillsError').style.display = 'none';
+            document.getElementById('appSubmitBtn').disabled = false;
+            document.getElementById('appSubmitBtn').textContent = 'Submit Application';
+
+            showModal('jobApplicationModal');
+        }
+
+        async function submitJobApplication(event) {
+            event.preventDefault();
+
+            // Validate at least 3 skills selected
+            const selectedSkills = Array.from(document.querySelectorAll('input[name="appSkill"]:checked')).map(cb => cb.value);
+            if (selectedSkills.length < 3) {
+                document.getElementById('appSkillsError').style.display = 'block';
+                document.getElementById('appSkillsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            document.getElementById('appSkillsError').style.display = 'none';
+
+            const submitBtn = document.getElementById('appSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Read CV file as base64
+            const resumeFile = document.getElementById('appResume').files[0];
+            let cvBase64 = '';
+            let cvFileName = '';
+            let cvMimeType = '';
+            if (resumeFile) {
+                if (resumeFile.size > 5 * 1024 * 1024) {
+                    showToast('CV file must be under 5MB.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Application';
+                    return;
+                }
+                cvFileName = resumeFile.name;
+                cvMimeType = resumeFile.type;
+                cvBase64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]); // strip data:...;base64,
+                    reader.readAsDataURL(resumeFile);
+                });
+            }
+
+            const payload = {
+                action: 'submitJobApplication',
+                userId: currentUser.userId || '',
+                applicantName: currentUser.name || '',
+                email: currentUser.email || '',
+                phone: currentUser.phone || '',
+                location: currentUser.location || '',
+                experience: currentUser.experience || '',
+                noticePeriod: currentUser.noticePeriod || '',
+                currentCTC: currentUser.currentCTC || '',
+                expectedCTC: currentUser.expectedCTC || '',
+                jobId: document.getElementById('appJobId').value,
+                jobTitle: document.getElementById('appJobTitle').value,
+                selectedSkills: selectedSkills,
+                eligibility: document.getElementById('appEligibility').value,
+                availability: document.getElementById('appAvailability').value,
+                workMode: document.getElementById('appWorkMode').value,
+                willingRelocate: document.getElementById('appWillingRelocate').value,
+                ref1Name: document.getElementById('ref1Name').value,
+                ref1Designation: document.getElementById('ref1Designation').value,
+                ref1Email: document.getElementById('ref1Email').value,
+                ref1Phone: document.getElementById('ref1Phone').value,
+                ref1Relation: document.getElementById('ref1Relation').value,
+                ref2Name: document.getElementById('ref2Name').value,
+                ref2Designation: document.getElementById('ref2Designation').value,
+                ref2Email: document.getElementById('ref2Email').value,
+                ref2Phone: document.getElementById('ref2Phone').value,
+                ref2Relation: document.getElementById('ref2Relation').value,
+                cvBase64: cvBase64,
+                cvFileName: cvFileName,
+                cvMimeType: cvMimeType,
+                additionalInfo: document.getElementById('appAdditionalInfo').value
+            };
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                console.log('[GCCPROs] Application result:', result);
+
+                if (result.success) {
+                    closeModal('jobApplicationModal');
+                    showToast('Application submitted! ID: ' + result.applicationId, 'success');
+                    document.getElementById('jobApplicationForm').reset();
+
+                    // Update recent activity
+                    const activity = document.getElementById('recentActivity');
+                    if (activity) {
+                        const jobTitle = document.getElementById('appJobTitle').value;
+                        activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + jobTitle + ' — <em>Just now</em> (ID: ' + result.applicationId + ')</div>';
+                    }
+
+                    // Update stats
+                    const appCountEl = document.querySelector('#jobSeekerStats .stat-card:first-child .stat-number');
+                    if (appCountEl) {
+                        appCountEl.textContent = parseInt(appCountEl.textContent || '0') + 1;
+                    }
+                } else {
+                    showToast('Error: ' + (result.error || 'Submission failed'), 'error');
+                }
+            } catch (err) {
+                console.error('[GCCPROs] Application submit error:', err);
+                showToast('Submission failed. Please try again.', 'error');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Application';
         }
 
         function populateReferralJobDropdown() {
