@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-05-v4">
+    <meta name="version" content="2026-04-05-v5">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -938,6 +938,8 @@
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
+            overflow: visible;
+            position: relative;
         }
         .recommended-job-card:hover {
             box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -1024,6 +1026,8 @@
             font-family: inherit;
             transition: all 0.3s;
             width: 100%;
+            position: relative;
+            z-index: 5;
         }
         .rec-job-apply-btn:hover {
             background: #b8862e;
@@ -5122,16 +5126,27 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
-                    <button class="rec-job-apply-btn" data-job-id="${job.id}">Apply Now</button>
+                    <button class="rec-job-apply-btn" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
                 </div>
             `).join('');
 
+            // Also attach listeners directly as backup
+            container.querySelectorAll('.rec-job-apply-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const jid = this.getAttribute('data-job-id');
+                    console.log('[GCCPROs] Apply btn addEventListener fired, jobId:', jid);
+                    applyForJob(jid);
+                });
+            });
+            console.log('[GCCPROs] renderRecommendedJobs complete. Buttons:', container.querySelectorAll('.rec-job-apply-btn').length);
         }
 
         function applyForJob(jobId) {
+            try {
             console.log('[GCCPROs] applyForJob called with jobId:', jobId);
             const job = JOBS_DATA.find(j => j.id === jobId);
-            if (!job) { console.log('[GCCPROs] Job not found for id:', jobId); return; }
+            if (!job) { console.error('[GCCPROs] Job not found for id:', jobId); alert('Job not found: ' + jobId); return; }
             if (!currentUser || !currentUser.email) {
                 showToast('Please log in to apply.', 'error');
                 return;
@@ -5172,6 +5187,10 @@
             document.getElementById('appSubmitBtn').textContent = 'Submit Application';
 
             showModal('jobApplicationModal');
+            } catch (err) {
+                console.error('[GCCPROs] applyForJob error:', err);
+                alert('Error opening application form: ' + err.message);
+            }
         }
 
         async function submitJobApplication(event) {
@@ -5352,26 +5371,31 @@
             }, 3000);
         }
 
+        // Global delegated click handler for Apply Now buttons — registered immediately (not inside DOMContentLoaded)
+        // Uses capture phase to ensure it fires before any other handler can block it
+        document.addEventListener('click', function(e) {
+            const applyBtn = e.target.closest('.rec-job-apply-btn');
+            if (applyBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const jobId = applyBtn.getAttribute('data-job-id');
+                console.log('[GCCPROs] Apply button clicked (delegated), jobId:', jobId);
+                if (typeof applyForJob === 'function') {
+                    applyForJob(jobId);
+                } else {
+                    console.error('[GCCPROs] applyForJob function not found!');
+                    alert('Application system loading... please try again in a moment.');
+                }
+            }
+        }, true); // <-- capture phase = fires FIRST before any other handlers
+
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('GCCPROs landing page loaded');
+            console.log('GCCPROs landing page loaded v4');
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 showUserConsole();
             }
-
-            // Global delegated click handler for Apply Now buttons
-            // This fires regardless of when/how the buttons are rendered
-            document.addEventListener('click', function(e) {
-                const applyBtn = e.target.closest('.rec-job-apply-btn');
-                if (applyBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const jobId = applyBtn.getAttribute('data-job-id');
-                    console.log('[GCCPROs] Apply button clicked (delegated), jobId:', jobId);
-                    applyForJob(jobId);
-                }
-            });
         });
     </script>
 </body>
