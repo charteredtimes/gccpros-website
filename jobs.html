@@ -813,6 +813,173 @@
             border: 1.5px solid var(--gold);
         }
 
+        /* Referral Coin Styles */
+        .referral-coin-badge {
+            background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+            border: 1.5px solid #D4A843;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .referral-coin-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #D4A843, #B8860B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(184, 134, 11, 0.3);
+        }
+        .referral-coin-text {
+            font-size: 0.85rem;
+            color: var(--ink);
+            line-height: 1.4;
+        }
+        .referral-coin-text strong {
+            color: #B8860B;
+            font-size: 0.95rem;
+        }
+        .referral-coin-highlight {
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.06), rgba(30, 64, 175, 0.04));
+            border: 1.5px solid rgba(184, 134, 11, 0.25);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .referral-coin-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #D4A843, #B8860B, #D4A843);
+        }
+        .referral-coin-highlight h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+        .referral-coin-highlight p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .coin-amount {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #D4A843, #B8860B);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 8px 0;
+        }
+        .coin-fine-print {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        /* Dashboard coin card */
+        .stat-card.coin-card {
+            background: linear-gradient(135deg, #FFF8E1, #FFFDF5);
+            border-color: #D4A843;
+        }
+        .stat-card.coin-card .stat-number {
+            color: #B8860B;
+        }
+        .stat-card.coin-card .stat-label {
+            color: #92700C;
+        }
+        .accrued-tag {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #92700C;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Invite partner button */
+        .invite-partner-section {
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.05), rgba(30, 64, 175, 0.03));
+            border: 1px dashed rgba(184, 134, 11, 0.3);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .invite-partner-section p {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+        .invite-btn {
+            background: linear-gradient(135deg, #D4A843, #B8860B);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .invite-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
+        }
+        .referral-code-box {
+            display: none;
+            margin-top: 12px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .referral-code-box.active {
+            display: block;
+        }
+        .referral-code-box input {
+            width: 100%;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: var(--ink);
+            text-align: center;
+            background: #F8FAFC;
+        }
+        .copy-link-btn {
+            background: var(--brand-blue);
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -1829,6 +1996,13 @@
                         <li>Complete identity protection guaranteed</li>
                         <li>Flexible schedule, multiple earning streams</li>
                     </ul>
+                    <div class="referral-coin-badge">
+                        <div class="referral-coin-icon">🪙</div>
+                        <div class="referral-coin-text">
+                            <strong>Earn ₹1,000 Referral Coins</strong><br>
+                            For every partner you invite who gets accepted
+                        </div>
+                    </div>
                     <div class="early-bird-badge">
                         <strong>FREE for first 200 partners</strong>
                         <span>Join our exclusive partner network.</span>
@@ -1955,11 +2129,20 @@
                     <h3>Earn Through Referrals, Training & Mentoring</h3>
                     <p>Partner with us to refer candidates (earn up to ₹5,00,000 per placement), conduct corporate training, offer mentorship, and take on advisory engagements — all on your terms.</p>
                 </div>
+                <div class="referral-coin-highlight">
+                    <h4>🪙 Partner Referral Coins</h4>
+                    <p>Invite fellow professionals to join as partners and earn rewards</p>
+                    <div class="coin-amount">🪙 ₹1,000 per accepted partner referral</div>
+                    <p>Coins accrue in your account and are disbursed along with your first successful hiring incentive.</p>
+                    <p class="coin-fine-print">Referral coins are credited upon partner acceptance and disbursed at the time of your first successful candidate placement payout.</p>
+                </div>
+
                 <div class="program-grid">
                     <div class="program-col">
                         <h4>Why Partner With Us?</h4>
                         <ul class="program-list">
                             <li>Earn referral incentives for each successful placement</li>
+                            <li>Earn ₹1,000 Referral Coins for every partner you invite</li>
                             <li>Conduct corporate training programs & workshops</li>
                             <li>Offer one-on-one mentoring to candidates</li>
                             <li>Advisory & consulting engagement opportunities</li>
@@ -2721,6 +2904,11 @@
                         </div>
                         <!-- Referrer Stats -->
                         <div id="referrerStats" style="display: none;">
+                            <div class="stat-card coin-card">
+                                <div class="stat-number" id="coinBalance">0</div>
+                                <div class="stat-label">🪙 Referral Coins</div>
+                                <div class="accrued-tag">Accrued</div>
+                            </div>
                             <div class="stat-card">
                                 <div class="stat-number">0</div>
                                 <div class="stat-label">Total Referrals</div>
@@ -2737,11 +2925,26 @@
                                 <div class="stat-number">0</div>
                                 <div class="stat-label">Payouts Processed</div>
                             </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="partnersInvited">0</div>
+                                <div class="stat-label">Partners Invited</div>
+                            </div>
                         </div>
                     </div>
                     <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Recent Activity</h3>
                     <div id="recentActivity" style="background: var(--cream); padding: 1.5rem; border-radius: 8px; text-align: center; color: var(--muted);">
                         No recent activity
+                    </div>
+
+                    <!-- Invite a Partner (only shown for referrers) -->
+                    <div id="invitePartnerSection" class="invite-partner-section" style="display:none;">
+                        <p>🪙 <strong>Earn ₹1,000 Referral Coins</strong> for every partner you invite who gets accepted</p>
+                        <button class="invite-btn" onclick="generateReferralLink()">Invite a Partner</button>
+                        <div class="referral-code-box" id="referralCodeBox">
+                            <input type="text" id="referralLinkInput" readonly>
+                            <button class="copy-link-btn" onclick="copyReferralLink()">Copy Link</button>
+                            <p style="font-size:0.75rem; color:#94a3b8; margin-top:6px;">Share this link — you'll earn ₹1,000 in Referral Coins when they register and get accepted.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -3033,6 +3236,12 @@
                 return;
             }
 
+            // Check if email is already registered
+            if (registeredEmails.has(email.toLowerCase().trim())) {
+                showToast('This email is already registered. Please login instead.', 'error');
+                return;
+            }
+
             document.getElementById(otpSection).classList.add('active');
             document.getElementById(emailBtn).disabled = true;
 
@@ -3139,7 +3348,15 @@
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+
+            // Check for duplicate email
+            if (registeredEmails.has(data.email.toLowerCase().trim())) {
+                showToast('This email is already registered. Please login instead.', 'error');
+                return;
+            }
+
             data.action = 'submitApplication';
+            trackRegisteredEmail(data.email);
 
             console.log('Job Seeker Registration:', data);
 
@@ -3197,7 +3414,21 @@
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+
+            // Check for duplicate email
+            if (registeredEmails.has(data.email.toLowerCase().trim())) {
+                showToast('This email is already registered as a job seeker or partner. Please login instead.', 'error');
+                return;
+            }
+
             data.action = 'registerReferrer';
+            trackRegisteredEmail(data.email);
+
+            // Attach referral code if visitor came via a partner referral link
+            const referredBy = sessionStorage.getItem('referredBy');
+            if (referredBy) {
+                data.referredByCode = referredBy;
+            }
 
             console.log('Referrer Registration:', data);
 
@@ -3437,36 +3668,103 @@
             })
             .then(res => res.json())
             .then(userInfo => {
-                currentUser = {
-                    name: userInfo.name,
-                    email: userInfo.email,
-                    type: googleSignInType,
-                    domain: 'Other'
-                };
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                trackRegisteredEmail(userInfo.email);
 
-                // Send to backend
-                const data = {
-                    action: 'googleSignIn',
-                    signInType: googleSignInType,
-                    fullName: userInfo.name,
-                    email: userInfo.email,
-                    picture: userInfo.picture
-                };
-                fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: JSON.stringify(data),
-                    mode: 'no-cors'
-                }).catch(err => console.log('Google sign-in data submitted'));
+                if (googleSignInType === 'login') {
+                    // Login flow — go straight to dashboard
+                    currentUser = {
+                        name: userInfo.name,
+                        email: userInfo.email,
+                        type: 'jobSeeker',
+                        domain: 'Other'
+                    };
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    closeModal('loginModal');
+                    showToast('Welcome back, ' + userInfo.name + '!', 'success');
+                    setTimeout(() => showUserConsole(), 500);
+                    return;
+                }
 
-                // Close any open modals
-                closeModal('loginModal');
-                closeModal('jobSeekerModal');
-                closeModal('referrerModal');
+                // Registration flow — pre-fill and show the appropriate form
+                if (googleSignInType === 'jobSeeker') {
+                    closeModal('loginModal');
+                    showModal('jobSeekerModal');
 
-                showToast('Welcome, ' + userInfo.name + '!', 'success');
-                setTimeout(() => showUserConsole(), 500);
+                    const form = document.getElementById('jobSeekerForm');
+                    // Pre-fill name and email from Google
+                    form.querySelector('[name="fullName"]').value = userInfo.name;
+                    form.querySelector('[name="email"]').value = userInfo.email;
+
+                    // Lock the email field and mark as verified (it's from Google)
+                    const emailInput = document.getElementById('jsEmail');
+                    emailInput.value = userInfo.email;
+                    emailInput.readOnly = true;
+                    emailInput.style.background = '#f0f9f0';
+                    emailInput.style.borderColor = '#059669';
+                    otpVerified['jobSeeker'] = true;
+
+                    // Hide OTP section and change button to show verified
+                    const otpBtn = document.getElementById('jsEmailBtn');
+                    otpBtn.textContent = '✓ Verified';
+                    otpBtn.disabled = true;
+                    otpBtn.style.background = '#059669';
+                    document.getElementById('jsOtpSection').style.display = 'none';
+
+                    // Hide the Google button and divider since already authenticated
+                    const googleBtn = form.querySelector('.google-signin-btn');
+                    const divider = form.querySelector('.form-divider');
+                    if (googleBtn) googleBtn.style.display = 'none';
+                    if (divider) divider.style.display = 'none';
+
+                    // Scroll modal to the phone field
+                    setTimeout(() => {
+                        const phoneField = form.querySelector('[name="phone"]');
+                        if (phoneField) phoneField.focus();
+                    }, 300);
+
+                    showToast('Hi ' + userInfo.name + '! Please complete your profile to continue.', 'success');
+
+                } else if (googleSignInType === 'referrer') {
+                    closeModal('loginModal');
+                    showModal('referrerModal');
+
+                    const form = document.getElementById('referrerForm');
+                    if (form) {
+                        const nameField = form.querySelector('[name="fullName"]');
+                        const emailField = document.getElementById('refEmail');
+                        if (nameField) nameField.value = userInfo.name;
+                        if (emailField) {
+                            emailField.value = userInfo.email;
+                            emailField.readOnly = true;
+                            emailField.style.background = '#f0f9f0';
+                            emailField.style.borderColor = '#059669';
+                        }
+                        otpVerified['referrer'] = true;
+
+                        // Mark OTP as verified and hide OTP section
+                        const otpBtn = document.getElementById('refEmailBtn');
+                        if (otpBtn) {
+                            otpBtn.textContent = '✓ Verified';
+                            otpBtn.disabled = true;
+                            otpBtn.style.background = '#059669';
+                        }
+                        const otpSection = document.getElementById('refOtpSection');
+                        if (otpSection) otpSection.style.display = 'none';
+
+                        const googleBtn = form.querySelector('.google-signin-btn');
+                        const divider = form.querySelector('.form-divider');
+                        if (googleBtn) googleBtn.style.display = 'none';
+                        if (divider) divider.style.display = 'none';
+
+                        // Focus on phone field
+                        setTimeout(() => {
+                            const phoneField = form.querySelector('[name="phone"]');
+                            if (phoneField) phoneField.focus();
+                        }, 300);
+                    }
+
+                    showToast('Hi ' + userInfo.name + '! Please complete your partner profile to continue.', 'success');
+                }
             })
             .catch(err => {
                 console.error('Failed to fetch user info:', err);
@@ -3485,6 +3783,48 @@
             showToast('Password reset functionality coming soon', 'success');
         }
 
+        // Referral Coins & Partner Invite
+        function generateReferralLink() {
+            // Generate a persistent code per user (reuse if already generated)
+            if (!currentUser.referralCode) {
+                currentUser.referralCode = (currentUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + '-' + Math.random().toString(36).substring(2, 8)).toUpperCase();
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            const baseUrl = window.location.origin + window.location.pathname;
+            const referralLink = baseUrl + '?ref=' + currentUser.referralCode;
+            document.getElementById('referralLinkInput').value = referralLink;
+            document.getElementById('referralCodeBox').classList.add('active');
+        }
+
+        function copyReferralLink() {
+            const input = document.getElementById('referralLinkInput');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Referral link copied!', 'success');
+            }).catch(() => {
+                document.execCommand('copy');
+                showToast('Referral link copied!', 'success');
+            });
+        }
+
+        // Check if visitor came via referral link
+        function checkReferralParam() {
+            const params = new URLSearchParams(window.location.search);
+            const ref = params.get('ref');
+            if (ref) {
+                sessionStorage.setItem('referredBy', ref);
+            }
+        }
+        checkReferralParam();
+
+        // Track registered emails to prevent duplicate invitations
+        const registeredEmails = new Set();
+
+        // Collect emails at registration time
+        function trackRegisteredEmail(email) {
+            if (email) registeredEmails.add(email.toLowerCase().trim());
+        }
+
         function showUserConsole() {
             if (currentUser) {
                 document.getElementById('userConsole').classList.add('active');
@@ -3499,11 +3839,13 @@
                     document.getElementById('refNav').style.display = 'none';
                     document.getElementById('jobSeekerStats').style.display = 'grid';
                     document.getElementById('referrerStats').style.display = 'none';
+                    document.getElementById('invitePartnerSection').style.display = 'none';
                 } else {
                     document.getElementById('appNav').style.display = 'none';
                     document.getElementById('refNav').style.display = 'block';
                     document.getElementById('jobSeekerStats').style.display = 'none';
                     document.getElementById('referrerStats').style.display = 'grid';
+                    document.getElementById('invitePartnerSection').style.display = 'block';
                     populateReferralJobDropdown();
                 }
             }
