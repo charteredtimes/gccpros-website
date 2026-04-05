@@ -4884,14 +4884,24 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
-                    <button class="rec-job-apply-btn" onclick="applyForJob('${job.id}')">Apply Now</button>
+                    <button class="rec-job-apply-btn" data-job-id="${job.id}">Apply Now</button>
                 </div>
             `).join('');
+
+            // Attach click handlers via event delegation (avoids CSP inline-script issues)
+            container.querySelectorAll('.rec-job-apply-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const jobId = this.getAttribute('data-job-id');
+                    console.log('[GCCPROs] Apply button clicked, jobId:', jobId);
+                    applyForJob(jobId);
+                });
+            });
         }
 
         function applyForJob(jobId) {
+            console.log('[GCCPROs] applyForJob called with jobId:', jobId);
             const job = JOBS_DATA.find(j => j.id === jobId);
-            if (!job) return;
+            if (!job) { console.log('[GCCPROs] Job not found for id:', jobId); return; }
             if (!currentUser || !currentUser.email) {
                 showToast('Please log in to apply.', 'error');
                 return;
