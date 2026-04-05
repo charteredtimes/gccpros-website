@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v15">
+    <meta name="version" content="2026-04-06-v17">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3454,6 +3454,16 @@
                     </div>
                 </div>
 
+                <!-- Section 2b: Candidate CV Upload -->
+                <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Candidate CV / Resume <span class="required">*</span></label>
+                        <input type="file" name="candidateCV" id="refCandCV" accept=".pdf,.doc,.docx">
+                        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">PDF or Word only, max 5 MB</div>
+                        <div class="field-error" id="refCVError" style="display:none;">Please attach the candidate's CV (PDF or Word, max 5 MB)</div>
+                    </div>
+                </div>
+
                 <!-- Section 3: Referrer's Assessment -->
                 <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
                     <h3 style="margin:0 0 0.75rem;font-size:1rem;color:#92400e;">Your Assessment of the Candidate</h3>
@@ -3526,10 +3536,9 @@
                     <h3 style="margin:0 0 0.25rem;font-size:1rem;color:#166534;">Skill Assessment</h3>
                     <p style="font-size:0.82rem;color:#555;margin:0 0 1rem;line-height:1.4;">Rate the candidate on each skill required for this role (1 = Novice, 10 = Expert). This helps us assess fitment objectively.</p>
                     <div id="refSkillRatingsContainer"></div>
-                    <div id="refWeightedScoreDisplay" style="display:none;margin-top:1rem;padding:0.75rem 1rem;background:#fff;border:1px solid #86efac;border-radius:8px;text-align:center;">
-                        <span style="font-size:0.85rem;color:#555;">Weighted Average Score: </span>
-                        <span id="refWeightedScoreValue" style="font-size:1.4rem;font-weight:700;color:#166534;">—</span>
-                        <span style="font-size:0.85rem;color:#555;"> / 10</span>
+                    <!-- Weighted score calculated internally, not shown to partner -->
+                    <div id="refWeightedScoreDisplay" style="display:none;">
+                        <span id="refWeightedScoreValue">—</span>
                     </div>
                 </div>
 
@@ -5248,12 +5257,8 @@
             sliders.forEach(s => { total += parseInt(s.value) || 0; });
             const avg = (total / sliders.length).toFixed(1);
             const scoreEl = document.getElementById('refWeightedScoreValue');
-            const scoreDisplay = document.getElementById('refWeightedScoreDisplay');
-            scoreDisplay.style.display = 'block';
+            // Score is stored internally but not displayed to partner
             scoreEl.textContent = avg;
-            if (avg >= 7.5) { scoreEl.style.color = '#059669'; }
-            else if (avg >= 5) { scoreEl.style.color = '#d97706'; }
-            else { scoreEl.style.color = '#dc2626'; }
         }
 
         // ── "Why Good Fit" character counter ──
@@ -5274,14 +5279,14 @@
             }
         })();
 
-        // ── Submit Referral (with full validation) ──
-        function submitReferral(event) {
+        // ── Submit Referral (with full validation + CV upload) ──
+        async function submitReferral(event) {
             event.preventDefault();
             if (!currentUser || !currentUser.email) { showToast('Please log in first', 'error'); return; }
 
             // Clear previous errors
             document.querySelectorAll('#referralForm .field-error').forEach(el => el.style.display = 'none');
-            let hasErrors = false;
+            const errors = [];
 
             const form = event.target;
             const formData = new FormData(form);
@@ -5289,6 +5294,7 @@
             data.action = 'submitReferral';
             data.referrerEmail = currentUser.email;
             data.referrerName = currentUser.name || '';
+            data.partnerId = currentUser.partnerId || '';
 
             // Get job details
             const selectedJob = JOBS_DATA.find(j => j.id === data.jobId);
@@ -5301,18 +5307,18 @@
             // ── VALIDATIONS ──
 
             // Job selection
-            if (!data.jobId) { showToast('Please select a job', 'error'); return; }
+            if (!data.jobId) { errors.push('Please select a job'); }
 
             // Candidate name
             if (!data.candidateName || data.candidateName.trim().length < 2) {
-                showToast('Please enter candidate\'s full name', 'error'); hasErrors = true;
+                errors.push('Candidate full name is required');
             }
 
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!data.candidateEmail || !emailRegex.test(data.candidateEmail)) {
                 document.getElementById('refEmailError').style.display = 'block';
-                hasErrors = true;
+                errors.push('Valid candidate email is required');
             }
 
             // Phone validation (Indian: 10 digits, optional +91 prefix)
@@ -5320,49 +5326,91 @@
             const phoneClean = rawPhone.replace(/^\+91/, '').replace(/^91/, '').replace(/^0/, '');
             if (phoneClean.length !== 10 || !/^\d{10}$/.test(phoneClean)) {
                 document.getElementById('refPhoneError').style.display = 'block';
-                hasErrors = true;
+                errors.push('Valid 10-digit phone number is required');
             }
 
             // LinkedIn validation
             if (!data.candidateLinkedIn || !data.candidateLinkedIn.toLowerCase().includes('linkedin.com/')) {
                 document.getElementById('refLinkedInError').style.display = 'block';
-                hasErrors = true;
+                errors.push('Valid LinkedIn profile URL is required');
             }
 
             // Company, designation, location
-            if (!data.candidateCompany || !data.candidateCompany.trim()) { showToast('Candidate current company is required', 'error'); hasErrors = true; }
-            if (!data.candidateDesignation || !data.candidateDesignation.trim()) { showToast('Candidate designation is required', 'error'); hasErrors = true; }
-            if (!data.candidateLocation || !data.candidateLocation.trim()) { showToast('Candidate location is required', 'error'); hasErrors = true; }
+            if (!data.candidateCompany || !data.candidateCompany.trim()) { errors.push('Candidate current company is required'); }
+            if (!data.candidateDesignation || !data.candidateDesignation.trim()) { errors.push('Candidate designation is required'); }
+            if (!data.candidateLocation || !data.candidateLocation.trim()) { errors.push('Candidate location is required'); }
 
             // Experience
             const exp = parseFloat(data.candidateExperience);
-            if (isNaN(exp) || exp < 0 || exp > 50) { showToast('Please enter valid experience (0-50 years)', 'error'); hasErrors = true; }
+            if (isNaN(exp) || exp < 0 || exp > 50) { errors.push('Valid experience (0-50 years) is required'); }
 
             // CTC validation (numeric)
             const ctcVal = data.candidateCTC ? data.candidateCTC.replace(/[₹,\s]/g, '') : '';
             if (!ctcVal || isNaN(parseFloat(ctcVal))) {
                 document.getElementById('refCTCError').style.display = 'block';
-                hasErrors = true;
+                errors.push('Valid current CTC is required');
             }
 
             // Notice period
-            if (!data.candidateNoticePeriod) { showToast('Please select notice period', 'error'); hasErrors = true; }
+            if (!data.candidateNoticePeriod) { errors.push('Notice period is required'); }
+
+            // CV validation
+            const cvInput = document.getElementById('refCandCV');
+            if (!cvInput || !cvInput.files.length) {
+                document.getElementById('refCVError').style.display = 'block';
+                errors.push('Candidate CV is required');
+            } else {
+                const cvFile = cvInput.files[0];
+                const cvExt = cvFile.name.split('.').pop().toLowerCase();
+                if (!['pdf', 'doc', 'docx'].includes(cvExt)) {
+                    document.getElementById('refCVError').style.display = 'block';
+                    errors.push('CV must be PDF or Word format');
+                } else if (cvFile.size > 5 * 1024 * 1024) {
+                    document.getElementById('refCVError').style.display = 'block';
+                    errors.push('CV file must be under 5 MB');
+                }
+            }
 
             // Relationship & duration
-            if (!data.relationship) { showToast('Please select your relationship with the candidate', 'error'); hasErrors = true; }
-            if (!data.knownYears) { showToast('Please select how long you\'ve known the candidate', 'error'); hasErrors = true; }
-            if (!data.workedTogether) { showToast('Please indicate if you\'ve worked together', 'error'); hasErrors = true; }
+            if (!data.relationship) { errors.push('Relationship with candidate is required'); }
+            if (!data.knownYears) { errors.push('Duration of knowing the candidate is required'); }
+            if (!data.workedTogether) { errors.push('Please indicate if you have worked together'); }
 
             // Why good fit (min 50 chars)
             if (!data.whyGoodFit || data.whyGoodFit.trim().length < 50) {
-                showToast('Please explain why this candidate is a good fit (minimum 50 characters)', 'error');
-                hasErrors = true;
+                errors.push('Why good fit explanation must be at least 50 characters');
             }
 
             // Confidence level
-            if (!data.confidenceLevel) { showToast('Please select your confidence level', 'error'); hasErrors = true; }
+            if (!data.confidenceLevel) { errors.push('Confidence level is required'); }
 
-            if (hasErrors) return;
+            // Show all errors at once
+            if (errors.length > 0) {
+                showToast(errors[0] + (errors.length > 1 ? ' (+' + (errors.length - 1) + ' more issues)' : ''), 'error');
+                // Scroll modal to the first visible error
+                const firstError = form.querySelector('.field-error[style*="display: block"], .field-error[style*="display:block"]');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            // ── Read CV as base64 ──
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading CV & Submitting...'; }
+
+            try {
+                const cvFile = cvInput.files[0];
+                const cvBase64 = await readFileAsBase64(cvFile);
+                data.cvBase64 = cvBase64;
+                data.cvFileName = cvFile.name;
+                data.cvMimeType = cvFile.type || 'application/pdf';
+            } catch (cvErr) {
+                console.error('CV read error:', cvErr);
+                showToast('Failed to read CV file. Please try again.', 'error');
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
+                return;
+            }
 
             // ── Collect skill ratings ──
             const skillSliders = document.querySelectorAll('#refSkillRatingsContainer input[type="range"]');
@@ -5380,35 +5428,40 @@
             data.weightedScore = weightedAvg;
             data.totalSkillsRated = skillSliders.length;
 
-            console.log('Referral Submission:', data);
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting Referral...'; }
+            // Remove the File object from data (can't JSON.stringify it)
+            delete data.candidateCV;
+
+            console.log('[GCCPROs] Referral Submission:', Object.keys(data));
+            if (submitBtn) { submitBtn.textContent = 'Submitting Referral...'; }
 
             // Send to backend
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                redirect: 'follow'
-            }).then(res => res.json()).then(result => {
+            try {
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await resp.json();
                 console.log('Referral submission result:', result);
                 if (result.success) {
                     showToast('Referral submitted successfully! Thank you for your detailed assessment.', 'success');
                 } else {
-                    showToast(result.error || 'Referral submitted!', 'success');
+                    showToast(result.error || 'Submission encountered an issue. Please try again.', 'error');
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
+                    return;
                 }
-                form.reset();
-                document.getElementById('refJobSummary').style.display = 'none';
-                document.getElementById('refSkillAssessmentSection').style.display = 'none';
-                document.getElementById('refSkillRatingsContainer').innerHTML = '';
-                closeModal('submitReferralModal');
-            }).catch(err => {
-                console.log('Referral submission (fallback):', err);
-                showToast('Referral submitted successfully!', 'success');
-                form.reset();
-                closeModal('submitReferralModal');
-            }).finally(() => {
-                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
-            });
+            } catch (err) {
+                console.log('Referral submission network error:', err);
+                showToast('Referral submitted! (Confirmation pending)', 'success');
+            }
+
+            // Reset form
+            form.reset();
+            document.getElementById('refJobSummary').style.display = 'none';
+            document.getElementById('refSkillAssessmentSection').style.display = 'none';
+            document.getElementById('refSkillRatingsContainer').innerHTML = '';
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
+            closeModal('submitReferralModal');
         }
 
         // Job Status Manager
@@ -5837,6 +5890,7 @@
                     document.getElementById('invitePartnerSection').style.display = 'block';
                     document.getElementById('recommendedJobsSection').style.display = 'none';
                     // Store KYC and agreement status from backend
+                    if (statusData.partnerId) currentUser.partnerId = statusData.partnerId;
                     if (statusData.kycStatus) currentUser.kycStatus = statusData.kycStatus;
                     if (statusData.agreementStatus) currentUser.agreementStatus = statusData.agreementStatus;
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
