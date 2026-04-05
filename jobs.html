@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-05-v3">
+    <meta name="version" content="2026-04-05-v4">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2620,6 +2620,24 @@
                 <button class="modal-close" onclick="closeModal('jobSeekerModal')">×</button>
             </div>
             <form id="jobSeekerForm" onsubmit="submitJobSeekerForm(event)">
+                <!-- Step indicators -->
+                <div class="form-steps" id="jsFormSteps">
+                    <div class="form-step active">
+                        <div class="form-step-number">1</div>
+                        <div class="form-step-label">Personal</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">2</div>
+                        <div class="form-step-label">Professional</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">3</div>
+                        <div class="form-step-label">Documents</div>
+                    </div>
+                </div>
+
+                <!-- JS Step 1: Personal Details -->
+                <div class="form-step-content active" id="jsStep1">
                 <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('jobSeeker')">
                     <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -2705,6 +2723,11 @@
                     <div class="field-error" id="jsLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                 </div>
 
+                </div>
+                <!-- End JS Step 1 -->
+
+                <!-- JS Step 2: Professional Details -->
+                <div class="form-step-content" id="jsStep2">
                 <div class="form-group">
                     <label>Current Company <span class="required">*</span></label>
                     <input type="text" name="currentCompany" required>
@@ -2762,7 +2785,11 @@
                     <input type="number" name="expectedCTC" placeholder="e.g. 20" min="0" step="0.1" required>
                     <span style="font-size:0.75rem; color:var(--muted);">Enter expected annual salary in Lakhs Per Annum (LPA)</span>
                 </div>
+                </div>
+                <!-- End JS Step 2 -->
 
+                <!-- JS Step 3: Documents & Submit -->
+                <div class="form-step-content" id="jsStep3">
                 <div class="form-group">
                     <label>Resume Upload <span class="required">*</span></label>
                     <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
@@ -2811,8 +2838,14 @@
                         <label for="jsTerms">I agree to the Terms & Privacy Policy</label>
                     </div>
                 </div>
+                </div>
+                <!-- End JS Step 3 -->
 
-                <button type="submit" class="form-submit-btn">Complete Registration</button>
+                <!-- Form Navigation -->
+                <div class="form-navigation" id="jsFormNav">
+                    <button type="button" class="btn-prev" id="jsPrevBtn" onclick="switchJobSeekerStep(-1)" style="display:none;">Previous</button>
+                    <button type="button" class="btn-next" id="jsNextBtn" onclick="switchJobSeekerStep(1)">Next</button>
+                </div>
             </form>
         </div>
     </div>
@@ -2942,11 +2975,6 @@
                         <input type="text" name="currentLocation" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Current CTC (LPA) <span class="required">*</span></label>
-                        <input type="number" name="currentCTC" placeholder="e.g. 25" min="0" step="0.1" required>
-                        <span style="font-size:0.75rem; color:var(--muted);">Enter annual salary in Lakhs Per Annum (LPA)</span>
-                    </div>
                 </div>
 
                 <!-- Step 2: Domain Expertise -->
@@ -3784,6 +3812,7 @@
         let otpTimers = {};
         let otpVerified = {};
         let currentReferrerStep = 0;
+        let currentJobSeekerStep = 0;
         let currentUser = null;
 
         // ═══════════ CAPTCHA System ═══════════
@@ -3921,6 +3950,27 @@
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             document.body.style.overflow = 'auto';
+            // Reset form step state when closing enrollment modals
+            if (modalId === 'jobSeekerModal') {
+                currentJobSeekerStep = 0;
+                const jsForm = document.getElementById('jobSeekerForm');
+                if (jsForm) {
+                    jsForm.querySelectorAll('.form-step-content').forEach((c, i) => c.classList.toggle('active', i === 0));
+                    const jsSteps = document.getElementById('jsFormSteps');
+                    if (jsSteps) jsSteps.querySelectorAll('.form-step').forEach((s, i) => s.classList.toggle('active', i === 0));
+                    const nav = document.getElementById('jsFormNav');
+                    if (nav) nav.innerHTML = '<button type="button" class="btn-prev" id="jsPrevBtn" onclick="switchJobSeekerStep(-1)" style="display:none;">Previous</button><button type="button" class="btn-next" id="jsNextBtn" onclick="switchJobSeekerStep(1)">Next</button>';
+                }
+            } else if (modalId === 'referrerModal') {
+                currentReferrerStep = 0;
+                const refForm = document.getElementById('referrerForm');
+                if (refForm) {
+                    refForm.querySelectorAll('.form-step-content').forEach((c, i) => c.classList.toggle('active', i === 0));
+                    refForm.querySelectorAll('.form-step').forEach((s, i) => s.classList.toggle('active', i === 0));
+                    document.getElementById('refPrevBtn').style.display = 'none';
+                    document.getElementById('refNextBtn').style.display = 'block';
+                }
+            }
         }
 
         document.querySelectorAll('.modal').forEach(modal => {
@@ -4037,11 +4087,197 @@
             showToast('Email verified successfully!', 'success');
         }
 
+        function validateJobSeekerStep(stepIndex) {
+            const form = document.getElementById('jobSeekerForm');
+            const step = document.getElementById('jsStep' + (stepIndex + 1));
+            if (!step) return true;
+
+            // Clear previous error highlights in this step
+            step.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            step.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+
+            const requiredInputs = step.querySelectorAll('input[required], select[required], textarea[required]');
+            let valid = true;
+            let firstInvalid = null;
+
+            for (const input of requiredInputs) {
+                // Skip hidden fields (like file inputs on non-active steps)
+                if (input.offsetParent === null && input.type !== 'hidden') continue;
+
+                let fieldValid = true;
+                if (input.type === 'email') {
+                    fieldValid = input.value.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+                } else if (input.type === 'tel') {
+                    fieldValid = input.value.replace(/\D/g, '').length >= 10;
+                } else if (input.type === 'url' || input.name === 'linkedin') {
+                    fieldValid = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(input.value.trim());
+                } else if (input.tagName === 'SELECT') {
+                    fieldValid = input.value !== '';
+                } else if (input.type === 'checkbox') {
+                    fieldValid = input.checked;
+                } else {
+                    fieldValid = input.value.trim() !== '';
+                }
+
+                if (!fieldValid) {
+                    valid = false;
+                    input.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = input;
+                }
+            }
+
+            // Step 1: Check phone validation specifically
+            if (stepIndex === 0) {
+                const phoneInput = step.querySelector('input[name="phone"]');
+                if (phoneInput && phoneInput.value.replace(/\D/g, '').length < 10) {
+                    valid = false;
+                    const phoneErr = document.getElementById('jsPhoneError');
+                    if (phoneErr) phoneErr.classList.add('show');
+                    phoneInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = phoneInput;
+                }
+                const linkedinInput = step.querySelector('input[name="linkedin"]');
+                if (linkedinInput && !/^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(linkedinInput.value.trim())) {
+                    valid = false;
+                    const linkedErr = document.getElementById('jsLinkedinError');
+                    if (linkedErr) linkedErr.classList.add('show');
+                    linkedinInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = linkedinInput;
+                }
+            }
+
+            if (!valid && firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showToast('Please fill in all required fields before proceeding.', 'error');
+            }
+            return valid;
+        }
+
+        function switchJobSeekerStep(direction) {
+            const form = document.getElementById('jobSeekerForm');
+            const contents = form.querySelectorAll('.form-step-content');
+            const steps = document.getElementById('jsFormSteps').querySelectorAll('.form-step');
+            const maxSteps = contents.length;
+
+            // Validate current step before advancing
+            if (direction > 0 && !validateJobSeekerStep(currentJobSeekerStep)) {
+                return;
+            }
+
+            currentJobSeekerStep += direction;
+            if (currentJobSeekerStep < 0) currentJobSeekerStep = 0;
+            if (currentJobSeekerStep >= maxSteps) currentJobSeekerStep = maxSteps - 1;
+
+            contents.forEach((content, idx) => {
+                content.classList.toggle('active', idx === currentJobSeekerStep);
+            });
+
+            steps.forEach((step, idx) => {
+                step.classList.toggle('active', idx === currentJobSeekerStep);
+            });
+
+            document.getElementById('jsPrevBtn').style.display = currentJobSeekerStep === 0 ? 'none' : 'block';
+
+            // Show/hide CAPTCHA on last step
+            const captchaGroup = document.querySelector('#jsStep3 .captcha-group');
+            if (captchaGroup) {
+                if (currentJobSeekerStep === maxSteps - 1) generateCaptcha('js');
+            }
+
+            const navContainer = document.getElementById('jsFormNav');
+            if (currentJobSeekerStep === maxSteps - 1) {
+                // Last step: show submit button instead of Next
+                navContainer.innerHTML = `
+                    <button type="button" class="btn-prev" onclick="switchJobSeekerStep(-1)">Previous</button>
+                    <button type="submit" class="btn-submit">Complete Registration</button>
+                `;
+            } else {
+                // Restore Next/Prev buttons
+                navContainer.innerHTML = `
+                    <button type="button" class="btn-prev" id="jsPrevBtn" onclick="switchJobSeekerStep(-1)" style="${currentJobSeekerStep === 0 ? 'display:none;' : ''}">Previous</button>
+                    <button type="button" class="btn-next" id="jsNextBtn" onclick="switchJobSeekerStep(1)">Next</button>
+                `;
+            }
+
+            // Scroll to top of modal
+            form.closest('.modal-content').scrollTop = 0;
+        }
+
+        function validateReferrerStep(stepIndex) {
+            const form = document.getElementById('referrerForm');
+            const contents = form.querySelectorAll('.form-step-content');
+            const step = contents[stepIndex];
+            if (!step) return true;
+
+            step.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            step.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+
+            const requiredInputs = step.querySelectorAll('input[required], select[required], textarea[required]');
+            let valid = true;
+            let firstInvalid = null;
+
+            for (const input of requiredInputs) {
+                if (input.offsetParent === null && input.type !== 'hidden') continue;
+
+                let fieldValid = true;
+                if (input.type === 'email') {
+                    fieldValid = input.value.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+                } else if (input.type === 'tel') {
+                    fieldValid = input.value.replace(/\D/g, '').length >= 10;
+                } else if (input.type === 'url' || input.name === 'linkedin') {
+                    fieldValid = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(input.value.trim());
+                } else if (input.tagName === 'SELECT') {
+                    fieldValid = input.value !== '';
+                } else if (input.type === 'checkbox') {
+                    fieldValid = input.checked;
+                } else {
+                    fieldValid = input.value.trim() !== '';
+                }
+
+                if (!fieldValid) {
+                    valid = false;
+                    input.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = input;
+                }
+            }
+
+            // Step 0: phone & linkedin specific validation
+            if (stepIndex === 0) {
+                const phoneInput = step.querySelector('input[name="phone"]');
+                if (phoneInput && phoneInput.value.replace(/\D/g, '').length < 10) {
+                    valid = false;
+                    const phoneErr = document.getElementById('refPhoneError');
+                    if (phoneErr) phoneErr.classList.add('show');
+                    phoneInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = phoneInput;
+                }
+                const linkedinInput = step.querySelector('input[name="linkedin"]');
+                if (linkedinInput && !/^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(linkedinInput.value.trim())) {
+                    valid = false;
+                    const linkedErr = document.getElementById('refLinkedinError');
+                    if (linkedErr) linkedErr.classList.add('show');
+                    linkedinInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = linkedinInput;
+                }
+            }
+
+            if (!valid && firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showToast('Please fill in all required fields before proceeding.', 'error');
+            }
+            return valid;
+        }
+
         function switchReferrerStep(direction) {
             const form = document.getElementById('referrerForm');
             const contents = form.querySelectorAll('.form-step-content');
             const steps = form.querySelectorAll('.form-step');
             const maxSteps = contents.length;
+
+            // Validate current step before advancing
+            if (direction > 0 && !validateReferrerStep(currentReferrerStep)) {
+                return;
+            }
 
             currentReferrerStep += direction;
 
@@ -4170,6 +4406,8 @@
                 form.style.display = 'block';
                 successMsg.remove();
                 form.reset();
+                currentJobSeekerStep = 0;
+                switchJobSeekerStep(0);
                 otpVerified['jobSeeker'] = false;
                 document.getElementById('jsOtpSection').classList.remove('active');
                 document.getElementById('jsEmail').disabled = false;
@@ -4888,14 +5126,6 @@
                 </div>
             `).join('');
 
-            // Attach click handlers via event delegation (avoids CSP inline-script issues)
-            container.querySelectorAll('.rec-job-apply-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const jobId = this.getAttribute('data-job-id');
-                    console.log('[GCCPROs] Apply button clicked, jobId:', jobId);
-                    applyForJob(jobId);
-                });
-            });
         }
 
         function applyForJob(jobId) {
@@ -5129,6 +5359,19 @@
                 currentUser = JSON.parse(savedUser);
                 showUserConsole();
             }
+
+            // Global delegated click handler for Apply Now buttons
+            // This fires regardless of when/how the buttons are rendered
+            document.addEventListener('click', function(e) {
+                const applyBtn = e.target.closest('.rec-job-apply-btn');
+                if (applyBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const jobId = applyBtn.getAttribute('data-job-id');
+                    console.log('[GCCPROs] Apply button clicked (delegated), jobId:', jobId);
+                    applyForJob(jobId);
+                }
+            });
         });
     </script>
 </body>
