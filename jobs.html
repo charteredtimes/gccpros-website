@@ -858,11 +858,13 @@
 
         /* Domain Filter Toggle */
         .domain-filter-toggle {
-            display: flex;
-            gap: 0.25rem;
-            background: var(--cream);
-            border-radius: 8px;
-            padding: 3px;
+            display: inline-flex;
+            gap: 0;
+            background: #E8E4E0;
+            border-radius: 10px;
+            padding: 4px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 2px 8px rgba(212,168,67,0.25);
         }
         .domain-radio-label {
             cursor: pointer;
@@ -873,18 +875,22 @@
             display: none;
         }
         .domain-radio-label span {
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--muted);
-            transition: all 0.2s;
+            padding: 8px 22px;
+            border-radius: 7px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--ink);
+            transition: all 0.25s ease;
             white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        .domain-radio-label:hover span {
+            background: rgba(11,17,32,0.06);
         }
         .domain-radio-label input[type="radio"]:checked + span {
             background: var(--brand-blue);
             color: var(--white);
-            box-shadow: 0 1px 4px rgba(11,17,32,0.15);
+            box-shadow: 0 2px 8px rgba(11,17,32,0.2);
         }
 
         /* Recommended Jobs Grid */
@@ -1858,32 +1864,28 @@
         }
 
         .dashboard-grid {
-            margin-bottom: 1.25rem;
-        }
-        #jobSeekerStats, #referrerStats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .stat-card {
             background: var(--white);
             border: 1px solid #E8E4E0;
             border-radius: 8px;
-            padding: 0.75rem 0.5rem;
+            padding: 0.6rem 0.4rem;
             text-align: center;
         }
 
         .stat-number {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--brand-blue);
-            margin-bottom: 0.15rem;
+            margin-bottom: 0;
+            line-height: 1.2;
         }
 
         .stat-label {
             color: var(--muted);
-            font-size: 0.8rem;
+            font-size: 0.72rem;
         }
 
         .data-table {
@@ -3330,10 +3332,9 @@
                 <!-- Dashboard Tab -->
                 <div id="dashboardTab" class="console-tab active" style="display:block;">
                     <h2 style="margin-bottom: 0.5rem;">Welcome, <span id="dashWelcomeName">User</span>!</h2>
-                    <h3 style="margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--muted);">Quick Stats</h3>
                     <div class="dashboard-grid" id="dashboardStats">
-                        <!-- Job Seeker Stats (default) -->
-                        <div id="jobSeekerStats">
+                        <!-- Job Seeker Stats (default) — inline grid forces single row -->
+                        <div id="jobSeekerStats" style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem;">
                             <div class="stat-card">
                                 <div class="stat-number">0</div>
                                 <div class="stat-label">Applications</div>
@@ -4676,18 +4677,40 @@
         function renderRecommendedJobs() {
             const container = document.getElementById('recommendedJobsContainer');
             console.log('[GCCPROs] renderRecommendedJobs called. Container found:', !!container);
-            console.log('[GCCPROs] currentUser:', JSON.stringify(currentUser));
             if (!container) return;
+            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
+            const showAll = allDomainsRadio && allDomainsRadio.checked;
             const jobs = getJobsForUserDomain();
             if (!jobs || jobs.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No matching opportunities found for your domain.</p>';
                 return;
             }
-            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
-            const showAll = allDomainsRadio && allDomainsRadio.checked;
-            const maxJobs = showAll ? 12 : 6;
-            const displayJobs = jobs.filter(j => j.status === 'Active').slice(0, maxJobs);
-            console.log('[GCCPROs] displayJobs count:', displayJobs.length);
+            let activeJobs = jobs.filter(j => j.status === 'Active');
+
+            // When showing all domains, distribute evenly across domains so user sees variety
+            let displayJobs;
+            if (showAll && activeJobs.length > 12) {
+                const byDomain = {};
+                activeJobs.forEach(j => {
+                    if (!byDomain[j.domain]) byDomain[j.domain] = [];
+                    byDomain[j.domain].push(j);
+                });
+                const domains = Object.keys(byDomain);
+                displayJobs = [];
+                let round = 0;
+                while (displayJobs.length < 12 && round < 20) {
+                    for (const d of domains) {
+                        if (byDomain[d][round] && displayJobs.length < 12) {
+                            displayJobs.push(byDomain[d][round]);
+                        }
+                    }
+                    round++;
+                }
+            } else {
+                displayJobs = activeJobs.slice(0, showAll ? 12 : 6);
+            }
+
+            console.log('[GCCPROs] displayJobs count:', displayJobs.length, 'showAll:', showAll);
             if (displayJobs.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No active opportunities found right now. Check back soon!</p>';
                 return;
