@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v17">
+    <meta name="version" content="2026-04-06-v18">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3397,17 +3397,17 @@
                         </div>
                         <div class="form-group">
                             <label>Email <span class="required">*</span></label>
-                            <input type="email" name="candidateEmail" id="refCandEmail" placeholder="candidate@email.com">
+                            <input type="email" name="candidateEmail" id="refCandEmail" placeholder="candidate@email.com" oninput="validateRefEmail()" onblur="validateRefEmail()">
                             <div class="field-error" id="refEmailError" style="display:none;">Please enter a valid email address</div>
                         </div>
                         <div class="form-group">
                             <label>Phone <span class="required">*</span></label>
-                            <input type="tel" name="candidatePhone" id="refCandPhone" placeholder="+91 XXXXXXXXXX">
+                            <input type="tel" name="candidatePhone" id="refCandPhone" placeholder="+91 XXXXXXXXXX" oninput="validateRefPhone()" onblur="validateRefPhone()">
                             <div class="field-error" id="refPhoneError" style="display:none;">Please enter a valid 10-digit phone number</div>
                         </div>
                         <div class="form-group">
                             <label>LinkedIn Profile <span class="required">*</span></label>
-                            <input type="url" name="candidateLinkedIn" id="refCandLinkedIn" placeholder="https://linkedin.com/in/profile">
+                            <input type="url" name="candidateLinkedIn" id="refCandLinkedIn" placeholder="https://linkedin.com/in/profile" oninput="validateRefLinkedIn()" onblur="validateRefLinkedIn()">
                             <div class="field-error" id="refLinkedInError" style="display:none;">Please enter a valid LinkedIn URL</div>
                         </div>
                         <div class="form-group">
@@ -5188,6 +5188,55 @@
             renderJobStatusManager();
         }
 
+        // ── Referral Form: Real-time field validators ──
+        function validateRefEmail() {
+            const input = document.getElementById('refCandEmail');
+            const errDiv = document.getElementById('refEmailError');
+            const val = (input.value || '').trim();
+            if (val.length === 0) { errDiv.style.display = 'none'; input.style.borderColor = ''; return; }
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            if (!valid) {
+                errDiv.style.display = 'block';
+                input.style.borderColor = '#dc2626';
+            } else {
+                errDiv.style.display = 'none';
+                input.style.borderColor = '#22c55e';
+            }
+        }
+
+        function validateRefPhone() {
+            const input = document.getElementById('refCandPhone');
+            const errDiv = document.getElementById('refPhoneError');
+            const val = (input.value || '').replace(/[\s\-\(\)]/g, '');
+            if (val.length === 0) { errDiv.style.display = 'none'; input.style.borderColor = ''; return; }
+            const cleaned = val.replace(/^\+91/, '').replace(/^91/, '').replace(/^0/, '');
+            const valid = cleaned.length === 10 && /^\d{10}$/.test(cleaned);
+            if (!valid) {
+                errDiv.style.display = 'block';
+                errDiv.textContent = cleaned.length > 0 ? 'Phone must be 10 digits (' + cleaned.length + ' entered)' : 'Please enter a valid 10-digit phone number';
+                input.style.borderColor = '#dc2626';
+            } else {
+                errDiv.style.display = 'none';
+                input.style.borderColor = '#22c55e';
+            }
+        }
+
+        function validateRefLinkedIn() {
+            const input = document.getElementById('refCandLinkedIn');
+            const errDiv = document.getElementById('refLinkedInError');
+            const val = (input.value || '').trim();
+            if (val.length === 0) { errDiv.style.display = 'none'; input.style.borderColor = ''; return; }
+            const valid = val.toLowerCase().includes('linkedin.com/in/') || val.toLowerCase().includes('linkedin.com/pub/');
+            if (!valid) {
+                errDiv.style.display = 'block';
+                errDiv.textContent = val.includes('linkedin.com') ? 'URL should include /in/ or /pub/ (e.g. linkedin.com/in/username)' : 'Must be a LinkedIn profile URL (linkedin.com/in/...)';
+                input.style.borderColor = '#dc2626';
+            } else {
+                errDiv.style.display = 'none';
+                input.style.borderColor = '#22c55e';
+            }
+        }
+
         // ── Referral Form: Job Change Handler ──
         function onReferralJobChange(jobId) {
             const summaryDiv = document.getElementById('refJobSummary');
@@ -5384,6 +5433,12 @@
             // Confidence level
             if (!data.confidenceLevel) { errors.push('Confidence level is required'); }
 
+            // Skill assessment mandatory — must have a job selected which generates sliders
+            const preCheckSliders = document.querySelectorAll('#refSkillRatingsContainer input[type="range"]');
+            if (preCheckSliders.length === 0) {
+                errors.push('Skill assessment is mandatory — please select a job first');
+            }
+
             // Show all errors at once
             if (errors.length > 0) {
                 showToast(errors[0] + (errors.length > 1 ? ' (+' + (errors.length - 1) + ' more issues)' : ''), 'error');
@@ -5434,15 +5489,15 @@
             console.log('[GCCPROs] Referral Submission:', Object.keys(data));
             if (submitBtn) { submitBtn.textContent = 'Submitting Referral...'; }
 
-            // Send to backend
+            // Send to backend (no Content-Type header — Apps Script needs simple CORS)
             try {
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
                 });
                 const result = await resp.json();
-                console.log('Referral submission result:', result);
+                console.log('[GCCPROs] Referral submission result:', result);
                 if (result.success) {
                     showToast('Referral submitted successfully! Thank you for your detailed assessment.', 'success');
                 } else {
@@ -5451,8 +5506,10 @@
                     return;
                 }
             } catch (err) {
-                console.log('Referral submission network error:', err);
-                showToast('Referral submitted! (Confirmation pending)', 'success');
+                console.error('[GCCPROs] Referral submission network error:', err);
+                showToast('Submission failed. Please check your connection and try again.', 'error');
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
+                return;
             }
 
             // Reset form
@@ -6573,8 +6630,8 @@
 
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    redirect: 'follow'
                 });
                 const result = await resp.json();
                 if (result.success) {
@@ -6741,8 +6798,8 @@ Date: _______________
 
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    redirect: 'follow'
                 });
                 const result = await resp.json();
                 if (result.success) {
