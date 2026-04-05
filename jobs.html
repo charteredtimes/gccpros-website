@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-05-v5">
+    <meta name="version" content="2026-04-05-v6">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3728,7 +3728,7 @@
     </div>
 
     <script>
-        console.log('[GCCPROs] Page version: 2026-04-05-v3 | Jobs loaded');
+        console.log('[GCCPROs] Page version: ' + document.querySelector('meta[name="version"]').content + ' | Jobs loaded');
         const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzs1vun4E3oiQdNcuGqBCMwZU1OW0ZIva6WBg_Rud4NvZUF_7vbbkaiQbysl91ZbQLww/exec';
 
@@ -5111,8 +5111,9 @@
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No active opportunities found right now. Check back soon!</p>';
                 return;
             }
-            container.innerHTML = displayJobs.map(job => `
-                <div class="recommended-job-card">
+            // Build cards WITHOUT buttons first
+            container.innerHTML = displayJobs.map((job, idx) => `
+                <div class="recommended-job-card" data-card-index="${idx}">
                     <div class="rec-job-header">
                         <span class="rec-job-domain">${job.domain}</span>
                         <span class="rec-job-type">${job.type}</span>
@@ -5126,19 +5127,34 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
-                    <button class="rec-job-apply-btn" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
                 </div>
             `).join('');
 
-            // Also attach listeners directly as backup
-            container.querySelectorAll('.rec-job-apply-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+            // Now programmatically create and append Apply buttons to each card
+            // This guarantees .onclick is bound as a JS property, not parsed from HTML
+            container.querySelectorAll('.recommended-job-card').forEach(card => {
+                const idx = parseInt(card.getAttribute('data-card-index'));
+                const job = displayJobs[idx];
+                if (!job) return;
+
+                const btn = document.createElement('button');
+                btn.className = 'rec-job-apply-btn';
+                btn.setAttribute('data-job-id', job.id);
+                btn.textContent = 'Apply Now';
+                btn.style.cursor = 'pointer';
+
+                // Direct .onclick property — most reliable, cannot be blocked by CSP or innerHTML parsing issues
+                btn.onclick = function(e) {
                     e.preventDefault();
-                    const jid = this.getAttribute('data-job-id');
-                    console.log('[GCCPROs] Apply btn addEventListener fired, jobId:', jid);
-                    applyForJob(jid);
-                });
+                    e.stopPropagation();
+                    console.log('[GCCPROs] Apply btn onclick property fired, jobId:', job.id);
+                    applyForJob(job.id);
+                    return false;
+                };
+
+                card.appendChild(btn);
             });
+
             console.log('[GCCPROs] renderRecommendedJobs complete. Buttons:', container.querySelectorAll('.rec-job-apply-btn').length);
         }
 
@@ -5390,7 +5406,7 @@
         }, true); // <-- capture phase = fires FIRST before any other handlers
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('GCCPROs landing page loaded v4');
+            console.log('GCCPROs landing page loaded v6');
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
