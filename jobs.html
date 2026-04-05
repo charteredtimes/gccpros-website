@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v11">
+    <meta name="version" content="2026-04-06-v13">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1999,9 +1999,17 @@
             color: var(--green);
         }
 
-        .status-badge.rejected {
+        .status-badge.rejected, .status-badge.status-rejected {
             background: rgba(239, 68, 68, 0.15);
             color: var(--red);
+        }
+        .status-badge.status-pending {
+            background: rgba(33, 150, 243, 0.15);
+            color: var(--brand-blue);
+        }
+        .status-badge.status-approved {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--green);
         }
 
         .view-btn {
@@ -2884,7 +2892,7 @@
                 <button class="modal-close" onclick="closeModal('referrerModal')">×</button>
             </div>
 
-            <form id="referrerForm" onsubmit="submitReferrerForm(event)">
+            <form id="referrerForm" onsubmit="submitReferrerForm(event)" novalidate>
                 <!-- Form Steps -->
                 <div class="form-steps">
                     <div class="form-step active">
@@ -3537,6 +3545,8 @@
                 <li><a class="nav-link" onclick="switchConsoleTab('profile')">Profile</a></li>
                 <li><a class="nav-link" id="appNav" onclick="switchConsoleTab('applications')" style="display:none;">Applications</a></li>
                 <li><a class="nav-link" id="refNav" onclick="switchConsoleTab('referrals')" style="display:none;">Referrals</a></li>
+                <li><a class="nav-link" id="complianceNav" onclick="switchConsoleTab('compliance')" style="display:none;">Agreement &amp; KYC</a></li>
+                <li><a class="nav-link" id="earningsNav" onclick="switchConsoleTab('earnings')" style="display:none;">Earnings</a></li>
                 <li><a class="nav-link" onclick="switchConsoleTab('settings')">Settings</a></li>
             </ul>
         </div>
@@ -3576,30 +3586,53 @@
                         </div>
                         <!-- Referrer Stats -->
                         <div id="referrerStats" style="display: none;">
-                            <div class="stat-card coin-card">
-                                <div class="stat-number" id="coinBalance">0</div>
-                                <div class="stat-label">🪙 Referral Coins</div>
-                                <div class="accrued-tag">Accrued</div>
+                            <!-- Row 1: Compliance Status + Earnings -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+                                <div class="stat-card" style="cursor:pointer;" onclick="switchConsoleTab('compliance')">
+                                    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">Agreement Status</div>
+                                    <div id="agreementStatusBadge" style="display:inline-block;padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Incomplete</div>
+                                </div>
+                                <div class="stat-card" style="cursor:pointer;" onclick="switchConsoleTab('compliance')">
+                                    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">KYC Status</div>
+                                    <div id="kycStatusBadge" style="display:inline-block;padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Incomplete</div>
+                                </div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-number">0</div>
-                                <div class="stat-label">Total Referrals</div>
+                            <!-- Row 2: Earnings + Stats -->
+                            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+                                <div class="stat-card coin-card" style="cursor:pointer;" onclick="switchConsoleTab('earnings')">
+                                    <div class="stat-number" id="totalEarnings" style="color:var(--green);">₹0</div>
+                                    <div class="stat-label">Total Earnings</div>
+                                    <div class="accrued-tag" style="font-size:0.65rem;">Click for details</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statTotalReferrals">0</div>
+                                    <div class="stat-label">Total Referrals</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statPendingReferrals">0</div>
+                                    <div class="stat-label">Pending</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="statPlaced">0</div>
+                                    <div class="stat-label">Placed</div>
+                                </div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-number">0</div>
-                                <div class="stat-label">Pending Referrals</div>
+
+                            <!-- Row 3: 4 Opportunity Category Windows -->
+                            <div style="margin-top:1.25rem;">
+                                <h3 style="margin-bottom:0.75rem;">Your Opportunity Channels</h3>
+                                <div id="opportunityChannels" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;"></div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-number">0</div>
-                                <div class="stat-label">Candidates Placed</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number">0</div>
-                                <div class="stat-label">Payouts Processed</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number" id="partnersInvited">0</div>
-                                <div class="stat-label">Partners Invited</div>
+
+                            <!-- Row 4: Domain-filtered Jobs for Partner -->
+                            <div id="partnerJobsSection" style="margin-top:1.5rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                                    <h3 style="margin:0;">Jobs in Your Domain</h3>
+                                    <span id="partnerJobCount" style="font-size:0.8rem;color:var(--muted);"></span>
+                                </div>
+                                <div id="partnerJobsContainer" class="recommended-jobs-grid">
+                                    <p style="text-align:center;color:var(--muted);padding:1rem;">Loading jobs...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3709,6 +3742,118 @@
                         </thead>
                         <tbody id="referralsBody">
                             <tr><td colspan="7" style="text-align: center; color: var(--muted);">No referrals yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Compliance (Agreement + KYC) Tab -->
+                <div id="complianceTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom:1.5rem;">Agreement & KYC Verification</h2>
+
+                    <!-- Agreement Section -->
+                    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">Referral Partner Agreement</h3>
+                            <span id="agreementStatusTag" style="padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Pending Signature</span>
+                        </div>
+                        <p style="font-size:0.9rem;color:#555;line-height:1.6;">Please review and digitally sign the Referral Partner Agreement. Your referral account will not be activated until the agreement is signed.</p>
+                        <div style="margin-top:1rem;">
+                            <button class="form-submit-btn" id="signAgreementBtn" onclick="showToast('Agreement will be sent to your registered email for e-signature.','info')" style="background:var(--brand-blue);">Request Agreement for Signature</button>
+                        </div>
+                    </div>
+
+                    <!-- KYC Section -->
+                    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">KYC Verification</h3>
+                            <span id="kycStatusTag" style="padding:4px 14px;border-radius:12px;font-size:0.8rem;font-weight:700;background:rgba(239,68,68,0.12);color:#dc2626;">Incomplete</span>
+                        </div>
+                        <p style="font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1rem;">Complete KYC to enable incentive payouts. All fields are mandatory.</p>
+
+                        <form id="kycForm" onsubmit="submitKYCForm(event)">
+                            <div class="form-group">
+                                <label>PAN Number <span class="required">*</span></label>
+                                <input type="text" name="panNumber" id="kycPAN" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="Valid PAN format: 5 letters, 4 digits, 1 letter" required style="text-transform:uppercase;">
+                                <div class="field-error" id="panError" style="display:none;">PAN must be in format ABCDE1234F</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Address Proof <span class="required">*</span></label>
+                                <select name="addressProofType" required>
+                                    <option value="">Select document type</option>
+                                    <option value="Aadhaar Card">Aadhaar Card</option>
+                                    <option value="Passport">Passport</option>
+                                    <option value="Voter ID">Voter ID</option>
+                                    <option value="Driving License">Driving License</option>
+                                    <option value="Utility Bill">Utility Bill (last 3 months)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Address Proof (PDF only, max 5MB) <span class="required">*</span></label>
+                                <input type="file" name="addressProofFile" accept=".pdf" required>
+                            </div>
+
+                            <div style="background:#F8FAFC;border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin:1rem 0;">
+                                <h4 style="margin:0 0 1rem;">Bank Account Details (for incentive disbursement)</h4>
+                                <div class="form-group">
+                                    <label>Account Holder Name <span class="required">*</span></label>
+                                    <input type="text" name="accountHolderName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Bank Name <span class="required">*</span></label>
+                                    <input type="text" name="bankName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account Number <span class="required">*</span></label>
+                                    <input type="text" name="accountNumber" required pattern="[0-9]{9,18}" title="Enter 9-18 digit account number">
+                                </div>
+                                <div class="form-group">
+                                    <label>IFSC Code <span class="required">*</span></label>
+                                    <input type="text" name="ifscCode" required pattern="[A-Z]{4}0[A-Z0-9]{6}" title="Valid IFSC format: 4 letters, 0, 6 alphanumeric" style="text-transform:uppercase;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Upload Cancelled Cheque (PDF/Image, max 5MB) <span class="required">*</span></label>
+                                    <input type="file" name="cancelledCheque" accept=".pdf,.jpg,.jpeg,.png" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="form-submit-btn" style="background:var(--green);color:#fff;">Submit KYC for Verification</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Earnings Tab -->
+                <div id="earningsTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom:1.5rem;">Earnings & Transactions</h2>
+
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+                        <div class="stat-card" style="border-left:4px solid var(--green);">
+                            <div class="stat-number" id="earningTotal" style="color:var(--green);">₹0</div>
+                            <div class="stat-label">Total Earned</div>
+                        </div>
+                        <div class="stat-card" style="border-left:4px solid var(--gold);">
+                            <div class="stat-number" id="earningPending" style="color:var(--gold);">₹0</div>
+                            <div class="stat-label">Pending Payout</div>
+                        </div>
+                        <div class="stat-card" style="border-left:4px solid var(--brand-blue);">
+                            <div class="stat-number" id="earningPaid" style="color:var(--brand-blue);">₹0</div>
+                            <div class="stat-label">Paid Out</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom:0.75rem;">Transaction History</h3>
+                    <table class="data-table" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Candidate</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                            <tr><td colspan="5" style="text-align:center;color:var(--muted);">No transactions yet</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -4403,13 +4548,19 @@
             }
 
             if (currentReferrerStep === maxSteps - 1) {
-                document.getElementById('refNextBtn').style.display = 'none';
                 form.querySelector('.form-navigation').innerHTML = `
                     <button type="button" class="btn-prev" onclick="switchReferrerStep(-1)">Previous</button>
-                    <button type="submit" class="btn-submit">Submit for Admin Review</button>
+                    <button type="submit" class="btn-submit" style="background:var(--gold);color:#fff;padding:0.75rem 2rem;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;">Submit for Admin Review</button>
                 `;
             } else {
-                if (!form.querySelector('.btn-submit')) {
+                // Restore original navigation if coming back from last step
+                const nav = form.querySelector('.form-navigation');
+                if (!document.getElementById('refNextBtn')) {
+                    nav.innerHTML = `
+                        <button type="button" class="btn-prev" id="refPrevBtn" onclick="switchReferrerStep(-1)" style="display:${currentReferrerStep === 0 ? 'none' : 'block'}">Previous</button>
+                        <button type="button" class="btn-next" id="refNextBtn" onclick="switchReferrerStep(1)">Next</button>
+                    `;
+                } else {
                     document.getElementById('refNextBtn').style.display = 'block';
                 }
             }
@@ -5134,14 +5285,20 @@
                     console.log('[GCCPROs] About to renderRecommendedJobs. domain=' + currentUser.domain + ', type=' + currentUser.type);
                     buildDomainFilterChips();
                     renderRecommendedJobs();
+                    // Fetch application history and update stats
+                    loadUserApplications();
                 } else {
                     document.getElementById('appNav').style.display = 'none';
                     document.getElementById('refNav').style.display = 'block';
+                    document.getElementById('complianceNav').style.display = 'block';
+                    document.getElementById('earningsNav').style.display = 'block';
                     document.getElementById('jobSeekerStats').style.display = 'none';
-                    document.getElementById('referrerStats').style.display = 'grid';
+                    document.getElementById('referrerStats').style.display = 'block';
                     document.getElementById('invitePartnerSection').style.display = 'block';
                     document.getElementById('recommendedJobsSection').style.display = 'none';
                     populateReferralJobDropdown();
+                    renderOpportunityChannels();
+                    renderPartnerJobs();
                 }
             } catch (err) {
                 console.error('[GCCPROs] showUserConsole error:', err);
@@ -5508,11 +5665,8 @@
                         activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + jobTitle + ' — <em>Just now</em> (ID: ' + result.applicationId + ')</div>';
                     }
 
-                    // Update stats
-                    const appCountEl = document.querySelector('#jobSeekerStats .stat-card:first-child .stat-number');
-                    if (appCountEl) {
-                        appCountEl.textContent = parseInt(appCountEl.textContent || '0') + 1;
-                    }
+                    // Reload application history and update stats from backend
+                    loadUserApplications();
                 } else {
                     showToast('Error: ' + (result.error || 'Submission failed'), 'error');
                 }
@@ -5543,6 +5697,59 @@
             document.getElementById('userConsole').classList.remove('active');
         }
 
+        async function loadUserApplications() {
+            if (!currentUser || !currentUser.email) return;
+            try {
+                const url = APPS_SCRIPT_URL + '?action=getApplications&email=' + encodeURIComponent(currentUser.email);
+                console.log('[GCCPROs] Fetching applications for:', currentUser.email);
+                const resp = await fetch(url);
+                const result = await resp.json();
+                const apps = result.applications || [];
+                console.log('[GCCPROs] Applications received:', apps.length);
+
+                // Update dashboard stats
+                const statCards = document.querySelectorAll('#jobSeekerStats .stat-card');
+                if (statCards.length >= 4) {
+                    const total = apps.length;
+                    const underReview = apps.filter(a => a.status === 'Submitted' || a.status === 'Under Review').length;
+                    const shortlisted = apps.filter(a => a.status === 'Shortlisted' || a.status === 'Interview' || a.status === 'Offered').length;
+                    const rejected = apps.filter(a => a.status === 'Rejected' || a.status === 'Withdrawn').length;
+                    statCards[0].querySelector('.stat-number').textContent = total;
+                    statCards[1].querySelector('.stat-number').textContent = underReview;
+                    statCards[2].querySelector('.stat-number').textContent = shortlisted;
+                    statCards[3].querySelector('.stat-number').textContent = rejected;
+                }
+
+                // Populate applications table
+                const tbody = document.getElementById('applicationsBody');
+                if (!tbody) return;
+                if (apps.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">No applications yet</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = apps.map(app => {
+                    const job = JOBS_DATA.find(j => j.id === app.jobId);
+                    const company = job ? job.company : '—';
+                    const referral = job ? '₹' + (job.referralAmount || 0).toLocaleString('en-IN') : '—';
+                    let statusClass = '';
+                    const st = (app.status || '').toLowerCase();
+                    if (st === 'submitted' || st === 'under review') statusClass = 'status-pending';
+                    else if (st === 'shortlisted' || st === 'interview' || st === 'offered') statusClass = 'status-approved';
+                    else if (st === 'rejected' || st === 'withdrawn') statusClass = 'status-rejected';
+                    return `<tr>
+                        <td>${app.date || '—'}</td>
+                        <td>${app.jobTitle || '—'}</td>
+                        <td>${company}</td>
+                        <td><span class="status-badge ${statusClass}">${app.status || 'Submitted'}</span></td>
+                        <td>${referral}</td>
+                        <td>${app.jobId ? '<button class="rec-job-view-btn" style="padding:4px 12px;font-size:0.75rem;" onclick="viewJobDetails(\'' + app.jobId + '\')">View Job</button>' : '—'}</td>
+                    </tr>`;
+                }).join('');
+            } catch (err) {
+                console.error('[GCCPROs] loadUserApplications error:', err);
+            }
+        }
+
         function switchConsoleTab(tabName) {
             document.querySelectorAll('.console-tab').forEach(tab => {
                 tab.style.display = 'none';
@@ -5551,8 +5758,121 @@
                 link.classList.remove('active');
             });
 
-            document.getElementById(tabName + 'Tab').style.display = 'block';
-            event.target.classList.add('active');
+            const tabEl = document.getElementById(tabName + 'Tab');
+            if (tabEl) tabEl.style.display = 'block';
+
+            // Find and highlight the correct nav link
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+                if (link.getAttribute('onclick') && link.getAttribute('onclick').includes("'" + tabName + "'")) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // ═══════════ PARTNER DASHBOARD FUNCTIONS ═══════════
+
+        function renderOpportunityChannels() {
+            const container = document.getElementById('opportunityChannels');
+            if (!container || !currentUser) return;
+
+            const channels = [
+                { key: 'jobReferral', icon: '💼', label: 'Job Referrals', desc: 'Refer candidates for open positions', alwaysActive: true },
+                { key: 'training', icon: '🎓', label: 'Training & Workshops', desc: 'Corporate training opportunities', field: 'interestTraining' },
+                { key: 'mentoring', icon: '🤝', label: 'Mentoring', desc: 'One-on-one career mentoring', field: 'interestMentoring' },
+                { key: 'advisory', icon: '📋', label: 'Advisory & Consulting', desc: 'Strategic advisory engagements', field: 'interestAdvisory' }
+            ];
+
+            container.innerHTML = channels.map(ch => {
+                const isActive = ch.alwaysActive || (currentUser[ch.field] === 'on' || currentUser[ch.field] === true);
+                return `<div style="background:${isActive ? '#fff' : '#F3F4F6'};border:1.5px solid ${isActive ? 'var(--gold)' : '#E5E7EB'};border-radius:10px;padding:1rem;text-align:center;opacity:${isActive ? '1' : '0.5'};position:relative;cursor:${isActive ? 'pointer' : 'default'};" ${isActive && ch.key === 'jobReferral' ? 'onclick="document.getElementById(\'partnerJobsSection\').scrollIntoView({behavior:\'smooth\'})"' : ''}>
+                    <div style="font-size:1.5rem;margin-bottom:0.4rem;">${ch.icon}</div>
+                    <div style="font-weight:700;font-size:0.85rem;color:${isActive ? 'var(--ink)' : '#9CA3AF'};">${ch.label}</div>
+                    <div style="font-size:0.7rem;color:var(--muted);margin-top:0.25rem;">${ch.desc}</div>
+                    ${isActive ? '<div style="position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--green);"></div>' : '<div style="position:absolute;top:6px;right:8px;font-size:0.6rem;color:#9CA3AF;">Inactive</div>'}
+                </div>`;
+            }).join('');
+        }
+
+        var partnerJobsPageSize = 12;
+        var partnerJobsCount = 12;
+
+        function renderPartnerJobs(showCount) {
+            const container = document.getElementById('partnerJobsContainer');
+            if (!container || !currentUser) return;
+
+            const userDomain = currentUser.domain || '';
+            // Partners only see their domain jobs — no cross-domain
+            let jobs = JOBS_DATA.filter(j => j.status === 'Active' && j.domain === userDomain);
+            jobs.sort((a, b) => a.title.localeCompare(b.title));
+
+            const countEl = document.getElementById('partnerJobCount');
+            if (countEl) countEl.textContent = jobs.length + ' active in ' + (userDomain || 'All');
+
+            const limit = showCount || partnerJobsPageSize;
+            partnerJobsCount = limit;
+            const display = jobs.slice(0, limit);
+
+            if (display.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:1rem;">No active jobs in your domain right now.</p>';
+                return;
+            }
+
+            let html = display.map((job, idx) => `
+                <div class="recommended-job-card" data-card-index="${idx}">
+                    <div class="rec-job-header">
+                        <span class="rec-job-domain">${job.domain}</span>
+                        <span class="rec-job-type">${job.type}</span>
+                    </div>
+                    <h4 class="rec-job-title">${job.title}</h4>
+                    <p class="rec-job-company">${job.company}</p>
+                    <div class="rec-job-details">
+                        <span>${job.location}</span>
+                        <span>${job.experience}</span>
+                        <span>${job.budget}</span>
+                    </div>
+                    <p class="rec-job-desc">${job.description}</p>
+                    <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
+                    <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
+                    <button class="rec-job-apply-btn" style="background:var(--brand-blue);" onclick="prefillReferralForJob('${job.id}')">Refer Candidate</button>
+                </div>
+            `).join('');
+
+            html += '<div style="grid-column:1/-1;text-align:center;padding:0.5rem 0;"><span style="font-size:0.8rem;color:var(--muted);">Showing ' + display.length + ' of ' + jobs.length + ' jobs</span></div>';
+
+            if (display.length < jobs.length) {
+                const next = Math.min(partnerJobsCount + partnerJobsPageSize, jobs.length);
+                html += '<div style="grid-column:1/-1;text-align:center;padding:0.75rem 0;display:flex;gap:0.75rem;justify-content:center;">';
+                html += '<button onclick="renderPartnerJobs(' + next + ')" style="padding:0.6rem 1.5rem;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">Show More</button>';
+                html += '<button onclick="renderPartnerJobs(' + jobs.length + ')" style="padding:0.6rem 1.5rem;background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">Show All ' + jobs.length + '</button>';
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function prefillReferralForJob(jobId) {
+            const job = JOBS_DATA.find(j => j.id === jobId);
+            if (!job) return;
+            const jobSelect = document.getElementById('referralJobSelect');
+            if (jobSelect) jobSelect.value = jobId;
+            showModal('submitReferralModal');
+        }
+
+        function submitKYCForm(event) {
+            event.preventDefault();
+            // Validate PAN format
+            const pan = document.getElementById('kycPAN').value.toUpperCase().trim();
+            const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+            if (!panRegex.test(pan)) {
+                document.getElementById('panError').style.display = 'block';
+                showToast('Please enter a valid PAN number', 'error');
+                return;
+            }
+            document.getElementById('panError').style.display = 'none';
+
+            showToast('KYC submitted for verification. You will be notified once approved.', 'success');
+            // In production, this would send data to backend
+            console.log('[GCCPROs] KYC form submitted');
         }
 
         function handleLogout() {
