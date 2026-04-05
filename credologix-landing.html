@@ -1,0 +1,3513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCC Jobs — GCCPROs | Talent & Career Ecosystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --ink: #0B1120;
+            --gold: #B8860B;
+            --gold-light: #D4A843;
+            --blue: #1E40AF;
+            --blue-mid: #1E3A8A;
+            --brand-blue: #1E40AF;
+            --brand-orange: #E85D04;
+            --cream: #F8F7F4;
+            --white: #FFFFFF;
+            --surface: #FFFFFF;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --green: #059669;
+            --red: #DC2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            background: var(--white);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.5rem; }
+        h3 { font-size: 1.8rem; }
+        h4 { font-size: 1.3rem; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11, 17, 32, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+            z-index: 1000;
+            padding: 0.6rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            height: 40px;
+        }
+
+        .logo-svg {
+            height: 36px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .login-btn, .join-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .join-btn {
+            background: linear-gradient(135deg, #B8860B, #D4A843);
+            color: var(--white);
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(184, 134, 11, 0.3);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--white);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        main {
+            margin-top: 80px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(160deg, #0B1120 0%, #1a2744 40%, #1E3A5F 70%, #0B1120 100%);
+            color: #fff;
+            padding: 6rem 0 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(30, 64, 175, 0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 50%, rgba(184, 134, 11, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            margin-bottom: 1rem;
+            color: var(--white);
+            font-size: 3.2rem;
+            letter-spacing: -0.02em;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-tagline {
+            font-size: 1.15rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #D4A843;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: rgba(255,255,255,0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(5, 150, 105, 0.1);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+            color: var(--green);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Split Screen Section */
+        .split-screen {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, #0B1120 0%, #162038 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .split-screen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(30, 64, 175, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .split-screen::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(184, 134, 11, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .split-screen .section-intro {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .split-screen .section-intro h2 {
+            color: #FFFFFF;
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .split-screen .section-intro p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+        }
+
+        .split-screen .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            max-width: 1040px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 2.75rem 2.25rem 2.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Job Seeker card accent */
+        .card.card-seeker {
+            border-top: 2px solid rgba(30, 64, 175, 0.6);
+        }
+        .card.card-seeker:hover {
+            border-top-color: rgba(30, 64, 175, 0.9);
+        }
+
+        /* Referrer card accent */
+        .card.card-referrer {
+            border-top: 2px solid rgba(184, 134, 11, 0.6);
+        }
+        .card.card-referrer:hover {
+            border-top-color: rgba(184, 134, 11, 0.9);
+        }
+
+        .card-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .card-seeker .card-icon-wrap {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.2), rgba(30, 64, 175, 0.05));
+            border: 1px solid rgba(30, 64, 175, 0.15);
+        }
+
+        .card-referrer .card-icon-wrap {
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.2), rgba(184, 134, 11, 0.05));
+            border: 1px solid rgba(184, 134, 11, 0.15);
+        }
+
+        .card-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .card-seeker .card-label { color: #6B8DD6; }
+        .card-referrer .card-label { color: #D4A843; }
+
+        .card h3 {
+            font-size: 1.65rem;
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.75rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .benefits-list li {
+            padding: 0.55rem 0 0.55rem 2rem;
+            position: relative;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .benefits-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.95rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+        }
+
+        .benefits-list li::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: calc(0.95rem + 5px);
+            width: 6px;
+            height: 3px;
+            border-left: 1.5px solid;
+            border-bottom: 1.5px solid;
+            transform: rotate(-45deg);
+        }
+
+        .card-seeker .benefits-list li::after { border-color: #6B8DD6; }
+        .card-referrer .benefits-list li::after { border-color: #D4A843; }
+
+        .early-bird-badge {
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 0 0 1.5rem;
+        }
+
+        .card-seeker .early-bird-badge {
+            background: rgba(30, 64, 175, 0.08);
+            border: 1px solid rgba(30, 64, 175, 0.15);
+        }
+
+        .card-referrer .early-bird-badge {
+            background: rgba(184, 134, 11, 0.08);
+            border: 1px solid rgba(184, 134, 11, 0.15);
+        }
+
+        .early-bird-badge strong {
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .card-seeker .early-bird-badge strong { color: #6B8DD6; }
+        .card-referrer .early-bird-badge strong { color: #D4A843; }
+
+        .early-bird-badge span {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        .card-cta {
+            color: #fff;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-seeker .card-cta {
+            background: linear-gradient(135deg, #1E40AF, #3B6FE0);
+        }
+        .card-seeker .card-cta:hover {
+            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .card-referrer .card-cta {
+            background: linear-gradient(135deg, #92700C, #B8860B);
+        }
+        .card-referrer .card-cta:hover {
+            box-shadow: 0 8px 24px rgba(184, 134, 11, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .small-text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
+            text-align: center;
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, #B8860B, #D4A843);
+            color: #fff;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(184, 134, 11, 0.3);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 5rem 0;
+            background: #FFFFFF;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-heading h2 {
+            font-size: 2.2rem;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+        }
+
+        .section-heading::after {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand-blue), var(--gold));
+            margin: 1.25rem auto 0;
+            border-radius: 8px;
+        }
+
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            position: relative;
+        }
+
+        .how-it-works-grid::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 16.67%;
+            right: 16.67%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #E2E8F0, #E2E8F0, transparent);
+            z-index: 0;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            background: #FFFFFF;
+            color: var(--ink);
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 auto 1.25rem;
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s;
+        }
+
+        .step:hover .step-number {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            box-shadow: 0 4px 16px rgba(30, 64, 175, 0.1);
+        }
+
+        .step h4 {
+            margin-bottom: 0.75rem;
+            color: var(--ink);
+            font-size: 1.2rem;
+        }
+
+        .step p {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
+
+        /* Roles Overview Section */
+        .roles-overview {
+            padding: 5rem 0;
+            background: #F8F9FC;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .role-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 1.75rem;
+            border: 1px solid #E8EDF5;
+            text-align: left;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--brand-blue);
+            transition: height 0.3s;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .role-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+            border-color: rgba(30, 64, 175, 0.2);
+        }
+
+        .role-card:hover::before {
+            height: 100%;
+        }
+
+        .role-count {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-blue);
+            font-family: 'Inter', sans-serif;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .role-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 0.35rem;
+        }
+
+        .role-subtitle {
+            color: var(--muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .role-referral {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-top: 0.6rem;
+            letter-spacing: 0.02em;
+        }
+
+        .track-btn {
+            background: transparent;
+            color: var(--brand-blue);
+            border: 1px solid rgba(30, 64, 175, 0.2);
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            margin-top: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .track-btn:hover {
+            background: var(--brand-blue);
+            color: #fff;
+            border-color: var(--brand-blue);
+        }
+
+        .roles-note {
+            text-align: center;
+            color: var(--muted);
+            margin-top: 2.5rem;
+            padding: 1.5rem 2rem;
+            background: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #E8EDF5;
+            font-size: 0.9rem;
+        }
+
+        .roles-note strong {
+            color: var(--ink);
+        }
+
+        /* Referrer Program Details */
+        .referrer-program {
+            padding: 5rem 0;
+            background: #FFFFFF;
+        }
+
+        .program-highlight {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.03), rgba(184, 134, 11, 0.03));
+            border: 1px solid #E8EDF5;
+            border-radius: 12px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .program-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand-blue), var(--gold), var(--brand-blue));
+        }
+
+        .program-highlight h3 {
+            color: var(--ink);
+            font-size: 1.5rem;
+        }
+
+        .program-highlight p {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2.5rem;
+        }
+
+        .program-col h4 {
+            color: var(--ink);
+            margin-bottom: 1.25rem;
+            font-size: 1.15rem;
+        }
+
+        .program-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .program-list li {
+            padding: 0.55rem 0 0.55rem 1.75rem;
+            position: relative;
+            color: var(--ink);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .program-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.95rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1.5px solid var(--gold);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #E8E4E0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--ink);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .form-group label .required {
+            color: var(--red);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E8E4E0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 151, 58, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group.error input,
+        .form-group.error textarea,
+        .form-group.error select {
+            border-color: var(--red);
+        }
+
+        .form-group.error::after {
+            content: 'This field is required';
+            color: var(--red);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Google Sign-In Button */
+        .google-signin-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--white);
+            border: 1px solid #E8E4E0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .google-signin-btn:hover {
+            background: #F8F8F8;
+            border-color: #D3D3D3;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .form-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .form-divider::before,
+        .form-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E8E4E0;
+        }
+
+        .form-divider::before {
+            margin-right: 1rem;
+        }
+
+        .form-divider::after {
+            margin-left: 1rem;
+        }
+
+        /* OTP Verification */
+        .otp-section {
+            display: none;
+            margin-bottom: 1rem;
+        }
+
+        .otp-section.active {
+            display: block;
+        }
+
+        .otp-inputs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .otp-input {
+            width: 100%;
+            height: 50px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 2px solid #E8E4E0;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 151, 58, 0.1);
+        }
+
+        .otp-timer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .email-action-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .email-action-group input {
+            flex: 1;
+        }
+
+        .send-otp-btn {
+            padding: 0.75rem 1rem;
+            background: var(--blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .send-otp-btn:hover:not(:disabled) {
+            background: var(--blue-mid);
+            transform: translateY(-2px);
+        }
+
+        .send-otp-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .verify-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        /* Multi-step Form */
+        .form-step {
+            margin-bottom: 1rem;
+        }
+
+        .form-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #E8E4E0;
+            z-index: 0;
+        }
+
+        .form-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .form-step-number {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            color: var(--muted);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .form-step.active .form-step-number {
+            background: var(--brand-blue);
+            color: var(--white);
+            border-color: var(--brand-blue);
+        }
+
+        .form-step-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+            transition: color 0.3s;
+        }
+
+        .form-step.active .form-step-label {
+            color: var(--brand-blue);
+            font-weight: 600;
+        }
+
+        .form-step-content {
+            display: none;
+        }
+
+        .form-step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-navigation {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-prev, .btn-next, .btn-submit {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-prev {
+            background: #F0F0F0;
+            color: var(--ink);
+        }
+
+        .btn-prev:hover {
+            background: #E8E4E0;
+        }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #B8860B, #D4A843);
+            color: var(--white);
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(184, 134, 11, 0.3);
+        }
+
+        .checkbox-group {
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            height: auto;
+            margin-top: 0.35rem;
+            cursor: pointer;
+            accent-color: var(--gold);
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .multiselect-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .rules-box {
+            background: #F9F7F4;
+            border: 1px solid #E8E4E0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rules-box h4 {
+            color: var(--ink);
+            margin-bottom: 1rem;
+        }
+
+        .rules-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .rules-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--ink);
+            font-size: 0.95rem;
+        }
+
+        .rules-box li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Submit Button */
+        .form-submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #B8860B, #D4A843);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .form-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(184, 134, 11, 0.3);
+        }
+
+        /* User Console / Dashboard */
+        .user-console {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 3000;
+            overflow: hidden;
+        }
+
+        .user-console.active {
+            display: flex;
+        }
+
+        .console-sidebar {
+            width: 250px;
+            background: var(--ink);
+            color: var(--white);
+            overflow-y: auto;
+            border-right: 1px solid #1a2741;
+        }
+
+        .console-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .console-header {
+            background: var(--white);
+            border-bottom: 1px solid #E8E4E0;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-user-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .console-logout-btn {
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .console-logout-btn:hover {
+            background: #d93030;
+        }
+
+        .console-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .sidebar-nav li {
+            margin: 0;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #AAA;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--brand-blue);
+            border-left: 3px solid var(--brand-blue);
+            padding-left: calc(1.5rem - 3px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid #E8E4E0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border: 1px solid #E8E4E0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table thead {
+            background: #F5F5F5;
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--ink);
+            border-bottom: 1px solid #E8E4E0;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #E8E4E0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.applied {
+            background: #E0E0E0;
+            color: #333;
+        }
+
+        .status-badge.under-review {
+            background: rgba(33, 150, 243, 0.15);
+            color: var(--brand-blue);
+        }
+
+        .status-badge.interview {
+            background: rgba(255, 107, 0, 0.15);
+            color: var(--brand-orange);
+        }
+
+        .status-badge.shortlisted {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--green);
+        }
+
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+
+        .view-btn {
+            background: var(--brand-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover {
+            background: #1976d2;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #E8E4E0;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--red);
+            transition: all 0.3s;
+        }
+
+        .password-strength-bar.weak {
+            width: 33%;
+            background: var(--red);
+        }
+
+        .password-strength-bar.fair {
+            width: 66%;
+            background: #FFA500;
+        }
+
+        .password-strength-bar.strong {
+            width: 100%;
+            background: var(--green);
+        }
+
+        .profile-completeness {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-completeness-bar {
+            height: 8px;
+            background: #E8E4E0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-completeness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-blue), var(--brand-orange));
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toggle {
+            width: 40px;
+            height: 24px;
+            background: #E8E4E0;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--brand-blue);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 18px;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--ink);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        .toast.error {
+            background: var(--red);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: #0B1120;
+            color: #fff;
+            padding: 3rem 0 1.5rem;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: #D4A843;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #E8C76E;
+        }
+
+        .footer-admin {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .footer-admin a {
+            cursor: pointer;
+        }
+
+        /* Admin Form Modal */
+        .admin-modal .modal-content {
+            max-width: 700px;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .success-message h3 {
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message p {
+            color: var(--ink);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.3rem; }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: var(--white);
+                border-bottom: 1px solid #E8E4E0;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .split-screen .container {
+                grid-template-columns: 1fr;
+            }
+
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .roles-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .program-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .multiselect-group {
+                grid-template-columns: 1fr;
+            }
+
+            .console-sidebar {
+                width: 70px;
+            }
+
+            .sidebar-nav a {
+                padding: 1rem 0.5rem;
+                text-align: center;
+                font-size: 0.7rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a class="logo" onclick="handleLogoClick()">
+                <svg class="logo-svg" viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="30" font-family="'Playfair Display', serif" font-size="26" font-weight="900">
+                        <tspan fill="#FFFFFF">GCC</tspan><tspan fill="#D4A843">PROs</tspan>
+                    </text>
+                </svg>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#roles">Open Roles</a></li>
+                <li><a href="#referrer-program">Partner Program</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <button class="login-btn" onclick="showLoginModal()">Login</button>
+                <button class="join-btn" onclick="showJobSeekerModal()">Join Now</button>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    Live Now
+                </div>
+                <h1>Your Career, Elevated</h1>
+                <p class="hero-tagline">Trust-Led. AI-Enabled. Career-First.</p>
+                <p class="hero-subtitle">India's premier GCC talent ecosystem by GCCPROs. Connect with verified talent across all domains — Finance, Technology, Operations, HR, Sales, Research, Legal, Consulting, and more.</p>
+                <button class="hero-cta" onclick="showJobSeekerModal()">Start Your Journey</button>
+            </div>
+        </section>
+
+        <!-- Split Screen: Job Seeker & Referrer -->
+        <section class="split-screen">
+            <div class="container" style="max-width:1040px; display:block; margin-bottom:0;">
+                <div class="section-intro">
+                    <h2>Two Paths, One Platform</h2>
+                    <p>Whether you're seeking your next role or empowering others to find theirs</p>
+                </div>
+            </div>
+            <div class="container">
+                <!-- Job Seeker Card -->
+                <div class="card card-seeker">
+                    <div class="card-icon-wrap">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6B8DD6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6"/><path d="M11 8v6"/></svg>
+                    </div>
+                    <div class="card-label">EXPLORE OPPORTUNITIES</div>
+                    <h3>For Job Seekers</h3>
+                    <p class="card-subtitle">Access curated GCC roles across 9 domains with direct application and status tracking.</p>
+                    <ul class="benefits-list">
+                        <li>Browse 200+ verified roles across domains</li>
+                        <li>Connect directly with global companies</li>
+                        <li>Personalized domain-based matching</li>
+                        <li>Real-time application status tracking</li>
+                    </ul>
+                    <div class="early-bird-badge">
+                        <strong>FREE for first 500 registrations</strong>
+                        <span>Get early-bird access to all features.</span>
+                    </div>
+                    <button class="card-cta" onclick="showJobSeekerModal()">Register as Job Seeker</button>
+                    <p class="small-text">After early bird slots fill up, subscription starts at ****/year</p>
+                </div>
+
+                <!-- Referrer Card -->
+                <div class="card card-referrer">
+                    <div class="card-icon-wrap">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M12 11v2"/><path d="M9 11h6"/></svg>
+                    </div>
+                    <div class="card-label">EARN & ENGAGE</div>
+                    <h3>For Senior Professionals</h3>
+                    <p class="card-subtitle">15+ years of corporate experience? Earn through referrals, training, and mentoring.</p>
+                    <ul class="benefits-list">
+                        <li>Earn through referrals, corporate training & mentoring</li>
+                        <li>Offer workshops, webinars & advisory engagements</li>
+                        <li>Complete identity protection guaranteed</li>
+                        <li>Flexible schedule, multiple earning streams</li>
+                    </ul>
+                    <div class="early-bird-badge">
+                        <strong>FREE for first 200 partners</strong>
+                        <span>Join our exclusive partner network.</span>
+                    </div>
+                    <button class="card-cta" onclick="showReferrerModal()">Become a Partner</button>
+                    <p class="small-text">After early bird slots fill up, subscription starts at ****/year</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>How It Works</h2>
+                    <p>Simple, transparent, and rewarding</p>
+                </div>
+                <div class="how-it-works-grid">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h4>Register</h4>
+                        <p>Sign up with your details and get verified. Quick and secure process.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h4>Connect</h4>
+                        <p>Browse verified roles or submit referrals. Access our curated opportunity network.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h4>Succeed</h4>
+                        <p>Get placed and celebrate success. Earn referral rewards or start your new role.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roles Overview -->
+        <section class="roles-overview" id="roles">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Open GCC Roles — Roles Overview</h2>
+                    <p>Opportunities across all domains</p>
+                </div>
+                <div class="roles-grid">
+                    <div class="role-card">
+                        <div class="role-count">14+</div>
+                        <div class="role-title">Technology Roles</div>
+                        <div class="role-subtitle">Engineers, DevOps, Data, QA</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">12+</div>
+                        <div class="role-title">Finance Roles</div>
+                        <div class="role-subtitle">FP&A, Audit, Treasury, Tax</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">8+</div>
+                        <div class="role-title">Operations Roles</div>
+                        <div class="role-subtitle">Supply Chain, Procurement, BPO</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">7+</div>
+                        <div class="role-title">HR Roles</div>
+                        <div class="role-subtitle">HRBP, TA, L&D, Analytics</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">5+</div>
+                        <div class="role-title">Sales Roles</div>
+                        <div class="role-subtitle">Enterprise, Pre-Sales, Channel</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">5+</div>
+                        <div class="role-title">Research & Analytics Roles</div>
+                        <div class="role-subtitle">BI, Data, Quant, NLP</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">4+</div>
+                        <div class="role-title">Legal Roles</div>
+                        <div class="role-subtitle">Contracts, Privacy, IP</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">5+</div>
+                        <div class="role-title">Consulting & Other</div>
+                        <div class="role-subtitle">Strategy, Change, PMO</div>
+                        <div class="role-referral">₹50,000 referral reward</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-count">200+</div>
+                        <div class="role-title">More Roles</div>
+                        <div class="role-subtitle">Getting added continuously</div>
+                        <button class="track-btn" onclick="showLoginModal()">Track Application</button>
+                    </div>
+                </div>
+                <div class="roles-note">
+                    <strong>Register and get approved to access all open positions</strong><br>
+                    After email verification and admin review, you'll gain full access to our complete job listings and application portal.
+                </div>
+            </div>
+        </section>
+
+        <!-- Referrer Program Details -->
+        <section class="referrer-program" id="referrer-program">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Partner Program Details</h2>
+                    <p>Multiple ways to earn and engage</p>
+                </div>
+                <div class="program-highlight">
+                    <h3>Earn Through Referrals, Training & Mentoring</h3>
+                    <p>Partner with us to refer candidates (earn up to ₹5,00,000 per placement), conduct corporate training, offer mentorship, and take on advisory engagements — all on your terms.</p>
+                </div>
+                <div class="program-grid">
+                    <div class="program-col">
+                        <h4>Why Partner With Us?</h4>
+                        <ul class="program-list">
+                            <li>Earn referral incentives for each successful placement</li>
+                            <li>Conduct corporate training programs & workshops</li>
+                            <li>Offer one-on-one mentoring to candidates</li>
+                            <li>Advisory & consulting engagement opportunities</li>
+                            <li>Simple and transparent process</li>
+                        </ul>
+                    </div>
+                    <div class="program-col">
+                        <h4>Our Commitment</h4>
+                        <ul class="program-list">
+                            <li>Identity protection & data security</li>
+                            <li>Encrypted storage of all information</li>
+                            <li>Right to withdraw at any time</li>
+                            <li>Data used exclusively for matching</li>
+                            <li>Compliance with all regulations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><strong>GCCPROs</strong> — India's Premier GCC Talent Ecosystem</p>
+            <p>Contact: <a href="mailto:admin@gccpros.com">admin@gccpros.com</a></p>
+            <p style="margin-top: 1rem;">&copy; 2026 GCCPROs. All rights reserved.</p>
+            <div class="footer-admin">
+                <a onclick="handleAdminClick()">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to GCCPROs</h2>
+                <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+            </div>
+            <form id="loginForm" onsubmit="submitLoginForm(event)">
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" name="password" required>
+                </div>
+
+                <button type="submit" class="form-submit-btn">Login</button>
+
+                <div style="margin-top: 1rem; text-align: center;">
+                    <a href="#" onclick="showForgotPasswordForm(event)" style="color: var(--brand-blue); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+                </div>
+
+                <div class="form-divider">or login with</div>
+
+                <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('login')">
+                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">
+                    Don't have an account? <a href="#" onclick="switchToRegister(event)" style="color: var(--brand-blue); text-decoration: none;">Register</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Job Seeker Modal -->
+    <div class="modal" id="jobSeekerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Join as Job Seeker</h2>
+                <button class="modal-close" onclick="closeModal('jobSeekerModal')">×</button>
+            </div>
+            <form id="jobSeekerForm" onsubmit="submitJobSeekerForm(event)">
+                <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('jobSeeker')">
+                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+
+                <div class="form-divider">or register manually</div>
+
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" name="fullName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <div class="email-action-group">
+                        <input type="email" name="email" id="jsEmail" required>
+                        <button type="button" class="send-otp-btn" id="jsEmailBtn" onclick="sendOTP('jobSeeker')">Send OTP</button>
+                    </div>
+                    <div class="otp-section" id="jsOtpSection">
+                        <div class="otp-timer" id="jsOtpTimer"></div>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
+                        </div>
+                        <button type="button" class="verify-btn" id="jsVerifyBtn" onclick="verifyOTP('jobSeeker')" disabled>Verify OTP</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone <span class="required">*</span></label>
+                    <input type="tel" name="phone" placeholder="+91 XXXXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Alternate Phone</label>
+                    <input type="tel" name="altPhone" placeholder="+91 XXXXXXXXXX">
+                </div>
+
+                <div class="form-group">
+                    <label>LinkedIn Profile <span class="required">*</span></label>
+                    <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Company <span class="required">*</span></label>
+                    <input type="text" name="currentCompany" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Designation <span class="required">*</span></label>
+                    <input type="text" name="currentDesignation" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Location <span class="required">*</span></label>
+                    <input type="text" name="currentLocation" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Years of Experience <span class="required">*</span></label>
+                    <input type="number" name="totalExperience" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Relevant Experience <span class="required">*</span></label>
+                    <input type="number" name="relevantExperience" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Domain/Function <span class="required">*</span></label>
+                    <select name="domain" required>
+                        <option value="">Select Domain</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Operations">Operations</option>
+                        <option value="HR">HR</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Research & Analytics">Research & Analytics</option>
+                        <option value="Legal">Legal</option>
+                        <option value="Consulting">Consulting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Notice Period (Days) <span class="required">*</span></label>
+                    <input type="number" name="noticePeriod" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current CTC <span class="required">*</span></label>
+                    <input type="text" name="currentCTC" placeholder="e.g., ₹50,00,000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Expected CTC <span class="required">*</span></label>
+                    <input type="text" name="expectedCTC" placeholder="e.g., ₹60,00,000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Resume Upload <span class="required">*</span></label>
+                    <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Reason for looking for a change <span class="required">*</span></label>
+                    <textarea name="reasonForChange" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>How did you hear about us?</label>
+                    <select name="hearAbout">
+                        <option value="">Select Source</option>
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="Google">Google</option>
+                        <option value="Referral">Referral</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Referred By (Partner Email)</label>
+                    <input type="email" name="referredBy" placeholder="Leave blank if not referred">
+                    <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">If a partner connected you to this role, enter their email</div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="termsAgree" id="jsTerms" required>
+                        <label for="jsTerms">I agree to the Terms & Privacy Policy</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="form-submit-btn">Complete Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Referrer Modal -->
+    <div class="modal" id="referrerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Become a Partner</h2>
+                <button class="modal-close" onclick="closeModal('referrerModal')">×</button>
+            </div>
+
+            <form id="referrerForm" onsubmit="submitReferrerForm(event)">
+                <!-- Form Steps -->
+                <div class="form-steps">
+                    <div class="form-step active">
+                        <div class="form-step-number">1</div>
+                        <div class="form-step-label">Personal</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">2</div>
+                        <div class="form-step-label">Expertise</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">3</div>
+                        <div class="form-step-label">Agreement</div>
+                    </div>
+                    <div class="form-step">
+                        <div class="form-step-number">4</div>
+                        <div class="form-step-label">Privacy</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Personal Details -->
+                <div class="form-step-content active">
+                    <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('referrer')">
+                        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Continue with Google
+                    </button>
+
+                    <div class="form-divider">or register manually</div>
+
+                    <div class="form-group">
+                        <label>Full Name <span class="required">*</span></label>
+                        <input type="text" name="fullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email <span class="required">*</span></label>
+                        <div class="email-action-group">
+                            <input type="email" name="email" id="refEmail" required>
+                            <button type="button" class="send-otp-btn" id="refEmailBtn" onclick="sendOTP('referrer')">Send OTP</button>
+                        </div>
+                        <div class="otp-section" id="refOtpSection">
+                            <div class="otp-timer" id="refOtpTimer"></div>
+                            <div class="otp-inputs">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
+                            </div>
+                            <button type="button" class="verify-btn" id="refVerifyBtn" onclick="verifyOTP('referrer')" disabled>Verify OTP</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone <span class="required">*</span></label>
+                        <input type="tel" name="phone" placeholder="+91 XXXXXXXXXX" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alternate Phone</label>
+                        <input type="tel" name="altPhone" placeholder="+91 XXXXXXXXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label>LinkedIn Profile <span class="required">*</span></label>
+                        <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Company <span class="required">*</span></label>
+                        <input type="text" name="currentCompany" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Designation <span class="required">*</span></label>
+                        <input type="text" name="currentDesignation" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Years of Corporate Experience <span class="required">*</span></label>
+                        <input type="number" name="totalExperience" min="15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Location <span class="required">*</span></label>
+                        <input type="text" name="currentLocation" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current CTC <span class="required">*</span></label>
+                        <input type="text" name="currentCTC" placeholder="e.g., ₹50,00,000" required>
+                    </div>
+                </div>
+
+                <!-- Step 2: Domain Expertise -->
+                <div class="form-step-content">
+                    <div class="form-group">
+                        <label>Primary Domain <span class="required">*</span></label>
+                        <select name="primaryDomain" required>
+                            <option value="">Select Domain</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Operations">Operations</option>
+                            <option value="HR">HR</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Research & Analytics">Research & Analytics</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Secondary Domain (optional)</label>
+                        <select name="secondaryDomain">
+                            <option value="">Select Domain</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Operations">Operations</option>
+                            <option value="HR">HR</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Research & Analytics">Research & Analytics</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Industries of Expertise</label>
+                        <div class="multiselect-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Banking & Financial Services">
+                                <label>Banking & Financial Services</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="IT & ITES">
+                                <label>IT & ITES</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Manufacturing">
+                                <label>Manufacturing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Healthcare">
+                                <label>Healthcare</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="FMCG">
+                                <label>FMCG</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="E-commerce">
+                                <label>E-commerce</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Consulting">
+                                <label>Consulting</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Energy">
+                                <label>Energy</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Telecom">
+                                <label>Telecom</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="industries" value="Other">
+                                <label>Other</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Describe your professional network and referral capability <span class="required">*</span></label>
+                        <textarea name="networkDescription" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Engagement Interests</label>
+                        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem;">Beyond referrals, select any areas you'd be interested in (optional)</p>
+                        <div class="multiselect-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestTraining" id="intTraining">
+                                <label for="intTraining">Corporate Training & Workshops</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestMentoring" id="intMentoring">
+                                <label for="intMentoring">One-on-One Mentoring</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestAdvisory" id="intAdvisory">
+                                <label for="intAdvisory">Advisory & Consulting</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestWebinars" id="intWebinars">
+                                <label for="intWebinars">Webinars & Speaking</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Referral Incentive Rules & Agreement -->
+                <div class="form-step-content">
+                    <div class="rules-box">
+                        <h4>Referral Incentive Rules</h4>
+                        <ul>
+                            <li>Referral incentive is payable upon successful candidate placement and as per the terms agreed in the referral agreement</li>
+                            <li>Incentive amount shall be as per the role-specific referral value displayed on each job listing, subject to a maximum cap of ₹5,00,000 per referral</li>
+                            <li>All referrals are subject to admin review and approval before processing</li>
+                            <li>GCCPROs reserves the right to modify incentive terms with 30 days notice</li>
+                            <li>Incentives are subject to applicable TDS deductions</li>
+                        </ul>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="confirmExperience" id="refConfirmExp" required>
+                            <label for="refConfirmExp">I confirm I have 15+ years of corporate experience <span class="required">*</span></label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="agreeRules" id="refAgreeRules" required>
+                            <label for="refAgreeRules">I agree to the Referral Incentive Rules stated above <span class="required">*</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Privacy & Consent -->
+                <div class="form-step-content">
+                    <div class="rules-box">
+                        <h4>Privacy & Data Protection</h4>
+                        <ul>
+                            <li>Your identity is protected through encryption and secure storage</li>
+                            <li>You have the right to withdraw your consent at any time</li>
+                            <li>Your data is used exclusively for talent matching and referral processing</li>
+                            <li>We comply with all applicable data protection regulations</li>
+                        </ul>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="consentProcessing" id="refConsent" required>
+                            <label for="refConsent">I consent to GCCPROs processing my data as described in the Privacy Policy <span class="required">*</span></label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="agreeAgreement" id="refAgreeAgr" required>
+                            <label for="refAgreeAgr">I understand that a digital agreement will be sent for signature after admin review <span class="required">*</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn-prev" id="refPrevBtn" onclick="switchReferrerStep(-1)">Previous</button>
+                    <button type="button" class="btn-next" id="refNextBtn" onclick="switchReferrerStep(1)">Next</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Form Modal -->
+    <div class="modal admin-modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Job Listing</h2>
+                <button class="modal-close" onclick="closeModal('adminModal')">×</button>
+            </div>
+            <form id="adminForm" onsubmit="submitAdminForm(event)">
+                <div class="form-group">
+                    <label>Job ID <span class="required">*</span></label>
+                    <input type="text" name="jobId" placeholder="e.g., GCC-FIN-007" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Job Title <span class="required">*</span></label>
+                    <input type="text" name="jobTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Company Name <span class="required">*</span></label>
+                    <input type="text" name="company" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Domain <span class="required">*</span></label>
+                    <select name="domain" required>
+                        <option value="">Select Domain</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Operations">Operations</option>
+                        <option value="HR">HR</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Research & Analytics">Research & Analytics</option>
+                        <option value="Legal">Legal</option>
+                        <option value="Consulting">Consulting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Job Type <span class="required">*</span></label>
+                    <select name="jobType" required>
+                        <option value="">Select Type</option>
+                        <option value="Permanent">Permanent</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Internship">Internship</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    <input type="text" name="location" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Work Mode <span class="required">*</span></label>
+                    <select name="workMode" required>
+                        <option value="">Select Mode</option>
+                        <option value="Remote">Remote</option>
+                        <option value="On-site">On-site</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Experience Required <span class="required">*</span></label>
+                    <input type="text" name="experience" placeholder="e.g., 3-5 Years" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Qualification <span class="required">*</span></label>
+                    <input type="text" name="qualification" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Budget/Salary Range <span class="required">*</span></label>
+                    <input type="text" name="budget" placeholder="e.g., ₹50-60 LPA" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Level <span class="required">*</span></label>
+                    <select name="level" required>
+                        <option value="">Select Level</option>
+                        <option value="Intern">Intern</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Junior–Mid">Junior–Mid</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Mid–Senior">Mid–Senior</option>
+                        <option value="Senior">Senior</option>
+                        <option value="Senior–Lead">Senior–Lead</option>
+                        <option value="Lead">Lead</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Team Size (optional)</label>
+                    <input type="text" name="teamSize" placeholder="e.g., 10-15 FTEs">
+                </div>
+
+                <div class="form-group">
+                    <label>Contract Duration (optional)</label>
+                    <input type="text" name="contractDuration" placeholder="e.g., 9 Months">
+                </div>
+
+                <div class="form-group">
+                    <label>Job Description <span class="required">*</span></label>
+                    <textarea name="description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Key Responsibilities <span class="required">*</span></label>
+                    <textarea name="responsibilities" placeholder="One per line" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Required Skills <span class="required">*</span></label>
+                    <textarea name="skills" placeholder="Comma separated" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Referral Amount (₹) <span class="required">*</span></label>
+                    <input type="number" name="referralAmount" value="50000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Job Status <span class="required">*</span></label>
+                    <select name="jobStatus" required>
+                        <option value="Active" selected>Active</option>
+                        <option value="Urgent">Urgent</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Filled">Filled</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="form-submit-btn">Create Job</button>
+            </form>
+
+            <!-- Existing Jobs Status Manager -->
+            <div style="margin-top: 2.5rem; border-top: 2px solid var(--gold); padding-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; font-size: 1.3rem;">Manage Existing Job Statuses</h3>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;">Change the status of any existing job listing.</p>
+                <div id="jobStatusManager">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="adminOutput" style="margin-top: 2rem; display: none;">
+                <h4>Job Object JSON</h4>
+                <pre id="adminOutputCode" style="background: #F0F0F0; padding: 1rem; border-radius: 8px; overflow-x: auto;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Referral Modal -->
+    <div class="modal" id="submitReferralModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Submit New Referral</h2>
+                <button class="modal-close" onclick="closeModal('submitReferralModal')">×</button>
+            </div>
+            <form id="referralForm" onsubmit="submitReferral(event)">
+                <div class="form-group">
+                    <label>Job Selection <span class="required">*</span></label>
+                    <select name="jobId" id="referralJobSelect" required>
+                        <option value="">Select a Job</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Candidate Full Name <span class="required">*</span></label>
+                    <input type="text" name="candidateName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Candidate Email <span class="required">*</span></label>
+                    <input type="email" name="candidateEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Candidate Phone <span class="required">*</span></label>
+                    <input type="tel" name="candidatePhone" placeholder="+91 XXXXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Candidate LinkedIn</label>
+                    <input type="url" name="candidateLinkedIn" placeholder="https://linkedin.com/in/candidateprofile">
+                </div>
+
+                <button type="submit" class="form-submit-btn">Submit Referral</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Console -->
+    <div class="user-console" id="userConsole">
+        <div class="console-sidebar">
+            <div style="padding: 1.5rem 0.5rem; text-align: center; border-bottom: 1px solid #1a2741; margin-bottom: 1rem;">
+                <div style="font-size: 0.7rem; color: #AAA;">Menu</div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a class="nav-link active" onclick="switchConsoleTab('dashboard')">Dashboard</a></li>
+                <li><a class="nav-link" onclick="switchConsoleTab('profile')">Profile</a></li>
+                <li><a class="nav-link" id="appNav" onclick="switchConsoleTab('applications')" style="display:none;">Applications</a></li>
+                <li><a class="nav-link" id="refNav" onclick="switchConsoleTab('referrals')" style="display:none;">Referrals</a></li>
+                <li><a class="nav-link" onclick="switchConsoleTab('settings')">Settings</a></li>
+            </ul>
+        </div>
+        <div class="console-main">
+            <div class="console-header">
+                <div class="console-user-info">
+                    <div>
+                        <div style="font-weight: 600;" id="consoleUserName">User</div>
+                        <div style="font-size: 0.85rem; color: var(--muted);" id="consoleUserEmail">user@email.com</div>
+                    </div>
+                </div>
+                <button class="console-logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+            <div class="console-content">
+                <!-- Dashboard Tab -->
+                <div id="dashboardTab" class="console-tab active" style="display:block;">
+                    <h2 style="margin-bottom: 1.5rem;">Welcome, <span id="dashWelcomeName">User</span>!</h2>
+                    <h3 style="margin-bottom: 1rem;">Quick Stats</h3>
+                    <div class="dashboard-grid" id="dashboardStats">
+                        <!-- Job Seeker Stats (default) -->
+                        <div id="jobSeekerStats">
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Applications</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Under Review</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Shortlisted</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Rejected</div>
+                            </div>
+                        </div>
+                        <!-- Referrer Stats -->
+                        <div id="referrerStats" style="display: none;">
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Total Referrals</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Pending Referrals</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Candidates Placed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Payouts Processed</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Recent Activity</h3>
+                    <div id="recentActivity" style="background: var(--cream); padding: 1.5rem; border-radius: 8px; text-align: center; color: var(--muted);">
+                        No recent activity
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profileTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom: 1.5rem;">My Profile</h2>
+                    <div class="profile-completeness">
+                        <div>Profile Completeness: <span id="profileCompleteness">0</span>%</div>
+                        <div class="profile-completeness-bar">
+                            <div class="profile-completeness-fill" id="profileCompletenessBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <form id="profileForm" onsubmit="submitProfileForm(event)">
+                        <div class="form-group">
+                            <label>Full Name <span class="required">*</span></label>
+                            <input type="text" name="fullName" id="profileFullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" name="email" id="profileEmail" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone <span class="required">*</span></label>
+                            <input type="tel" name="phone" id="profilePhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Company</label>
+                            <input type="text" name="currentCompany" id="profileCompany">
+                        </div>
+                        <div class="form-group">
+                            <label>Designation</label>
+                            <input type="text" name="designation" id="profileDesignation">
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" name="location" id="profileLocation">
+                        </div>
+                        <button type="submit" class="form-submit-btn">Save Changes</button>
+                    </form>
+                </div>
+
+                <!-- Applications Tab -->
+                <div id="applicationsTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom: 1.5rem;">My Applications</h2>
+                    <table class="data-table" id="applicationsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Referral Reward</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--muted);">No applications yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Referrals Tab -->
+                <div id="referralsTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom: 1.5rem;">My Referrals</h2>
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="form-submit-btn" onclick="showModal('submitReferralModal')" style="background-color: var(--brand-blue);">Submit New Referral</button>
+                    </div>
+                    <table class="data-table" id="referralsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Candidate Name</th>
+                                <th>Role</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Referral Amount</th>
+                                <th>Referral Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="referralsBody">
+                            <tr><td colspan="7" style="text-align: center; color: var(--muted);">No referrals yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settingsTab" class="console-tab" style="display:none;">
+                    <h2 style="margin-bottom: 1.5rem;">Settings</h2>
+
+                    <h3 style="margin-bottom: 1rem; margin-top: 1.5rem;">Change Password</h3>
+                    <form id="passwordForm" onsubmit="submitPasswordForm(event)" style="max-width: 400px;">
+                        <div class="form-group">
+                            <label>Current Password <span class="required">*</span></label>
+                            <input type="password" name="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password <span class="required">*</span></label>
+                            <input type="password" name="newPassword" id="newPassword" onkeyup="checkPasswordStrength()" required>
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="strengthBar"></div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem;">
+                                Min 8 chars, 1 uppercase, 1 number, 1 special char
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password <span class="required">*</span></label>
+                            <input type="password" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="form-submit-btn">Update Password</button>
+                    </form>
+
+                    <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Email Notifications</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailNewJobs" checked>
+                            <label for="emailNewJobs">New job listings matching my profile</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailStatusUpdates" checked>
+                            <label for="emailStatusUpdates">Application status updates</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailNews" checked>
+                            <label for="emailNews">GCCPROs news and updates</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIJB-MOK5Pn1cSbPvj4tqiTVHljp_Y7gihrFdHM4AWGSIF2Kt8mNV_tC0gHzP_kpqQ7w/exec';
+
+        const JOBS_DATA = [
+// ══════════════ FINANCE (12 roles) ══════════════
+{ id:"GCC-FIN-001", title:"FP&A Analyst", company:"Large Global Consulting Firm (GCC)", domain:"Finance", type:"Permanent", location:"Remote", mode:"Remote", experience:"1–3 Years", qualification:"Qualified Chartered Accountant", budget:"Up to ₹12 LPA", level:"Junior–Mid", description:"FP&A Analyst role involving budgeting, planning and forecasting with strong Excel and communication skills.", responsibilities:["Support end-to-end budgeting and forecasting cycles","Prepare financial plans and variance analysis","Create management reports and dashboards"], skills:["Budgeting","Planning & Forecasting","Advanced Excel","Financial Analysis","Chartered Accountant"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-002", title:"Trade Processing Team Lead", company:"Large Multinational Bank (GCC)", domain:"Finance", type:"Contract", location:"Bengaluru", mode:"Hybrid", experience:"3–5 Years", qualification:"B.Com / M.Com in Finance", budget:"₹1.5L–1.75L/month", level:"Mid–Senior", teamSize:"10–15 FTEs", contractDuration:"9 Months", description:"Lead Trade Processing operations for fund services. Manage 10–15 FTEs, drive process efficiency.", responsibilities:["Lead Trade Processing operations","Manage team of 10–15 FTEs","Drive change management","Ensure compliance with audit requirements"], skills:["Trade Life Cycle","Capital Markets","Fund Accounting","SimCorp Dimension","Bloomberg","Team Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-003", title:"Investment Operations Manager", company:"Large Multinational Bank (GCC)", domain:"Finance", type:"Contract", location:"Bengaluru", mode:"Hybrid", experience:"3–5 Years", qualification:"Commerce Graduate", budget:"₹1.75L–2L/month", level:"Senior", teamSize:"10–15 FTEs", contractDuration:"9 Months", description:"Lead Investment Operations covering Pricing, Reconciliations and NAV across Europe/APAC jurisdictions.", responsibilities:["Lead Investment Operations across multiple jurisdictions","Manage 10–15 FTEs","Drive cost efficiency","Support Global Operating Model initiatives"], skills:["Fund Administration","Investment Operations","Pricing","Reconciliations","NAV","Team Leadership"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-004", title:"NAV / A&V Manager", company:"Large Multinational Bank (GCC)", domain:"Finance", type:"Contract", location:"Bengaluru", mode:"Hybrid", experience:"3–5 Years", qualification:"B.Com / Accounting Degree", budget:"₹1.5L–1.75L/month", level:"Mid–Senior", teamSize:"15–16 FTEs", contractDuration:"9 Months", description:"Daily/monthly/weekly NAV valuations. Capital activity bookings, accruals, amortization.", responsibilities:["Lead NAV / A&V operations","Manage 15–16 FTEs","Review NAV packs within SLA","Reduce manual processes"], skills:["NAV Calculation","Fund Accounting","Capital Markets","Bloomberg","Investment Valuations"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-005", title:"Senior Associate – Accounts Receivable", company:"Leading Gaming Company (GCC)", domain:"Finance", type:"Permanent", location:"Pune", mode:"On-site", experience:"5–7 Years", qualification:"MBA Finance or CA Inter", budget:"Up to ₹10 LPA", level:"Mid–Senior", description:"End-to-end AR operations including billing, cash application, collections, reconciliations.", responsibilities:["Manage billing/invoicing cycle","Cash application and ERP posting","Collection accounting and MIS","Customer ledger reconciliations"], skills:["Accounts Receivable","Invoicing","Cash Application","SAP S/4HANA","GST/TDS Compliance","MS Excel"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-006", title:"Treasury Analyst", company:"Global FMCG Corporation (GCC)", domain:"Finance", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"4–6 Years", qualification:"CA / CFA / MBA Finance", budget:"₹18–25 LPA", level:"Mid", description:"Manage cash flow forecasting, FX hedging, and bank relationship management for APAC operations.", responsibilities:["Daily cash position management","FX exposure analysis and hedging","Bank relationship management","Treasury policy compliance"], skills:["Treasury Management","Cash Flow Forecasting","FX Hedging","SAP Treasury","Bloomberg","Bank Reconciliation"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-007", title:"Internal Audit Manager", company:"Global Insurance Group (GCC)", domain:"Finance", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"8–12 Years", qualification:"CA / CIA / CISA", budget:"₹28–38 LPA", level:"Senior", description:"Lead internal audit engagements across APAC GCC operations. SOX compliance and risk assessments.", responsibilities:["Plan and execute internal audits","SOX compliance testing","Risk assessment and advisory","Audit committee reporting"], skills:["Internal Audit","SOX Compliance","Risk Assessment","COSO Framework","Data Analytics","SAP"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-008", title:"Financial Controller", company:"US Technology Giant (GCC)", domain:"Finance", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"12–15 Years", qualification:"Chartered Accountant", budget:"₹45–60 LPA", level:"Senior", description:"Oversee end-to-end financial reporting, consolidation, and controllership for India GCC.", responsibilities:["Financial reporting under US GAAP","Monthly close and consolidation","Statutory compliance for India entity","Team leadership of 20+ FTEs"], skills:["US GAAP","Financial Consolidation","SAP FICO","Statutory Compliance","Team Leadership","Oracle HFM"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-009", title:"Accounts Payable Lead", company:"European Pharma Major (GCC)", domain:"Finance", type:"Permanent", location:"Chennai", mode:"Hybrid", experience:"6–8 Years", qualification:"B.Com / M.Com / MBA", budget:"₹15–22 LPA", level:"Mid–Senior", description:"Lead AP operations for multi-entity, multi-currency environment. Invoice processing, vendor management.", responsibilities:["Lead AP team of 12 members","Invoice processing and approval workflows","Vendor master management","Month-end AP close and reporting"], skills:["Accounts Payable","SAP MM/FI","Invoice Processing","Vendor Management","P2P Process","MS Excel"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-010", title:"Revenue Accountant", company:"Global SaaS Platform (GCC)", domain:"Finance", type:"Permanent", location:"Bengaluru", mode:"Remote", experience:"3–5 Years", qualification:"CA Inter / CPA Aspirant", budget:"₹12–18 LPA", level:"Mid", description:"Revenue recognition under ASC 606 for subscription and usage-based revenue models.", responsibilities:["Revenue recognition per ASC 606","Contract review and SSP allocation","Revenue forecasting and variance analysis","Audit support for Big 4 audits"], skills:["ASC 606","Revenue Recognition","NetSuite","Zuora","Advanced Excel","US GAAP Basics"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-011", title:"Senior Tax Analyst – Transfer Pricing", company:"Big 4 Adjacent GCC", domain:"Finance", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"4–7 Years", qualification:"CA / LLB / MBA", budget:"₹16–24 LPA", level:"Mid–Senior", description:"Transfer pricing documentation, benchmarking studies, and compliance for multinational operations.", responsibilities:["TP documentation and benchmarking","Intercompany agreement drafting","TP audit defense support","Country-by-country reporting"], skills:["Transfer Pricing","BEPS","International Tax","TP Documentation","Economic Analysis","Excel/R"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-012", title:"Credit Risk Analyst", company:"Global Investment Bank (GCC)", domain:"Finance", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"2–4 Years", qualification:"MBA Finance / FRM / CFA L1", budget:"₹14–20 LPA", level:"Mid", description:"Analyse counterparty credit risk for structured products and derivatives portfolio.", responsibilities:["Credit risk assessment of counterparties","Financial statement analysis","Credit limit monitoring","Stress testing and scenario analysis"], skills:["Credit Risk","Financial Modelling","Basel III","VaR","Python/R","Bloomberg Terminal"], referralAmount:50000, status:"Active" },
+
+// ══════════════ TECHNOLOGY (14 roles) ══════════════
+{ id:"GCC-TECH-001", title:"Adobe (AEM) QA Engineer", company:"Large US-based HVAC Company (GCC)", domain:"Technology", type:"Permanent", location:"India", mode:"Hybrid", experience:"3+ Years", qualification:"Bachelor's in CS/IT", budget:"Not Disclosed", level:"Mid", description:"QA Engineer focused on Adobe marketing products — AEM, Adobe Campaign.", responsibilities:["Develop test plans for Adobe products","Functional and regression testing","Automate with Selenium/JUnit/TestNG","Track and resolve defects"], skills:["Adobe Experience Manager","Adobe Campaign","Selenium","JUnit","TestNG","Agile","Git","CI/CD"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-002", title:"Mid-Level Copado Engineer (DevOps)", company:"Large US-based HVAC Company (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"5+ Years", qualification:"Bachelor's in related field", budget:"Not Disclosed", level:"Mid–Senior", description:"Optimize Salesforce development and deployment using Copado release management platform.", responsibilities:["Configure Copado pipelines","Support Salesforce dev lifecycle","Automated deployment scripts","CI/CD process optimization"], skills:["Copado","Salesforce","Apex","Visualforce","Lightning","Git","CI/CD","Agile"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-003", title:"Shopify Developer", company:"Large US-based HVAC Company (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"4+ Years", qualification:"Bachelor's with Shopify experience", budget:"Not Disclosed", level:"Mid", description:"Build e-commerce solutions using Shopify Plus, Hydrogen framework, GraphQL APIs.", responsibilities:["Custom Shopify themes and apps","Hydrogen framework development","GraphQL and Storefront API integration","Middleware integration with ERP"], skills:["Shopify Plus","Hydrogen","React.js","JavaScript","GraphQL","Storefront API","Liquid","HTML5/CSS3"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-004", title:"Technical Program Manager", company:"Large US-based HVAC Company (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"12+ Years", qualification:"Bachelor's; Master's preferred", budget:"Not Disclosed", level:"Senior", description:"Own end-to-end delivery of Salesforce and ServiceMax programs. Agile/SAFe delivery.", responsibilities:["End-to-end Salesforce/SMAX program delivery","Project governance and risk management","Lead Agile/SAFe delivery models","Stakeholder management"], skills:["Salesforce","ServiceMax","Agile","SAFe","Scrum","Program Management","DevOps","CI/CD"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-005", title:"Senior Technical Program Manager", company:"Large US-based HVAC Company (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"14+ Years", qualification:"Bachelor's; Salesforce certifications", budget:"Not Disclosed", level:"Senior–Lead", description:"Own Salesforce (Sales, Service, Experience Cloud) and Service Max program delivery.", responsibilities:["Salesforce multi-cloud program delivery","Agile governance and stakeholder management","Technical mentoring across teams","Regional project staffing coordination"], skills:["Salesforce","Service Max","Field Service Lightning","Agile","SAFe","Program Management","Data Analysis"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-006", title:"Senior Data Engineer", company:"Global Payments Company (GCC)", domain:"Technology", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"5–8 Years", qualification:"B.Tech/M.Tech in CS/IT", budget:"₹30–45 LPA", level:"Mid–Senior", description:"Build and maintain data pipelines for real-time payment analytics. Spark, Kafka, Airflow stack.", responsibilities:["Design and build ETL/ELT data pipelines","Real-time streaming with Kafka","Data lake architecture on AWS/GCP","Data quality and governance frameworks"], skills:["Apache Spark","Kafka","Airflow","Python","SQL","AWS Glue","Snowflake","dbt","Terraform"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-007", title:"Cloud Security Engineer", company:"Global Cybersecurity Firm (GCC)", domain:"Technology", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"4–7 Years", qualification:"B.Tech + Security certifications", budget:"₹22–35 LPA", level:"Mid–Senior", description:"Implement cloud security controls across AWS and Azure environments. SIEM/SOAR operations.", responsibilities:["Cloud security architecture on AWS/Azure","SIEM implementation and tuning","Incident response and forensics","Security automation with Python"], skills:["AWS Security","Azure Security","SIEM","SOAR","Terraform","Python","CISSP/CCSP","Kubernetes Security"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-008", title:"Full Stack Developer (React + Node)", company:"US Fintech Leader (GCC)", domain:"Technology", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"3–6 Years", qualification:"B.Tech/MCA", budget:"₹18–30 LPA", level:"Mid", description:"Build consumer-facing fintech applications with React frontend and Node.js microservices.", responsibilities:["Frontend development with React/Next.js","Backend APIs with Node.js/Express","Database design with PostgreSQL/MongoDB","CI/CD pipeline management"], skills:["React","Next.js","Node.js","TypeScript","PostgreSQL","MongoDB","Docker","AWS","GraphQL","Jest"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-009", title:"Machine Learning Engineer", company:"Global E-commerce Giant (GCC)", domain:"Technology", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"4–7 Years", qualification:"M.Tech/MS in CS/AI/ML", budget:"₹35–55 LPA", level:"Mid–Senior", description:"Build recommendation engines and NLP models for search and personalization at scale.", responsibilities:["ML model development and deployment","A/B testing for model performance","Feature engineering pipelines","MLOps and model monitoring"], skills:["Python","TensorFlow","PyTorch","Scikit-learn","NLP","AWS SageMaker","MLflow","Spark ML","SQL"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-010", title:"iOS Developer – Swift", company:"Global Media & Entertainment Corp (GCC)", domain:"Technology", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"3–5 Years", qualification:"Bachelor's in CS/IT", budget:"₹20–32 LPA", level:"Mid", description:"Build and maintain iOS applications for a leading OTT streaming platform with 50M+ users.", responsibilities:["iOS app development with Swift/SwiftUI","Video player integration and DRM","Performance optimization and crash-free metrics","App Store release management"], skills:["Swift","SwiftUI","UIKit","Core Data","AVFoundation","XCTest","CI/CD","Git","MVVM"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-011", title:"SAP S/4HANA Functional Consultant – MM", company:"European Manufacturing Giant (GCC)", domain:"Technology", type:"Contract", location:"Pune", mode:"Hybrid", experience:"6–10 Years", qualification:"Bachelor's + SAP Certification", budget:"₹1.8L–2.5L/month", level:"Senior", contractDuration:"12 Months", description:"S/4HANA implementation for Materials Management module. Greenfield project.", responsibilities:["Requirement gathering and blueprinting","MM module configuration in S/4HANA","Integration with FI/CO, WM, PP modules","Data migration and cutover planning"], skills:["SAP S/4HANA","SAP MM","Procurement","Inventory Management","SAP Fiori","ABAP Debugging"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-012", title:"Platform Engineer – Kubernetes", company:"Global Ride-Hailing Platform (GCC)", domain:"Technology", type:"Permanent", location:"Bengaluru", mode:"Remote", experience:"5–8 Years", qualification:"B.Tech in CS/IT", budget:"₹40–60 LPA", level:"Senior", description:"Build and manage Kubernetes platform serving 1000+ microservices in production.", responsibilities:["Kubernetes cluster management and scaling","Service mesh implementation (Istio)","Platform tooling and developer experience","Incident response and SRE practices"], skills:["Kubernetes","Docker","Istio","Helm","Terraform","Go","Prometheus","Grafana","AWS EKS"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-013", title:"QA Automation Lead – Selenium/Cypress", company:"US Healthcare Tech Company (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"7–10 Years", qualification:"B.Tech/MCA", budget:"₹25–38 LPA", level:"Senior", description:"Lead QA automation for healthcare SaaS platform. HIPAA compliance testing.", responsibilities:["Build automation framework from scratch","Lead QA team of 8 engineers","HIPAA compliance validation","Performance and security testing"], skills:["Selenium","Cypress","JavaScript","Java","TestNG","Jenkins","Jira","API Testing","Postman"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-014", title:"ServiceNow Developer", company:"Global IT Services GCC", domain:"Technology", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"3–6 Years", qualification:"Bachelor's + ServiceNow CSA", budget:"₹15–25 LPA", level:"Mid", description:"Develop and customize ServiceNow ITSM, ITOM, and HRSD modules for enterprise clients.", responsibilities:["ServiceNow application development","Workflow and flow designer automation","Integration with third-party tools","CMDB management and discovery"], skills:["ServiceNow","JavaScript","ITSM","ITOM","HRSD","REST APIs","Flow Designer","CMDB"], referralAmount:50000, status:"Active" },
+
+// ══════════════ OPERATIONS (8 roles) ══════════════
+{ id:"GCC-OPS-001", title:"Operations Manager – Shared Services", company:"Global Consumer Goods Company (GCC)", domain:"Operations", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA Operations / B.Tech + MBA", budget:"₹25–38 LPA", level:"Senior", description:"Lead shared services operations for P2P, O2C, and R2R processes across APAC.", responsibilities:["Manage shared services team of 50+","SLA management and continuous improvement","Process re-engineering using Lean Six Sigma","Stakeholder management with global BU heads"], skills:["Shared Services","P2P","O2C","R2R","Six Sigma","Lean","SAP","Stakeholder Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-002", title:"Supply Chain Analyst", company:"Global Retail Chain (GCC)", domain:"Operations", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"3–5 Years", qualification:"MBA Supply Chain / B.Tech IE", budget:"₹12–18 LPA", level:"Mid", description:"Demand planning and supply chain analytics for 200+ stores across India and SEA.", responsibilities:["Demand forecasting using statistical models","Inventory optimization","Supplier performance tracking","S&OP process coordination"], skills:["Demand Planning","SAP APO","Tableau","Advanced Excel","SQL","Supply Chain Analytics","Python"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-003", title:"Process Excellence Lead – Lean Six Sigma", company:"Global Pharma Company (GCC)", domain:"Operations", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"6–10 Years", qualification:"B.Tech + Six Sigma Black Belt", budget:"₹20–30 LPA", level:"Senior", description:"Drive continuous improvement projects across R&D and manufacturing support operations.", responsibilities:["Lead Kaizen and DMAIC projects","Process mapping and value stream analysis","Training teams on Lean Six Sigma","ROI tracking for improvement initiatives"], skills:["Lean Six Sigma","DMAIC","Kaizen","Value Stream Mapping","Minitab","Project Management","Change Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-004", title:"Procurement Specialist – Indirect", company:"European Auto Manufacturer (GCC)", domain:"Operations", type:"Permanent", location:"Pune", mode:"Hybrid", experience:"4–7 Years", qualification:"MBA / B.Tech", budget:"₹14–22 LPA", level:"Mid–Senior", description:"Strategic sourcing for indirect categories — IT, facilities, professional services, marketing.", responsibilities:["Category strategy development","RFP/RFQ management","Supplier negotiation and contracting","Savings tracking and reporting"], skills:["Strategic Sourcing","SAP Ariba","Coupa","Contract Management","Negotiation","Spend Analytics"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-005", title:"Facilities Manager", company:"US Tech Company (GCC)", domain:"Operations", type:"Permanent", location:"Bengaluru", mode:"On-site", experience:"8–12 Years", qualification:"B.Tech / MBA Facilities", budget:"₹18–28 LPA", level:"Senior", description:"Manage 500K sqft campus operations — HVAC, security, catering, transport, EHS for 3000+ employees.", responsibilities:["Campus operations management","Vendor management for FM services","EHS compliance and audits","Budget planning and cost optimization"], skills:["Facilities Management","Vendor Management","EHS","CAFM Systems","Budget Management","Contract Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-006", title:"Business Process Analyst", company:"Global Insurance Company (GCC)", domain:"Operations", type:"Permanent", location:"Chennai", mode:"Hybrid", experience:"2–4 Years", qualification:"B.Tech / BBA / MBA", budget:"₹8–14 LPA", level:"Junior–Mid", description:"Analyse and document business processes for claims operations. Identify automation opportunities.", responsibilities:["Process mapping using BPMN","Requirements gathering with stakeholders","UAT coordination","Automation opportunity identification"], skills:["BPMN","Visio","JIRA","Confluence","SQL","Process Mapping","UAT","Agile"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-007", title:"Logistics Coordinator", company:"Global Logistics Company (GCC)", domain:"Operations", type:"Permanent", location:"Mumbai", mode:"On-site", experience:"2–4 Years", qualification:"BBA / MBA Logistics", budget:"₹6–10 LPA", level:"Junior–Mid", description:"Coordinate inbound/outbound logistics for FMCG clients. Route optimization and carrier management.", responsibilities:["Shipment coordination and tracking","Carrier performance management","Route optimization analysis","Customs documentation support"], skills:["Logistics Management","TMS","SAP TM","Excel","Carrier Management","Customs Documentation"], referralAmount:50000, status:"Active" },
+{ id:"GCC-OPS-008", title:"Quality Assurance Manager – BPO Operations", company:"Global BPO & Shared Services (GCC)", domain:"Operations", type:"Permanent", location:"Noida", mode:"Hybrid", experience:"6–9 Years", qualification:"Graduate + Six Sigma Green Belt", budget:"₹15–22 LPA", level:"Mid–Senior", description:"Lead quality function for 500-seat contact center. Transaction monitoring, calibrations, coaching.", responsibilities:["Quality framework design","Transaction monitoring and scoring","Calibration sessions with clients","Root cause analysis and coaching"], skills:["Quality Management","COPC","Six Sigma","Speech Analytics","Calibration","Coaching","Excel","Tableau"], referralAmount:50000, status:"Active" },
+
+// ══════════════ HR (7 roles) ══════════════
+{ id:"GCC-HR-001", title:"HR Business Partner", company:"Global SaaS Company (GCC)", domain:"HR", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"6–10 Years", qualification:"MBA HR / MSW", budget:"₹22–35 LPA", level:"Senior", description:"Strategic HRBP for 800+ employee India GCC. Employee relations, talent planning, culture.", responsibilities:["Strategic workforce planning","Employee engagement and retention","Performance management cycle ownership","HR analytics and insights for leadership"], skills:["HRBP","Employee Relations","Talent Management","Workday","HR Analytics","Compensation & Benefits","OD"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-002", title:"Talent Acquisition Lead", company:"US Fintech Company (GCC)", domain:"HR", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA HR", budget:"₹25–38 LPA", level:"Senior", description:"Lead TA team of 10 for engineering and product hiring. 200+ hires per year target.", responsibilities:["Hiring strategy and workforce planning","Manage TA team of 10 recruiters","Employer branding initiatives","Vendor management and ATS optimization"], skills:["Talent Acquisition","Greenhouse/Lever","LinkedIn Recruiter","Employer Branding","Hiring Analytics","Stakeholder Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-003", title:"Compensation & Benefits Analyst", company:"European Bank (GCC)", domain:"HR", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"3–6 Years", qualification:"MBA HR / CA Inter", budget:"₹14–22 LPA", level:"Mid", description:"C&B benchmarking, salary structure design, and benefits administration for India GCC.", responsibilities:["Annual compensation benchmarking","Pay structure and grade design","Benefits program management","Executive compensation analysis"], skills:["Compensation & Benefits","Mercer/AON Surveys","Job Evaluation","HRIS","Advanced Excel","Data Analysis"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-004", title:"Learning & Development Manager", company:"Global Consulting Firm (GCC)", domain:"HR", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"7–10 Years", qualification:"MBA HR / M.Ed", budget:"₹20–30 LPA", level:"Senior", description:"Design and deliver learning programs for 2000+ employee GCC. Leadership development focus.", responsibilities:["Learning needs assessment","Program design and delivery","LMS management and analytics","Leadership development programs"], skills:["L&D","Instructional Design","LMS","Facilitation","Leadership Development","Kirkpatrick Model","SAP SuccessFactors"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-005", title:"HR Operations Specialist", company:"Global Technology Company (GCC)", domain:"HR", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"2–4 Years", qualification:"MBA HR / BBA", budget:"₹8–14 LPA", level:"Junior–Mid", description:"Support HR operations — onboarding, payroll coordination, policy administration, HRIS management.", responsibilities:["Employee onboarding and offboarding","Payroll coordination with vendor","Policy queries and case management","HRIS data accuracy and reporting"], skills:["HR Operations","Workday","ServiceNow HRSD","Payroll","Onboarding","Employee Lifecycle","Excel"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-006", title:"Diversity & Inclusion Program Manager", company:"US Tech Giant (GCC)", domain:"HR", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"5–8 Years", qualification:"MBA HR / Social Sciences", budget:"₹18–28 LPA", level:"Mid–Senior", description:"Lead D&I strategy for 5000+ employee India tech hub. ERG management, inclusive hiring, metrics.", responsibilities:["D&I strategy and roadmap","Employee Resource Group management","Inclusive hiring practice design","D&I dashboards and reporting"], skills:["Diversity & Inclusion","Program Management","Data Analytics","ERG Management","Change Management","Stakeholder Engagement"], referralAmount:50000, status:"Active" },
+{ id:"GCC-HR-007", title:"People Analytics Specialist", company:"Global Pharma GCC", domain:"HR", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"3–5 Years", qualification:"MBA HR / MSc Statistics", budget:"₹14–22 LPA", level:"Mid", description:"Build people analytics capability — attrition models, engagement insights, workforce planning.", responsibilities:["Attrition prediction modelling","Engagement survey analysis","Workforce planning dashboards","HR data governance"], skills:["People Analytics","Python/R","Tableau/Power BI","SQL","Workday","Statistical Modelling","Excel"], referralAmount:50000, status:"Active" },
+
+// ══════════════ SALES (5 roles) ══════════════
+{ id:"GCC-SALES-001", title:"Enterprise Account Manager – SaaS", company:"Global Cloud Platform (GCC)", domain:"Sales", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"6–10 Years", qualification:"MBA / B.Tech + MBA", budget:"₹30–50 LPA (+ Variable)", level:"Senior", description:"Manage portfolio of 20+ enterprise accounts. $5M ARR target. Cross-sell cloud solutions.", responsibilities:["Enterprise account management","Revenue growth and renewals","Solution selling with pre-sales","QBR and C-level stakeholder management"], skills:["Enterprise Sales","SaaS","Account Management","Salesforce","Solution Selling","Cloud/IaaS/PaaS"], referralAmount:50000, status:"Active" },
+{ id:"GCC-SALES-002", title:"Inside Sales Representative", company:"US Cybersecurity Company (GCC)", domain:"Sales", type:"Permanent", location:"Bengaluru", mode:"On-site", experience:"1–3 Years", qualification:"BBA / MBA / B.Tech", budget:"₹6–10 LPA (+ Incentives)", level:"Junior–Mid", description:"Outbound prospecting for mid-market accounts. 60+ calls/day, pipeline building.", responsibilities:["Outbound prospecting via call/email/LinkedIn","Lead qualification using BANT/MEDDIC","Pipeline management in Salesforce","Handoff to field sales team"], skills:["Inside Sales","Cold Calling","Salesforce","LinkedIn Sales Navigator","MEDDIC","SaaS Sales","Outreach.io"], referralAmount:50000, status:"Active" },
+{ id:"GCC-SALES-003", title:"Pre-Sales Solution Architect", company:"Global ERP Software Company (GCC)", domain:"Sales", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"8–12 Years", qualification:"B.Tech + MBA preferred", budget:"₹35–50 LPA", level:"Senior", description:"Technical pre-sales for ERP solutions. RFP responses, solution demos, POC delivery.", responsibilities:["Solution design for enterprise prospects","RFP/RFI response management","Product demos and POC delivery","Technical win strategy"], skills:["Pre-Sales","ERP","Solution Architecture","SAP/Oracle","Demo Skills","RFP Management","Stakeholder Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-SALES-004", title:"Channel Partner Manager", company:"Global Networking Company (GCC)", domain:"Sales", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"5–8 Years", qualification:"MBA Marketing / B.Tech", budget:"₹20–32 LPA", level:"Mid–Senior", description:"Manage channel partner ecosystem for India and SAARC region. Revenue through partners.", responsibilities:["Partner recruitment and enablement","Joint business planning","Partner performance management","Co-marketing program execution"], skills:["Channel Sales","Partner Management","Salesforce PRM","Marketing","Business Development","Networking/Security"], referralAmount:50000, status:"Active" },
+{ id:"GCC-SALES-005", title:"Revenue Operations Analyst", company:"US SaaS Unicorn (GCC)", domain:"Sales", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"2–4 Years", qualification:"B.Tech / BBA / MBA", budget:"₹10–16 LPA", level:"Junior–Mid", description:"Support RevOps function — pipeline analytics, territory planning, Salesforce admin, forecasting.", responsibilities:["Pipeline and forecast analytics","Salesforce administration and reports","Territory and quota planning support","Sales process optimization"], skills:["Revenue Operations","Salesforce Admin","SQL","Tableau","Excel","Sales Analytics","CPQ"], referralAmount:50000, status:"Active" },
+
+// ══════════════ RESEARCH & ANALYTICS (5 roles) ══════════════
+{ id:"GCC-RA-001", title:"Market Research Intern", company:"Chartered Times LLP", domain:"Research & Analytics", type:"Internship", location:"Remote", mode:"Remote", experience:"0 Years (Freshers)", qualification:"Graduates / Final-year students", budget:"₹6K–26K/month", level:"Intern", contractDuration:"3 Months", description:"Market Research internship with data analytics and generative AI tools.", responsibilities:["Research using MS Excel","Generative AI tools for insights","Reports and presentations","Industry trend analysis"], skills:["MS Excel","Data Analytics","Generative AI","ChatGPT","Claude","Research","English Proficiency"], referralAmount:50000, status:"Active" },
+{ id:"GCC-RA-002", title:"Business Intelligence Analyst", company:"Global FMCG Corporation (GCC)", domain:"Research & Analytics", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"3–5 Years", qualification:"B.Tech / MSc Statistics / MBA", budget:"₹14–22 LPA", level:"Mid", description:"Build BI dashboards and analytics for sales and marketing functions across APAC.", responsibilities:["Dashboard development in Tableau/Power BI","Data modelling and warehousing","Ad-hoc analysis for leadership","KPI framework design"], skills:["Tableau","Power BI","SQL","Python","Data Modelling","Snowflake","Business Analytics","DAX"], referralAmount:50000, status:"Active" },
+{ id:"GCC-RA-003", title:"Quantitative Research Analyst", company:"Global Hedge Fund (GCC)", domain:"Research & Analytics", type:"Permanent", location:"Mumbai", mode:"On-site", experience:"2–5 Years", qualification:"MSc/PhD in Maths/Stats/Physics", budget:"₹25–45 LPA", level:"Mid–Senior", description:"Develop quantitative models for equity and derivatives trading strategies.", responsibilities:["Alpha signal research and backtesting","Statistical modelling for trading","Alternative data analysis","Performance attribution"], skills:["Python","R","C++","Time Series Analysis","Machine Learning","Bloomberg","SQL","Statistics"], referralAmount:50000, status:"Active" },
+{ id:"GCC-RA-004", title:"Data Analyst – Customer Insights", company:"Global E-commerce Company (GCC)", domain:"Research & Analytics", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"2–4 Years", qualification:"B.Tech / MSc / MBA Analytics", budget:"₹10–16 LPA", level:"Junior–Mid", description:"Customer segmentation, cohort analysis, and funnel analytics for e-commerce platform.", responsibilities:["Customer segmentation and profiling","Funnel and cohort analysis","A/B test analysis","Self-serve analytics dashboards"], skills:["SQL","Python","Tableau","Google Analytics","Amplitude","Mixpanel","Excel","Cohort Analysis"], referralAmount:50000, status:"Active" },
+{ id:"GCC-RA-005", title:"Senior Research Scientist – NLP", company:"US AI Company (GCC)", domain:"Research & Analytics", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"5–8 Years", qualification:"PhD/MS in CS/AI/NLP", budget:"₹45–70 LPA", level:"Senior", description:"Lead NLP research for large language model applications. Publish at top-tier conferences.", responsibilities:["NLP research and experimentation","LLM fine-tuning and evaluation","Research paper writing (ACL/EMNLP/NeurIPS)","Collaboration with product teams"], skills:["NLP","Transformers","PyTorch","Hugging Face","Python","LLMs","Research Methodology","CUDA"], referralAmount:50000, status:"Active" },
+
+// ══════════════ LEGAL (4 roles) ══════════════
+{ id:"GCC-LEG-001", title:"Legal Counsel – Commercial Contracts", company:"Global Technology Company (GCC)", domain:"Legal", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"5–8 Years", qualification:"LLB / LLM", budget:"₹20–32 LPA", level:"Mid–Senior", description:"Draft and negotiate commercial contracts — SaaS agreements, MSAs, SOWs, NDAs for India GCC.", responsibilities:["Commercial contract drafting and review","SaaS and cloud agreement negotiation","Legal risk assessment","Vendor and partner contract management"], skills:["Commercial Contracts","SaaS Agreements","Contract Negotiation","IP Law","Data Privacy","Legal Research"], referralAmount:50000, status:"Active" },
+{ id:"GCC-LEG-002", title:"Compliance Manager – Data Privacy", company:"European Financial Services (GCC)", domain:"Legal", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"6–10 Years", qualification:"LLB + CIPP/E or CIPM", budget:"₹25–40 LPA", level:"Senior", description:"Lead GDPR and India DPDP Act compliance program for financial services GCC.", responsibilities:["Data privacy program management","DPIA and privacy impact assessments","Regulatory change monitoring","Training and awareness programs"], skills:["GDPR","India DPDP Act","Data Privacy","Compliance","DPIA","OneTrust","ISO 27701","Risk Assessment"], referralAmount:50000, status:"Active" },
+{ id:"GCC-LEG-003", title:"Paralegal – Corporate Governance", company:"US Multinational Corporation (GCC)", domain:"Legal", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"2–4 Years", qualification:"LLB / CS (Company Secretary)", budget:"₹8–14 LPA", level:"Junior–Mid", description:"Support corporate governance, board compliance, entity management for global subsidiaries.", responsibilities:["Board meeting coordination","Statutory filing management","Entity management database","Corporate governance documentation"], skills:["Corporate Governance","Company Law","MCA Filings","Board Compliance","Diligent Entities","MS Office"], referralAmount:50000, status:"Active" },
+{ id:"GCC-LEG-004", title:"IP & Patent Analyst", company:"Global Pharma Company (GCC)", domain:"Legal", type:"Permanent", location:"Hyderabad", mode:"Hybrid", experience:"3–6 Years", qualification:"B.Tech + LLB / Patent Agent", budget:"₹12–20 LPA", level:"Mid", description:"Patent landscape analysis, prior art searches, and IP portfolio management for pharma R&D.", responsibilities:["Patent search and analysis","Prior art investigations","IP portfolio management","Freedom-to-operate assessments"], skills:["Patent Analysis","IP Law","Prior Art Search","Espacenet","PatSnap","Pharma/Biotech Knowledge","Legal Research"], referralAmount:50000, status:"Active" },
+
+// ══════════════ CONSULTING (3 roles) ══════════════
+{ id:"GCC-CON-001", title:"Management Consultant – Strategy", company:"Global Strategy Firm (GCC)", domain:"Consulting", type:"Permanent", location:"Gurugram", mode:"Hybrid", experience:"3–6 Years", qualification:"MBA from Tier 1 / B.Tech + MBA", budget:"₹25–40 LPA", level:"Mid–Senior", description:"Strategy consulting for Fortune 500 clients. Market entry, growth strategy, due diligence.", responsibilities:["Market sizing and opportunity assessment","Competitive analysis and benchmarking","Client presentation and storytelling","Financial modelling for business cases"], skills:["Strategy Consulting","Market Analysis","Financial Modelling","PowerPoint","Excel","Client Management","Research"], referralAmount:50000, status:"Active" },
+{ id:"GCC-CON-002", title:"Business Analyst – Digital Transformation", company:"Global IT Consulting Firm (GCC)", domain:"Consulting", type:"Permanent", location:"Bengaluru", mode:"Hybrid", experience:"2–5 Years", qualification:"B.Tech / MBA", budget:"₹12–20 LPA", level:"Mid", description:"Requirements analysis and solution design for enterprise digital transformation projects.", responsibilities:["Business requirements documentation","Process mapping (As-Is / To-Be)","User story creation for Agile teams","Stakeholder workshops and facilitation"], skills:["Business Analysis","JIRA","Confluence","Agile","Process Mapping","Visio","SQL","Stakeholder Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-CON-003", title:"Change Management Lead", company:"Global Professional Services Firm (GCC)", domain:"Consulting", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA / PROSCI Certified", budget:"₹28–42 LPA", level:"Senior", description:"Lead organizational change management for large-scale ERP and digital transformation programs.", responsibilities:["Change impact assessment","Stakeholder engagement strategy","Communication and training plans","Change readiness measurement"], skills:["Change Management","PROSCI ADKAR","Stakeholder Management","Communication","Training Design","Project Management"], referralAmount:50000, status:"Active" },
+
+// ══════════════ CROSS-FUNCTIONAL (2 roles) ══════════════
+{ id:"GCC-CF-001", title:"Executive Assistant to Country Head", company:"Global MNC (GCC)", domain:"Cross-Functional", type:"Permanent", location:"Bengaluru", mode:"On-site", experience:"5–8 Years", qualification:"Graduate / MBA", budget:"₹12–18 LPA", level:"Mid", description:"Support Country Head with calendar management, travel, meeting coordination, MIS reporting.", responsibilities:["Executive calendar and travel management","Meeting coordination and minutes","MIS and dashboard preparation","Stakeholder communication"], skills:["Executive Assistance","Calendar Management","MIS Reporting","PowerPoint","Excel","Travel Coordination"], referralAmount:50000, status:"Active" },
+{ id:"GCC-CF-002", title:"Project Manager – PMO", company:"Large Global Bank (GCC)", domain:"Cross-Functional", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA + PMP Certification", budget:"₹30–45 LPA", level:"Senior", description:"Lead projects within the enterprise PMO. Portfolio management, governance, reporting.", responsibilities:["Project planning and execution","Portfolio governance and reporting","Risk and issue management","PMO process design and improvement"], skills:["Project Management","PMP","Agile/Waterfall","MS Project","JIRA","Risk Management","Stakeholder Management"], referralAmount:50000, status:"Active" }
+        ];
+
+        let logoClickCount = 0;
+        let otpTimers = {};
+        let otpVerified = {};
+        let currentReferrerStep = 0;
+        let currentUser = null;
+
+        function getJobsForUserDomain() {
+            if (!currentUser || !currentUser.domain) return JOBS_DATA;
+            return JOBS_DATA.filter(j => j.domain === currentUser.domain || j.domain === 'Cross-Functional');
+        }
+
+        function handleLogoClick() {
+            logoClickCount++;
+            if (logoClickCount === 3) {
+                showModal('adminModal');
+                renderJobStatusManager();
+                logoClickCount = 0;
+            }
+        }
+
+        function handleAdminClick() {
+            showModal('adminModal');
+            renderJobStatusManager();
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showJobSeekerModal() {
+            showModal('jobSeekerModal');
+        }
+
+        function showReferrerModal() {
+            showModal('referrerModal');
+        }
+
+        function showLoginModal() {
+            showModal('loginModal');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this.id);
+                }
+            });
+        });
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        function sendOTP(type) {
+            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
+            const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
+            const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
+            const timer = type === 'jobSeeker' ? 'jsOtpTimer' : 'refOtpTimer';
+
+            const email = document.getElementById(emailField).value;
+            if (!email || !email.includes('@')) {
+                showToast('Please enter a valid email', 'error');
+                return;
+            }
+
+            document.getElementById(otpSection).classList.add('active');
+            document.getElementById(emailBtn).disabled = true;
+
+            let timeLeft = 30;
+            document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
+
+            const interval = setInterval(() => {
+                timeLeft--;
+                document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
+                if (timeLeft === 0) {
+                    clearInterval(interval);
+                    document.getElementById(emailBtn).disabled = false;
+                    document.getElementById(timer).textContent = '';
+                }
+            }, 1000);
+
+            showToast('OTP sent to ' + email, 'success');
+        }
+
+        function handleOtpInput(input, type) {
+            if (input.value.length === 1 && /[0-9]/.test(input.value)) {
+                if (input.nextElementSibling) {
+                    input.nextElementSibling.focus();
+                }
+            } else if (input.value.length === 0) {
+                if (input.previousElementSibling) {
+                    input.previousElementSibling.focus();
+                }
+            } else {
+                input.value = input.value.slice(0, 1);
+            }
+
+            const verifyBtn = type === 'jobSeeker' ? 'jsVerifyBtn' : 'refVerifyBtn';
+            const otpInputs = document.querySelectorAll(`${type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm'} .otp-input`);
+            const allFilled = Array.from(otpInputs).every(inp => inp.value.length === 1);
+            document.getElementById(verifyBtn).disabled = !allFilled;
+        }
+
+        function verifyOTP(type) {
+            const otpInputs = document.querySelectorAll(`${type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm'} .otp-input`);
+            const otp = Array.from(otpInputs).map(inp => inp.value).join('');
+
+            if (otp.length !== 6) {
+                showToast('Please enter a valid 6-digit OTP', 'error');
+                return;
+            }
+
+            otpVerified[type] = true;
+            const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
+            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
+
+            document.getElementById(otpSection).classList.remove('active');
+            document.getElementById(emailField).disabled = true;
+
+            const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
+            document.getElementById(emailBtn).textContent = '✓ Verified';
+            document.getElementById(emailBtn).style.background = '#22c55e';
+
+            showToast('Email verified successfully!', 'success');
+        }
+
+        function switchReferrerStep(direction) {
+            const form = document.getElementById('referrerForm');
+            const contents = form.querySelectorAll('.form-step-content');
+            const steps = form.querySelectorAll('.form-step');
+            const maxSteps = contents.length;
+
+            currentReferrerStep += direction;
+
+            if (currentReferrerStep < 0) currentReferrerStep = 0;
+            if (currentReferrerStep >= maxSteps) currentReferrerStep = maxSteps - 1;
+
+            contents.forEach((content, idx) => {
+                content.classList.toggle('active', idx === currentReferrerStep);
+            });
+
+            steps.forEach((step, idx) => {
+                step.classList.toggle('active', idx === currentReferrerStep);
+            });
+
+            document.getElementById('refPrevBtn').style.display = currentReferrerStep === 0 ? 'none' : 'block';
+
+            if (currentReferrerStep === maxSteps - 1) {
+                document.getElementById('refNextBtn').style.display = 'none';
+                form.querySelector('.form-navigation').innerHTML = `
+                    <button type="button" class="btn-prev" onclick="switchReferrerStep(-1)">Previous</button>
+                    <button type="submit" class="btn-submit">Submit for Admin Review</button>
+                `;
+            } else {
+                if (!form.querySelector('.btn-submit')) {
+                    document.getElementById('refNextBtn').style.display = 'block';
+                }
+            }
+        }
+
+        function submitJobSeekerForm(event) {
+            event.preventDefault();
+
+            if (!otpVerified['jobSeeker']) {
+                showToast('Please verify your email with OTP', 'error');
+                return;
+            }
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            data.action = 'submitApplication';
+
+            console.log('Job Seeker Registration:', data);
+
+            // Set currentUser with domain
+            currentUser = {
+                name: data.fullName || data.email.split('@')[0],
+                email: data.email,
+                type: 'jobSeeker',
+                domain: data.domain || 'Other'
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Send to backend
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify(data),
+                mode: 'no-cors'
+            }).catch(err => console.log('Job seeker registration submitted'));
+
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.innerHTML = `
+                <h3>Thank You!</h3>
+                <p>Your registration has been submitted successfully. You'll receive a confirmation email shortly.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem;">Early bird access will be activated within 24 hours.</p>
+            `;
+
+            form.parentElement.insertBefore(successMsg, form);
+            form.style.display = 'none';
+
+            setTimeout(() => {
+                closeModal('jobSeekerModal');
+                form.style.display = 'block';
+                successMsg.remove();
+                form.reset();
+                otpVerified['jobSeeker'] = false;
+                document.getElementById('jsOtpSection').classList.remove('active');
+                document.getElementById('jsEmail').disabled = false;
+                document.getElementById('jsEmailBtn').disabled = false;
+                document.getElementById('jsEmailBtn').textContent = 'Send OTP';
+                document.getElementById('jsEmailBtn').style.background = '';
+                showUserConsole();
+            }, 3000);
+        }
+
+        function submitReferrerForm(event) {
+            event.preventDefault();
+
+            if (!otpVerified['referrer']) {
+                showToast('Please verify your email with OTP', 'error');
+                return;
+            }
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            data.action = 'registerReferrer';
+
+            console.log('Referrer Registration:', data);
+
+            // Set currentUser with domain
+            currentUser = {
+                name: data.fullName || data.email.split('@')[0],
+                email: data.email,
+                type: 'referrer',
+                domain: data.primaryDomain || 'Other'
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Send to backend
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify(data),
+                mode: 'no-cors'
+            }).catch(err => console.log('Referrer registration submitted'));
+
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.innerHTML = `
+                <h3>Application Submitted!</h3>
+                <p>Your partner application has been submitted for admin review.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem;">A digital partner agreement will be sent within 24-48 hours.</p>
+            `;
+
+            form.parentElement.insertBefore(successMsg, form);
+            form.style.display = 'none';
+
+            setTimeout(() => {
+                closeModal('referrerModal');
+                form.style.display = 'block';
+                successMsg.remove();
+                form.reset();
+                currentReferrerStep = 0;
+                switchReferrerStep(0);
+                otpVerified['referrer'] = false;
+                document.getElementById('refOtpSection').classList.remove('active');
+                document.getElementById('refEmail').disabled = false;
+                document.getElementById('refEmailBtn').disabled = false;
+                document.getElementById('refEmailBtn').textContent = 'Send OTP';
+                document.getElementById('refEmailBtn').style.background = '';
+                showUserConsole();
+            }, 3000);
+        }
+
+        function submitLoginForm(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = form.querySelector('input[name="email"]').value;
+            const password = form.querySelector('input[name="password"]').value;
+
+            currentUser = {
+                name: email.split('@')[0],
+                email: email,
+                type: 'jobSeeker',
+                domain: 'Technology'
+            };
+
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeModal('loginModal');
+            showUserConsole();
+            form.reset();
+            showToast('Logged in successfully!', 'success');
+        }
+
+        function submitPasswordForm(event) {
+            event.preventDefault();
+            const newPassword = document.querySelector('#passwordForm input[name="newPassword"]').value;
+            const confirmPassword = document.querySelector('#passwordForm input[name="confirmPassword"]').value;
+
+            if (newPassword !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            if (!validatePasswordStrength(newPassword)) {
+                showToast('Password does not meet requirements', 'error');
+                return;
+            }
+
+            showToast('Password changed successfully!', 'success');
+            document.getElementById('passwordForm').reset();
+        }
+
+        function submitProfileForm(event) {
+            event.preventDefault();
+            showToast('Profile updated successfully!', 'success');
+        }
+
+        function submitAdminForm(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const jobObj = {
+                id: formData.get('jobId'),
+                title: formData.get('jobTitle'),
+                company: formData.get('company'),
+                domain: formData.get('domain'),
+                type: formData.get('jobType'),
+                location: formData.get('location'),
+                mode: formData.get('workMode'),
+                experience: formData.get('experience'),
+                qualification: formData.get('qualification'),
+                budget: formData.get('budget'),
+                level: formData.get('level'),
+                description: formData.get('description'),
+                responsibilities: formData.get('responsibilities').split('\n').filter(r => r.trim()),
+                skills: formData.get('skills').split(',').map(s => s.trim()),
+                referralAmount: parseInt(formData.get('referralAmount')),
+                status: formData.get('jobStatus') || 'Active',
+            };
+
+            if (formData.get('teamSize')) jobObj.teamSize = formData.get('teamSize');
+            if (formData.get('contractDuration')) jobObj.contractDuration = formData.get('contractDuration');
+
+            document.getElementById('adminOutput').style.display = 'block';
+            document.getElementById('adminOutputCode').textContent = JSON.stringify(jobObj, null, 2);
+
+            showToast('Job created successfully! Copy the JSON above.', 'success');
+            renderJobStatusManager();
+        }
+
+        function submitReferral(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            data.action = 'submitReferral';
+
+            // Validate required fields
+            if (!data.jobId || !data.candidateName || !data.candidateEmail || !data.candidatePhone) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            console.log('Referral Submission:', data);
+
+            // Send to backend
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify(data),
+                mode: 'no-cors'
+            }).then(() => {
+                showToast('Referral submitted successfully!', 'success');
+                form.reset();
+                closeModal('submitReferralModal');
+            }).catch(err => {
+                console.log('Referral submission sent');
+                showToast('Referral submitted successfully!', 'success');
+                form.reset();
+                closeModal('submitReferralModal');
+            });
+        }
+
+        // Job Status Manager
+        function renderJobStatusManager() {
+            const container = document.getElementById('jobStatusManager');
+            if (!container || !JOBS_DATA || JOBS_DATA.length === 0) return;
+
+            const statusColors = {
+                'Active': '#22c55e', 'Urgent': '#ef4444', 'Inactive': '#6B7A99',
+                'Filled': '#2196F3', 'Closed': '#666'
+            };
+
+            container.innerHTML = JOBS_DATA.map((job, i) => {
+                const st = job.status || 'Active';
+                const col = statusColors[st] || '#6B7A99';
+                return `<div style="display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;background:#FAF7F2;border-radius:8px;border-left:4px solid ${col};flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                        <div style="font-weight:600;font-size:0.9rem;">${job.id} — ${job.title}</div>
+                        <div style="font-size:0.8rem;color:#6B7A99;">${job.company}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.75rem;padding:3px 10px;border-radius:20px;background:${col}20;color:${col};font-weight:600;">${st}</span>
+                        <select onchange="updateJobStatus(${i}, this.value)" style="padding:6px 10px;border:1px solid #E8E4E0;border-radius:6px;font-size:0.8rem;font-family:inherit;cursor:pointer;">
+                            <option value="">Change Status</option>
+                            <option value="Active" ${st==='Active'?'disabled':''}>Active</option>
+                            <option value="Urgent" ${st==='Urgent'?'disabled':''}>Urgent</option>
+                            <option value="Inactive" ${st==='Inactive'?'disabled':''}>Inactive</option>
+                            <option value="Filled" ${st==='Filled'?'disabled':''}>Filled</option>
+                            <option value="Closed" ${st==='Closed'?'disabled':''}>Closed</option>
+                        </select>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateJobStatus(index, newStatus) {
+            if (!newStatus) return;
+            const job = JOBS_DATA[index];
+            const oldStatus = job.status || 'Active';
+            job.status = newStatus;
+            renderJobStatusManager();
+            showToast(`${job.id} status changed: ${oldStatus} → ${newStatus}`, 'success');
+
+            // Send to backend
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify({ action: 'updateJobStatus', jobId: job.id, status: newStatus }),
+                mode: 'no-cors'
+            }).catch(err => console.log('Status update sent'));
+        }
+
+        function initiateGoogleSignIn(type) {
+            showToast('Google Sign-In would initiate with Client ID: ' + GOOGLE_CLIENT_ID, 'success');
+        }
+
+        function switchToRegister(event) {
+            event.preventDefault();
+            closeModal('loginModal');
+            showJobSeekerModal();
+        }
+
+        function showForgotPasswordForm(event) {
+            event.preventDefault();
+            showToast('Password reset functionality coming soon', 'success');
+        }
+
+        function showUserConsole() {
+            if (currentUser) {
+                document.getElementById('userConsole').classList.add('active');
+                document.getElementById('consoleUserName').textContent = currentUser.name;
+                document.getElementById('consoleUserEmail').textContent = currentUser.email;
+                document.getElementById('dashWelcomeName').textContent = currentUser.name;
+                document.getElementById('profileFullName').value = currentUser.name;
+                document.getElementById('profileEmail').value = currentUser.email;
+
+                if (currentUser.type === 'jobSeeker') {
+                    document.getElementById('appNav').style.display = 'block';
+                    document.getElementById('refNav').style.display = 'none';
+                    document.getElementById('jobSeekerStats').style.display = 'grid';
+                    document.getElementById('referrerStats').style.display = 'none';
+                } else {
+                    document.getElementById('appNav').style.display = 'none';
+                    document.getElementById('refNav').style.display = 'block';
+                    document.getElementById('jobSeekerStats').style.display = 'none';
+                    document.getElementById('referrerStats').style.display = 'grid';
+                    populateReferralJobDropdown();
+                }
+            }
+        }
+
+        function populateReferralJobDropdown() {
+            const jobSelect = document.getElementById('referralJobSelect');
+            const filteredJobs = getJobsForUserDomain();
+            if (!jobSelect || !filteredJobs || filteredJobs.length === 0) return;
+
+            jobSelect.innerHTML = '<option value="">Select a Job</option>';
+            filteredJobs.forEach(job => {
+                const option = document.createElement('option');
+                option.value = job.id;
+                option.textContent = `${job.id} - ${job.title}`;
+                jobSelect.appendChild(option);
+            });
+        }
+
+        function hideUserConsole() {
+            document.getElementById('userConsole').classList.remove('active');
+        }
+
+        function switchConsoleTab(tabName) {
+            document.querySelectorAll('.console-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            sessionStorage.removeItem('currentUser');
+            hideUserConsole();
+            showToast('Logged out successfully', 'success');
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthBar = document.getElementById('strengthBar');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            strengthBar.className = 'password-strength-bar';
+            if (strength === 1) strengthBar.classList.add('weak');
+            else if (strength === 2) strengthBar.classList.add('fair');
+            else if (strength >= 3) strengthBar.classList.add('strong');
+        }
+
+        function validatePasswordStrength(password) {
+            return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('GCCPROs landing page loaded');
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showUserConsole();
+            }
+        });
+    </script>
+</body>
+</html>
