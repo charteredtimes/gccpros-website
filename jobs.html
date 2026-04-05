@@ -1758,7 +1758,7 @@
             </ul>
             <div class="nav-buttons">
                 <button class="login-btn" onclick="showLoginModal()">Login</button>
-                <button class="join-btn" onclick="showJobSeekerModal()">Join Now</button>
+                <button class="join-btn" onclick="document.getElementById('get-started').scrollIntoView({behavior:'smooth'})">Join Now</button>
             </div>
             <div class="hamburger" onclick="toggleMenu()">
                 <span></span>
@@ -1780,12 +1780,12 @@
                 <h1>Your Career, Elevated</h1>
                 <p class="hero-tagline">Trust-Led. AI-Enabled. Career-First.</p>
                 <p class="hero-subtitle">India's premier GCC talent ecosystem by GCCPROs. Connect with verified talent across all domains — Finance, Technology, Operations, HR, Sales, Research, Legal, Consulting, and more.</p>
-                <button class="hero-cta" onclick="showJobSeekerModal()">Start Your Journey</button>
+                <button class="hero-cta" onclick="document.getElementById('get-started').scrollIntoView({behavior:'smooth'})">Start Your Journey</button>
             </div>
         </section>
 
         <!-- Split Screen: Job Seeker & Referrer -->
-        <section class="split-screen">
+        <section class="split-screen" id="get-started">
             <div class="container" style="max-width:1040px; display:block; margin-bottom:0;">
                 <div class="section-intro">
                     <h2>Two Paths, One Platform</h2>
