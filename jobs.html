@@ -3410,67 +3410,68 @@
         }
 
         let googleSignInType = 'jobSeeker';
+        let tokenClient = null;
 
         function initiateGoogleSignIn(type) {
             googleSignInType = type;
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleCredentialResponse,
-                auto_select: false
-            });
-            google.accounts.id.prompt((notification) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    // Fallback: use popup mode
-                    google.accounts.id.renderButton(
-                        document.createElement('div'),
-                        { theme: 'outline', size: 'large' }
-                    );
-                    // Try One Tap again or show toast
-                    showToast('Google popup was blocked. Please allow popups or register manually.', 'error');
-                }
-            });
+
+            if (!tokenClient) {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GOOGLE_CLIENT_ID,
+                    scope: 'openid email profile',
+                    callback: handleGoogleTokenResponse
+                });
+            }
+            tokenClient.requestAccessToken();
         }
 
-        function handleGoogleCredentialResponse(response) {
-            // Decode the JWT to get user info
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            const userData = {
-                name: payload.name,
-                email: payload.email,
-                picture: payload.picture,
-                type: googleSignInType
-            };
+        function handleGoogleTokenResponse(tokenResponse) {
+            if (tokenResponse.error) {
+                showToast('Google sign-in failed. Please try again or register manually.', 'error');
+                return;
+            }
 
-            currentUser = {
-                name: userData.name,
-                email: userData.email,
-                type: googleSignInType,
-                domain: 'Other'
-            };
-            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            // Fetch user info from Google using the access token
+            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
+            })
+            .then(res => res.json())
+            .then(userInfo => {
+                currentUser = {
+                    name: userInfo.name,
+                    email: userInfo.email,
+                    type: googleSignInType,
+                    domain: 'Other'
+                };
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            // Send to backend
-            const data = {
-                action: 'googleSignIn',
-                signInType: googleSignInType,
-                fullName: userData.name,
-                email: userData.email,
-                picture: userData.picture
-            };
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                headers: {'Content-Type': 'text/plain'},
-                body: JSON.stringify(data),
-                mode: 'no-cors'
-            }).catch(err => console.log('Google sign-in data submitted'));
+                // Send to backend
+                const data = {
+                    action: 'googleSignIn',
+                    signInType: googleSignInType,
+                    fullName: userInfo.name,
+                    email: userInfo.email,
+                    picture: userInfo.picture
+                };
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain'},
+                    body: JSON.stringify(data),
+                    mode: 'no-cors'
+                }).catch(err => console.log('Google sign-in data submitted'));
 
-            // Close any open modals
-            closeModal('loginModal');
-            closeModal('jobSeekerModal');
-            closeModal('referrerModal');
+                // Close any open modals
+                closeModal('loginModal');
+                closeModal('jobSeekerModal');
+                closeModal('referrerModal');
 
-            showToast('Welcome, ' + userData.name + '!', 'success');
-            setTimeout(() => showUserConsole(), 500);
+                showToast('Welcome, ' + userInfo.name + '!', 'success');
+                setTimeout(() => showUserConsole(), 500);
+            })
+            .catch(err => {
+                console.error('Failed to fetch user info:', err);
+                showToast('Google sign-in failed. Please try again.', 'error');
+            });
         }
 
         function switchToRegister(event) {
