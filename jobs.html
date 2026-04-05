@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v9">
+    <meta name="version" content="2026-04-06-v10">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1033,6 +1033,36 @@
             background: #b8862e;
             transform: translateY(-1px);
         }
+
+        .rec-job-view-btn {
+            background: transparent;
+            color: var(--brand-blue);
+            border: 1.5px solid var(--brand-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .rec-job-view-btn:hover {
+            background: var(--brand-blue);
+            color: var(--white);
+        }
+        /* Job Detail Modal */
+        .job-detail-body { padding: 0 0.5rem; }
+        .job-detail-body h4 { font-size: 0.95rem; margin: 1rem 0 0.4rem; color: var(--ink); }
+        .job-detail-body .jd-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .job-detail-body .jd-meta span { background: #f1f5f9; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; color: #555; }
+        .job-detail-body .jd-resp { padding-left: 1.2rem; margin: 0; }
+        .job-detail-body .jd-resp li { font-size: 0.85rem; line-height: 1.6; color: #444; }
+        .job-detail-body .jd-skills-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .job-detail-body .jd-skill-tag { background: #EEF2FF; color: #4F46E5; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 500; }
+        .job-detail-body .jd-section { margin-bottom: 0.75rem; }
+        .job-detail-body .jd-referral { background: linear-gradient(135deg,#FEF3C7,#FDE68A); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #92700C; margin-top: 0.75rem; text-align: center; }
 
         /* Validation error styles */
         .field-error {
@@ -3391,11 +3421,11 @@
 
                 <!-- Section 3: Eligibility statement -->
                 <div class="form-group">
-                    <label for="appEligibility" style="font-weight:600;">Why are you the right fit for this role? <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(Minimum 100 words)</span></label>
-                    <textarea id="appEligibility" name="eligibility" rows="5" required placeholder="Describe your relevant experience, achievements, and what makes you a strong candidate for this position (minimum 100 words)..." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;" oninput="updateWordCount()"></textarea>
+                    <label for="appEligibility" style="font-weight:600;">Why are you the right fit for this role? <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(Minimum 20 words)</span></label>
+                    <textarea id="appEligibility" name="eligibility" rows="5" required placeholder="Describe your relevant experience, achievements, and what makes you a strong candidate for this position (minimum 20 words)..." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;" oninput="updateWordCount()"></textarea>
                     <div style="display:flex;justify-content:space-between;margin-top:0.25rem;">
-                        <p id="appEligibilityError" style="color:#dc2626;font-size:0.78rem;display:none;margin:0;">Minimum 100 words required.</p>
-                        <span id="appWordCount" style="font-size:0.75rem;color:var(--muted);">0 / 100 words</span>
+                        <p id="appEligibilityError" style="color:#dc2626;font-size:0.78rem;display:none;margin:0;">Minimum 20 words required.</p>
+                        <span id="appWordCount" style="font-size:0.75rem;color:var(--muted);">0 / 20 words</span>
                     </div>
                 </div>
 
@@ -3473,6 +3503,23 @@
 
                 <button type="submit" class="form-submit-btn" id="appSubmitBtn" style="width:100%;margin-top:0.75rem;">Submit Application</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Job Detail Modal -->
+    <div class="modal" id="jobDetailModal">
+        <div class="modal-content" style="max-width:680px;">
+            <div class="modal-header">
+                <h2 id="jdModalTitle" style="font-size:1.15rem;">Job Details</h2>
+                <button class="modal-close" onclick="closeModal('jobDetailModal')">×</button>
+            </div>
+            <div class="job-detail-body" id="jobDetailBody">
+                <!-- Populated dynamically -->
+            </div>
+            <div style="padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:0.75rem;">
+                <button class="rec-job-apply-btn" id="jdApplyBtn" style="flex:1;" onclick="">Apply Now</button>
+                <button style="flex:0.5;background:transparent;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600;color:var(--muted);" onclick="closeModal('jobDetailModal')">Close</button>
+            </div>
         </div>
     </div>
 
@@ -3812,7 +3859,20 @@
 
 // ══════════════ CROSS-FUNCTIONAL (2 roles) ══════════════
 { id:"GCC-CF-001", title:"Executive Assistant to Country Head", company:"Global MNC (GCC)", domain:"Cross-Functional", type:"Permanent", location:"Bengaluru", mode:"On-site", experience:"5–8 Years", qualification:"Graduate / MBA", budget:"₹12–18 LPA", level:"Mid", description:"Support Country Head with calendar management, travel, meeting coordination, MIS reporting.", responsibilities:["Executive calendar and travel management","Meeting coordination and minutes","MIS and dashboard preparation","Stakeholder communication"], skills:["Executive Assistance","Calendar Management","MIS Reporting","PowerPoint","Excel","Travel Coordination"], referralAmount:50000, status:"Active" },
-{ id:"GCC-CF-002", title:"Project Manager – PMO", company:"Large Global Bank (GCC)", domain:"Cross-Functional", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA + PMP Certification", budget:"₹30–45 LPA", level:"Senior", description:"Lead projects within the enterprise PMO. Portfolio management, governance, reporting.", responsibilities:["Project planning and execution","Portfolio governance and reporting","Risk and issue management","PMO process design and improvement"], skills:["Project Management","PMP","Agile/Waterfall","MS Project","JIRA","Risk Management","Stakeholder Management"], referralAmount:50000, status:"Active" }
+{ id:"GCC-CF-002", title:"Project Manager – PMO", company:"Large Global Bank (GCC)", domain:"Cross-Functional", type:"Permanent", location:"Mumbai", mode:"Hybrid", experience:"8–12 Years", qualification:"MBA + PMP Certification", budget:"₹30–45 LPA", level:"Senior", description:"Lead projects within the enterprise PMO. Portfolio management, governance, reporting.", responsibilities:["Project planning and execution","Portfolio governance and reporting","Risk and issue management","PMO process design and improvement"], skills:["Project Management","PMP","Agile/Waterfall","MS Project","JIRA","Risk Management","Stakeholder Management"], referralAmount:50000, status:"Active" },
+// ══════════════ NEW ROLES (Docs Upload) ══════════════
+{ id:"GCC-TECH-015", title:"Adobe AEM QA Engineer", company:"Global Manufacturing MNC (GCC)", domain:"Technology", type:"Permanent", location:"India – Remote/Hybrid", mode:"Hybrid", experience:"3+ Years", qualification:"B.Tech / B.E. in CS/IT", budget:"Competitive", level:"Mid", description:"Develop and execute comprehensive test plans for Adobe marketing products including AEM and Adobe Campaign. Collaborate with cross-functional teams to ensure product quality.", responsibilities:["Develop and execute test plans for Adobe AEM and Campaign","Perform functional, regression, and performance testing","Identify, document, and track defects using bug-tracking tools","Automate test cases using Selenium, JUnit, TestNG","Participate in code reviews and provide quality feedback","Stay current with industry trends and testing methodologies"], skills:["Adobe AEM","Adobe Campaign","Selenium","JUnit","TestNG","SDLC","Agile","Git","CI/CD","API Testing"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-016", title:"Mid-Level Copado Engineer (DevOps)", company:"Global Manufacturing MNC (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"5+ Years", qualification:"Bachelor's in CS/IT or related field", budget:"Competitive", level:"Mid–Senior", description:"Configure and manage Copado environments and deployment pipelines for Salesforce ecosystems. Drive automation and continuous delivery across multiple teams.", responsibilities:["Configure and manage Copado environments and pipelines","Develop automated deployment scripts and processes","Work with Salesforce developers and administrators","Monitor deployment workflows and resolve issues","Create documentation and performance reports","Collaborate on DevOps process improvements"], skills:["Copado","Salesforce","Apex","Lightning","Git","CI/CD","Automated Deployment","Agile","JIRA"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-017", title:"Shopify Developer (P2 Level)", company:"Global Manufacturing MNC (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"4+ Years", qualification:"Bachelor's in CS/IT or related field", budget:"Competitive", level:"Mid", description:"Build custom themes, features, and apps for enterprise Shopify stores. Integrate with GraphQL, Storefront APIs, and middleware systems like ERP and PIM.", responsibilities:["Develop scalable ecommerce solutions on Shopify Plus","Build custom themes and apps using Hydrogen framework","Write clean, optimized code with React.js","Integrate with GraphQL and Storefront APIs","Support middleware integration with ERP, PIM, payment gateways","Debug and troubleshoot features and integrations"], skills:["Shopify Plus","Liquid","React.js","JavaScript","HTML5","CSS3","GraphQL","Remix.run","Hydrogen","Shopify Metafields","GitHub"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-018", title:"Technical Program Manager (M4)", company:"Global Manufacturing MNC (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"12+ Years", qualification:"Bachelor's / Master's in Engineering or MBA", budget:"Competitive", level:"Senior–Lead", description:"Own end-to-end delivery of Salesforce and ServiceMax programs. Drive project governance, Agile delivery, and coach engineering teams across global initiatives.", responsibilities:["Own end-to-end delivery of Salesforce and SMAX programs","Drive project governance, scope, budgets, and risk management","Oversee solution designs and integration approaches","Lead Agile (Scrum/SAFe) delivery models across workstreams","Coach and mentor team members","Engage with senior management and external partners"], skills:["Salesforce","ServiceMax","Shopify","AEM","Agile","Scrum","SAFe","DevOps","CI/CD","JIRA","Stakeholder Management","Program Management"], referralAmount:50000, status:"Active" },
+{ id:"GCC-TECH-019", title:"Technical Program Manager – Salesforce & ServiceMax", company:"Global Manufacturing MNC (GCC)", domain:"Technology", type:"Permanent", location:"Hyderabad / Bengaluru", mode:"Hybrid", experience:"14+ Years", qualification:"Bachelor's / Master's in Engineering", budget:"Competitive", level:"Lead", description:"Lead end-to-end delivery of Salesforce and Service Max programs with 9+ years hands-on platform experience. Provide consulting on capabilities and drive Agile across multiple workstreams.", responsibilities:["Own end-to-end delivery of Salesforce and Service Max programs","Provide consulting on Salesforce and Service Max capabilities","Drive agile project governance and stakeholder management","Oversee solution designs, integration approaches, data models","Lead Scrum/SAFe across multiple workstreams","Manage team performance and development"], skills:["Salesforce","ServiceMax","Agile","SAFe","Scrum","DevOps","Program Governance","People Management","Integration Architecture","JIRA"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-013", title:"Senior Associate – Accounts Receivable", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Flexible (skill-focused)", qualification:"Commerce Graduate / CA Inter preferred", budget:"₹10–12 LPA", level:"Mid", description:"Handle end-to-end Accounts Receivable operations with India-focused finance operations and GST compliance. Mid-sized company background preferred.", responsibilities:["Manage end-to-end AR operations","Ensure GST compliance in invoicing and collections","Handle auditor queries related to receivables","Prepare AR ageing reports and reconciliations","Coordinate with sales and operations for billing accuracy"], skills:["Accounts Receivable","GST Compliance","India Finance Operations","Reconciliations","Auditor Management","Excel","SAP"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-014", title:"Manager Finance – Holding Company", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"5–7 Years post-CA", qualification:"Chartered Accountant (mandatory)", budget:"₹20–22 LPA", level:"Senior", description:"End-to-end finance operations for the holding company covering AR, AP, Treasury, R2R, Ind-AS reporting, and people management of 5–6 direct reports.", responsibilities:["Manage end-to-end finance operations (AR, AP, Treasury, R2R)","Lead Ind-AS financial reporting and monthly book close","Handle statutory compliance and auditor management","Manage team of 5–6 direct reports","Support consolidation across ~30 subsidiaries"], skills:["Chartered Accountant","Ind-AS","Financial Reporting","AR/AP/Treasury","R2R","People Management","Consolidation","SAP S/4HANA","Statutory Compliance"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-015", title:"Manager Finance – Subsidiary Operations", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"5–7 Years post-CA", qualification:"Chartered Accountant (mandatory)", budget:"₹20–22 LPA", level:"Senior", description:"End-to-end finance operations for the subsidiary covering financial reporting, compliance, auditor management, and people management.", responsibilities:["Manage end-to-end finance operations","Lead Ind-AS financial reporting and statutory compliance","Handle auditor management and monthly book close","Manage team of 5–6 direct reports","Drive process improvements in finance operations"], skills:["Chartered Accountant","Ind-AS","Financial Reporting","Auditor Management","People Management","Statutory Compliance","Excel"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-016", title:"Assistant Manager Finance", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Flexible", qualification:"Commerce Graduate / CA or CA Inter preferred", budget:"₹12–15 LPA", level:"Mid", description:"Handle end-to-end finance and accounting operations with India-focused operations knowledge. Mid-sized company background preferred.", responsibilities:["Support end-to-end finance and accounting operations","Prepare monthly financial statements and MIS","Handle reconciliations and variance analysis","Support audit processes and compliance requirements","Maintain books of accounts and journal entries"], skills:["Finance & Accounting","India Operations","Reconciliations","MIS Reporting","SAP S/4HANA","Excel","Auditor Support"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-017", title:"Senior Manager – Taxation", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Leadership Level", qualification:"Chartered Accountant (mandatory)", budget:"~₹25 LPA", level:"Senior–Lead", description:"Head the taxation function covering direct and indirect tax expertise for India operations with people management responsibilities.", responsibilities:["Head direct and indirect tax function for India operations","Manage tax compliance, planning, and advisory","Lead a team of tax professionals","Handle transfer pricing and international tax matters","Coordinate with external consultants and tax authorities"], skills:["Chartered Accountant","Direct Tax","Indirect Tax","GST","Transfer Pricing","International Tax","People Management","SAP Tax Module","Tax Planning"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-018", title:"Short-Term Finance Consultant", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Contract", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Senior level", qualification:"CA / MBA Finance preferred", budget:"Competitive (Monthly)", level:"Senior", contractDuration:"2–3 Months", description:"Short-term consultant to support data analysis, financial modeling, audit management, and investor data compilation. Self-starter with minimal learning curve required.", responsibilities:["Perform data analysis and financial modeling","Support audit management processes","Compile investor data and reports","Drive financial process improvements","Work independently with minimal supervision"], skills:["Financial Modeling","Data Analysis","Audit Management","Investor Reporting","Excel Advanced","Self-starter","Big Four Experience preferred"], referralAmount:50000, status:"Active" },
+{ id:"GCC-FIN-019", title:"Chartered Accountant – Audit / DD Assistance", company:"Confidential (GCC)", domain:"Finance", type:"Contract", location:"Local candidates preferred", mode:"On-site", experience:"0–3 Years", qualification:"Chartered Accountant (qualified)", budget:"Competitive (Monthly)", level:"Junior–Mid", contractDuration:"2 Months (extendable by 1 month)", description:"Short-term audit and due diligence assistance role involving preparation of book closure workings, schedules, financials, reconciliations, and support for audit/DD data requirements. No cab or OPE reimbursement provided.", responsibilities:["Prepare book closure workings and schedules","Prepare financials and reconciliations","Support audit and due diligence data requirements","Assist with statutory filings and documentation","Coordinate with audit teams on data requests"], skills:["Chartered Accountant","Audit","Due Diligence","Book Closure","Reconciliations","Financials Preparation","Statutory Compliance","Excel"], referralAmount:25000, status:"Active" }
         ];
 
         let logoClickCount = 0;
@@ -5133,6 +5193,7 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
+                    <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
                     <button class="rec-job-apply-btn" data-apply-job="${job.id}" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
                 </div>
             `).join('');
@@ -5140,6 +5201,46 @@
             // Buttons use inline onclick="applyForJob('...')" — confirmed working in v7 console logs
 
             console.log('[GCCPROs] renderRecommendedJobs complete. Buttons:', container.querySelectorAll('.rec-job-apply-btn').length);
+        }
+
+        function viewJobDetails(jobId) {
+            const job = JOBS_DATA.find(j => j.id === jobId);
+            if (!job) return;
+            document.getElementById('jdModalTitle').textContent = job.title;
+            const body = document.getElementById('jobDetailBody');
+            body.innerHTML = `
+                <p style="font-size:0.9rem;color:var(--muted);margin:0 0 0.75rem;">${job.company}</p>
+                <div class="jd-meta">
+                    <span>${job.domain}</span>
+                    <span>${job.type}</span>
+                    <span>${job.location}</span>
+                    <span>${job.mode || ''}</span>
+                    <span>${job.experience}</span>
+                    <span>${job.budget}</span>
+                    ${job.level ? '<span>Level: '+job.level+'</span>' : ''}
+                    ${job.qualification ? '<span>'+job.qualification+'</span>' : ''}
+                    ${job.teamSize ? '<span>Team: '+job.teamSize+'</span>' : ''}
+                    ${job.contractDuration ? '<span>Duration: '+job.contractDuration+'</span>' : ''}
+                </div>
+                <div class="jd-section">
+                    <h4>About the Role</h4>
+                    <p style="font-size:0.85rem;line-height:1.6;color:#444;">${job.description}</p>
+                </div>
+                ${(job.responsibilities && job.responsibilities.length) ? `
+                <div class="jd-section">
+                    <h4>Key Responsibilities</h4>
+                    <ul class="jd-resp">${job.responsibilities.map(r => '<li>'+r+'</li>').join('')}</ul>
+                </div>` : ''}
+                ${(job.skills && job.skills.length) ? `
+                <div class="jd-section">
+                    <h4>Required Skills</h4>
+                    <div class="jd-skills-grid">${job.skills.map(s => '<span class="jd-skill-tag">'+s+'</span>').join('')}</div>
+                </div>` : ''}
+                ${job.referralAmount ? '<div class="jd-referral">Referral Bonus: ₹'+job.referralAmount.toLocaleString('en-IN')+'</div>' : ''}
+            `;
+            const applyBtn = document.getElementById('jdApplyBtn');
+            applyBtn.setAttribute('onclick', "closeModal('jobDetailModal'); applyForJob('" + jobId + "');");
+            showModal('jobDetailModal');
         }
 
         function applyForJob(jobId) {
@@ -5205,9 +5306,9 @@
             const words = text.length === 0 ? 0 : text.split(/\s+/).length;
             const counter = document.getElementById('appWordCount');
             const errEl = document.getElementById('appEligibilityError');
-            counter.textContent = words + ' / 100 words';
-            counter.style.color = words >= 100 ? '#16a34a' : 'var(--muted)';
-            if (words >= 100) errEl.style.display = 'none';
+            counter.textContent = words + ' / 20 words';
+            counter.style.color = words >= 20 ? '#16a34a' : 'var(--muted)';
+            if (words >= 20) errEl.style.display = 'none';
         }
 
         async function submitJobApplication(event) {
@@ -5226,10 +5327,10 @@
                 document.getElementById('appSkillsError').style.display = 'none';
             }
 
-            // 2. Validate eligibility — minimum 100 words
+            // 2. Validate eligibility — minimum 20 words
             const eligText = document.getElementById('appEligibility').value.trim();
             const eligWords = eligText.length === 0 ? 0 : eligText.split(/\s+/).length;
-            if (eligWords < 100) {
+            if (eligWords < 20) {
                 document.getElementById('appEligibilityError').style.display = 'block';
                 if (!hasError) { document.getElementById('appEligibility').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
             } else {
