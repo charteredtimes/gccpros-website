@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCC Jobs — GCCPROs | Talent & Career Ecosystem</title>
+    <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
@@ -1753,7 +1753,7 @@
                 <li><a href="insights.html">Insights</a></li>
                 <li><a href="events.html">Events</a></li>
                 <li><a href="database.html">GCC Database</a></li>
-                <li><a href="jobs.html" style="color:#fff;font-weight:600;">GCC Jobs</a></li>
+                <li><a href="jobs.html" style="color:#fff;font-weight:600;">GCC Opportunities</a></li>
                 <li><a href="https://portal.gccpros.com">Member Portal</a></li>
             </ul>
             <div class="nav-buttons">
@@ -1939,7 +1939,7 @@
                 </div>
                 <div class="roles-note">
                     <strong>Register and get approved to access all open positions</strong><br>
-                    After email verification and admin review, you'll gain full access to our complete job listings and application portal.
+                    After email verification and admin review, you'll gain full access to our complete opportunity listings and application portal.
                 </div>
             </div>
         </section>
@@ -2858,7 +2858,7 @@
                     <div class="checkbox-group">
                         <div class="checkbox-item">
                             <input type="checkbox" id="emailNewJobs" checked>
-                            <label for="emailNewJobs">New job listings matching my profile</label>
+                            <label for="emailNewJobs">New opportunities matching my profile</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="emailStatusUpdates" checked>
@@ -2875,7 +2875,7 @@
     </div>
 
     <script>
-        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+        const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIJB-MOK5Pn1cSbPvj4tqiTVHljp_Y7gihrFdHM4AWGSIF2Kt8mNV_tC0gHzP_kpqQ7w/exec';
 
         const JOBS_DATA = [
@@ -3409,8 +3409,68 @@
             }).catch(err => console.log('Status update sent'));
         }
 
+        let googleSignInType = 'jobSeeker';
+
         function initiateGoogleSignIn(type) {
-            showToast('Google Sign-In would initiate with Client ID: ' + GOOGLE_CLIENT_ID, 'success');
+            googleSignInType = type;
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredentialResponse,
+                auto_select: false
+            });
+            google.accounts.id.prompt((notification) => {
+                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                    // Fallback: use popup mode
+                    google.accounts.id.renderButton(
+                        document.createElement('div'),
+                        { theme: 'outline', size: 'large' }
+                    );
+                    // Try One Tap again or show toast
+                    showToast('Google popup was blocked. Please allow popups or register manually.', 'error');
+                }
+            });
+        }
+
+        function handleGoogleCredentialResponse(response) {
+            // Decode the JWT to get user info
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            const userData = {
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture,
+                type: googleSignInType
+            };
+
+            currentUser = {
+                name: userData.name,
+                email: userData.email,
+                type: googleSignInType,
+                domain: 'Other'
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Send to backend
+            const data = {
+                action: 'googleSignIn',
+                signInType: googleSignInType,
+                fullName: userData.name,
+                email: userData.email,
+                picture: userData.picture
+            };
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify(data),
+                mode: 'no-cors'
+            }).catch(err => console.log('Google sign-in data submitted'));
+
+            // Close any open modals
+            closeModal('loginModal');
+            closeModal('jobSeekerModal');
+            closeModal('referrerModal');
+
+            showToast('Welcome, ' + userData.name + '!', 'success');
+            setTimeout(() => showUserConsole(), 500);
         }
 
         function switchToRegister(event) {
