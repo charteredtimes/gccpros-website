@@ -4069,18 +4069,25 @@
             tokenClient.requestAccessToken();
         }
 
-        function handleGoogleTokenResponse(tokenResponse) {
+        async function handleGoogleTokenResponse(tokenResponse) {
             if (tokenResponse.error) {
                 showToast('Google sign-in failed. Please try again or register manually.', 'error');
                 return;
             }
 
-            // Fetch user info from Google using the access token
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
-            })
-            .then(res => res.json())
-            .then(userInfo => {
+            try {
+                // Fetch user info from Google using the access token
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
+                });
+                const userInfo = await res.json();
+                console.log('Google user info received:', userInfo.name, userInfo.email);
+
+                if (!userInfo || !userInfo.email) {
+                    showToast('Could not retrieve your Google account info. Please try again.', 'error');
+                    return;
+                }
+
                 if (googleSignInType === 'login') {
                     // Login flow — go straight to dashboard
                     currentUser = {
@@ -4096,110 +4103,123 @@
                     return;
                 }
 
-                // Registration flow — check for duplicate email first
-                checkEmailExists(userInfo.email).then(exists => {
-                    if (exists) {
-                        // Email already registered — treat as login
-                        currentUser = {
-                            name: userInfo.name,
-                            email: userInfo.email,
-                            type: 'jobSeeker',
-                            domain: 'Other'
-                        };
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        closeModal('loginModal');
-                        closeModal('jobSeekerModal');
-                        closeModal('referrerModal');
-                        showToast('Welcome back, ' + userInfo.name + '! You\'re already registered.', 'success');
-                        setTimeout(() => showUserConsole(), 500);
-                        return;
-                    }
+                // Registration flow — check for duplicate email (with 5s timeout)
+                let emailAlreadyExists = false;
+                try {
+                    const emailCheckPromise = checkEmailExists(userInfo.email);
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+                    emailAlreadyExists = await Promise.race([emailCheckPromise, timeoutPromise]);
+                } catch (err) {
+                    console.log('Email check timed out or failed, proceeding with registration:', err);
+                    emailAlreadyExists = false;
+                }
 
-                if (googleSignInType === 'jobSeeker') {
+                if (emailAlreadyExists) {
+                    // Email already registered — treat as login
+                    currentUser = {
+                        name: userInfo.name,
+                        email: userInfo.email,
+                        type: 'jobSeeker',
+                        domain: 'Other'
+                    };
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
-                    showModal('jobSeekerModal');
+                    closeModal('jobSeekerModal');
+                    closeModal('referrerModal');
+                    showToast('Welcome back, ' + userInfo.name + '! You\'re already registered.', 'success');
+                    setTimeout(() => showUserConsole(), 500);
+                    return;
+                }
 
-                    const form = document.getElementById('jobSeekerForm');
-                    // Pre-fill name and email from Google
-                    form.querySelector('[name="fullName"]').value = userInfo.name;
-                    form.querySelector('[name="email"]').value = userInfo.email;
+                // Pre-fill and show registration form
+                prefillGoogleRegistrationForm(userInfo);
 
-                    // Lock the email field and mark as verified (it's from Google)
-                    const emailInput = document.getElementById('jsEmail');
-                    emailInput.value = userInfo.email;
-                    emailInput.readOnly = true;
-                    emailInput.style.background = '#f0f9f0';
-                    emailInput.style.borderColor = '#059669';
-                    otpVerified['jobSeeker'] = true;
+            } catch (err) {
+                console.error('Google sign-in handling failed:', err);
+                showToast('Google sign-in failed. Please try again.', 'error');
+            }
+        }
 
-                    // Hide OTP section and change button to show verified
-                    const otpBtn = document.getElementById('jsEmailBtn');
-                    otpBtn.textContent = '✓ Verified';
-                    otpBtn.disabled = true;
-                    otpBtn.style.background = '#059669';
-                    document.getElementById('jsOtpSection').style.display = 'none';
+        function prefillGoogleRegistrationForm(userInfo) {
+            if (googleSignInType === 'jobSeeker') {
+                closeModal('loginModal');
+                showModal('jobSeekerModal');
 
-                    // Hide the Google button and divider since already authenticated
+                const form = document.getElementById('jobSeekerForm');
+                // Pre-fill name and email from Google
+                form.querySelector('[name="fullName"]').value = userInfo.name;
+                form.querySelector('[name="email"]').value = userInfo.email;
+
+                // Lock the email field and mark as verified (it's from Google)
+                const emailInput = document.getElementById('jsEmail');
+                emailInput.value = userInfo.email;
+                emailInput.readOnly = true;
+                emailInput.style.background = '#f0f9f0';
+                emailInput.style.borderColor = '#059669';
+                otpVerified['jobSeeker'] = true;
+
+                // Hide OTP section and change button to show verified
+                const otpBtn = document.getElementById('jsEmailBtn');
+                otpBtn.textContent = '✓ Verified';
+                otpBtn.disabled = true;
+                otpBtn.style.background = '#059669';
+                document.getElementById('jsOtpSection').style.display = 'none';
+
+                // Hide the Google button and divider since already authenticated
+                const googleBtn = form.querySelector('.google-signin-btn');
+                const divider = form.querySelector('.form-divider');
+                if (googleBtn) googleBtn.style.display = 'none';
+                if (divider) divider.style.display = 'none';
+
+                // Scroll modal to the phone field
+                setTimeout(() => {
+                    const phoneField = form.querySelector('[name="phone"]');
+                    if (phoneField) phoneField.focus();
+                }, 300);
+
+                showToast('Hi ' + userInfo.name + '! Please complete your profile to continue.', 'success');
+
+            } else if (googleSignInType === 'referrer') {
+                closeModal('loginModal');
+                showModal('referrerModal');
+
+                const form = document.getElementById('referrerForm');
+                if (form) {
+                    const nameField = form.querySelector('[name="fullName"]');
+                    const emailField = document.getElementById('refEmail');
+                    if (nameField) nameField.value = userInfo.name;
+                    if (emailField) {
+                        emailField.value = userInfo.email;
+                        emailField.readOnly = true;
+                        emailField.style.background = '#f0f9f0';
+                        emailField.style.borderColor = '#059669';
+                    }
+                    otpVerified['referrer'] = true;
+
+                    // Mark OTP as verified and hide OTP section
+                    const otpBtn = document.getElementById('refEmailBtn');
+                    if (otpBtn) {
+                        otpBtn.textContent = '✓ Verified';
+                        otpBtn.disabled = true;
+                        otpBtn.style.background = '#059669';
+                    }
+                    const otpSection = document.getElementById('refOtpSection');
+                    if (otpSection) otpSection.style.display = 'none';
+
                     const googleBtn = form.querySelector('.google-signin-btn');
                     const divider = form.querySelector('.form-divider');
                     if (googleBtn) googleBtn.style.display = 'none';
                     if (divider) divider.style.display = 'none';
 
-                    // Scroll modal to the phone field
+                    // Focus on phone field
                     setTimeout(() => {
                         const phoneField = form.querySelector('[name="phone"]');
                         if (phoneField) phoneField.focus();
                     }, 300);
-
-                    showToast('Hi ' + userInfo.name + '! Please complete your profile to continue.', 'success');
-
-                } else if (googleSignInType === 'referrer') {
-                    closeModal('loginModal');
-                    showModal('referrerModal');
-
-                    const form = document.getElementById('referrerForm');
-                    if (form) {
-                        const nameField = form.querySelector('[name="fullName"]');
-                        const emailField = document.getElementById('refEmail');
-                        if (nameField) nameField.value = userInfo.name;
-                        if (emailField) {
-                            emailField.value = userInfo.email;
-                            emailField.readOnly = true;
-                            emailField.style.background = '#f0f9f0';
-                            emailField.style.borderColor = '#059669';
-                        }
-                        otpVerified['referrer'] = true;
-
-                        // Mark OTP as verified and hide OTP section
-                        const otpBtn = document.getElementById('refEmailBtn');
-                        if (otpBtn) {
-                            otpBtn.textContent = '✓ Verified';
-                            otpBtn.disabled = true;
-                            otpBtn.style.background = '#059669';
-                        }
-                        const otpSection = document.getElementById('refOtpSection');
-                        if (otpSection) otpSection.style.display = 'none';
-
-                        const googleBtn = form.querySelector('.google-signin-btn');
-                        const divider = form.querySelector('.form-divider');
-                        if (googleBtn) googleBtn.style.display = 'none';
-                        if (divider) divider.style.display = 'none';
-
-                        // Focus on phone field
-                        setTimeout(() => {
-                            const phoneField = form.querySelector('[name="phone"]');
-                            if (phoneField) phoneField.focus();
-                        }, 300);
-                    }
-
-                    showToast('Hi ' + userInfo.name + '! Please complete your partner profile to continue.', 'success');
                 }
-                }); // end checkEmailExists .then()
-            })
-            .catch(err => {
-                console.error('Failed to fetch user info:', err);
-                showToast('Google sign-in failed. Please try again.', 'error');
-            });
+
+                showToast('Hi ' + userInfo.name + '! Please complete your partner profile to continue.', 'success');
+            }
         }
 
         function switchToRegister(event) {
