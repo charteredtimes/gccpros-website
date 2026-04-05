@@ -855,6 +855,37 @@
             box-shadow: none;
         }
 
+        /* Domain Filter Toggle */
+        .domain-filter-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--cream);
+            border-radius: 8px;
+            padding: 3px;
+        }
+        .domain-radio-label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .domain-radio-label input[type="radio"] {
+            display: none;
+        }
+        .domain-radio-label span {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--muted);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .domain-radio-label input[type="radio"]:checked + span {
+            background: var(--brand-blue);
+            color: var(--white);
+            box-shadow: 0 1px 4px rgba(11,17,32,0.15);
+        }
+
         /* Recommended Jobs Grid */
         .recommended-jobs-grid {
             display: grid;
@@ -3348,7 +3379,19 @@
                     </div>
                     <!-- Recommended Jobs (only for job seekers) -->
                     <div id="recommendedJobsSection" style="margin-top: 2rem;">
-                        <h3 style="margin-bottom: 1rem;">Recommended Opportunities for You</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
+                            <h3 style="margin:0;">Recommended Opportunities for You</h3>
+                            <div id="domainFilterToggle" class="domain-filter-toggle">
+                                <label class="domain-radio-label">
+                                    <input type="radio" name="jobDomainFilter" value="myDomain" checked onchange="onDomainFilterChange()">
+                                    <span>My Domain</span>
+                                </label>
+                                <label class="domain-radio-label">
+                                    <input type="radio" name="jobDomainFilter" value="allDomains" onchange="onDomainFilterChange()">
+                                    <span>All Domains</span>
+                                </label>
+                            </div>
+                        </div>
                         <div id="recommendedJobsContainer" class="recommended-jobs-grid">
                             <p style="text-align:center; color:var(--muted); padding:1.5rem;">Loading opportunities...</p>
                         </div>
@@ -3666,8 +3709,26 @@
         }
 
         function getJobsForUserDomain() {
-            if (!currentUser || !currentUser.domain) return JOBS_DATA;
-            return JOBS_DATA.filter(j => j.domain === currentUser.domain || j.domain === 'Cross-Functional');
+            // Check if "All Domains" radio is selected
+            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
+            const showAll = allDomainsRadio && allDomainsRadio.checked;
+
+            if (showAll) {
+                console.log('[GCCPROs] All Domains selected, returning all jobs:', JOBS_DATA.length);
+                return JOBS_DATA;
+            }
+            if (!currentUser || !currentUser.domain || currentUser.domain === 'Other') {
+                console.log('[GCCPROs] No domain or domain=Other, returning all jobs:', JOBS_DATA.length);
+                return JOBS_DATA;
+            }
+            console.log('[GCCPROs] Filtering jobs for domain:', currentUser.domain);
+            const filtered = JOBS_DATA.filter(j => j.domain === currentUser.domain || j.domain === 'Cross-Functional');
+            console.log('[GCCPROs] Filtered jobs count:', filtered.length);
+            return filtered;
+        }
+
+        function onDomainFilterChange() {
+            renderRecommendedJobs();
         }
 
         function handleLogoClick(e) {
@@ -3943,9 +4004,9 @@
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
             successMsg.innerHTML = `
-                <h3>Thank You!</h3>
-                <p>Your registration has been submitted successfully. You'll receive a confirmation email shortly.</p>
-                <p style="margin-top: 1rem; font-size: 0.9rem;">Early bird access will be activated within 24 hours.</p>
+                <h3>Welcome to GCCPROs!</h3>
+                <p>Your registration is confirmed. You now have full access to your dashboard and recommended opportunities.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem;">A welcome email has been sent to your inbox.</p>
             `;
 
             form.parentElement.insertBefore(successMsg, form);
@@ -4517,21 +4578,18 @@
 
                 // Check approval status from backend
                 const statusData = await checkUserStatus(currentUser.email);
+                console.log('[GCCPROs] checkUserStatus response:', JSON.stringify(statusData));
                 const pendingOverlay = document.getElementById('pendingApprovalOverlay');
 
-                if (statusData.exists && statusData.status !== 'Accepted' && statusData.status !== 'unknown') {
-                    // User is registered but NOT yet approved — show pending overlay
+                const userType = statusData.type || currentUser.type;
+                if (statusData.exists && statusData.status !== 'Accepted' && statusData.status !== 'unknown' && userType !== 'jobSeeker') {
+                    // Only partners need admin approval — job seekers are auto-approved
                     const pendingMsg = document.getElementById('pendingMessage');
-                    const userType = statusData.type || currentUser.type;
-                    if (userType === 'jobSeeker') {
-                        pendingMsg.textContent = 'We appreciate your interest in exploring GCC opportunities. Our team is reviewing your candidate profile.';
-                    } else {
-                        pendingMsg.textContent = 'We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.';
-                    }
+                    pendingMsg.textContent = 'We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.';
                     pendingOverlay.classList.add('active');
                     return;
                 } else {
-                    // User is approved or status unknown (allow access)
+                    // User is approved or is a job seeker (auto-approved) — allow access
                     pendingOverlay.classList.remove('active');
                 }
 
@@ -4598,13 +4656,23 @@
 
         function renderRecommendedJobs() {
             const container = document.getElementById('recommendedJobsContainer');
+            console.log('[GCCPROs] renderRecommendedJobs called. Container found:', !!container);
+            console.log('[GCCPROs] currentUser:', JSON.stringify(currentUser));
             if (!container) return;
             const jobs = getJobsForUserDomain();
             if (!jobs || jobs.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No matching opportunities found for your domain.</p>';
                 return;
             }
-            const displayJobs = jobs.filter(j => j.status === 'Active').slice(0, 6);
+            const allDomainsRadio = document.querySelector('input[name="jobDomainFilter"][value="allDomains"]');
+            const showAll = allDomainsRadio && allDomainsRadio.checked;
+            const maxJobs = showAll ? 12 : 6;
+            const displayJobs = jobs.filter(j => j.status === 'Active').slice(0, maxJobs);
+            console.log('[GCCPROs] displayJobs count:', displayJobs.length);
+            if (displayJobs.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No active opportunities found right now. Check back soon!</p>';
+                return;
+            }
             container.innerHTML = displayJobs.map(job => `
                 <div class="recommended-job-card">
                     <div class="rec-job-header">
