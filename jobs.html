@@ -1554,6 +1554,83 @@
             display: flex;
         }
 
+        /* Pending Approval Overlay */
+        .pending-approval-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.97);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+        .pending-approval-overlay.active {
+            display: flex;
+        }
+        .pending-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(184, 134, 11, 0.15);
+        }
+        .pending-approval-overlay h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+        .pending-approval-overlay p {
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 480px;
+        }
+        .pending-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #FEF3C7;
+            color: #92700C;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 20px 0;
+            border: 1px solid #FDE68A;
+        }
+        .pending-status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #D97706;
+            border-radius: 50%;
+            animation: blink 1.8s infinite;
+        }
+        .pending-logout-btn {
+            margin-top: 24px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 10px 28px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pending-logout-btn:hover {
+            border-color: var(--ink);
+            color: var(--ink);
+        }
+
         .console-sidebar {
             width: 250px;
             background: var(--ink);
@@ -3026,6 +3103,17 @@
 
     <!-- User Console -->
     <div class="user-console" id="userConsole">
+        <!-- Pending Approval Overlay -->
+        <div class="pending-approval-overlay" id="pendingApprovalOverlay">
+            <div class="pending-icon">&#9203;</div>
+            <h2>Thank You for Registering!</h2>
+            <div class="pending-status-badge">Registration Under Review</div>
+            <p>We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.</p>
+            <p style="margin-top: 16px;">You will receive an <strong>email notification within 48 hours</strong> once your registration is accepted. After approval, you'll get full access to your personalized dashboard.</p>
+            <p style="margin-top: 16px; font-size: 0.85rem; color: #94a3b8;">For any queries, reach out to <a href="mailto:admin@gccpros.com" style="color: var(--brand-blue);">admin@gccpros.com</a></p>
+            <button class="pending-logout-btn" onclick="logoutUser()">Back to Home</button>
+        </div>
+
         <div class="console-sidebar">
             <div style="padding: 1.5rem 0.5rem; text-align: center; border-bottom: 1px solid #1a2741; margin-bottom: 1rem;">
                 <div style="font-size: 0.7rem; color: #AAA;">Menu</div>
@@ -3470,7 +3558,20 @@
             navLinks.classList.toggle('active');
         }
 
-        function sendOTP(type) {
+        // ═══════════ Backend Duplicate Email Check ═══════════
+        async function checkEmailExists(email) {
+            try {
+                const url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
+                const res = await fetch(url);
+                const data = await res.json();
+                return data.exists === true;
+            } catch (err) {
+                console.log('Email check failed (backend unreachable), allowing registration:', err);
+                return false; // Allow registration if backend is unreachable
+            }
+        }
+
+        async function sendOTP(type) {
             const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
             const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
             const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
@@ -3482,8 +3583,22 @@
                 return;
             }
 
+            // Show loading state on button
+            const btn = document.getElementById(emailBtn);
+            const originalText = btn.textContent;
+            btn.textContent = 'Checking...';
+            btn.disabled = true;
+
+            // Check backend for duplicate email
+            const exists = await checkEmailExists(email);
+            if (exists) {
+                showToast('This email is already registered. Please use the Login option instead.', 'error');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
             document.getElementById(otpSection).classList.add('active');
-            document.getElementById(emailBtn).disabled = true;
 
             let timeLeft = 30;
             document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
@@ -3493,7 +3608,8 @@
                 document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
                 if (timeLeft === 0) {
                     clearInterval(interval);
-                    document.getElementById(emailBtn).disabled = false;
+                    btn.disabled = false;
+                    btn.textContent = originalText;
                     document.getElementById(timer).textContent = '';
                 }
             }, 1000);
@@ -3748,9 +3864,10 @@
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
             successMsg.innerHTML = `
-                <h3>Application Submitted!</h3>
-                <p>Your partner application has been submitted for admin review.</p>
-                <p style="margin-top: 1rem; font-size: 0.9rem;">A digital partner agreement will be sent within 24-48 hours.</p>
+                <h3>Thank You for Registering!</h3>
+                <p>Your partner application has been submitted successfully and is now under review.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.9rem;">You will receive an <strong>email notification within 48 hours</strong> once your registration is accepted.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;">After approval, you'll get full access to your personalized partner dashboard.</p>
             `;
 
             form.parentElement.insertBefore(successMsg, form);
@@ -3769,8 +3886,8 @@
                 document.getElementById('refEmailBtn').disabled = false;
                 document.getElementById('refEmailBtn').textContent = 'Send OTP';
                 document.getElementById('refEmailBtn').style.background = '';
-                showUserConsole();
-            }, 3000);
+                // Do NOT show dashboard — partner needs admin approval first
+            }, 4000);
         }
 
         function submitLoginForm(event) {
@@ -3979,7 +4096,25 @@
                     return;
                 }
 
-                // Registration flow — pre-fill and show the appropriate form
+                // Registration flow — check for duplicate email first
+                checkEmailExists(userInfo.email).then(exists => {
+                    if (exists) {
+                        // Email already registered — treat as login
+                        currentUser = {
+                            name: userInfo.name,
+                            email: userInfo.email,
+                            type: 'jobSeeker',
+                            domain: 'Other'
+                        };
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        closeModal('loginModal');
+                        closeModal('jobSeekerModal');
+                        closeModal('referrerModal');
+                        showToast('Welcome back, ' + userInfo.name + '! You\'re already registered.', 'success');
+                        setTimeout(() => showUserConsole(), 500);
+                        return;
+                    }
+
                 if (googleSignInType === 'jobSeeker') {
                     closeModal('loginModal');
                     showModal('jobSeekerModal');
@@ -4059,6 +4194,7 @@
 
                     showToast('Hi ' + userInfo.name + '! Please complete your partner profile to continue.', 'success');
                 }
+                }); // end checkEmailExists .then()
             })
             .catch(err => {
                 console.error('Failed to fetch user info:', err);
@@ -4112,7 +4248,19 @@
         checkReferralParam();
 
 
-        function showUserConsole() {
+        async function checkUserStatus(email) {
+            try {
+                const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim());
+                const res = await fetch(url);
+                const data = await res.json();
+                return data; // { exists, status, type }
+            } catch (err) {
+                console.log('Status check failed:', err);
+                return { exists: false, status: 'unknown', type: null };
+            }
+        }
+
+        async function showUserConsole() {
             if (currentUser) {
                 document.getElementById('userConsole').classList.add('active');
                 document.getElementById('consoleUserName').textContent = currentUser.name;
@@ -4120,6 +4268,25 @@
                 document.getElementById('dashWelcomeName').textContent = currentUser.name;
                 document.getElementById('profileFullName').value = currentUser.name;
                 document.getElementById('profileEmail').value = currentUser.email;
+
+                // Check approval status from backend
+                const statusData = await checkUserStatus(currentUser.email);
+                const pendingOverlay = document.getElementById('pendingApprovalOverlay');
+
+                if (statusData.exists && statusData.status !== 'Accepted' && statusData.status !== 'unknown') {
+                    // User is registered but NOT yet approved — show pending overlay
+                    pendingOverlay.classList.add('active');
+                    return;
+                } else {
+                    // User is approved or status unknown (allow access)
+                    pendingOverlay.classList.remove('active');
+                }
+
+                // Update user type from backend if available
+                if (statusData.type) {
+                    currentUser.type = statusData.type;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
 
                 if (currentUser.type === 'jobSeeker') {
                     document.getElementById('appNav').style.display = 'block';
