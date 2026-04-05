@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v8">
+    <meta name="version" content="2026-04-06-v9">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3391,8 +3391,12 @@
 
                 <!-- Section 3: Eligibility statement -->
                 <div class="form-group">
-                    <label for="appEligibility" style="font-weight:600;">Why are you the right fit for this role? <span style="color:#dc2626;">*</span></label>
-                    <textarea id="appEligibility" name="eligibility" rows="4" required placeholder="Describe your relevant experience, achievements, and what makes you a strong candidate for this position..." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;"></textarea>
+                    <label for="appEligibility" style="font-weight:600;">Why are you the right fit for this role? <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(Minimum 100 words)</span></label>
+                    <textarea id="appEligibility" name="eligibility" rows="5" required placeholder="Describe your relevant experience, achievements, and what makes you a strong candidate for this position (minimum 100 words)..." style="width:100%;padding:0.75rem;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;" oninput="updateWordCount()"></textarea>
+                    <div style="display:flex;justify-content:space-between;margin-top:0.25rem;">
+                        <p id="appEligibilityError" style="color:#dc2626;font-size:0.78rem;display:none;margin:0;">Minimum 100 words required.</p>
+                        <span id="appWordCount" style="font-size:0.75rem;color:var(--muted);">0 / 100 words</span>
+                    </div>
                 </div>
 
                 <!-- Section 4: Availability & Preferences -->
@@ -3419,32 +3423,31 @@
                         <option value="">Select</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
-                        <option value="Depends on Location">Depends on Location</option>
                     </select>
                 </div>
 
                 <!-- Section 5: Professional References (2 required) -->
                 <div style="margin-top:0.5rem;">
-                    <h4 style="margin:0 0 0.75rem;font-size:0.95rem;">Professional References <span style="color:#dc2626;">*</span> <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(2 required)</span></h4>
+                    <h4 style="margin:0 0 0.75rem;font-size:0.95rem;">Professional References <span style="color:#dc2626;">*</span></h4>
                     <div style="background:#f8f9fa;border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.75rem;">
-                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 1</p>
+                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 1 <span style="color:#dc2626;">(Required)</span></p>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-                            <input type="text" id="ref1Name" name="ref1Name" placeholder="Full Name" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="text" id="ref1Designation" name="ref1Designation" placeholder="Designation & Company" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="email" id="ref1Email" name="ref1Email" placeholder="Email" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="tel" id="ref1Phone" name="ref1Phone" placeholder="Phone Number" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref1Name" name="ref1Name" placeholder="Full Name *" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref1Designation" name="ref1Designation" placeholder="Designation & Company *" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="email" id="ref1Email" name="ref1Email" placeholder="Email *" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="tel" id="ref1Phone" name="ref1Phone" placeholder="Phone Number *" required pattern="[0-9]{10,15}" title="Enter at least 10 digits" style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
                         </div>
-                        <input type="text" id="ref1Relation" name="ref1Relation" placeholder="Professional relationship (e.g. Former Manager at XYZ)" required style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
+                        <input type="text" id="ref1Relation" name="ref1Relation" placeholder="Professional relationship (e.g. Former Manager at XYZ) *" required style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
                     </div>
                     <div style="background:#f8f9fa;border-radius:10px;padding:1rem 1.25rem;">
-                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 2</p>
+                        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 0.5rem;">Reference 2 <span style="color:var(--muted);">(Optional)</span></p>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-                            <input type="text" id="ref2Name" name="ref2Name" placeholder="Full Name" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="text" id="ref2Designation" name="ref2Designation" placeholder="Designation & Company" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="email" id="ref2Email" name="ref2Email" placeholder="Email" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
-                            <input type="tel" id="ref2Phone" name="ref2Phone" placeholder="Phone Number" required style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref2Name" name="ref2Name" placeholder="Full Name" style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="text" id="ref2Designation" name="ref2Designation" placeholder="Designation & Company" style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="email" id="ref2Email" name="ref2Email" placeholder="Email" style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
+                            <input type="tel" id="ref2Phone" name="ref2Phone" placeholder="Phone Number" pattern="[0-9]{10,15}" title="Enter at least 10 digits" style="padding:0.55rem;border:1px solid var(--border);border-radius:6px;">
                         </div>
-                        <input type="text" id="ref2Relation" name="ref2Relation" placeholder="Professional relationship (e.g. Team Lead at ABC)" required style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
+                        <input type="text" id="ref2Relation" name="ref2Relation" placeholder="Professional relationship (e.g. Team Lead at ABC)" style="width:100%;padding:0.55rem;border:1px solid var(--border);border-radius:6px;margin-top:0.5rem;">
                     </div>
                 </div>
 
@@ -5167,11 +5170,18 @@
             // Populate skills checkboxes from job's skills array
             const skillsContainer = document.getElementById('appSkillsContainer');
             skillsContainer.innerHTML = (job.skills || []).map((skill, i) =>
-                `<label class="app-skill-chip" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" name="appSkill" value="${skill}">
-                    ${skill}
-                </label>`
+                `<span class="app-skill-chip" data-skill="${skill}">${skill}</span>`
             ).join('');
+            // Attach click handlers for skill chip toggling
+            skillsContainer.querySelectorAll('.app-skill-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    // Update skill count display
+                    const count = skillsContainer.querySelectorAll('.app-skill-chip.selected').length;
+                    const errEl = document.getElementById('appSkillsError');
+                    if (count >= 3) errEl.style.display = 'none';
+                });
+            });
 
             // Set minimum date for availability (tomorrow)
             const tomorrow = new Date();
@@ -5190,24 +5200,96 @@
             }
         }
 
+        function updateWordCount() {
+            const text = document.getElementById('appEligibility').value.trim();
+            const words = text.length === 0 ? 0 : text.split(/\s+/).length;
+            const counter = document.getElementById('appWordCount');
+            const errEl = document.getElementById('appEligibilityError');
+            counter.textContent = words + ' / 100 words';
+            counter.style.color = words >= 100 ? '#16a34a' : 'var(--muted)';
+            if (words >= 100) errEl.style.display = 'none';
+        }
+
         async function submitJobApplication(event) {
             event.preventDefault();
 
-            // Validate at least 3 skills selected
-            const selectedSkills = Array.from(document.querySelectorAll('input[name="appSkill"]:checked')).map(cb => cb.value);
+            const submitBtn = document.getElementById('appSubmitBtn');
+            let hasError = false;
+
+            // 1. Validate at least 3 skills selected (now using .selected class, not checkboxes)
+            const selectedChips = document.querySelectorAll('#appSkillsContainer .app-skill-chip.selected');
+            const selectedSkills = Array.from(selectedChips).map(chip => chip.getAttribute('data-skill'));
             if (selectedSkills.length < 3) {
                 document.getElementById('appSkillsError').style.display = 'block';
-                document.getElementById('appSkillsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
+                if (!hasError) { document.getElementById('appSkillsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+            } else {
+                document.getElementById('appSkillsError').style.display = 'none';
             }
-            document.getElementById('appSkillsError').style.display = 'none';
 
-            const submitBtn = document.getElementById('appSubmitBtn');
+            // 2. Validate eligibility — minimum 100 words
+            const eligText = document.getElementById('appEligibility').value.trim();
+            const eligWords = eligText.length === 0 ? 0 : eligText.split(/\s+/).length;
+            if (eligWords < 100) {
+                document.getElementById('appEligibilityError').style.display = 'block';
+                if (!hasError) { document.getElementById('appEligibility').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+            } else {
+                document.getElementById('appEligibilityError').style.display = 'none';
+            }
+
+            // 3. Validate Ref 1 email format
+            const ref1Email = document.getElementById('ref1Email').value.trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ref1Email)) {
+                document.getElementById('ref1Email').style.borderColor = '#dc2626';
+                if (!hasError) { document.getElementById('ref1Email').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+                showToast('Please enter a valid email for Reference 1.', 'error');
+            } else {
+                document.getElementById('ref1Email').style.borderColor = '';
+            }
+
+            // 4. Validate Ref 1 phone (at least 10 digits)
+            const ref1Phone = document.getElementById('ref1Phone').value.replace(/\D/g, '');
+            if (ref1Phone.length < 10) {
+                document.getElementById('ref1Phone').style.borderColor = '#dc2626';
+                if (!hasError) { document.getElementById('ref1Phone').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+                showToast('Please enter a valid phone number for Reference 1 (10+ digits).', 'error');
+            } else {
+                document.getElementById('ref1Phone').style.borderColor = '';
+            }
+
+            // 5. Validate Ref 2 email & phone IF any ref2 field is filled
+            const ref2Name = document.getElementById('ref2Name').value.trim();
+            const ref2Email = document.getElementById('ref2Email').value.trim();
+            const ref2Phone = document.getElementById('ref2Phone').value.replace(/\D/g, '');
+            if (ref2Name || ref2Email || ref2Phone) {
+                if (ref2Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ref2Email)) {
+                    document.getElementById('ref2Email').style.borderColor = '#dc2626';
+                    if (!hasError) { document.getElementById('ref2Email').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+                    showToast('Please enter a valid email for Reference 2.', 'error');
+                } else { document.getElementById('ref2Email').style.borderColor = ''; }
+                if (ref2Phone && ref2Phone.length < 10) {
+                    document.getElementById('ref2Phone').style.borderColor = '#dc2626';
+                    if (!hasError) { document.getElementById('ref2Phone').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+                    showToast('Please enter a valid phone for Reference 2 (10+ digits).', 'error');
+                } else { document.getElementById('ref2Phone').style.borderColor = ''; }
+            }
+
+            // 6. Validate CV file type (PDF/Word only)
+            const resumeFile = document.getElementById('appResume').files[0];
+            if (resumeFile) {
+                const allowedExts = ['pdf', 'doc', 'docx'];
+                const ext = resumeFile.name.split('.').pop().toLowerCase();
+                if (!allowedExts.includes(ext)) {
+                    showToast('Only PDF and Word (.doc, .docx) files are accepted for CV.', 'error');
+                    if (!hasError) { document.getElementById('appResume').scrollIntoView({ behavior: 'smooth', block: 'center' }); hasError = true; }
+                }
+            }
+
+            if (hasError) return;
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
             // Read CV file as base64
-            const resumeFile = document.getElementById('appResume').files[0];
             let cvBase64 = '';
             let cvFileName = '';
             let cvMimeType = '';
@@ -5222,7 +5304,7 @@
                 cvMimeType = resumeFile.type;
                 cvBase64 = await new Promise((resolve) => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(',')[1]); // strip data:...;base64,
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(resumeFile);
                 });
             }
