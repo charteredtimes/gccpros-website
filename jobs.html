@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v20">
+    <meta name="version" content="2026-04-06-v24">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -745,73 +745,136 @@
             background: #FFFFFF;
         }
 
-        .program-highlight {
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.03), rgba(184, 134, 11, 0.03));
-            border: 1px solid #E8EDF5;
-            border-radius: 12px;
-            padding: 2.5rem;
-            text-align: center;
-            position: relative;
+        /* ─── Partner Program Unified Card ─── */
+        .partner-program-card {
+            background: #fff;
+            border: 1.5px solid #E8EDF5;
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
         }
-
-        .program-highlight::before {
+        .ppc-earn {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.04), rgba(184, 134, 11, 0.04));
+            padding: 2.5rem 2.5rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid #E8EDF5;
+            position: relative;
+        }
+        .ppc-earn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 3px;
             background: linear-gradient(90deg, var(--brand-blue), var(--gold), var(--brand-blue));
         }
-
-        .program-highlight h3 {
+        .ppc-earn h3 {
             color: var(--ink);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 0.5rem;
         }
-
-        .program-highlight p {
+        .ppc-earn > p {
             color: var(--muted);
-            font-size: 1rem;
-            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
-
-        .program-grid {
+        .ppc-earn-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .ppc-stat-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #E8EDF5;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
+            min-width: 110px;
+        }
+        .ppc-stat-num {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--brand-blue);
+        }
+        .ppc-stat-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .ppc-body {
+            padding: 2rem 2.5rem;
+        }
+        .ppc-coin-strip {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(184,134,11,0.06), rgba(30,64,175,0.03));
+            border: 1px solid rgba(184,134,11,0.2);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .ppc-coin-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+        .ppc-coin-text { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
+        .ppc-columns {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-top: 2.5rem;
+            gap: 2.5rem;
         }
-
-        .program-col h4 {
+        .ppc-col h4 {
             color: var(--ink);
-            margin-bottom: 1.25rem;
-            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
         }
-
         .program-list {
             list-style: none;
             padding: 0;
         }
-
         .program-list li {
-            padding: 0.55rem 0 0.55rem 1.75rem;
+            padding: 0.5rem 0 0.5rem 1.75rem;
             position: relative;
             color: var(--ink);
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 0.88rem;
+            line-height: 1.55;
         }
-
         .program-list li::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0.95rem;
+            top: 0.85rem;
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: transparent;
             border: 1.5px solid var(--gold);
+        }
+        .ppc-footer {
+            padding: 1.25rem 2.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid #E8EDF5;
+        }
+        .ppc-cta-btn {
+            background: linear-gradient(135deg, var(--brand-blue), #1E3A8A);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ppc-cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(30,64,175,0.25);
         }
 
         /* Phone Input with Country Code */
@@ -1141,36 +1204,7 @@
             color: #B8860B;
             font-size: 0.95rem;
         }
-        .referral-coin-highlight {
-            background: linear-gradient(135deg, rgba(184, 134, 11, 0.06), rgba(30, 64, 175, 0.04));
-            border: 1.5px solid rgba(184, 134, 11, 0.25);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .referral-coin-highlight::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #D4A843, #B8860B, #D4A843);
-        }
-        .referral-coin-highlight h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            color: var(--ink);
-            margin-bottom: 0.5rem;
-        }
-        .referral-coin-highlight p {
-            color: var(--muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
+        /* (referral-coin-highlight removed — merged into .partner-program-card) */
         .coin-amount {
             display: inline-flex;
             align-items: center;
@@ -1843,6 +1877,33 @@
             color: var(--ink);
         }
 
+        .dash-loader-spinner {
+            width: 40px; height: 40px;
+            border: 3.5px solid #E5E7EB;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: dash-spin 0.7s linear infinite;
+        }
+        @keyframes dash-spin { to { transform: rotate(360deg); } }
+
+        .login-btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+        .login-btn-loading::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            margin-top: -8px;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: dash-spin 0.6s linear infinite;
+        }
+
         .console-sidebar {
             width: 250px;
             background: var(--ink);
@@ -2010,6 +2071,10 @@
         .status-badge.status-approved {
             background: rgba(34, 197, 94, 0.15);
             color: var(--green);
+        }
+        .status-badge.status-inactive {
+            background: rgba(107, 114, 128, 0.12);
+            color: #6B7280;
         }
 
         .view-btn {
@@ -2251,10 +2316,15 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            .program-grid {
+            .ppc-columns {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 1.5rem;
             }
+            .ppc-earn { padding: 1.5rem 1.25rem 1.25rem; }
+            .ppc-body { padding: 1.25rem; }
+            .ppc-footer { padding: 1rem 1.25rem 1.5rem; }
+            .ppc-earn-stats { gap: 0.75rem; }
+            .ppc-stat-pill { min-width: 90px; padding: 0.5rem 1rem; }
 
             .multiselect-group {
                 grid-template-columns: 1fr;
@@ -2591,10 +2661,6 @@
                         <button class="track-btn" onclick="showLoginModal()">Track Application</button>
                     </div>
                 </div>
-                <div class="roles-note">
-                    <strong>Register and get approved to access all open positions</strong><br>
-                    After email verification and admin review, you'll gain full access to our complete opportunity listings and application portal.
-                </div>
             </div>
         </section>
 
@@ -2605,39 +2671,56 @@
                     <h2>Partner Program Details</h2>
                     <p>Multiple ways to earn and engage</p>
                 </div>
-                <div class="program-highlight">
-                    <h3>Earn Through Referrals, Training & Mentoring</h3>
-                    <p>Partner with us to refer candidates (earn up to ₹5,00,000 per placement), conduct corporate training, offer mentorship, and take on advisory engagements — all on your terms.</p>
-                </div>
-                <div class="referral-coin-highlight">
-                    <h4>🪙 Partner Referral Coins</h4>
-                    <p>Invite fellow professionals to join as partners and earn rewards</p>
-                    <div class="coin-amount">🪙 ₹1,000 per accepted partner referral</div>
-                    <p>Coins accrue in your account and are disbursed along with your first successful hiring incentive.</p>
-                    <p class="coin-fine-print">Referral coins are credited upon partner acceptance and disbursed at the time of your first successful candidate placement payout.</p>
-                </div>
 
-                <div class="program-grid">
-                    <div class="program-col">
-                        <h4>Why Partner With Us?</h4>
-                        <ul class="program-list">
-                            <li>Earn referral incentives for each successful placement</li>
-                            <li>Earn ₹1,000 Referral Coins for every partner you invite</li>
-                            <li>Conduct corporate training programs & workshops</li>
-                            <li>Offer one-on-one mentoring to candidates</li>
-                            <li>Advisory & consulting engagement opportunities</li>
-                            <li>Simple and transparent process</li>
-                        </ul>
+                <div class="partner-program-card">
+                    <!-- Top: Earn highlight -->
+                    <div class="ppc-earn">
+                        <h3>Earn Through Referrals, Training & Mentoring</h3>
+                        <p>Partner with us to refer candidates (earn up to ₹5,00,000 per placement), conduct corporate training, offer mentorship, and take on advisory engagements — all on your terms.</p>
+                        <div class="ppc-earn-stats">
+                            <div class="ppc-stat-pill"><span class="ppc-stat-num">₹5L+</span><span class="ppc-stat-label">Per Placement</span></div>
+                            <div class="ppc-stat-pill"><span class="ppc-stat-num">4</span><span class="ppc-stat-label">Earning Channels</span></div>
+                            <div class="ppc-stat-pill"><span class="ppc-stat-num">100%</span><span class="ppc-stat-label">Transparent</span></div>
+                        </div>
                     </div>
-                    <div class="program-col">
-                        <h4>Our Commitment</h4>
-                        <ul class="program-list">
-                            <li>Identity protection & data security</li>
-                            <li>Encrypted storage of all information</li>
-                            <li>Right to withdraw at any time</li>
-                            <li>Data used exclusively for matching</li>
-                            <li>Compliance with all regulations</li>
-                        </ul>
+
+                    <!-- Middle: Coin strip + Two columns -->
+                    <div class="ppc-body">
+                        <div class="ppc-coin-strip">
+                            <span class="ppc-coin-icon">🪙</span>
+                            <div class="ppc-coin-text">
+                                <strong>Partner Referral Coins</strong> — Invite fellow professionals and earn <span style="color:#B8860B;font-weight:700;">₹1,000</span> per accepted partner referral. Coins accrue and disburse with your first successful placement payout.
+                            </div>
+                        </div>
+
+                        <div class="ppc-columns">
+                            <div class="ppc-col">
+                                <h4>Why Partner With Us?</h4>
+                                <ul class="program-list">
+                                    <li>Earn referral incentives for each successful placement</li>
+                                    <li>Earn ₹1,000 Referral Coins for every partner you invite</li>
+                                    <li>Conduct corporate training programs & workshops</li>
+                                    <li>Offer one-on-one mentoring to candidates</li>
+                                    <li>Advisory & consulting engagement opportunities</li>
+                                    <li>Simple and transparent process</li>
+                                </ul>
+                            </div>
+                            <div class="ppc-col">
+                                <h4>Our Commitment</h4>
+                                <ul class="program-list">
+                                    <li>Identity protection & data security</li>
+                                    <li>Encrypted storage of all information</li>
+                                    <li>Right to withdraw at any time</li>
+                                    <li>Data used exclusively for matching</li>
+                                    <li>Compliance with all regulations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom CTA -->
+                    <div class="ppc-footer">
+                        <button class="ppc-cta-btn" onclick="showModal('referrerModal')">Become a Partner</button>
                     </div>
                 </div>
             </div>
@@ -3767,6 +3850,16 @@
             <button class="pending-logout-btn" onclick="logoutUser()">Back to Home</button>
         </div>
 
+        <!-- Dashboard Loading Overlay -->
+        <div id="dashboardLoadingOverlay" style="display:none;position:absolute;inset:0;background:rgba(255,255,255,0.95);z-index:1200;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;">
+            <div class="dash-loader-spinner"></div>
+            <div style="font-size:1rem;font-weight:600;color:var(--ink);" id="dashLoadingTitle">Setting up your dashboard...</div>
+            <div style="font-size:0.8rem;color:var(--muted);max-width:280px;text-align:center;" id="dashLoadingSubtext">Fetching your data, just a moment</div>
+            <div style="width:200px;height:4px;background:#E5E7EB;border-radius:4px;overflow:hidden;margin-top:0.25rem;">
+                <div id="dashLoadingBar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--primary),var(--brand-blue));border-radius:4px;transition:width 0.4s ease;"></div>
+            </div>
+        </div>
+
         <!-- Mobile sidebar overlay -->
         <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay" onclick="closeMobileSidebar()"></div>
 
@@ -4221,7 +4314,7 @@
         const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzs1vun4E3oiQdNcuGqBCMwZU1OW0ZIva6WBg_Rud4NvZUF_7vbbkaiQbysl91ZbQLww/exec';
 
-        const JOBS_DATA = [
+        let JOBS_DATA = [
 // ══════════════ FINANCE (12 roles) ══════════════
 { id:"GCC-FIN-001", title:"FP&A Analyst", company:"Large Global Consulting Firm (GCC)", domain:"Finance", type:"Permanent", location:"Remote", mode:"Remote", experience:"1–3 Years", qualification:"Qualified Chartered Accountant", budget:"Up to ₹12 LPA", level:"Junior–Mid", description:"FP&A Analyst role involving budgeting, planning and forecasting with strong Excel and communication skills.", responsibilities:["Support end-to-end budgeting and forecasting cycles","Prepare financial plans and variance analysis","Create management reports and dashboards"], skills:["Budgeting","Planning & Forecasting","Advanced Excel","Financial Analysis","Chartered Accountant"], referralAmount:50000, status:"Active" },
 { id:"GCC-FIN-002", title:"Trade Processing Team Lead", company:"Large Multinational Bank (GCC)", domain:"Finance", type:"Contract", location:"Bengaluru", mode:"Hybrid", experience:"3–5 Years", qualification:"B.Com / M.Com in Finance", budget:"₹1.5L–1.75L/month", level:"Mid–Senior", teamSize:"10–15 FTEs", contractDuration:"9 Months", description:"Lead Trade Processing operations for fund services. Manage 10–15 FTEs, drive process efficiency.", responsibilities:["Lead Trade Processing operations","Manage team of 10–15 FTEs","Drive change management","Ensure compliance with audit requirements"], skills:["Trade Life Cycle","Capital Markets","Fund Accounting","SimCorp Dimension","Bloomberg","Team Management"], referralAmount:50000, status:"Active" },
@@ -4313,6 +4406,77 @@
 { id:"GCC-FIN-018", title:"Short-Term Finance Consultant", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Contract", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Senior level", qualification:"CA / MBA Finance preferred", budget:"Competitive (Monthly)", level:"Senior", contractDuration:"2–3 Months", description:"Short-term consultant to support data analysis, financial modeling, audit management, and investor data compilation. Self-starter with minimal learning curve required.", responsibilities:["Perform data analysis and financial modeling","Support audit management processes","Compile investor data and reports","Drive financial process improvements","Work independently with minimal supervision"], skills:["Financial Modeling","Data Analysis","Audit Management","Investor Reporting","Excel Advanced","Self-starter","Big Four Experience preferred"], referralAmount:50000, status:"Active" },
 { id:"GCC-FIN-019", title:"Chartered Accountant – Audit / DD Assistance", company:"Confidential (GCC)", domain:"Finance", type:"Contract", location:"Local candidates preferred", mode:"On-site", experience:"0–3 Years", qualification:"Chartered Accountant (qualified)", budget:"Competitive (Monthly)", level:"Junior–Mid", contractDuration:"2 Months (extendable by 1 month)", description:"Short-term audit and due diligence assistance role involving preparation of book closure workings, schedules, financials, reconciliations, and support for audit/DD data requirements. No cab or OPE reimbursement provided.", responsibilities:["Prepare book closure workings and schedules","Prepare financials and reconciliations","Support audit and due diligence data requirements","Assist with statutory filings and documentation","Coordinate with audit teams on data requests"], skills:["Chartered Accountant","Audit","Due Diligence","Book Closure","Reconciliations","Financials Preparation","Statutory Compliance","Excel"], referralAmount:25000, status:"Active" }
         ];
+
+        // ═══════════ JOBS SYNC (5-minute auto-refresh from Google Sheet) ═══════════
+        let _jobsSyncInterval = null;
+        let _jobsLastSync = 0;
+        const JOBS_SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
+        async function fetchJobsFromSheet() {
+            try {
+                const url = APPS_SCRIPT_URL + '?action=getJobs&_t=' + Date.now();
+                const res = await fetch(url);
+                const result = await res.json();
+                if (result.jobs && result.jobs.length > 0) {
+                    // Build set of previous active job IDs for change detection
+                    const prevIds = new Set(JOBS_DATA.map(j => j.id));
+                    // Replace JOBS_DATA contents
+                    JOBS_DATA.length = 0;
+                    result.jobs.forEach(j => JOBS_DATA.push(j));
+                    _jobsLastSync = Date.now();
+                    console.log('[GCCPROs] Jobs synced: ' + JOBS_DATA.length + ' jobs at ' + new Date().toLocaleTimeString());
+                    // Detect changes
+                    const newIds = new Set(JOBS_DATA.map(j => j.id));
+                    const added = [...newIds].filter(id => !prevIds.has(id));
+                    const removed = [...prevIds].filter(id => !newIds.has(id));
+                    if (added.length > 0 || removed.length > 0) {
+                        console.log('[GCCPROs] Job changes detected — added:', added, 'removed:', removed);
+                        refreshJobViews();
+                    }
+                    return true;
+                }
+            } catch (err) {
+                console.error('[GCCPROs] Jobs sync error:', err);
+            }
+            return false;
+        }
+
+        function refreshJobViews() {
+            // Re-render any visible job views after sync
+            try {
+                if (document.getElementById('userConsole') && document.getElementById('userConsole').classList.contains('active')) {
+                    if (currentUser && (currentUser.type === 'jobSeeker')) {
+                        buildDomainFilterChips();
+                        renderRecommendedJobs();
+                    } else if (currentUser) {
+                        renderPartnerJobs();
+                        populateReferralJobDropdown();
+                    }
+                }
+                // Re-render landing page role cards if visible
+                if (typeof renderRoleCards === 'function') renderRoleCards();
+            } catch (e) { console.log('refreshJobViews error:', e); }
+        }
+
+        function startJobsSync() {
+            if (_jobsSyncInterval) return;
+            _jobsSyncInterval = setInterval(fetchJobsFromSheet, JOBS_SYNC_INTERVAL_MS);
+            console.log('[GCCPROs] Jobs auto-sync started (every 5 min)');
+        }
+
+        function stopJobsSync() {
+            if (_jobsSyncInterval) { clearInterval(_jobsSyncInterval); _jobsSyncInterval = null; }
+        }
+
+        // Initial fetch on page load (uses hardcoded data as fallback)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fire initial sync — if it fails, the hardcoded JOBS_DATA is still available
+            fetchJobsFromSheet().then(function(ok) {
+                if (ok) console.log('[GCCPROs] Initial jobs sync successful');
+                else console.log('[GCCPROs] Initial jobs sync failed — using embedded data');
+            });
+            startJobsSync();
+        });
 
         let logoClickCount = 0;
         let otpTimers = {};
@@ -4544,15 +4708,16 @@
         }
 
         // ═══════════ Backend Duplicate Email Check ═══════════
-        async function checkEmailExists(email) {
+        async function checkEmailExists(email, regType) {
             try {
-                const url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
+                let url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
+                if (regType) url += '&type=' + encodeURIComponent(regType);
                 const res = await fetch(url);
                 const data = await res.json();
                 return data.exists === true;
             } catch (err) {
                 console.log('Email check failed (backend unreachable), allowing registration:', err);
-                return false; // Allow registration if backend is unreachable
+                return false;
             }
         }
 
@@ -4562,44 +4727,67 @@
             const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
             const timer = type === 'jobSeeker' ? 'jsOtpTimer' : 'refOtpTimer';
 
-            const email = document.getElementById(emailField).value;
-            if (!email || !email.includes('@')) {
-                showToast('Please enter a valid email', 'error');
+            const email = document.getElementById(emailField).value.trim();
+            if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('Please enter a valid email address', 'error');
                 return;
             }
 
-            // Show loading state on button
             const btn = document.getElementById(emailBtn);
             const originalText = btn.textContent;
             btn.textContent = 'Checking...';
             btn.disabled = true;
 
-            // Check backend for duplicate email
-            const exists = await checkEmailExists(email);
-            if (exists) {
-                showToast('This email is already registered. Please use the Login option instead.', 'error');
+            // Check for duplicate email (type-aware: same email can have both job seeker + partner)
+            const regType = type === 'jobSeeker' ? 'jobSeeker' : 'referrer';
+            try {
+                const exists = await checkEmailExists(email, regType);
+                if (exists) {
+                    const typeLabel = type === 'jobSeeker' ? 'Job Seeker' : 'Partner';
+                    showToast('This email is already registered as ' + typeLabel + '. Please use Login instead.', 'error');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+            } catch (e) { console.log('Email check skipped:', e); }
+
+            // Send OTP via backend
+            btn.textContent = 'Sending...';
+            try {
+                const url = APPS_SCRIPT_URL + '?action=sendOTP&email=' + encodeURIComponent(email.toLowerCase());
+                const res = await fetch(url);
+                const result = await res.json();
+                if (!result.success) {
+                    showToast(result.error || 'Failed to send OTP. Please try again.', 'error');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+            } catch (err) {
+                console.error('sendOTP error:', err);
+                showToast('Could not send OTP. Please check your connection and try again.', 'error');
                 btn.textContent = originalText;
                 btn.disabled = false;
                 return;
             }
 
             document.getElementById(otpSection).classList.add('active');
+            showToast('OTP sent to ' + email + '. Check your inbox (and spam folder).', 'success');
 
-            let timeLeft = 30;
-            document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
+            let timeLeft = 60;
+            document.getElementById(timer).textContent = 'Resend in ' + timeLeft + 's';
+            btn.textContent = 'OTP Sent';
 
             const interval = setInterval(() => {
                 timeLeft--;
-                document.getElementById(timer).textContent = `Resend in ${timeLeft}s`;
+                document.getElementById(timer).textContent = 'Resend in ' + timeLeft + 's';
                 if (timeLeft === 0) {
                     clearInterval(interval);
                     btn.disabled = false;
-                    btn.textContent = originalText;
+                    btn.textContent = 'Resend OTP';
                     document.getElementById(timer).textContent = '';
                 }
             }, 1000);
-
-            showToast('OTP sent to ' + email, 'success');
         }
 
         function handleOtpInput(input, type) {
@@ -4621,8 +4809,9 @@
             document.getElementById(verifyBtn).disabled = !allFilled;
         }
 
-        function verifyOTP(type) {
-            const otpInputs = document.querySelectorAll(`${type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm'} .otp-input`);
+        async function verifyOTP(type) {
+            const formSelector = type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm';
+            const otpInputs = document.querySelectorAll(formSelector + ' .otp-input');
             const otp = Array.from(otpInputs).map(inp => inp.value).join('');
 
             if (otp.length !== 6) {
@@ -4630,9 +4819,38 @@
                 return;
             }
 
+            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
+            const email = document.getElementById(emailField).value.trim().toLowerCase();
+            const verifyBtn = type === 'jobSeeker' ? 'jsVerifyBtn' : 'refVerifyBtn';
+
+            document.getElementById(verifyBtn).disabled = true;
+            document.getElementById(verifyBtn).textContent = 'Verifying...';
+
+            try {
+                const url = APPS_SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp);
+                const res = await fetch(url);
+                const result = await res.json();
+
+                if (!result.valid) {
+                    showToast(result.error || 'Invalid OTP. Please try again.', 'error');
+                    document.getElementById(verifyBtn).disabled = false;
+                    document.getElementById(verifyBtn).textContent = 'Verify OTP';
+                    // Clear OTP inputs for retry
+                    otpInputs.forEach(inp => { inp.value = ''; });
+                    otpInputs[0].focus();
+                    return;
+                }
+            } catch (err) {
+                console.error('verifyOTP error:', err);
+                showToast('Verification failed. Please try again.', 'error');
+                document.getElementById(verifyBtn).disabled = false;
+                document.getElementById(verifyBtn).textContent = 'Verify OTP';
+                return;
+            }
+
+            // OTP verified successfully
             otpVerified[type] = true;
             const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
-            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
 
             document.getElementById(otpSection).classList.remove('active');
             document.getElementById(emailField).disabled = true;
@@ -4640,6 +4858,7 @@
             const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
             document.getElementById(emailBtn).textContent = '✓ Verified';
             document.getElementById(emailBtn).style.background = '#22c55e';
+            document.getElementById(emailBtn).disabled = true;
 
             showToast('Email verified successfully!', 'success');
         }
@@ -4683,8 +4902,18 @@
                 }
             }
 
-            // Step 1: Check phone validation specifically
+            // Step 1: Check phone, linkedin, and EMAIL VERIFICATION
             if (stepIndex === 0) {
+                // Email must be verified via OTP or Google Sign-In
+                if (!otpVerified['jobSeeker']) {
+                    valid = false;
+                    const emailInput = document.getElementById('jsEmail');
+                    if (emailInput) emailInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = emailInput;
+                    showToast('Please verify your email first. Click "Send OTP" or use Google Sign-In.', 'error');
+                    return false;
+                }
+
                 const phoneInput = step.querySelector('input[name="phone"]');
                 if (phoneInput && phoneInput.value.replace(/\D/g, '').length < 10) {
                     valid = false;
@@ -4798,8 +5027,18 @@
                 }
             }
 
-            // Step 0: phone & linkedin specific validation
+            // Step 0: email verification, phone & linkedin specific validation
             if (stepIndex === 0) {
+                // Email must be verified via OTP or Google Sign-In
+                if (!otpVerified['referrer']) {
+                    valid = false;
+                    const emailInput = document.getElementById('refEmail');
+                    if (emailInput) emailInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = emailInput;
+                    showToast('Please verify your email first. Click "Send OTP" or use Google Sign-In.', 'error');
+                    return false;
+                }
+
                 const phoneInput = step.querySelector('input[name="phone"]');
                 if (phoneInput && phoneInput.value.replace(/\D/g, '').length < 10) {
                     valid = false;
@@ -5140,9 +5379,11 @@
             const email = form.querySelector('input[name="email"]').value;
             const password = form.querySelector('input[name="password"]').value;
             const loginType = selectedLoginType;
+            const loginBtn = form.querySelector('button[type="submit"]');
 
-            // Check with backend if user exists as the selected type
-            showToast('Verifying credentials...', 'info');
+            // Show loading state on login button
+            if (loginBtn) { loginBtn.classList.add('login-btn-loading'); loginBtn.textContent = 'Signing in...'; }
+
             try {
                 const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim()) + '&type=' + encodeURIComponent(loginType);
                 const res = await fetch(url);
@@ -5151,6 +5392,7 @@
                 if (!statusData.exists) {
                     const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                     showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
+                    if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
                     return;
                 }
 
@@ -5163,12 +5405,12 @@
 
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 closeModal('loginModal');
-                showUserConsole();
+                // Pass statusData so showUserConsole skips the duplicate checkStatus call
+                showUserConsole(statusData);
                 form.reset();
-                showToast('Logged in successfully!', 'success');
+                if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
             } catch (err) {
                 console.error('[GCCPROs] Login check error:', err);
-                // Fallback: allow login without backend verification
                 currentUser = {
                     name: email.split('@')[0],
                     email: email,
@@ -5179,7 +5421,7 @@
                 closeModal('loginModal');
                 showUserConsole();
                 form.reset();
-                showToast('Logged in successfully!', 'success');
+                if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
             }
         }
 
@@ -5709,14 +5951,15 @@
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
                     showToast('Welcome back, ' + currentUser.name + '!', 'success');
-                    setTimeout(() => showUserConsole(), 500);
+                    setTimeout(() => showUserConsole(profileData), 300);
                     return;
                 }
 
-                // Registration flow — check for duplicate email (with 5s timeout)
+                // Registration flow — check for duplicate email (type-aware, with 5s timeout)
+                const googleRegType = googleSignInType === 'referrer' ? 'referrer' : 'jobSeeker';
                 let emailAlreadyExists = false;
                 try {
-                    const emailCheckPromise = checkEmailExists(userInfo.email);
+                    const emailCheckPromise = checkEmailExists(userInfo.email, googleRegType);
                     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
                     emailAlreadyExists = await Promise.race([emailCheckPromise, timeoutPromise]);
                 } catch (err) {
@@ -5757,7 +6000,7 @@
                     closeModal('jobSeekerModal');
                     closeModal('referrerModal');
                     showToast('Welcome back, ' + currentUser.name + '! You\'re already registered.', 'success');
-                    setTimeout(() => showUserConsole(), 500);
+                    setTimeout(() => showUserConsole(profileData), 300);
                     return;
                 }
 
@@ -5911,24 +6154,44 @@
             }
         }
 
-        async function showUserConsole() {
+        function showDashboardLoading(show, step, progress) {
+            const overlay = document.getElementById('dashboardLoadingOverlay');
+            if (!overlay) return;
+            if (show) {
+                overlay.style.display = 'flex';
+                if (step) document.getElementById('dashLoadingTitle').textContent = step;
+                if (progress !== undefined) document.getElementById('dashLoadingBar').style.width = progress + '%';
+                const subtexts = ['Hang tight, almost there...', 'Loading your personalized data...', 'Preparing your dashboard...'];
+                document.getElementById('dashLoadingSubtext').textContent = subtexts[Math.floor(Math.random() * subtexts.length)];
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
+        async function showUserConsole(prefetchedStatus) {
             if (!currentUser) return;
             try {
                 document.getElementById('userConsole').classList.add('active');
+                showDashboardLoading(true, 'Setting up your dashboard...', 10);
+
                 document.getElementById('consoleUserName').textContent = currentUser.name;
                 document.getElementById('consoleUserEmail').textContent = currentUser.email;
                 document.getElementById('dashWelcomeName').textContent = currentUser.name;
                 document.getElementById('profileFullName').value = currentUser.name;
                 document.getElementById('profileEmail').value = currentUser.email;
 
-                // Check approval status from backend
-                let statusData = { exists: false, status: 'unknown', type: null };
-                try {
-                    statusData = await checkUserStatus(currentUser.email, currentUser.type);
-                    console.log('[GCCPROs] checkUserStatus response:', JSON.stringify(statusData));
-                } catch (e) {
-                    console.log('[GCCPROs] checkUserStatus failed, continuing without backend data:', e);
+                // Use pre-fetched status from login if available, otherwise fetch fresh
+                let statusData = prefetchedStatus || { exists: false, status: 'unknown', type: null };
+                if (!prefetchedStatus) {
+                    showDashboardLoading(true, 'Verifying your account...', 25);
+                    try {
+                        statusData = await checkUserStatus(currentUser.email, currentUser.type);
+                        console.log('[GCCPROs] checkUserStatus response:', JSON.stringify(statusData));
+                    } catch (e) {
+                        console.log('[GCCPROs] checkUserStatus failed, continuing without backend data:', e);
+                    }
                 }
+                showDashboardLoading(true, 'Loading your profile...', 50);
                 const pendingOverlay = document.getElementById('pendingApprovalOverlay');
 
                 const userType = statusData.type || currentUser.type;
@@ -5990,6 +6253,8 @@
                 // Calculate and display profile completeness
                 updateProfileCompleteness();
 
+                showDashboardLoading(true, 'Preparing your workspace...', 70);
+
                 // Always show the right sections and render jobs — regardless of backend status
                 if (currentUser.type === 'jobSeeker' || userType === 'jobSeeker') {
                     document.getElementById('appNav').style.display = 'block';
@@ -5998,12 +6263,13 @@
                     document.getElementById('referrerStats').style.display = 'none';
                     document.getElementById('invitePartnerSection').style.display = 'none';
                     document.getElementById('recommendedJobsSection').style.display = 'block';
-                    // Build domain filter chips and show recommended jobs
+                    // Render local data immediately (sync — no wait)
                     console.log('[GCCPROs] About to renderRecommendedJobs. domain=' + currentUser.domain + ', type=' + currentUser.type);
                     buildDomainFilterChips();
                     renderRecommendedJobs();
-                    // Fetch application history and update stats
-                    loadUserApplications();
+                    showDashboardLoading(true, 'Loading your applications...', 85);
+                    // Fire async fetch (non-blocking — dashboard is usable while this loads)
+                    loadUserApplications().catch(function(e) { console.log('loadUserApplications bg error:', e); });
                 } else {
                     document.getElementById('appNav').style.display = 'none';
                     document.getElementById('refNav').style.display = 'block';
@@ -6018,14 +6284,22 @@
                     if (statusData.kycStatus) currentUser.kycStatus = statusData.kycStatus;
                     if (statusData.agreementStatus) currentUser.agreementStatus = statusData.agreementStatus;
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    // Render sync data immediately
                     updateComplianceStatusBadges();
                     populateReferralJobDropdown();
                     renderOpportunityChannels();
                     renderPartnerJobs();
-                    loadPartnerEarnings();
+                    showDashboardLoading(true, 'Fetching your earnings...', 85);
+                    // Fire async fetch (non-blocking)
+                    loadPartnerEarnings().catch(function(e) { console.log('loadPartnerEarnings bg error:', e); });
                 }
+
+                showDashboardLoading(true, 'Almost ready!', 100);
+                // Brief pause so user sees 100% then hide
+                setTimeout(function() { showDashboardLoading(false); }, 350);
             } catch (err) {
                 console.error('[GCCPROs] showUserConsole error:', err);
+                showDashboardLoading(false);
                 // Fallback: still try to render jobs even if something above failed
                 try {
                     document.getElementById('recommendedJobsSection').style.display = 'block';
@@ -6453,20 +6727,30 @@
                 }
                 tbody.innerHTML = apps.map(app => {
                     const job = JOBS_DATA.find(j => j.id === app.jobId);
+                    const jobActive = job && job.status === 'Active';
                     const company = job ? job.company : '—';
-                    const referral = job ? '₹' + (job.referralAmount || 0).toLocaleString('en-IN') : '—';
+
+                    // If the job was removed or marked inactive, override display status
+                    let displayStatus = app.status || 'Submitted';
                     let statusClass = '';
-                    const st = (app.status || '').toLowerCase();
-                    if (st === 'submitted' || st === 'under review') statusClass = 'status-pending';
-                    else if (st === 'shortlisted' || st === 'interview' || st === 'offered') statusClass = 'status-approved';
-                    else if (st === 'rejected' || st === 'withdrawn') statusClass = 'status-rejected';
-                    return `<tr>
+                    if (!jobActive && !['Placed','Paid','Rejected','Withdrawn'].includes(displayStatus)) {
+                        displayStatus = 'Role Inactive';
+                        statusClass = 'status-inactive';
+                    } else {
+                        const st = displayStatus.toLowerCase();
+                        if (st === 'submitted' || st === 'under review') statusClass = 'status-pending';
+                        else if (st === 'shortlisted' || st === 'interview' || st === 'offered') statusClass = 'status-approved';
+                        else if (st === 'rejected' || st === 'withdrawn') statusClass = 'status-rejected';
+                        else if (st === 'role inactive') statusClass = 'status-inactive';
+                    }
+
+                    return `<tr style="${!jobActive ? 'opacity:0.6;' : ''}">
                         <td>${app.date || '—'}</td>
-                        <td>${app.jobTitle || '—'}</td>
+                        <td>${app.jobTitle || '—'}${!jobActive ? ' <span style="font-size:0.7rem;color:#DC2626;">(Closed)</span>' : ''}</td>
                         <td>${company}</td>
-                        <td><span class="status-badge ${statusClass}">${app.status || 'Submitted'}</span></td>
-                        <td>${referral}</td>
-                        <td>${app.jobId ? '<button class="rec-job-view-btn" style="padding:4px 12px;font-size:0.75rem;" onclick="viewJobDetails(\'' + app.jobId + '\')">View Job</button>' : '—'}</td>
+                        <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
+                        <td>—</td>
+                        <td>${jobActive && app.jobId ? '<button class="rec-job-view-btn" style="padding:4px 12px;font-size:0.75rem;" onclick="viewJobDetails(\'' + app.jobId + '\')">View Job</button>' : '<span style="font-size:0.75rem;color:var(--muted);">N/A</span>'}</td>
                     </tr>`;
                 }).join('');
             } catch (err) {
@@ -6530,7 +6814,15 @@
                     let rows = '';
                     referrals.forEach(ref => {
                         const amount = parseFloat(ref.referralAmount) || 0;
-                        const status = ref.status || 'Submitted';
+                        let status = ref.status || 'Submitted';
+
+                        // Check if the referred job is still active
+                        const refJob = ref.jobId ? JOBS_DATA.find(j => j.id === ref.jobId) : null;
+                        const jobActive = refJob && refJob.status === 'Active';
+                        if (!jobActive && !['Placed','Paid','Rejected'].includes(status)) {
+                            status = 'Role Inactive';
+                        }
+
                         if (status === 'Paid') { totalEarned += amount; paidOut += amount; }
                         else if (status === 'Placed' || status === 'Approved') { totalEarned += amount; pendingPayout += amount; }
 
@@ -6538,9 +6830,11 @@
                         if (status === 'Paid') statusBadge += 'background:rgba(16,185,129,0.12);color:#059669;">' + status + '</span>';
                         else if (status === 'Placed' || status === 'Approved') statusBadge += 'background:rgba(245,158,11,0.12);color:#d97706;">' + status + '</span>';
                         else if (status === 'Rejected') statusBadge += 'background:rgba(239,68,68,0.12);color:#dc2626;">' + status + '</span>';
+                        else if (status === 'Role Inactive') statusBadge += 'background:rgba(107,114,128,0.12);color:#6B7280;">' + status + '</span>';
                         else statusBadge += 'background:rgba(59,130,246,0.12);color:#2563eb;">' + status + '</span>';
 
-                        rows += '<tr><td>' + (ref.date || '-') + '</td><td>' + (ref.jobTitle || 'Referral') + '</td><td>' + (ref.candidateName || '-') + '</td><td>' + (amount > 0 ? '₹' + amount.toLocaleString('en-IN') : '-') + '</td><td>' + statusBadge + '</td></tr>';
+                        const jobLabel = (ref.jobTitle || 'Referral') + (!jobActive ? ' <span style="font-size:0.65rem;color:#DC2626;">(Closed)</span>' : '');
+                        rows += '<tr style="' + (!jobActive ? 'opacity:0.6;' : '') + '"><td>' + (ref.date || '-') + '</td><td>' + jobLabel + '</td><td>' + (ref.candidateName || '-') + '</td><td>' + (amount > 0 ? '₹' + amount.toLocaleString('en-IN') : '-') + '</td><td>' + statusBadge + '</td></tr>';
                     });
                     tbody.innerHTML = rows;
                 }
