@@ -1311,21 +1311,27 @@
 
         /* Modal Styles */
         .modal {
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0);
             z-index: 5000;
             overflow-y: auto;
+            pointer-events: none;
+            visibility: hidden;
+            transition: background 0.25s ease, visibility 0s 0.25s;
         }
 
         .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+            visibility: visible;
+            transition: background 0.25s ease, visibility 0s 0s;
         }
 
         .modal-content {
@@ -1337,7 +1343,14 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            animation: slideUp 0.3s ease-out;
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .modal.active .modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         @keyframes slideUp {
@@ -1785,7 +1798,7 @@
 
         /* User Console / Dashboard */
         .user-console {
-            display: none;
+            display: flex;
             position: fixed;
             top: 0;
             left: 0;
@@ -1794,10 +1807,17 @@
             background: var(--white);
             z-index: 3000;
             overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0s 0.35s;
         }
 
         .user-console.active {
-            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+            transition: opacity 0.35s ease, visibility 0s 0s;
         }
 
         /* Pending Approval Overlay */
@@ -4682,6 +4702,10 @@
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             document.body.style.overflow = 'auto';
+            // Reset login loading overlay when login modal closes
+            if (modalId === 'loginModal') {
+                setTimeout(function() { showLoginLoading(false); }, 300);
+            }
             // Reset form step state when closing enrollment modals
             if (modalId === 'jobSeekerModal') {
                 currentJobSeekerStep = 0;
@@ -6195,12 +6219,15 @@
             if (!overlay) return;
             if (show) {
                 overlay.style.display = 'flex';
+                overlay.style.opacity = '1';
                 if (step) document.getElementById('dashLoadingTitle').textContent = step;
                 if (progress !== undefined) document.getElementById('dashLoadingBar').style.width = progress + '%';
                 const subtexts = ['Hang tight, almost there...', 'Loading your personalized data...', 'Preparing your dashboard...'];
                 document.getElementById('dashLoadingSubtext').textContent = subtexts[Math.floor(Math.random() * subtexts.length)];
             } else {
-                overlay.style.display = 'none';
+                overlay.style.transition = 'opacity 0.3s ease';
+                overlay.style.opacity = '0';
+                setTimeout(function() { overlay.style.display = 'none'; overlay.style.transition = ''; }, 300);
             }
         }
 
@@ -6332,7 +6359,7 @@
 
                 showDashboardLoading(true, 'Almost ready!', 100);
                 // Brief pause so user sees 100% then hide
-                setTimeout(function() { showDashboardLoading(false); }, 350);
+                setTimeout(function() { showDashboardLoading(false); }, 150);
             } catch (err) {
                 console.error('[GCCPROs] showUserConsole error:', err);
                 showDashboardLoading(false);
@@ -6728,7 +6755,8 @@
         }
 
         function hideUserConsole() {
-            document.getElementById('userConsole').classList.remove('active');
+            var uc = document.getElementById('userConsole');
+            uc.classList.remove('active');
         }
 
         async function loadUserApplications() {
@@ -7287,10 +7315,34 @@ Date: _______________
             setBadge(agrTag, agrStatus);
         }
 
+        // Alias for pending overlay button
+        function logoutUser() { handleLogout(); }
+
         function handleLogout() {
             currentUser = null;
             sessionStorage.removeItem('currentUser');
-            hideUserConsole();
+            // Smooth fade-out then reset dashboard state
+            var console = document.getElementById('userConsole');
+            console.classList.remove('active');
+            // After transition completes, reset internal state
+            setTimeout(function() {
+                // Reset dashboard tabs to default
+                var sections = console.querySelectorAll('.console-section');
+                sections.forEach(function(s) { s.classList.remove('active'); });
+                var dashSection = document.getElementById('dashboardSection');
+                if (dashSection) dashSection.classList.add('active');
+                // Reset sidebar active state
+                var navItems = console.querySelectorAll('.sidebar-nav-item');
+                navItems.forEach(function(n) { n.classList.remove('active'); });
+                var dashNav = document.getElementById('dashNav');
+                if (dashNav) dashNav.classList.add('active');
+                // Reset pending overlay
+                var pending = document.getElementById('pendingApprovalOverlay');
+                if (pending) pending.classList.remove('active');
+                // Scroll main content to top
+                var mainContent = console.querySelector('.console-main');
+                if (mainContent) mainContent.scrollTop = 0;
+            }, 400);
             showToast('Logged out successfully', 'success');
         }
 
