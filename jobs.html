@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v19">
+    <meta name="version" content="2026-04-06-v20">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -6159,7 +6159,7 @@
                     <h4>Required Skills</h4>
                     <div class="jd-skills-grid">${job.skills.map(s => '<span class="jd-skill-tag">'+s+'</span>').join('')}</div>
                 </div>` : ''}
-                ${job.referralAmount ? '<div class="jd-referral">Referral Bonus: ₹'+job.referralAmount.toLocaleString('en-IN')+'</div>' : ''}
+                ${(job.referralAmount && currentUser && currentUser.type === 'referrer') ? '<div class="jd-referral">Referral Bonus: ₹'+job.referralAmount.toLocaleString('en-IN')+'</div>' : ''}
             `;
             const applyBtn = document.getElementById('jdApplyBtn');
             applyBtn.setAttribute('onclick', "closeModal('jobDetailModal'); applyForJob('" + jobId + "');");
@@ -6635,6 +6635,7 @@
                     </div>
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
+                    ${job.referralAmount ? '<div style="margin:0.5rem 0 0.25rem;padding:0.45rem 0.75rem;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.14));border:1px solid rgba(16,185,129,0.25);border-radius:8px;display:flex;align-items:center;gap:0.4rem;"><span style="font-size:0.95rem;">💰</span><span style="font-size:0.8rem;font-weight:700;color:#059669;">Referral Bonus: ₹' + job.referralAmount.toLocaleString('en-IN') + '</span></div>' : ''}
                     <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
                     <button class="rec-job-apply-btn" style="background:var(--brand-blue);" onclick="prefillReferralForJob('${job.id}')">Refer Candidate</button>
                 </div>
