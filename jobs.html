@@ -2754,7 +2754,13 @@
 
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
-        <div class="modal-content">
+        <div class="modal-content" style="position:relative;">
+            <!-- Login Loading Overlay -->
+            <div id="loginLoadingOverlay" style="display:none;position:absolute;inset:0;background:rgba(255,255,255,0.96);z-index:10;flex-direction:column;align-items:center;justify-content:center;gap:1rem;border-radius:16px;">
+                <div style="width:40px;height:40px;border:3px solid #E5E7EB;border-top-color:var(--brand-blue);border-radius:50%;animation:dash-spin 0.7s linear infinite;"></div>
+                <div style="font-size:1rem;font-weight:600;color:var(--ink);" id="loginLoadingText">Signing you in...</div>
+                <div style="font-size:0.8rem;color:var(--muted);">Verifying your account</div>
+            </div>
             <div class="modal-header">
                 <h2>Login to GCCPROs</h2>
                 <button class="modal-close" onclick="closeModal('loginModal')">×</button>
@@ -5361,6 +5367,17 @@
 
         var selectedLoginType = 'jobSeeker';
 
+        function showLoginLoading(show, text) {
+            var overlay = document.getElementById('loginLoadingOverlay');
+            if (!overlay) return;
+            if (show) {
+                overlay.style.display = 'flex';
+                if (text) document.getElementById('loginLoadingText').textContent = text;
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
         function selectLoginType(type) {
             selectedLoginType = type;
             const jsLabel = document.getElementById('loginTypeJS');
@@ -5386,8 +5403,9 @@
             const loginType = selectedLoginType;
             const loginBtn = form.querySelector('button[type="submit"]');
 
-            // Show loading state on login button
+            // Show loading state
             if (loginBtn) { loginBtn.classList.add('login-btn-loading'); loginBtn.textContent = 'Signing in...'; }
+            showLoginLoading(true, 'Signing you in...');
 
             try {
                 const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim()) + '&type=' + encodeURIComponent(loginType);
@@ -5397,6 +5415,7 @@
                 if (!statusData.exists) {
                     const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                     showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
+                    showLoginLoading(false);
                     if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
                     return;
                 }
@@ -5408,6 +5427,7 @@
                     domain: statusData.domain || ''
                 };
 
+                showLoginLoading(true, 'Loading your dashboard...');
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 closeModal('loginModal');
                 // Pass statusData so showUserConsole skips the duplicate checkStatus call
@@ -5422,6 +5442,7 @@
                     type: loginType,
                     domain: ''
                 };
+                showLoginLoading(true, 'Loading your dashboard...');
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 closeModal('loginModal');
                 showUserConsole();
@@ -5906,6 +5927,8 @@
                 return;
             }
 
+            showLoginLoading(true, 'Connecting to Google...');
+
             try {
                 // Fetch user info from Google using the access token
                 const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -5922,6 +5945,7 @@
                 if (googleSignInType === 'login') {
                     // Login flow — use selected login type to fetch correct account
                     var loginAs = selectedLoginType || 'jobSeeker';
+                    showLoginLoading(true, 'Verifying your account...');
                     currentUser = {
                         name: userInfo.name,
                         email: userInfo.email,
@@ -5948,16 +5972,18 @@
                             if (profileData.name) currentUser.name = profileData.name;
                         } else {
                             var typeLabel = loginAs === 'jobSeeker' ? 'Job Seeker' : 'Partner';
+                            showLoginLoading(false);
                             showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
                             return;
                         }
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
                     }
+                    showLoginLoading(true, 'Loading your dashboard...');
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
                     showToast('Welcome back, ' + currentUser.name + '!', 'success');
-                    setTimeout(() => showUserConsole(profileData), 300);
+                    showUserConsole(profileData);
                     return;
                 }
 
@@ -5975,6 +6001,7 @@
 
                 if (emailAlreadyExists) {
                     // Email already registered — treat as login, fetch full profile
+                    showLoginLoading(true, 'Account found! Loading profile...');
                     currentUser = {
                         name: userInfo.name,
                         email: userInfo.email,
@@ -6002,12 +6029,13 @@
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
                     }
+                    showLoginLoading(true, 'Loading your dashboard...');
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     closeModal('loginModal');
                     closeModal('jobSeekerModal');
                     closeModal('referrerModal');
                     showToast('Welcome back, ' + currentUser.name + '! You\'re already registered.', 'success');
-                    setTimeout(() => showUserConsole(profileData), 300);
+                    showUserConsole(profileData);
                     return;
                 }
 
@@ -6016,6 +6044,7 @@
 
             } catch (err) {
                 console.error('Google sign-in handling failed:', err);
+                showLoginLoading(false);
                 showToast('Google sign-in failed. Please try again.', 'error');
             }
         }
