@@ -5929,8 +5929,9 @@
                         domain: 'Other'
                     };
                     // Fetch profile data from backend for the selected account type
+                    let profileData = null;
                     try {
-                        const profileData = await checkUserStatus(userInfo.email, loginAs);
+                        profileData = await checkUserStatus(userInfo.email, loginAs);
                         if (profileData.exists) {
                             currentUser.type = profileData.type || loginAs;
                             if (profileData.userId) currentUser.userId = profileData.userId;
@@ -5980,8 +5981,9 @@
                         type: 'jobSeeker',
                         domain: 'Other'
                     };
+                    let profileData = null;
                     try {
-                        const profileData = await checkUserStatus(userInfo.email);
+                        profileData = await checkUserStatus(userInfo.email);
                         if (profileData.exists) {
                             currentUser.type = profileData.type || 'jobSeeker';
                             if (profileData.userId) currentUser.userId = profileData.userId;
