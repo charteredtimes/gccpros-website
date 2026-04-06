@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-06-v18">
+    <meta name="version" content="2026-04-06-v19">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2294,31 +2294,92 @@
                 font-size: 1.2rem;
             }
 
+            /* ── Mobile sidebar: collapsible hamburger ── */
             .console-sidebar {
-                width: 70px;
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                width: 250px;
+                z-index: 1100;
+                transition: left 0.3s ease;
+            }
+
+            .console-sidebar.mobile-open {
+                left: 0;
+            }
+
+            .mobile-sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1099;
+            }
+
+            .mobile-sidebar-overlay.active {
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex !important;
             }
 
             .sidebar-nav a {
-                padding: 1rem 0.5rem;
-                text-align: center;
-                font-size: 0.7rem;
+                padding: 1rem 1.5rem;
+                font-size: 0.9rem;
             }
 
-            #jobSeekerStats, #referrerStats {
-                grid-template-columns: repeat(2, 1fr);
+            .console-header {
+                padding: 1rem;
+            }
+
+            .console-content {
+                padding: 1rem;
+            }
+
+            /* ── Mobile dashboard stats: 2x2 grid ── */
+            #referrerStats > div:nth-child(2) {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* ── Mobile opportunity channels: 2x2 grid ── */
+            #opportunityChannels {
+                grid-template-columns: repeat(2, 1fr) !important;
             }
 
             .recommended-jobs-grid {
                 grid-template-columns: 1fr;
             }
 
+            /* ── Mobile: referral form 2-col → 1-col ── */
+            #referralForm [style*="grid-template-columns: 1fr 1fr"],
+            #referralForm [style*="grid-template-columns:1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+
             .data-table {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
 
             .data-table th,
             .data-table td {
-                padding: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            .console-user-info {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            /* ── Earnings tab mobile: stack cards ── */
+            #earningsTab > div:first-of-type {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* ── Welcome text smaller on mobile ── */
+            #dashWelcomeName {
+                font-size: 1.3rem !important;
             }
         }
     </style>
@@ -3706,7 +3767,10 @@
             <button class="pending-logout-btn" onclick="logoutUser()">Back to Home</button>
         </div>
 
-        <div class="console-sidebar">
+        <!-- Mobile sidebar overlay -->
+        <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+        <div class="console-sidebar" id="consoleSidebar">
             <div style="padding: 1.5rem 0.5rem; text-align: center; border-bottom: 1px solid #1a2741; margin-bottom: 1rem;">
                 <div style="font-size: 0.7rem; color: #AAA;">Menu</div>
             </div>
@@ -3722,10 +3786,13 @@
         </div>
         <div class="console-main">
             <div class="console-header">
-                <div class="console-user-info">
-                    <div>
-                        <div style="font-weight: 600;" id="consoleUserName">User</div>
-                        <div style="font-size: 0.85rem; color: var(--muted);" id="consoleUserEmail">user@email.com</div>
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.6rem;cursor:pointer;font-size:1.1rem;color:var(--ink);" aria-label="Menu">&#9776;</button>
+                    <div class="console-user-info">
+                        <div>
+                            <div style="font-weight: 600;" id="consoleUserName">User</div>
+                            <div style="font-size: 0.85rem; color: var(--muted);" id="consoleUserEmail">user@email.com</div>
+                        </div>
                     </div>
                 </div>
                 <button class="console-logout-btn" onclick="handleLogout()">Logout</button>
@@ -6407,6 +6474,20 @@
             }
         }
 
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('consoleSidebar');
+            const overlay = document.getElementById('mobileSidebarOverlay');
+            if (sidebar) sidebar.classList.toggle('mobile-open');
+            if (overlay) overlay.classList.toggle('active');
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('consoleSidebar');
+            const overlay = document.getElementById('mobileSidebarOverlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.remove('active');
+        }
+
         function switchConsoleTab(tabName) {
             document.querySelectorAll('.console-tab').forEach(tab => {
                 tab.style.display = 'none';
@@ -6424,6 +6505,9 @@
                     link.classList.add('active');
                 }
             });
+
+            // Auto-close sidebar on mobile after tab selection
+            closeMobileSidebar();
         }
 
         // ═══════════ PARTNER DASHBOARD FUNCTIONS ═══════════
@@ -6464,6 +6548,27 @@
                 document.getElementById('earningTotal').textContent = '₹' + totalEarned.toLocaleString('en-IN');
                 document.getElementById('earningPending').textContent = '₹' + pendingPayout.toLocaleString('en-IN');
                 document.getElementById('earningPaid').textContent = '₹' + paidOut.toLocaleString('en-IN');
+
+                // Update dashboard stat cards
+                const totalRef = referrals.length;
+                const pendingRef = referrals.filter(r => {
+                    const s = (r.status || 'Submitted').toLowerCase();
+                    return s === 'submitted' || s === 'under review' || s === 'shortlisted';
+                }).length;
+                const placedRef = referrals.filter(r => {
+                    const s = (r.status || '').toLowerCase();
+                    return s === 'placed' || s === 'paid';
+                }).length;
+
+                const elTotal = document.getElementById('statTotalReferrals');
+                const elPending = document.getElementById('statPendingReferrals');
+                const elPlaced = document.getElementById('statPlaced');
+                const elEarnings = document.getElementById('totalEarnings');
+
+                if (elTotal) elTotal.textContent = totalRef;
+                if (elPending) elPending.textContent = pendingRef;
+                if (elPlaced) elPlaced.textContent = placedRef;
+                if (elEarnings) elEarnings.textContent = '₹' + totalEarned.toLocaleString('en-IN');
             } catch (err) {
                 console.error('[GCCPROs] loadPartnerEarnings error:', err);
             }
