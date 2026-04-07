@@ -834,9 +834,6 @@
             document.getElementById('fileSize').textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
             document.getElementById('fileSize').classList.remove('hidden');
             cvLabel.classList.add('has-file');
-
-            // Auto-extract candidate details from CV
-            autoExtractFromCV(file);
         }
 
         // PAN validation
@@ -968,258 +965,214 @@
             });
         }
 
-        // ══════════════════════════════════════════════════
-        //  CV AUTO-EXTRACTION ENGINE (Referral Form)
-        // ══════════════════════════════════════════════════
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', loadReferralData);
+    </script>
 
-        function showCvParseStatus(el, type, msg) {
-            if (!el) return;
-            const colors = {
-                parsing: { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: '⏳' },
-                success: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✓' },
-                warn:    { bg: '#fefce8', border: '#fde68a', text: '#92400e', icon: '⚠' },
-                info:    { bg: '#f8f9fa', border: '#e5e7eb', text: '#374151', icon: 'ℹ' }
-            };
-            const c = colors[type] || colors.info;
-            el.style.display = 'flex';
-            el.style.background = c.bg;
-            el.style.border = '1px solid ' + c.border;
-            el.style.color = c.text;
-            el.innerHTML = '<span style="font-size:1rem;">' + c.icon + '</span> ' + msg;
-        }
+    <!-- CV Auto-Extract: isolated script so it cannot break existing functionality -->
+    <script>
+    (function() {
+        "use strict";
+        try {
 
         function loadScript(src) {
             return new Promise(function(resolve, reject) {
-                var s = document.createElement('script');
+                var s = document.createElement("script");
                 s.src = src;
                 s.onload = resolve;
-                s.onerror = function() { reject(new Error('Failed to load ' + src)); };
+                s.onerror = function() { reject(new Error("Failed to load " + src)); };
                 document.head.appendChild(s);
             });
         }
 
-        async function ensureCVLibraries(ext) {
-            if (ext === 'pdf' && typeof pdfjsLib === 'undefined') {
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-            if ((ext === 'docx' || ext === 'doc') && typeof mammoth === 'undefined') {
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
-            }
-        }
-
-        async function extractTextFromFile(file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            if (ext === 'pdf') {
-                await ensureCVLibraries('pdf');
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                let fullText = '';
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    fullText += content.items.map(item => item.str).join(' ') + '\n';
-                }
-                return fullText;
-            }
-            if (ext === 'docx' || ext === 'doc') {
-                await ensureCVLibraries(ext);
-                const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                return result.value;
-            }
-            return '';
+        function showStatus(el, type, msg) {
+            if (!el) return;
+            var styles = {
+                parsing: "background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;",
+                success: "background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;",
+                warn: "background:#fefce8;border:1px solid #fde68a;color:#92400e;",
+                info: "background:#f8f9fa;border:1px solid #e5e7eb;color:#374151;"
+            };
+            el.style.cssText = "display:flex;margin-top:0.5rem;padding:0.6rem 0.9rem;border-radius:8px;font-size:0.82rem;align-items:center;gap:0.5rem;" + (styles[type] || styles.info);
+            el.textContent = msg;
         }
 
         function parseCVText(text) {
-            const info = {};
-            const clean = text.replace(/\s+/g, ' ').trim();
-            const lines = text.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
+            var info = {};
+            var clean = text.replace(/\s+/g, " ").trim();
+            var lines = text.split(/\n/).map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
 
-            // Full Name
-            for (let i = 0; i < Math.min(lines.length, 5); i++) {
-                const line = lines[i].trim();
+            // Name
+            for (var i = 0; i < Math.min(lines.length, 5); i++) {
+                var line = lines[i].trim();
                 if (/^(curriculum|resume|cv|profile|contact|personal|about)/i.test(line)) continue;
                 if (/@/.test(line) || /^[\d+\-()\s]{10,}/.test(line) || /^https?:\/\//i.test(line)) continue;
-                const words = line.split(/\s+/);
+                var words = line.split(/\s+/);
                 if (words.length >= 2 && words.length <= 5 && /^[A-Za-z.\-'\s]+$/.test(line) && line.length <= 60) {
-                    info.fullName = line.replace(/\b\w/g, c => c.toUpperCase());
-                    break;
+                    info.fullName = line; break;
                 }
             }
 
             // Phone
-            const phoneMatch = clean.match(/(?:(?:\+91|91|0)?[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/);
-            if (phoneMatch) info.phone = phoneMatch[0].replace(/[\s\-.\(\)]/g, '');
+            var phoneM = clean.match(/(?:(?:\+91|91|0)?[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/);
+            if (phoneM) info.phone = phoneM[0].replace(/[\s\-.\(\)]/g, "");
 
             // LinkedIn
-            const linkedinMatch = clean.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/i);
-            if (linkedinMatch) {
-                let url = linkedinMatch[0];
-                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-                info.linkedin = url;
-            }
+            var liM = clean.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/i);
+            if (liM) { var u = liM[0]; if (!/^https?:\/\//i.test(u)) u = "https://" + u; info.linkedin = u; }
 
             // PAN
-            const panMatch = clean.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/);
-            if (panMatch) info.pan = panMatch[0];
+            var panM = clean.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/);
+            if (panM) info.pan = panM[0];
 
             // Location
-            const cities = ['Mumbai','Delhi','Bengaluru','Bangalore','Hyderabad','Chennai','Kolkata','Pune','Ahmedabad','Jaipur',
-                'Lucknow','Surat','Nagpur','Indore','Thane','Bhopal','Vadodara','Gurgaon','Gurugram','Noida',
-                'Navi Mumbai','Kochi','Chandigarh','Mysore','Coimbatore','New Delhi','NCR','Greater Noida',
-                'Dubai','Abu Dhabi','Sharjah','Riyadh','Jeddah','Doha','Muscat','Kuwait City','Manama','Dammam'];
-            for (const city of cities) {
-                if (new RegExp('\\b' + city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(clean)) {
-                    info.location = city; break;
+            var cities = ["Mumbai","Delhi","Bengaluru","Bangalore","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Jaipur","Lucknow","Surat","Nagpur","Indore","Thane","Bhopal","Vadodara","Gurgaon","Gurugram","Noida","Navi Mumbai","Kochi","Chandigarh","Coimbatore","New Delhi","Dubai","Abu Dhabi","Riyadh","Jeddah","Doha","Muscat"];
+            for (var ci = 0; ci < cities.length; ci++) {
+                if (new RegExp("\\b" + cities[ci].replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(clean)) {
+                    info.location = cities[ci]; break;
                 }
             }
 
             // Company
-            const companyPatterns = [
-                /(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||–|-|\n|$))/i,
-                /(?:company|organisation|organization)[\s:]+([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:\||–|-|\n|$))/i
-            ];
-            for (const pat of companyPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1] && m[1].trim().length > 1 && m[1].trim().length < 80) {
-                    info.company = m[1].trim().replace(/[,.\s]+$/, ''); break;
-                }
-            }
+            var compM = clean.match(/(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||-|\n|$))/i);
+            if (compM && compM[1] && compM[1].trim().length > 1 && compM[1].trim().length < 80) info.company = compM[1].trim().replace(/[,.\s]+$/, "");
 
             // Designation
-            const designationPatterns = [
-                /(?:designation|position|role|title|current\s+role)[\s:]+([A-Za-z\s\-&/,()]+?)(?:\s*(?:at|in|\||–|-|\n|$))/i,
-                /(?:working\s+as|employed\s+as|currently\s+(?:a|an)?\s*)[\s:]*([A-Za-z\s\-&/,()]+?)(?:\s*(?:at|in|\||–|-|\n|$))/i
-            ];
-            for (const pat of designationPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1] && m[1].trim().length > 2 && m[1].trim().length < 60) {
-                    info.designation = m[1].trim().replace(/[,.\s]+$/, ''); break;
-                }
-            }
+            var desM = clean.match(/(?:designation|position|role|title|current\s+role)[\s:]+([A-Za-z\s\-&\/,()]+?)(?:\s*(?:at|in|\||-|\n|$))/i);
+            if (desM && desM[1] && desM[1].trim().length > 2 && desM[1].trim().length < 60) info.designation = desM[1].trim().replace(/[,.\s]+$/, "");
 
             // Experience
-            const expPatterns = [
-                /(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i,
-                /(?:total\s+)?(?:experience|exp)[\s:]+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i
-            ];
-            for (const pat of expPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1]) { const y = parseFloat(m[1]); if (y >= 0 && y <= 50) { info.experience = y; break; } }
-            }
+            var expM = clean.match(/(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i);
+            if (!expM) expM = clean.match(/(?:total\s+)?(?:experience|exp)[\s:]+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i);
+            if (expM && expM[1]) { var y = parseFloat(expM[1]); if (y >= 0 && y <= 50) info.experience = y; }
 
             // CTC
-            const ctcPat = /(?:current\s+)?(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?)/i;
-            const ctcM = clean.match(ctcPat);
-            if (ctcM && ctcM[1]) { const v = parseFloat(ctcM[1]); if (v > 0 && v < 500) info.currentCTC = v; }
+            var ctcM = clean.match(/(?:current\s+)?(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
+            if (ctcM && ctcM[1]) { var v = parseFloat(ctcM[1]); if (v > 0 && v < 500) info.currentCTC = v; }
 
             // Expected CTC
-            const ectcPat = /(?:expected|desired|target)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?)/i;
-            const ectcM = clean.match(ectcPat);
-            if (ectcM && ectcM[1]) { const v = parseFloat(ectcM[1]); if (v > 0 && v < 500) info.expectedCTC = v; }
+            var ectcM = clean.match(/(?:expected|desired|target)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
+            if (ectcM && ectcM[1]) { var ev = parseFloat(ectcM[1]); if (ev > 0 && ev < 500) info.expectedCTC = ev; }
 
             // Notice Period
-            const noticePat = /(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i;
-            const noticeM = clean.match(noticePat);
-            if (noticeM && noticeM[1]) info.noticePeriodDays = parseInt(noticeM[1]);
-            if (/(?:notice\s*period)[\s:]*(?:immediate(?:ly)?)/i.test(clean)) info.noticePeriodDays = 0;
+            var npM = clean.match(/(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i);
+            if (npM && npM[1]) info.noticePeriodDays = parseInt(npM[1]);
+            if (/(?:notice\s*period)[\s:]*(?:immediate)/i.test(clean)) info.noticePeriodDays = 0;
 
             // Qualification
-            const qualMap = {
-                'phd': 'PhD', 'doctorate': 'PhD', 'mba': 'MBA',
-                'master': "Master's", 'mtech': "Master's", 'msc': "Master's",
-                'bachelor': "Bachelor's", 'btech': "Bachelor's", 'bsc': "Bachelor's", 'bcom': "Bachelor's", 'bca': "Bachelor's",
-                'diploma': 'Diploma'
-            };
-            const qualOrder = ['phd','doctorate','mba','master','mtech','msc','bachelor','btech','bsc','bcom','bca','diploma'];
-            for (const q of qualOrder) {
-                if (new RegExp('\\b' + q + '\\b', 'i').test(clean)) {
-                    info.qualification = qualMap[q]; break;
-                }
+            var quals = [["phd","PhD"],["doctorate","PhD"],["mba","MBA"],["master","Master's"],["mtech","Master's"],["msc","Master's"],["bachelor","Bachelor's"],["btech","Bachelor's"],["bsc","Bachelor's"],["bcom","Bachelor's"],["diploma","Diploma"]];
+            for (var qi = 0; qi < quals.length; qi++) {
+                if (new RegExp("\\b" + quals[qi][0] + "\\b", "i").test(clean)) { info.qualification = quals[qi][1]; break; }
             }
 
             return info;
         }
 
         function autofillReferralForm(info) {
-            let filled = 0;
+            var filled = 0;
             function setIfEmpty(id, value) {
                 if (!value) return false;
-                const el = document.getElementById(id);
+                var el = document.getElementById(id);
                 if (!el) return false;
                 if (el.value && el.value.trim()) return false;
-                el.value = typeof value === 'number' ? value : value.trim();
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-                el.dispatchEvent(new Event('change', { bubbles: true }));
+                el.value = (typeof value === "number") ? value : value.trim();
                 return true;
             }
+            if (setIfEmpty("candidateName", info.fullName)) filled++;
+            if (setIfEmpty("phone", info.phone)) filled++;
+            if (setIfEmpty("linkedin", info.linkedin)) filled++;
+            if (setIfEmpty("company", info.company)) filled++;
+            if (setIfEmpty("designation", info.designation)) filled++;
+            if (setIfEmpty("experience", info.experience)) filled++;
+            if (setIfEmpty("location", info.location)) filled++;
+            if (setIfEmpty("ctc", info.currentCTC)) filled++;
+            if (setIfEmpty("expectedCTC", info.expectedCTC)) filled++;
+            if (setIfEmpty("panNumber", info.pan)) filled++;
 
-            if (setIfEmpty('candidateName', info.fullName)) filled++;
-            if (setIfEmpty('phone', info.phone)) filled++;
-            if (setIfEmpty('linkedin', info.linkedin)) filled++;
-            if (setIfEmpty('company', info.company)) filled++;
-            if (setIfEmpty('designation', info.designation)) filled++;
-            if (setIfEmpty('experience', info.experience)) filled++;
-            if (setIfEmpty('location', info.location)) filled++;
-            if (setIfEmpty('ctc', info.currentCTC)) filled++;
-            if (setIfEmpty('expectedCTC', info.expectedCTC)) filled++;
-            if (setIfEmpty('panNumber', info.pan)) filled++;
-
-            // Notice period is a select dropdown — map days to option values
             if (info.noticePeriodDays !== undefined) {
-                const npSelect = document.getElementById('noticePeriod');
+                var npSelect = document.getElementById("noticePeriod");
                 if (npSelect && !npSelect.value) {
-                    let val = '';
-                    if (info.noticePeriodDays === 0) val = 'Immediate';
-                    else if (info.noticePeriodDays <= 15) val = '15 days';
-                    else if (info.noticePeriodDays <= 30) val = '30 days';
-                    else if (info.noticePeriodDays <= 60) val = '60 days';
-                    else if (info.noticePeriodDays <= 90) val = '90 days';
-                    else val = '90+ days';
-                    npSelect.value = val;
-                    npSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                    filled++;
+                    var val = "";
+                    if (info.noticePeriodDays === 0) val = "Immediate";
+                    else if (info.noticePeriodDays <= 15) val = "15 days";
+                    else if (info.noticePeriodDays <= 30) val = "30 days";
+                    else if (info.noticePeriodDays <= 60) val = "60 days";
+                    else if (info.noticePeriodDays <= 90) val = "90 days";
+                    else val = "90+ days";
+                    npSelect.value = val; filled++;
                 }
             }
-
-            // Qualification is a select dropdown
             if (info.qualification) {
-                const qSelect = document.getElementById('qualification');
-                if (qSelect && !qSelect.value) {
-                    qSelect.value = info.qualification;
-                    qSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                    filled++;
-                }
+                var qSelect = document.getElementById("qualification");
+                if (qSelect && !qSelect.value) { qSelect.value = info.qualification; filled++; }
             }
-
             return filled;
         }
 
-        async function autoExtractFromCV(file) {
-            const statusEl = document.getElementById('cvParseStatusRef');
-            try {
-                showCvParseStatus(statusEl, 'parsing', 'Extracting details from your CV...');
-                const text = await extractTextFromFile(file);
-                if (!text || text.trim().length < 30) {
-                    showCvParseStatus(statusEl, 'warn', 'Could not extract enough text from CV. Please fill in details manually.');
-                    return;
-                }
-                const info = parseCVText(text);
-                const filled = autofillReferralForm(info);
-                if (filled > 0) {
-                    showCvParseStatus(statusEl, 'success', filled + ' field' + (filled > 1 ? 's' : '') + ' auto-filled from your CV. Please review for accuracy.');
-                } else {
-                    showCvParseStatus(statusEl, 'info', 'CV parsed but no empty fields could be auto-filled.');
-                }
-            } catch (err) {
-                console.error('CV parse error:', err);
-                showCvParseStatus(statusEl, 'warn', 'Could not parse CV automatically. Please fill in details manually.');
-            }
+        var cvInput = document.getElementById("cvFile");
+        if (cvInput) {
+            cvInput.addEventListener("change", function() {
+                var file = this.files[0];
+                if (!file) return;
+                var statusEl = document.getElementById("cvParseStatusRef");
+                var ext = file.name.split(".").pop().toLowerCase();
+                if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
+
+                showStatus(statusEl, "parsing", "Extracting details from your CV...");
+
+                var libUrl = (ext === "pdf")
+                    ? "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+                    : "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
+                var libReady = (ext === "pdf" && typeof pdfjsLib !== "undefined") || (ext !== "pdf" && typeof mammoth !== "undefined");
+
+                var p = libReady ? Promise.resolve() : loadScript(libUrl);
+                p.then(function() {
+                    if (ext === "pdf") {
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+                        return file.arrayBuffer().then(function(buf) {
+                            return pdfjsLib.getDocument({data: buf}).promise;
+                        }).then(function(pdf) {
+                            var text = "";
+                            var chain = Promise.resolve();
+                            for (var pg = 1; pg <= pdf.numPages; pg++) {
+                                (function(pageNum) {
+                                    chain = chain.then(function() {
+                                        return pdf.getPage(pageNum);
+                                    }).then(function(page) {
+                                        return page.getTextContent();
+                                    }).then(function(content) {
+                                        text += content.items.map(function(it){ return it.str; }).join(" ") + "\n";
+                                    });
+                                })(pg);
+                            }
+                            return chain.then(function() { return text; });
+                        });
+                    } else {
+                        return file.arrayBuffer().then(function(buf) {
+                            return mammoth.extractRawText({arrayBuffer: buf});
+                        }).then(function(result) { return result.value; });
+                    }
+                }).then(function(text) {
+                    if (!text || text.trim().length < 30) {
+                        showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
+                        return;
+                    }
+                    var info = parseCVText(text);
+                    var filled = autofillReferralForm(info);
+                    if (filled > 0) {
+                        showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
+                    } else {
+                        showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
+                    }
+                }).catch(function(err) {
+                    console.error("CV parse error:", err);
+                    showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
+                });
+            });
         }
 
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', loadReferralData);
+        } catch(e) { console.error("CV auto-extract init error:", e); }
+    })();
     </script>
 </body>
 </html>

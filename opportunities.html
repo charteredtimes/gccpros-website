@@ -2917,6 +2917,13 @@
 
                 <div class="form-divider">or register manually</div>
 
+                <div class="form-group" style="background:linear-gradient(135deg,#f0f5ff,#eef2ff);border:1px solid #c7d7fe;border-radius:10px;padding:1rem 1.25rem;">
+                    <label style="font-weight:600;color:var(--brand-blue);margin-bottom:0.25rem;">Upload CV to Auto-Fill <span style="font-weight:400;font-size:0.8rem;color:var(--muted);">(PDF, DOC, DOCX - Optional)</span></label>
+                    <p style="font-size:0.78rem;color:#666;margin:0 0 0.5rem;line-height:1.4;">Upload your resume and we'll auto-fill the form fields for you. You can review and edit before submitting.</p>
+                    <input type="file" name="cvAutoFill" id="jsResumeAutoFill" accept=".pdf,.doc,.docx" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:#fff;">
+                    <div id="cvParseStatus" style="display:none;margin-top:0.5rem;padding:0.6rem 0.9rem;border-radius:8px;font-size:0.82rem;align-items:center;gap:0.5rem;"></div>
+                </div>
+
                 <div class="form-group">
                     <label>Full Name <span class="required">*</span></label>
                     <input type="text" name="fullName" required>
@@ -3083,8 +3090,7 @@
                 <div class="form-step-content" id="jsStep3">
                 <div class="form-group">
                     <label>Resume Upload <span class="required">*</span></label>
-                    <input type="file" name="resume" id="jsResume" accept=".pdf,.doc,.docx" required>
-                    <div id="cvParseStatus" style="display:none;margin-top:0.5rem;padding:0.6rem 0.9rem;border-radius:8px;font-size:0.82rem;align-items:center;gap:0.5rem;"></div>
+                    <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
                 </div>
 
                 <div class="form-group">
@@ -5010,6 +5016,25 @@
                     if (!firstInvalid) firstInvalid = linkedinInput;
                 }
 
+                // PAN validation (hard blocker)
+                const jsPanInput = document.getElementById('jsPanNumber');
+                if (jsPanInput) {
+                    const panVal = (jsPanInput.value || '').toUpperCase().trim();
+                    if (!panVal || !validatePanFormat(panVal)) {
+                        valid = false;
+                        jsPanInput.classList.add('input-error');
+                        const panErr = document.getElementById('jsPanError');
+                        if (panErr) panErr.style.display = 'block';
+                        if (!firstInvalid) firstInvalid = jsPanInput;
+                        if (!panVal) {
+                            showToast('PAN number is required', 'error');
+                        } else {
+                            showToast('Please enter a valid PAN number (format: ABCDE1234F)', 'error');
+                        }
+                        return false;
+                    }
+                }
+
                 // Password validation (only if password fields are visible — skipped for Google sign-in)
                 const jsPassFields = document.getElementById('jsPasswordFields');
                 if (jsPassFields && jsPassFields.style.display !== 'none') {
@@ -5154,6 +5179,25 @@
                     if (linkedErr) linkedErr.classList.add('show');
                     linkedinInput.classList.add('input-error');
                     if (!firstInvalid) firstInvalid = linkedinInput;
+                }
+
+                // PAN validation (hard blocker)
+                const refPanInput = document.getElementById('refPanNumber');
+                if (refPanInput) {
+                    const panVal = (refPanInput.value || '').toUpperCase().trim();
+                    if (!panVal || !validatePanFormat(panVal)) {
+                        valid = false;
+                        refPanInput.classList.add('input-error');
+                        const panErr = document.getElementById('refPanError');
+                        if (panErr) panErr.style.display = 'block';
+                        if (!firstInvalid) firstInvalid = refPanInput;
+                        if (!panVal) {
+                            showToast('PAN number is required', 'error');
+                        } else {
+                            showToast('Please enter a valid PAN number (format: ABCDE1234F)', 'error');
+                        }
+                        return false;
+                    }
                 }
 
                 // Password validation (only if password fields are visible — skipped for Google sign-in)
@@ -7867,293 +7911,114 @@ Date: _______________
                 showUserConsole();
             }
 
-            // ── CV Auto-Extract: Job Seeker Registration ──
-            const jsResumeInput = document.getElementById('jsResume');
-            if (jsResumeInput) {
-                jsResumeInput.addEventListener('change', async function () {
-                    const file = this.files[0];
-                    if (!file) return;
-                    const statusEl = document.getElementById('cvParseStatus');
-                    try {
-                        showCvParseStatus(statusEl, 'parsing', 'Extracting details from your CV...');
-                        const text = await extractTextFromFile(file);
-                        if (!text || text.trim().length < 30) {
-                            showCvParseStatus(statusEl, 'warn', 'Could not extract enough text from CV. Please fill in details manually.');
-                            return;
-                        }
-                        const info = parseCVText(text);
-                        const filled = autofillJobSeekerForm(info);
-                        if (filled > 0) {
-                            showCvParseStatus(statusEl, 'success', filled + ' field' + (filled > 1 ? 's' : '') + ' auto-filled from your CV. Please review for accuracy.');
-                        } else {
-                            showCvParseStatus(statusEl, 'info', 'CV parsed but no empty fields could be auto-filled.');
-                        }
-                    } catch (err) {
-                        console.error('CV parse error:', err);
-                        showCvParseStatus(statusEl, 'warn', 'Could not parse CV automatically. Please fill in details manually.');
-                    }
-                });
-            }
         });
+    </script>
 
-        // ══════════════════════════════════════════════════
-        //  CV AUTO-EXTRACTION ENGINE
-        // ══════════════════════════════════════════════════
+    <!-- CV Auto-Extract for Job Seeker Registration: isolated script -->
+    <script>
+    (function() {
+        "use strict";
+        try {
 
-        // ── Status display helper ──
-        function showCvParseStatus(el, type, msg) {
-            if (!el) return;
-            const colors = {
-                parsing: { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: '⏳' },
-                success: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✓' },
-                warn:    { bg: '#fefce8', border: '#fde68a', text: '#92400e', icon: '⚠' },
-                info:    { bg: '#f8f9fa', border: '#e5e7eb', text: '#374151', icon: 'ℹ' }
-            };
-            const c = colors[type] || colors.info;
-            el.style.display = 'flex';
-            el.style.background = c.bg;
-            el.style.border = '1px solid ' + c.border;
-            el.style.color = c.text;
-            el.innerHTML = '<span style="font-size:1rem;">' + c.icon + '</span> ' + msg;
-        }
-
-        // ── Dynamic library loader (loads only on first CV upload) ──
         function loadScript(src) {
             return new Promise(function(resolve, reject) {
-                var s = document.createElement('script');
+                var s = document.createElement("script");
                 s.src = src;
                 s.onload = resolve;
-                s.onerror = function() { reject(new Error('Failed to load ' + src)); };
+                s.onerror = function() { reject(new Error("Failed to load " + src)); };
                 document.head.appendChild(s);
             });
         }
 
-        async function ensureCVLibraries(ext) {
-            if (ext === 'pdf' && typeof pdfjsLib === 'undefined') {
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-            if ((ext === 'docx' || ext === 'doc') && typeof mammoth === 'undefined') {
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
-            }
-        }
-
-        // ── Extract text from PDF or DOCX ──
-        async function extractTextFromFile(file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-
-            if (ext === 'pdf') {
-                await ensureCVLibraries('pdf');
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                let fullText = '';
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str).join(' ');
-                    fullText += pageText + '\n';
-                }
-                return fullText;
-            }
-
-            if (ext === 'docx' || ext === 'doc') {
-                await ensureCVLibraries(ext);
-                const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                return result.value;
-            }
-
-            return '';
-        }
-
-        // ── Parse CV text into structured fields ──
-        function parseCVText(text) {
-            const info = {};
-
-            // Normalize whitespace
-            const clean = text.replace(/\s+/g, ' ').trim();
-            const lines = text.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
-
-            // ─ Full Name: heuristic — first non-empty line that looks like a name ─
-            for (let i = 0; i < Math.min(lines.length, 5); i++) {
-                const line = lines[i].trim();
-                // Skip lines that are common headers, emails, phones, URLs
-                if (/^(curriculum|resume|cv|profile|contact|personal|about)/i.test(line)) continue;
-                if (/@/.test(line) || /^[\d+\-()\s]{10,}/.test(line)) continue;
-                if (/^https?:\/\//i.test(line)) continue;
-                // A name line: 2-5 words, mostly letters, no long numbers
-                const words = line.split(/\s+/);
-                if (words.length >= 2 && words.length <= 5 && /^[A-Za-z.\-'\s]+$/.test(line) && line.length <= 60) {
-                    info.fullName = line.replace(/\b\w/g, c => c.toUpperCase());
-                    break;
-                }
-            }
-
-            // ─ Phone ─
-            const phoneMatch = clean.match(/(?:(?:\+91|91|0)?[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/);
-            if (phoneMatch) {
-                info.phone = phoneMatch[0].replace(/[\s\-.\(\)]/g, '').replace(/^(?:\+?91|0)/, '');
-            }
-
-            // ─ Email ─
-            const emailMatch = clean.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
-            if (emailMatch) info.email = emailMatch[0].toLowerCase();
-
-            // ─ LinkedIn ─
-            const linkedinMatch = clean.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/i);
-            if (linkedinMatch) {
-                let url = linkedinMatch[0];
-                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-                info.linkedin = url;
-            }
-
-            // ─ PAN Number ─
-            const panMatch = clean.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/);
-            if (panMatch) info.pan = panMatch[0];
-
-            // ─ Location/City ─
-            const indianCities = ['Mumbai','Delhi','Bengaluru','Bangalore','Hyderabad','Chennai','Kolkata','Pune','Ahmedabad','Jaipur',
-                'Lucknow','Surat','Kanpur','Nagpur','Patna','Indore','Thane','Bhopal','Visakhapatnam','Vadodara',
-                'Ghaziabad','Ludhiana','Agra','Nashik','Faridabad','Meerut','Rajkot','Varanasi','Srinagar','Coimbatore',
-                'Chandigarh','Mysore','Gurgaon','Gurugram','Noida','Navi Mumbai','Kochi','Thiruvananthapuram','Bhubaneswar','Mangalore',
-                'Dehradun','Guwahati','Ranchi','Raipur','Vijayawada','Jodhpur','Madurai','Tiruchirappalli','Salem','Hubli',
-                'New Delhi','NCR','Greater Noida','HITEC City','Whitefield','Electronic City','Andheri','Powai','Worli','BKC'];
-            const gulfCities = ['Dubai','Abu Dhabi','Sharjah','Riyadh','Jeddah','Doha','Muscat','Kuwait City','Manama','Bahrain','Dammam','Al Khobar'];
-            const allCities = [...indianCities, ...gulfCities];
-            for (const city of allCities) {
-                const cityRegex = new RegExp('\\b' + city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
-                if (cityRegex.test(clean)) {
-                    info.location = city;
-                    break;
-                }
-            }
-
-            // ─ Current Company ─
-            const companyPatterns = [
-                /(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||–|-|\n|$))/i,
-                /(?:company|organisation|organization)[\s:]+([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:\||–|-|\n|$))/i
-            ];
-            for (const pat of companyPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1] && m[1].trim().length > 1 && m[1].trim().length < 80) {
-                    info.company = m[1].trim().replace(/[,.\s]+$/, '');
-                    break;
-                }
-            }
-
-            // ─ Designation / Role ─
-            const designationPatterns = [
-                /(?:designation|position|role|title|current\s+role)[\s:]+([A-Za-z\s\-&/,()]+?)(?:\s*(?:at|in|\||–|-|\n|$))/i,
-                /(?:working\s+as|employed\s+as|currently\s+(?:a|an)?\s*)[\s:]*([A-Za-z\s\-&/,()]+?)(?:\s*(?:at|in|\||–|-|\n|$))/i
-            ];
-            for (const pat of designationPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1] && m[1].trim().length > 2 && m[1].trim().length < 60) {
-                    info.designation = m[1].trim().replace(/[,.\s]+$/, '');
-                    break;
-                }
-            }
-
-            // ─ Experience (total years) ─
-            const expPatterns = [
-                /(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i,
-                /(?:total\s+)?(?:experience|exp)[\s:]+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i,
-                /(?:experience|exp)[\s:]*(\d{1,2}(?:\.\d)?)\s*\+?\s*(?:years?|yrs?)/i
-            ];
-            for (const pat of expPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1]) {
-                    const yrs = parseFloat(m[1]);
-                    if (yrs >= 0 && yrs <= 50) {
-                        info.experience = yrs;
-                        break;
-                    }
-                }
-            }
-
-            // ─ CTC / Salary ─
-            const ctcPatterns = [
-                /(?:current\s+)?(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?)/i,
-                /(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*per\s*annum|l\.?p\.?a\.?)[\s,]*(?:current|ctc)/i
-            ];
-            for (const pat of ctcPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1]) {
-                    const ctc = parseFloat(m[1]);
-                    if (ctc > 0 && ctc < 500) {
-                        info.currentCTC = ctc;
-                        break;
-                    }
-                }
-            }
-
-            // ─ Expected CTC ─
-            const expCtcPatterns = [
-                /(?:expected|desired|target)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?)/i
-            ];
-            for (const pat of expCtcPatterns) {
-                const m = clean.match(pat);
-                if (m && m[1]) {
-                    const ctc = parseFloat(m[1]);
-                    if (ctc > 0 && ctc < 500) { info.expectedCTC = ctc; break; }
-                }
-            }
-
-            // ─ Notice Period ─
-            const noticePatterns = [
-                /(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i,
-                /(\d+)\s*(?:days?)\s*(?:notice)/i,
-                /(?:notice\s*period)[\s:]*(?:immediate(?:ly)?)/i
-            ];
-            for (const pat of noticePatterns) {
-                const m = clean.match(pat);
-                if (m) {
-                    if (m[1]) {
-                        info.noticePeriod = parseInt(m[1]);
-                    } else {
-                        info.noticePeriod = 0; // Immediate
-                    }
-                    break;
-                }
-            }
-
-            // ─ Qualification ─
-            const qualMap = {
-                'phd': 'PhD', 'ph\\.?d': 'PhD', 'doctorate': 'PhD',
-                'mba': 'MBA', 'm\\.?b\\.?a': 'MBA',
-                'master': "Master's", 'm\\.?tech': "Master's", 'm\\.?sc': "Master's", 'm\\.?e\\.?': "Master's", 'm\\.?a\\.?': "Master's",
-                'bachelor': "Bachelor's", 'b\\.?tech': "Bachelor's", 'b\\.?sc': "Bachelor's", 'b\\.?e\\.?': "Bachelor's", 'b\\.?a\\.?': "Bachelor's", 'b\\.?com': "Bachelor's", 'b\\.?ca': "Bachelor's",
-                'diploma': 'Diploma'
+        function showStatus(el, type, msg) {
+            if (!el) return;
+            var styles = {
+                parsing: "background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;",
+                success: "background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;",
+                warn: "background:#fefce8;border:1px solid #fde68a;color:#92400e;",
+                info: "background:#f8f9fa;border:1px solid #e5e7eb;color:#374151;"
             };
-            // Check highest first
-            const qualOrder = ['phd','ph\\.?d','doctorate','mba','m\\.?b\\.?a','master','m\\.?tech','m\\.?sc','m\\.?e\\.?','m\\.?a\\.?','bachelor','b\\.?tech','b\\.?sc','b\\.?e\\.?','b\\.?a\\.?','b\\.?com','b\\.?ca','diploma'];
-            for (const q of qualOrder) {
-                if (new RegExp('\\b' + q + '\\b', 'i').test(clean)) {
-                    info.qualification = qualMap[q] || qualMap[q.replace(/\\/g, '')];
-                    break;
+            el.style.cssText = "display:flex;margin-top:0.5rem;padding:0.6rem 0.9rem;border-radius:8px;font-size:0.82rem;align-items:center;gap:0.5rem;" + (styles[type] || styles.info);
+            el.textContent = msg;
+        }
+
+        function parseCVText(text) {
+            var info = {};
+            var clean = text.replace(/\s+/g, " ").trim();
+            var lines = text.split(/\n/).map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+
+            // Name
+            for (var i = 0; i < Math.min(lines.length, 5); i++) {
+                var line = lines[i].trim();
+                if (/^(curriculum|resume|cv|profile|contact|personal|about)/i.test(line)) continue;
+                if (/@/.test(line) || /^[\d+\-()\s]{10,}/.test(line) || /^https?:\/\//i.test(line)) continue;
+                var words = line.split(/\s+/);
+                if (words.length >= 2 && words.length <= 5 && /^[A-Za-z.\-'\s]+$/.test(line) && line.length <= 60) {
+                    info.fullName = line; break;
                 }
             }
+
+            // Phone
+            var phoneM = clean.match(/(?:(?:\+91|91|0)?[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/);
+            if (phoneM) info.phone = phoneM[0].replace(/[\s\-.\(\)]/g, "").replace(/^(\+?91|0)/, "");
+
+            // LinkedIn
+            var liM = clean.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/i);
+            if (liM) { var u = liM[0]; if (!/^https?:\/\//i.test(u)) u = "https://" + u; info.linkedin = u; }
+
+            // PAN
+            var panM = clean.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/);
+            if (panM) info.pan = panM[0];
+
+            // Location
+            var cities = ["Mumbai","Delhi","Bengaluru","Bangalore","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Jaipur","Lucknow","Surat","Nagpur","Indore","Thane","Bhopal","Vadodara","Gurgaon","Gurugram","Noida","Navi Mumbai","Kochi","Chandigarh","Coimbatore","New Delhi","Dubai","Abu Dhabi","Riyadh","Jeddah","Doha","Muscat"];
+            for (var ci = 0; ci < cities.length; ci++) {
+                if (new RegExp("\\b" + cities[ci].replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(clean)) {
+                    info.location = cities[ci]; break;
+                }
+            }
+
+            // Company
+            var compM = clean.match(/(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||-|\n|$))/i);
+            if (compM && compM[1] && compM[1].trim().length > 1 && compM[1].trim().length < 80) info.company = compM[1].trim().replace(/[,.\s]+$/, "");
+
+            // Designation
+            var desM = clean.match(/(?:designation|position|role|title|current\s+role)[\s:]+([A-Za-z\s\-&\/,()]+?)(?:\s*(?:at|in|\||-|\n|$))/i);
+            if (desM && desM[1] && desM[1].trim().length > 2 && desM[1].trim().length < 60) info.designation = desM[1].trim().replace(/[,.\s]+$/, "");
+
+            // Experience
+            var expM = clean.match(/(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i);
+            if (!expM) expM = clean.match(/(?:total\s+)?(?:experience|exp)[\s:]+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i);
+            if (expM && expM[1]) { var y = parseFloat(expM[1]); if (y >= 0 && y <= 50) info.experience = y; }
+
+            // CTC
+            var ctcM = clean.match(/(?:current\s+)?(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
+            if (ctcM && ctcM[1]) { var v = parseFloat(ctcM[1]); if (v > 0 && v < 500) info.currentCTC = v; }
+
+            // Expected CTC
+            var ectcM = clean.match(/(?:expected|desired|target)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
+            if (ectcM && ectcM[1]) { var ev = parseFloat(ectcM[1]); if (ev > 0 && ev < 500) info.expectedCTC = ev; }
+
+            // Notice Period
+            var npM = clean.match(/(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i);
+            if (npM && npM[1]) info.noticePeriod = parseInt(npM[1]);
+            if (/(?:notice\s*period)[\s:]*(?:immediate)/i.test(clean)) info.noticePeriod = 0;
 
             return info;
         }
 
-        // ── Auto-fill Job Seeker registration form (empty fields only) ──
-        function autofillJobSeekerForm(info) {
-            let filled = 0;
-            const jsForm = document.getElementById('jobSeekerForm');
+        function autofillForm(info) {
+            var jsForm = document.getElementById("jobSeekerForm");
             if (!jsForm) return 0;
-
-            function setIfEmpty(selector, value) {
-                if (!value) return false;
-                const el = jsForm.querySelector(selector);
+            var filled = 0;
+            function setIfEmpty(sel, val) {
+                if (!val) return false;
+                var el = jsForm.querySelector(sel);
                 if (!el) return false;
-                if (el.value && el.value.trim()) return false; // Don't overwrite
-                el.value = typeof value === 'number' ? value : value.trim();
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-                el.dispatchEvent(new Event('change', { bubbles: true }));
+                if (el.value && el.value.trim()) return false;
+                el.value = (typeof val === "number") ? val : val.trim();
                 return true;
             }
-
             if (setIfEmpty('[name="fullName"]', info.fullName)) filled++;
             if (setIfEmpty('[name="phone"]', info.phone)) filled++;
             if (setIfEmpty('[name="linkedin"]', info.linkedin)) filled++;
@@ -8165,9 +8030,73 @@ Date: _______________
             if (setIfEmpty('[name="currentCTC"]', info.currentCTC)) filled++;
             if (setIfEmpty('[name="expectedCTC"]', info.expectedCTC)) filled++;
             if (setIfEmpty('[name="noticePeriod"]', info.noticePeriod)) filled++;
-
             return filled;
         }
+
+        var input = document.getElementById("jsResumeAutoFill");
+        if (input) {
+            input.addEventListener("change", function() {
+                var file = this.files[0];
+                if (!file) return;
+                var statusEl = document.getElementById("cvParseStatus");
+                var ext = file.name.split(".").pop().toLowerCase();
+                if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
+
+                showStatus(statusEl, "parsing", "Extracting details from your CV...");
+
+                var libUrl = (ext === "pdf")
+                    ? "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+                    : "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
+                var libReady = (ext === "pdf" && typeof pdfjsLib !== "undefined") || (ext !== "pdf" && typeof mammoth !== "undefined");
+
+                var p = libReady ? Promise.resolve() : loadScript(libUrl);
+                p.then(function() {
+                    if (ext === "pdf") {
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+                        return file.arrayBuffer().then(function(buf) {
+                            return pdfjsLib.getDocument({data: buf}).promise;
+                        }).then(function(pdf) {
+                            var text = "";
+                            var chain = Promise.resolve();
+                            for (var pg = 1; pg <= pdf.numPages; pg++) {
+                                (function(pageNum) {
+                                    chain = chain.then(function() {
+                                        return pdf.getPage(pageNum);
+                                    }).then(function(page) {
+                                        return page.getTextContent();
+                                    }).then(function(content) {
+                                        text += content.items.map(function(it){ return it.str; }).join(" ") + "\n";
+                                    });
+                                })(pg);
+                            }
+                            return chain.then(function() { return text; });
+                        });
+                    } else {
+                        return file.arrayBuffer().then(function(buf) {
+                            return mammoth.extractRawText({arrayBuffer: buf});
+                        }).then(function(result) { return result.value; });
+                    }
+                }).then(function(text) {
+                    if (!text || text.trim().length < 30) {
+                        showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
+                        return;
+                    }
+                    var info = parseCVText(text);
+                    var filled = autofillForm(info);
+                    if (filled > 0) {
+                        showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
+                    } else {
+                        showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
+                    }
+                }).catch(function(err) {
+                    console.error("CV parse error:", err);
+                    showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
+                });
+            });
+        }
+
+        } catch(e) { console.error("CV auto-extract init error:", e); }
+    })();
     </script>
 
 </body>
