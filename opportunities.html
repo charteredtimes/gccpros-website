@@ -9,8 +9,6 @@
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" async></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" async></script>
     <style>
         :root {
             --ink: #0B1120;
@@ -7919,15 +7917,33 @@ Date: _______________
             el.innerHTML = '<span style="font-size:1rem;">' + c.icon + '</span> ' + msg;
         }
 
+        // ── Dynamic library loader (loads only on first CV upload) ──
+        function loadScript(src) {
+            return new Promise(function(resolve, reject) {
+                var s = document.createElement('script');
+                s.src = src;
+                s.onload = resolve;
+                s.onerror = function() { reject(new Error('Failed to load ' + src)); };
+                document.head.appendChild(s);
+            });
+        }
+
+        async function ensureCVLibraries(ext) {
+            if (ext === 'pdf' && typeof pdfjsLib === 'undefined') {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+            if ((ext === 'docx' || ext === 'doc') && typeof mammoth === 'undefined') {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+            }
+        }
+
         // ── Extract text from PDF or DOCX ──
         async function extractTextFromFile(file) {
             const ext = file.name.split('.').pop().toLowerCase();
 
             if (ext === 'pdf') {
-                if (typeof pdfjsLib === 'undefined') throw new Error('PDF library still loading. Please try again.');
-                if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                }
+                await ensureCVLibraries('pdf');
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 let fullText = '';
@@ -7941,7 +7957,7 @@ Date: _______________
             }
 
             if (ext === 'docx' || ext === 'doc') {
-                if (typeof mammoth === 'undefined') throw new Error('DOCX library still loading. Please try again.');
+                await ensureCVLibraries(ext);
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
                 return result.value;
