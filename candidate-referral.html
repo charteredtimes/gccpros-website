@@ -487,8 +487,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="linkedin">LinkedIn Profile</label>
-                            <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                            <label for="linkedin" class="required">LinkedIn Profile</label>
+                            <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                            <span class="error-text hidden" id="linkedinError">Please enter a valid LinkedIn URL (e.g., https://linkedin.com/in/yourprofile)</span>
                         </div>
                     </div>
                 </div>
@@ -845,6 +846,15 @@
             cvLabel.classList.add('has-file');
         }
 
+        // Top CV auto-fill input: also sets selectedFile for form submission
+        var cvAutoFillInput = document.getElementById('cvAutoFillRef');
+        if (cvAutoFillInput) {
+            cvAutoFillInput.addEventListener('change', function() {
+                var file = this.files && this.files[0];
+                if (file) handleFileSelection(file);
+            });
+        }
+
         // PAN validation
         document.getElementById('panNumber').addEventListener('blur', function() {
             const panError = document.getElementById('panError');
@@ -860,6 +870,20 @@
             }
         });
 
+        // LinkedIn validation on blur
+        document.getElementById('linkedin').addEventListener('blur', function() {
+            var val = this.value.trim();
+            var err = document.getElementById('linkedinError');
+            if (val && !/linkedin\.com\/in\//i.test(val)) {
+                err.textContent = 'Please enter a valid LinkedIn URL (e.g., https://linkedin.com/in/yourprofile)';
+                err.classList.remove('hidden');
+                this.classList.add('has-error');
+            } else {
+                err.classList.add('hidden');
+                this.classList.remove('has-error');
+            }
+        });
+
         // Form submission
         document.getElementById('referralForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -871,6 +895,16 @@
             // Validate required fields
             if (!this.checkValidity()) {
                 showMessage('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+
+            // Validate LinkedIn
+            const linkedinVal = (document.getElementById('linkedin').value || '').trim();
+            if (!linkedinVal || !/linkedin\.com\/in\//i.test(linkedinVal)) {
+                document.getElementById('linkedinError').textContent = 'Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourprofile)';
+                document.getElementById('linkedinError').classList.remove('hidden');
+                document.getElementById('linkedin').classList.add('has-error');
+                showMessage('A valid LinkedIn profile URL is required.', 'error');
                 return;
             }
 
@@ -936,9 +970,7 @@
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    redirect: 'follow'
                 });
 
                 const result = await response.json();

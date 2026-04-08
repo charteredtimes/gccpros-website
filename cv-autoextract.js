@@ -54,75 +54,177 @@
         return div;
     }
 
-    // ─── CV text parser ───
+    // ─── CV text parser (robust) ───
     function parseCVText(text) {
         var info = {};
         var clean = text.replace(/\s+/g, " ").trim();
         var lines = text.split(/\n/).map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
 
-        // Name — first plausible line in top 5
-        for (var i = 0; i < Math.min(lines.length, 5); i++) {
+        // ── Name — first plausible line in top 8 lines ──
+        for (var i = 0; i < Math.min(lines.length, 8); i++) {
             var line = lines[i].trim();
-            if (/^(curriculum|resume|cv|profile|contact|personal|about)/i.test(line)) continue;
+            if (/^(curriculum|resume|cv\b|profile|contact|personal|about|summary|objective|address|page)/i.test(line)) continue;
             if (/@/.test(line) || /^[\d+\-()\s]{10,}/.test(line) || /^https?:\/\//i.test(line)) continue;
+            if (/linkedin|github|phone|mobile|email|tel|fax/i.test(line)) continue;
             var words = line.split(/\s+/);
-            if (words.length >= 2 && words.length <= 5 && /^[A-Za-z.\-'\s]+$/.test(line) && line.length <= 60) {
+            if (words.length >= 2 && words.length <= 6 && /^[A-Za-z.\-'\s]+$/.test(line) && line.length >= 4 && line.length <= 60) {
                 info.fullName = line; break;
             }
         }
 
-        // Phone (Indian mobile)
-        var phoneM = clean.match(/(?:(?:\+91|91|0)?[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/);
-        if (phoneM) info.phone = phoneM[0].replace(/[\s\-.\(\)]/g, "").replace(/^(\+?91|0)/, "");
+        // ── Phone (Indian mobile — flexible patterns) ──
+        var phonePatterns = [
+            /(?:\+91[\s\-.]?)?[6-9]\d{4}[\s\-.]?\d{5}/,
+            /(?:91[\s\-.])?[6-9]\d{4}[\s\-.]?\d{5}/,
+            /(?:phone|mobile|cell|contact|tel)[\s:]*(?:\+?91[\s\-.]?)?([6-9]\d{4}[\s\-.]?\d{5})/i,
+            /[6-9]\d{9}/
+        ];
+        for (var pi = 0; pi < phonePatterns.length; pi++) {
+            var phoneM = clean.match(phonePatterns[pi]);
+            if (phoneM) {
+                var raw = (phoneM[1] || phoneM[0]).replace(/[\s\-.\(\)]/g, "");
+                raw = raw.replace(/^(\+?91|0)/, "");
+                if (raw.length === 10 && /^[6-9]/.test(raw)) { info.phone = raw; break; }
+            }
+        }
 
-        // LinkedIn
+        // ── Email (for reference, not typically auto-filled) ──
+        var emailM = clean.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+        if (emailM) info.email = emailM[0].toLowerCase();
+
+        // ── LinkedIn ──
         var liM = clean.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?/i);
         if (liM) { var u = liM[0]; if (!/^https?:\/\//i.test(u)) u = "https://" + u; info.linkedin = u; }
 
-        // PAN
+        // ── PAN ──
         var panM = clean.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/);
         if (panM) info.pan = panM[0];
 
-        // Location (common Indian + GCC cities)
-        var cities = ["Mumbai","Delhi","Bengaluru","Bangalore","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Jaipur","Lucknow","Surat","Nagpur","Indore","Thane","Bhopal","Vadodara","Gurgaon","Gurugram","Noida","Navi Mumbai","Kochi","Chandigarh","Coimbatore","New Delhi","Dubai","Abu Dhabi","Riyadh","Jeddah","Doha","Muscat"];
+        // ── Location (expanded Indian cities + GCC cities) ──
+        var cities = [
+            "Mumbai","Delhi","Bengaluru","Bangalore","Hyderabad","Chennai","Kolkata","Pune",
+            "Ahmedabad","Jaipur","Lucknow","Surat","Nagpur","Indore","Thane","Bhopal",
+            "Vadodara","Gurgaon","Gurugram","Noida","Navi Mumbai","Kochi","Chandigarh",
+            "Coimbatore","New Delhi","Greater Noida","Ghaziabad","Faridabad","Mysuru","Mysore",
+            "Mangalore","Mangaluru","Trivandrum","Thiruvananthapuram","Visakhapatnam","Vizag",
+            "Patna","Ranchi","Bhubaneswar","Dehradun","Agra","Varanasi","Nashik","Rajkot",
+            "Tiruchirappalli","Trichy","Madurai","Salem","Vijayawada","Guntur","Warangal",
+            "Hubli","Belgaum","Belagavi","Aurangabad","Jodhpur","Raipur","Amritsar",
+            "Dubai","Abu Dhabi","Riyadh","Jeddah","Doha","Muscat","Kuwait","Sharjah","Bahrain"
+        ];
         for (var ci = 0; ci < cities.length; ci++) {
             if (new RegExp("\\b" + cities[ci].replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(clean)) {
                 info.location = cities[ci]; break;
             }
         }
 
-        // Company
-        var compM = clean.match(/(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||-|\n|$))/i);
-        if (compM && compM[1] && compM[1].trim().length > 1 && compM[1].trim().length < 80) info.company = compM[1].trim().replace(/[,.\s]+$/, "");
+        // ── Company — multiple patterns ──
+        var compPatterns = [
+            /(?:current(?:ly)?[\s:]+(?:working\s+(?:at|with|in|for))?|(?:present\s+)?employer|working\s+(?:at|with|for)|employed\s+(?:at|with|by))[\s:]*([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:as|since|\||-|\n|,|$))/i,
+            /(?:company|organization|organisation|firm)[\s:]+([A-Z][A-Za-z0-9&\s,.\-']+?)(?:\s*(?:\||-|\n|,|$))/i,
+            /(?:^|\n)\s*([A-Z][A-Za-z0-9&.\s]+?(?:Technologies|Solutions|Consulting|Services|Systems|Software|Infosys|Wipro|TCS|Cognizant|Accenture|Capgemini|Tech Mahindra|HCL|LTIMindtree|Deloitte|KPMG|EY|PwC|IBM|Oracle|Microsoft|Google|Amazon|Flipkart))\b/i
+        ];
+        for (var cpi = 0; cpi < compPatterns.length; cpi++) {
+            var compM = clean.match(compPatterns[cpi]);
+            if (compM && compM[1] && compM[1].trim().length > 1 && compM[1].trim().length < 80) {
+                info.company = compM[1].trim().replace(/[,.\s]+$/, "");
+                break;
+            }
+        }
 
-        // Designation
-        var desM = clean.match(/(?:designation|position|role|title|current\s+role)[\s:]+([A-Za-z\s\-&\/,()]+?)(?:\s*(?:at|in|\||-|\n|$))/i);
-        if (desM && desM[1] && desM[1].trim().length > 2 && desM[1].trim().length < 60) info.designation = desM[1].trim().replace(/[,.\s]+$/, "");
+        // ── Designation — multiple patterns ──
+        var desPatterns = [
+            /(?:designation|position|role|job\s*title|current\s+role|current\s+designation)[\s:]+([A-Za-z\s\-&\/,().]+?)(?:\s*(?:at|in|\||-|\n|$))/i,
+            /(?:^|\n)\s*((?:Senior|Junior|Lead|Principal|Staff|Chief|Head|Manager|Director|VP|Associate|Assistant|Analyst|Engineer|Developer|Architect|Consultant|Specialist|Coordinator|Executive|Administrator|Designer|Tester|QA|DevOps|Data|Full[\s\-]?Stack|Front[\s\-]?end|Back[\s\-]?end|Software|Product|Project|Program|Business|Technical|Marketing|Sales|HR|Finance|Operations)[\w\s\-&\/,()]*?)(?:\s+at\s+|\s+in\s+|\s*[\|,\-]\s*|\s*\n)/i
+        ];
+        for (var dpi = 0; dpi < desPatterns.length; dpi++) {
+            var desM = clean.match(desPatterns[dpi]);
+            if (desM && desM[1] && desM[1].trim().length > 2 && desM[1].trim().length < 60) {
+                info.designation = desM[1].trim().replace(/[,.\s]+$/, "");
+                break;
+            }
+        }
 
-        // Experience
-        var expM = clean.match(/(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i);
-        if (!expM) expM = clean.match(/(?:total\s+)?(?:experience|exp)[\s:]+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i);
-        if (expM && expM[1]) { var y = parseFloat(expM[1]); if (y >= 0 && y <= 50) info.experience = y; }
+        // ── Experience — multiple patterns ──
+        var expPatterns = [
+            /(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)[\s\-]*(?:of\s+)?(?:total\s+)?(?:experience|exp)/i,
+            /(?:total\s+)?(?:experience|exp)[\s:]*(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i,
+            /(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)\s+(?:in\s+)?(?:it|software|development|industry|professional)/i,
+            /(?:experience|exp)[\s:]*(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i,
+            /(?:having|with)\s+(\d{1,2}(?:\.\d)?)\+?\s*(?:years?|yrs?)/i
+        ];
+        for (var epi = 0; epi < expPatterns.length; epi++) {
+            var expM = clean.match(expPatterns[epi]);
+            if (expM && expM[1]) {
+                var y = parseFloat(expM[1]);
+                if (y >= 0 && y <= 50) { info.experience = y; break; }
+            }
+        }
 
-        // CTC
-        var ctcM = clean.match(/(?:current\s+)?(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
-        if (ctcM && ctcM[1]) { var v = parseFloat(ctcM[1]); if (v > 0 && v < 500) info.currentCTC = v; }
+        // ── CTC — multiple patterns ──
+        var ctcPatterns = [
+            /(?:current\s+)?(?:ctc|salary|compensation|package|annual\s+salary)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?)/i,
+            /(?:ctc|salary)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lacs?|lac|lakh)/i,
+            /(?:current\s+)?(?:ctc|salary)[\s:]*(\d+(?:\.\d+)?)\s*(?:lpa|lakh|lac)/i
+        ];
+        for (var cti = 0; cti < ctcPatterns.length; cti++) {
+            var ctcM = clean.match(ctcPatterns[cti]);
+            if (ctcM && ctcM[1]) {
+                var v = parseFloat(ctcM[1]);
+                if (v > 0 && v < 500) { info.currentCTC = v; break; }
+            }
+        }
 
-        // Expected CTC
-        var ectcM = clean.match(/(?:expected|desired|target)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?)/i);
-        if (ectcM && ectcM[1]) { var ev = parseFloat(ectcM[1]); if (ev > 0 && ev < 500) info.expectedCTC = ev; }
+        // ── Expected CTC ──
+        var ectcPatterns = [
+            /(?:expected|desired|target|asking)\s*(?:ctc|salary|compensation|package)[\s:]*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakhs?\s*(?:per\s*annum)?|l\.?p\.?a\.?|lacs?|lac|lakh)/i,
+            /(?:expected|desired)\s*[:]\s*(?:Rs\.?|INR|₹)?\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakh|lac)/i
+        ];
+        for (var eci = 0; eci < ectcPatterns.length; eci++) {
+            var ectcM = clean.match(ectcPatterns[eci]);
+            if (ectcM && ectcM[1]) {
+                var ev = parseFloat(ectcM[1]);
+                if (ev > 0 && ev < 500) { info.expectedCTC = ev; break; }
+            }
+        }
 
-        // Notice Period
-        var npM = clean.match(/(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i);
-        if (npM && npM[1]) info.noticePeriodDays = parseInt(npM[1]);
-        if (/(?:notice\s*period)[\s:]*(?:immediate)/i.test(clean)) info.noticePeriodDays = 0;
+        // ── Notice Period ──
+        var npPatterns = [
+            /(?:notice\s*period)[\s:]*(\d+)\s*(?:days?)/i,
+            /(\d+)\s*(?:days?)\s*(?:notice)/i,
+            /(?:notice\s*period)[\s:]*(\d+)\s*(?:months?)/i
+        ];
+        for (var npi = 0; npi < npPatterns.length; npi++) {
+            var npM = clean.match(npPatterns[npi]);
+            if (npM && npM[1]) {
+                var npVal = parseInt(npM[1]);
+                // If matched "months", convert to days
+                if (/months?/i.test(npPatterns[npi].source)) npVal = npVal * 30;
+                info.noticePeriodDays = npVal;
+                break;
+            }
+        }
+        if (info.noticePeriodDays === undefined && /(?:notice\s*period)[\s:]*(?:immediate|currently\s+serving|nil|zero|0\s*days?)/i.test(clean)) {
+            info.noticePeriodDays = 0;
+        }
+        if (info.noticePeriodDays === undefined && /(?:immediately?\s+(?:available|joinable)|ready\s+to\s+join)/i.test(clean)) {
+            info.noticePeriodDays = 0;
+        }
 
-        // Qualification
-        var quals = [["phd","PhD"],["doctorate","PhD"],["mba","MBA"],["master","Master's"],["mtech","Master's"],["msc","Master's"],["bachelor","Bachelor's"],["btech","Bachelor's"],["bsc","Bachelor's"],["bcom","Bachelor's"],["diploma","Diploma"]];
+        // ── Qualification — expanded list ──
+        var quals = [
+            ["ph\\.?d","PhD"],["doctorate","PhD"],
+            ["m\\.?b\\.?a","MBA"],
+            ["m\\.?tech","M.Tech/M.E."],["m\\.?e\\.(?!\\w)","M.Tech/M.E."],["master","M.Tech/M.E."],["m\\.?sc","M.Sc"],["m\\.?c\\.?a","MCA"],
+            ["b\\.?tech","B.Tech/B.E."],["b\\.?e\\.(?!\\w)","B.Tech/B.E."],["bachelor","B.Tech/B.E."],["b\\.?sc","B.Sc"],["b\\.?c\\.?a","BCA"],["b\\.?com","B.Sc"],["b\\.?b\\.?a","BBA"],
+            ["c\\.?a(?:\\s|$|,)","CA"],
+            ["diploma","Diploma"]
+        ];
         for (var qi = 0; qi < quals.length; qi++) {
             if (new RegExp("\\b" + quals[qi][0] + "\\b", "i").test(clean)) { info.qualification = quals[qi][1]; break; }
         }
 
+        console.log("[CV AutoExtract] Parsed fields:", JSON.stringify(info));
         return info;
     }
 
@@ -166,6 +268,24 @@
                 }).then(function(result) { return result.value; });
             }
         });
+    }
+
+    // ─── Match qualification to dropdown value ───
+    function matchQualification(selectEl, parsedQual) {
+        if (!selectEl || !parsedQual || selectEl.value) return false;
+        // Try exact match first
+        selectEl.value = parsedQual;
+        if (selectEl.value === parsedQual) return true;
+        // Map common parser outputs to dropdown values
+        var maps = {
+            "B.Tech/B.E.": "Bachelor's", "BCA": "Bachelor's", "B.Sc": "Bachelor's", "BBA": "Bachelor's",
+            "M.Tech/M.E.": "Master's", "MCA": "Master's", "M.Sc": "Master's",
+            "MBA": "MBA", "PhD": "PhD", "Diploma": "Diploma", "CA": "Other",
+            "Bachelor's": "Bachelor's", "Master's": "Master's"
+        };
+        var mapped = maps[parsedQual];
+        if (mapped) { selectEl.value = mapped; return selectEl.value === mapped; }
+        return false;
     }
 
     // ─── Generic set-if-empty helper ───
@@ -286,10 +406,10 @@
                     npSelect.value = val; filled++;
                 }
             }
-            // Qualification (select dropdown)
+            // Qualification (select dropdown — use smart matching)
             if (info.qualification) {
                 var qSelect = document.getElementById("qualification");
-                if (qSelect && !qSelect.value) { qSelect.value = info.qualification; filled++; }
+                if (matchQualification(qSelect, info.qualification)) filled++;
             }
 
             if (filled > 0) {
