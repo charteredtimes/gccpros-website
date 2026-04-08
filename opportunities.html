@@ -4957,6 +4957,10 @@
                 if (regType) url += '&type=' + encodeURIComponent(regType);
                 const res = await fetch(url);
                 const data = await res.json();
+                if (data.blacklisted) {
+                    showToast('This email has been blocked. Please contact support at admin@gccpros.com', 'error');
+                    return 'blacklisted';
+                }
                 return data.exists === true;
             } catch (err) {
                 console.log('Email check failed (backend unreachable), allowing registration:', err);
@@ -4985,6 +4989,11 @@
             const regType = type === 'jobSeeker' ? 'jobSeeker' : 'referrer';
             try {
                 const exists = await checkEmailExists(email, regType);
+                if (exists === 'blacklisted') {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
                 if (exists) {
                     const typeLabel = type === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                     showToast('This email is already registered as ' + typeLabel + '. Please use Login instead.', 'error');
@@ -5789,6 +5798,13 @@
                 const res = await fetch(url);
                 const statusData = await res.json();
 
+                if (statusData.blacklisted) {
+                    showToast('This account has been blocked. Please contact support at admin@gccpros.com', 'error');
+                    showLoginLoading(false);
+                    if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
+                    return;
+                }
+
                 if (!statusData.exists) {
                     const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                     showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
@@ -6418,6 +6434,11 @@
                     let profileData = null;
                     try {
                         profileData = await checkUserStatus(userInfo.email, loginAs);
+                        if (profileData.blacklisted) {
+                            showLoginLoading(false);
+                            showToast('This account has been blocked. Please contact support at admin@gccpros.com', 'error');
+                            return;
+                        }
                         if (profileData.exists) {
                             currentUser.type = profileData.type || loginAs;
                             if (profileData.userId) currentUser.userId = profileData.userId;
