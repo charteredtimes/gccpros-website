@@ -5396,6 +5396,32 @@
             delete data.regPassword;
             delete data.regConfirmPassword;
 
+            // Read CV file as base64 (from Step 1 auto-fill or Step 3 resume input)
+            var jsCVFile = null;
+            var jsCVAutoFillInput = document.getElementById('jsCVAutoFill');
+            var jsResumeInput = form.querySelector('input[name="resume"]');
+            if (jsCVAutoFillInput && jsCVAutoFillInput.files && jsCVAutoFillInput.files[0]) {
+                jsCVFile = jsCVAutoFillInput.files[0];
+            } else if (jsResumeInput && jsResumeInput.files && jsResumeInput.files[0]) {
+                jsCVFile = jsResumeInput.files[0];
+            }
+
+            if (jsCVFile) {
+                try {
+                    var cvBase64 = await new Promise(function(resolve, reject) {
+                        var reader = new FileReader();
+                        reader.onload = function() { resolve(reader.result.split(',')[1]); };
+                        reader.onerror = function() { reject('CV read error'); };
+                        reader.readAsDataURL(jsCVFile);
+                    });
+                    data.cvBase64 = cvBase64;
+                    data.cvFileName = jsCVFile.name;
+                    data.cvMimeType = jsCVFile.type;
+                } catch (cvErr) {
+                    console.error('Could not read CV file:', cvErr);
+                }
+            }
+
             console.log('Job Seeker Registration:', data);
 
             // Set currentUser with domain and full profile data
@@ -5415,14 +5441,31 @@
             };
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            // Send to backend
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                redirect: 'follow'
-            }).then(res => res.json()).then(result => {
+            // Show loading state
+            const jsSubmitBtn = form.querySelector('button[type="submit"]');
+            if (jsSubmitBtn) { jsSubmitBtn.disabled = true; jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
+
+            // Send to backend and WAIT for confirmation
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                });
+                const result = await response.json();
                 console.log('Job seeker registration result:', result);
-            }).catch(err => console.log('Job seeker registration submitted (fallback):', err));
+
+                if (result.success === false) {
+                    showToast(result.error || 'Registration failed. Please try again.', 'error');
+                    if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                    return;
+                }
+            } catch (err) {
+                console.error('Job seeker registration error:', err);
+                showToast('Network error — please check your connection and try again.', 'error');
+                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                return;
+            }
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -5562,13 +5605,31 @@
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
             // Send to backend
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                redirect: 'follow'
-            }).then(res => res.json()).then(result => {
+            // Show loading state
+            const refSubmitBtn = form.querySelector('button[type="submit"]');
+            if (refSubmitBtn) { refSubmitBtn.disabled = true; refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
+
+            // Send to backend and WAIT for confirmation
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                });
+                const result = await response.json();
                 console.log('Referrer registration result:', result);
-            }).catch(err => console.log('Referrer registration submitted (fallback):', err));
+
+                if (result.success === false) {
+                    showToast(result.error || 'Registration failed. Please try again.', 'error');
+                    if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                    return;
+                }
+            } catch (err) {
+                console.error('Referrer registration error:', err);
+                showToast('Network error — please check your connection and try again.', 'error');
+                if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                return;
+            }
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -6594,10 +6655,7 @@
                     showToast('Invalid OTP. Please try again.', 'error');
                 }
             } catch(err) {
-                // Fallback: accept any OTP if backend is unreachable
-                showToast('OTP verified! Set your new password.', 'success');
-                document.getElementById('fpStep2').style.display = 'none';
-                document.getElementById('fpStep3').style.display = 'block';
+                showToast('Could not verify OTP. Please check your connection and try again.', 'error');
             }
         }
 
@@ -6614,7 +6672,7 @@
                 return;
             }
 
-            // Send to backend
+            // Send to backend and WAIT for confirmation
             try {
                 const payload = {
                     action: 'resetPassword',
@@ -6622,20 +6680,28 @@
                     password: newPass,
                     type: selectedLoginType
                 };
-                fetch(APPS_SCRIPT_URL, {
+                const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
                     redirect: 'follow'
-                }).then(res => res.json()).then(result => {
-                    console.log('Password reset result:', result);
-                }).catch(err => console.log('Password reset submitted:', err));
-            } catch(err) { console.log('Password reset error:', err); }
+                });
+                const result = await response.json();
+                console.log('Password reset result:', result);
 
-            showToast('Password reset successfully! You can now login.', 'success');
-            fpOtpCode = null;
-            fpEmail = null;
-            // Reset back to login form
-            setTimeout(() => { resetLoginForm(new Event('click')); }, 1500);
+                if (result.success === false) {
+                    showToast(result.error || 'Password reset failed. Please try again.', 'error');
+                    return;
+                }
+
+                showToast('Password reset successfully! You can now login.', 'success');
+                fpOtpCode = null;
+                fpEmail = null;
+                // Reset back to login form
+                setTimeout(() => { resetLoginForm(new Event('click')); }, 1500);
+            } catch(err) {
+                console.error('Password reset error:', err);
+                showToast('Network error — could not reset password. Please try again.', 'error');
+            }
         }
 
         function resetLoginForm(event) {
