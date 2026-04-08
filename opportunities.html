@@ -2917,6 +2917,16 @@
 
                 <div class="form-divider">or register manually</div>
 
+                <!-- CV Upload (auto-fill) — placed at the top for quick form filling -->
+                <div style="background:#f0f9ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                        <span style="font-size:1.2rem;">📄</span>
+                        <label style="font-weight:600;color:#1e40af;margin:0;font-size:0.95rem;">Upload your CV to auto-fill the form</label>
+                    </div>
+                    <p style="font-size:0.8rem;color:#555;margin:0 0 0.5rem;line-height:1.4;">Upload your resume (PDF or DOCX) and we'll extract your details automatically. You can review and edit before submitting.</p>
+                    <input type="file" name="cvAutoFill" id="jsCVAutoFill" accept=".pdf,.doc,.docx" style="font-size:0.85rem;width:100%;">
+                </div>
+
                 <div class="form-group">
                     <label>Full Name <span class="required">*</span></label>
                     <input type="text" name="fullName" required>
@@ -3617,10 +3627,23 @@
                     </div>
                 </div>
 
+                <!-- Referral Mode Toggle -->
+                <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h3 style="margin:0 0 0.75rem;font-size:1rem;color:#333;">How would you like to refer?</h3>
+                    <div style="display:flex;gap:0.75rem;">
+                        <label style="flex:1;cursor:pointer;display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;border:2px solid var(--brand-blue);border-radius:8px;background:#f0f5ff;font-size:0.85rem;font-weight:600;color:var(--brand-blue);" id="refModeSendLabel">
+                            <input type="radio" name="referralMode" value="send_link" checked onchange="toggleReferralMode()" style="accent-color:var(--brand-blue);"> Send link to candidate
+                        </label>
+                        <label style="flex:1;cursor:pointer;display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:0.85rem;font-weight:600;color:#333;" id="refModeDirectLabel">
+                            <input type="radio" name="referralMode" value="fill_direct" onchange="toggleReferralMode()" style="accent-color:var(--brand-blue);"> Fill details myself
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Candidate Basic Info -->
                 <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
                     <h3 style="margin:0 0 0.5rem;font-size:1rem;color:#333;">Candidate Details</h3>
-                    <p style="font-size:0.82rem;color:#666;margin:0 0 1rem;line-height:1.4;">Enter the candidate's email and name. They will receive a form to fill in their detailed information and upload their CV.</p>
+                    <p style="font-size:0.82rem;color:#666;margin:0 0 1rem;line-height:1.4;" id="refCandSubtext">Enter the candidate's email and name. They will receive a form to fill in their detailed information and upload their CV.</p>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;">
                         <div class="form-group">
                             <label>Candidate Email <span class="required">*</span></label>
@@ -3632,9 +3655,82 @@
                             <input type="text" name="candidateName" id="refCandName" required placeholder="Candidate's full name">
                         </div>
                     </div>
+
+                    <!-- Direct-fill extra fields (hidden by default) -->
+                    <div id="refDirectFields" style="display:none;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;">
+                            <div class="form-group">
+                                <label>Phone <span class="required">*</span></label>
+                                <input type="tel" name="refPhone" placeholder="+91 9876543210">
+                            </div>
+                            <div class="form-group">
+                                <label>LinkedIn Profile</label>
+                                <input type="text" name="refLinkedin" placeholder="https://linkedin.com/in/profile">
+                            </div>
+                            <div class="form-group">
+                                <label>Current Company</label>
+                                <input type="text" name="refCompany" placeholder="Company name">
+                            </div>
+                            <div class="form-group">
+                                <label>Designation</label>
+                                <input type="text" name="refDesignation" placeholder="e.g., Senior Developer">
+                            </div>
+                            <div class="form-group">
+                                <label>Experience (Yrs) <span class="required">*</span></label>
+                                <input type="number" name="refExperience" min="0" step="0.5" placeholder="e.g., 5.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Qualification <span class="required">*</span></label>
+                                <select name="refQualification">
+                                    <option value="">-- Select --</option>
+                                    <option value="B.Tech/B.E.">B.Tech/B.E.</option>
+                                    <option value="M.Tech/M.E.">M.Tech/M.E.</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="MCA">MCA</option>
+                                    <option value="B.Sc">B.Sc</option>
+                                    <option value="M.Sc">M.Sc</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="BBA">BBA</option>
+                                    <option value="CA">CA</option>
+                                    <option value="PhD">PhD</option>
+                                    <option value="Diploma">Diploma</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Location <span class="required">*</span></label>
+                                <input type="text" name="refLocation" placeholder="City, State">
+                            </div>
+                            <div class="form-group">
+                                <label>Current CTC (LPA)</label>
+                                <input type="number" name="refCTC" min="0" step="0.1" placeholder="e.g., 10.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Expected CTC (LPA) <span class="required">*</span></label>
+                                <input type="number" name="refExpectedCTC" min="0" step="0.1" placeholder="e.g., 15.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Notice Period <span class="required">*</span></label>
+                                <select name="refNoticePeriod">
+                                    <option value="">-- Select --</option>
+                                    <option value="Immediate">Immediate</option>
+                                    <option value="15 days">15 days</option>
+                                    <option value="30 days">30 days</option>
+                                    <option value="60 days">60 days</option>
+                                    <option value="90 days">90 days</option>
+                                    <option value="90+ days">90+ days</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload CV</label>
+                            <input type="file" name="refCVFile" id="refCVFile" accept=".pdf,.doc,.docx" style="font-size:0.85rem;">
+                        </div>
+                    </div>
                 </div>
 
-                <div style="background:#f0f9ff;border:1px solid #bfdbfe;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                <!-- Info box for send-link mode -->
+                <div id="refSendLinkInfo" style="background:#f0f9ff;border:1px solid #bfdbfe;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
                     <h4 style="margin:0 0 0.5rem;font-size:0.9rem;color:#1e40af;">How this works</h4>
                     <ol style="margin:0;padding-left:1.25rem;font-size:0.82rem;color:#444;line-height:1.7;">
                         <li>You submit the candidate's email and name above</li>
@@ -3642,6 +3738,12 @@
                         <li>Once the candidate submits, you'll be notified and can fill your assessment</li>
                         <li>After you complete the assessment, the referral is fully submitted</li>
                     </ol>
+                </div>
+
+                <!-- Info box for direct-fill mode -->
+                <div id="refDirectInfo" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+                    <h4 style="margin:0 0 0.5rem;font-size:0.9rem;color:#166534;">Direct Submission</h4>
+                    <p style="margin:0;font-size:0.82rem;color:#444;line-height:1.7;">You are filling the candidate's information directly. No email link will be sent to the candidate. The referral will be submitted immediately.</p>
                 </div>
 
                 <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
@@ -5696,6 +5798,36 @@
             }
         }
 
+        // ── Referral Mode Toggle ──
+        function toggleReferralMode() {
+            const mode = document.querySelector('input[name="referralMode"]:checked').value;
+            const directFields = document.getElementById('refDirectFields');
+            const sendInfo = document.getElementById('refSendLinkInfo');
+            const directInfo = document.getElementById('refDirectInfo');
+            const subtext = document.getElementById('refCandSubtext');
+            const btn = document.getElementById('initiateReferralBtn');
+            const sendLabel = document.getElementById('refModeSendLabel');
+            const directLabel = document.getElementById('refModeDirectLabel');
+
+            if (mode === 'fill_direct') {
+                if (directFields) directFields.style.display = 'block';
+                if (sendInfo) sendInfo.style.display = 'none';
+                if (directInfo) directInfo.style.display = 'block';
+                if (subtext) subtext.textContent = 'Fill in the candidate\'s details below. No link will be sent to the candidate.';
+                if (btn) btn.textContent = 'Submit Referral';
+                if (sendLabel) { sendLabel.style.borderColor = 'var(--border)'; sendLabel.style.background = '#fff'; sendLabel.style.color = '#333'; }
+                if (directLabel) { directLabel.style.borderColor = 'var(--brand-blue)'; directLabel.style.background = '#f0f5ff'; directLabel.style.color = 'var(--brand-blue)'; }
+            } else {
+                if (directFields) directFields.style.display = 'none';
+                if (sendInfo) sendInfo.style.display = 'block';
+                if (directInfo) directInfo.style.display = 'none';
+                if (subtext) subtext.textContent = 'Enter the candidate\'s email and name. They will receive a form to fill in their detailed information and upload their CV.';
+                if (btn) btn.textContent = 'Send Referral Invite';
+                if (sendLabel) { sendLabel.style.borderColor = 'var(--brand-blue)'; sendLabel.style.background = '#f0f5ff'; sendLabel.style.color = 'var(--brand-blue)'; }
+                if (directLabel) { directLabel.style.borderColor = 'var(--border)'; directLabel.style.background = '#fff'; directLabel.style.color = '#333'; }
+            }
+        }
+
         // ── Referral Form: Job Change Handler ──
         function onReferralJobChange(jobId) {
             const summaryDiv = document.getElementById('refJobSummary');
@@ -5800,8 +5932,9 @@
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+            const mode = data.referralMode || 'send_link';
 
-            // Validations
+            // Common validations
             if (!data.jobId) { showToast('Please select a job', 'error'); return; }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -5815,13 +5948,23 @@
                 return;
             }
 
+            // Direct-fill mode: validate required fields
+            if (mode === 'fill_direct') {
+                if (!data.refPhone || data.refPhone.trim().length < 6) { showToast('Candidate phone is required', 'error'); return; }
+                if (!data.refExperience) { showToast('Candidate experience is required', 'error'); return; }
+                if (!data.refQualification) { showToast('Candidate qualification is required', 'error'); return; }
+                if (!data.refLocation || data.refLocation.trim().length < 2) { showToast('Candidate location is required', 'error'); return; }
+                if (!data.refExpectedCTC) { showToast('Expected CTC is required', 'error'); return; }
+                if (!data.refNoticePeriod) { showToast('Notice period is required', 'error'); return; }
+            }
+
             const selectedJob = JOBS_DATA.find(j => j.id === data.jobId);
 
             const submitBtn = document.getElementById('initiateReferralBtn');
-            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending Invite...'; }
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = mode === 'fill_direct' ? 'Submitting...' : 'Sending Invite...'; }
 
             const payload = {
-                action: 'initiateReferral',
+                action: mode === 'fill_direct' ? 'directReferral' : 'initiateReferral',
                 referrerEmail: currentUser.email,
                 referrerName: currentUser.name || '',
                 partnerId: currentUser.partnerId || '',
@@ -5831,8 +5974,41 @@
                 jobTitle: selectedJob ? selectedJob.title : '',
                 jobDomain: selectedJob ? selectedJob.domain : '',
                 jobCompany: selectedJob ? selectedJob.company : '',
-                referralAmount: selectedJob ? selectedJob.referralAmount : 0
+                referralAmount: (currentUser.type === 'jobSeeker') ? 0 : (selectedJob ? selectedJob.referralAmount : 0)
             };
+
+            // Add direct-fill fields
+            if (mode === 'fill_direct') {
+                payload.phone = data.refPhone || '';
+                payload.linkedin = data.refLinkedin || '';
+                payload.company = data.refCompany || '';
+                payload.designation = data.refDesignation || '';
+                payload.experience = data.refExperience || '';
+                payload.qualification = data.refQualification || '';
+                payload.location = data.refLocation || '';
+                payload.ctc = data.refCTC || '';
+                payload.expectedCTC = data.refExpectedCTC || '';
+                payload.noticePeriod = data.refNoticePeriod || '';
+
+                // Handle CV file upload as base64
+                const cvFileInput = document.getElementById('refCVFile');
+                if (cvFileInput && cvFileInput.files && cvFileInput.files.length > 0) {
+                    try {
+                        const file = cvFileInput.files[0];
+                        const base64 = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result.split(',')[1]);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                        payload.cvBase64 = base64;
+                        payload.cvFileName = file.name;
+                        payload.cvMimeType = file.type;
+                    } catch (cvErr) {
+                        console.error('CV read error:', cvErr);
+                    }
+                }
+            }
 
             try {
                 const resp = await fetch(APPS_SCRIPT_URL, {
@@ -5842,26 +6018,30 @@
                 });
                 const result = await resp.json();
                 if (result.success) {
-                    let msg = 'Referral invite sent to ' + data.candidateEmail + '! They will receive a form to fill their details.';
+                    let msg = mode === 'fill_direct'
+                        ? 'Referral submitted successfully for ' + data.candidateName + '!'
+                        : 'Referral invite sent to ' + data.candidateEmail + '! They will receive a form to fill their details.';
                     if (result.isExistingCandidate) {
                         msg += ' (Existing candidate — 50% referral amount applies)';
                     }
                     showToast(msg, 'success');
                     form.reset();
-                    document.getElementById('refJobSummary').style.display = 'none';
-                    document.getElementById('existingCandidateNotice').style.display = 'none';
+                    toggleReferralMode(); // Reset mode toggle UI
+                    const jobSummary = document.getElementById('refJobSummary');
+                    const existNotice = document.getElementById('existingCandidateNotice');
+                    if (jobSummary) jobSummary.style.display = 'none';
+                    if (existNotice) existNotice.style.display = 'none';
                     closeModal('submitReferralModal');
-                    // Reload referrals in dashboard
                     if (typeof loadPartnerEarnings === 'function') loadPartnerEarnings();
                 } else {
-                    showToast(result.error || 'Failed to send referral invite', 'error');
+                    showToast(result.error || 'Failed to submit referral', 'error');
                 }
             } catch (err) {
-                console.error('Referral initiation error:', err);
+                console.error('Referral error:', err);
                 showToast('Failed to send. Please check your connection.', 'error');
             }
 
-            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Referral Invite'; }
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = mode === 'fill_direct' ? 'Submit Referral' : 'Send Referral Invite'; }
         }
 
         // ── Open Partner Assessment Modal ──
@@ -6619,11 +6799,14 @@
                 // Always show the right sections and render jobs — regardless of backend status
                 if (currentUser.type === 'jobSeeker' || userType === 'jobSeeker') {
                     document.getElementById('appNav').style.display = 'block';
-                    document.getElementById('refNav').style.display = 'none';
+                    document.getElementById('refNav').style.display = 'block';
+                    document.getElementById('refNav').textContent = 'Refer a Friend';
                     document.getElementById('jobSeekerStats').style.display = 'grid';
                     document.getElementById('referrerStats').style.display = 'none';
                     document.getElementById('invitePartnerSection').style.display = 'none';
                     document.getElementById('recommendedJobsSection').style.display = 'block';
+                    // Hide referral amount column for job seekers
+                    document.querySelectorAll('#referralsTable th:nth-child(5), #referralsTable td:nth-child(5)').forEach(function(el) { el.style.display = 'none'; });
                     // Render local data immediately (sync — no wait)
                     console.log('[GCCPROs] About to renderRecommendedJobs. domain=' + currentUser.domain + ', type=' + currentUser.type);
                     buildDomainFilterChips();
@@ -6631,6 +6814,9 @@
                     showDashboardLoading(true, 'Loading your applications...', 85);
                     // Fire async fetch (non-blocking — dashboard is usable while this loads)
                     loadUserApplications().catch(function(e) { console.log('loadUserApplications bg error:', e); });
+                    // Job seekers also get referral features (Refer a Friend)
+                    populateReferralJobDropdown();
+                    loadPartnerEarnings().catch(function(e) { console.log('loadJobSeekerReferrals bg error:', e); });
                 } else {
                     document.getElementById('appNav').style.display = 'none';
                     document.getElementById('refNav').style.display = 'block';

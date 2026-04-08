@@ -179,124 +179,151 @@
 
     // ═══════════════════════════════════════════
     //  FORM A: Job Seeker Registration (opportunities.html)
-    //  Hooks into: input[name="resume"] in #jobSeekerForm Step 3
+    //  Hooks into: #jsCVAutoFill (Step 1) and input[name="resume"] (Step 3)
     // ═══════════════════════════════════════════
+    function fillJobSeekerFromCV(form, statusEl, file) {
+        if (!file) return;
+        var ext = file.name.split(".").pop().toLowerCase();
+        if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
+
+        showStatus(statusEl, "parsing", "Extracting details from your CV...");
+
+        extractTextFromFile(file).then(function(text) {
+            if (!text || text.trim().length < 30) {
+                showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
+                return;
+            }
+            var info = parseCVText(text);
+            var filled = 0;
+
+            // Auto-fill Job Seeker form fields (only empty ones)
+            if (setIfEmpty(form.querySelector('[name="fullName"]'), info.fullName)) filled++;
+            if (setIfEmpty(form.querySelector('[name="phone"]'), info.phone)) filled++;
+            if (setIfEmpty(form.querySelector('[name="linkedin"]'), info.linkedin)) filled++;
+            if (setIfEmpty(form.querySelector('[name="currentCompany"]'), info.company)) filled++;
+            if (setIfEmpty(form.querySelector('[name="currentDesignation"]'), info.designation)) filled++;
+            if (setIfEmpty(form.querySelector('[name="currentLocation"]'), info.location)) filled++;
+            if (setIfEmpty(form.querySelector('[name="totalExperience"]'), info.experience)) filled++;
+            if (setIfEmpty(form.querySelector('[name="currentCTC"]'), info.currentCTC)) filled++;
+            if (setIfEmpty(form.querySelector('[name="expectedCTC"]'), info.expectedCTC)) filled++;
+            if (setIfEmpty(form.querySelector('[name="noticePeriod"]'), info.noticePeriodDays)) filled++;
+
+            if (filled > 0) {
+                showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
+            } else {
+                showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
+            }
+        }).catch(function(err) {
+            console.error("CV parse error:", err);
+            showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
+        });
+    }
+
     function initJobSeekerAutoExtract() {
         var form = document.getElementById("jobSeekerForm");
         if (!form) return; // Not on this page
 
-        var resumeInput = form.querySelector('input[name="resume"]');
-        if (!resumeInput) return;
-
-        var statusEl = createStatusDiv(resumeInput);
-
-        resumeInput.addEventListener("change", function() {
-            var file = this.files && this.files[0];
-            if (!file) return;
-            var ext = file.name.split(".").pop().toLowerCase();
-            if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
-
-            showStatus(statusEl, "parsing", "Extracting details from your CV...");
-
-            extractTextFromFile(file).then(function(text) {
-                if (!text || text.trim().length < 30) {
-                    showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
-                    return;
-                }
-                var info = parseCVText(text);
-                var filled = 0;
-
-                // Auto-fill Job Seeker form fields (only empty ones)
-                if (setIfEmpty(form.querySelector('[name="fullName"]'), info.fullName)) filled++;
-                if (setIfEmpty(form.querySelector('[name="phone"]'), info.phone)) filled++;
-                if (setIfEmpty(form.querySelector('[name="linkedin"]'), info.linkedin)) filled++;
-                if (setIfEmpty(form.querySelector('[name="currentCompany"]'), info.company)) filled++;
-                if (setIfEmpty(form.querySelector('[name="currentDesignation"]'), info.designation)) filled++;
-                if (setIfEmpty(form.querySelector('[name="currentLocation"]'), info.location)) filled++;
-                if (setIfEmpty(form.querySelector('[name="totalExperience"]'), info.experience)) filled++;
-                if (setIfEmpty(form.querySelector('[name="currentCTC"]'), info.currentCTC)) filled++;
-                if (setIfEmpty(form.querySelector('[name="expectedCTC"]'), info.expectedCTC)) filled++;
-                if (setIfEmpty(form.querySelector('[name="noticePeriod"]'), info.noticePeriodDays)) filled++;
-
-                if (filled > 0) {
-                    showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
-                } else {
-                    showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
-                }
-            }).catch(function(err) {
-                console.error("CV parse error:", err);
-                showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
+        // Hook 1: CV auto-fill input at the top of Step 1
+        var cvAutoFill = document.getElementById("jsCVAutoFill");
+        if (cvAutoFill) {
+            var statusEl1 = createStatusDiv(cvAutoFill);
+            cvAutoFill.addEventListener("change", function() {
+                fillJobSeekerFromCV(form, statusEl1, this.files && this.files[0]);
             });
-        });
+        }
+
+        // Hook 2: Resume upload in Step 3 (also triggers auto-fill for any remaining empty fields)
+        var resumeInput = form.querySelector('input[name="resume"]');
+        if (resumeInput) {
+            var statusEl2 = createStatusDiv(resumeInput);
+            resumeInput.addEventListener("change", function() {
+                fillJobSeekerFromCV(form, statusEl2, this.files && this.files[0]);
+            });
+        }
     }
 
     // ═══════════════════════════════════════════
     //  FORM B: Candidate Referral (candidate-referral.html)
     //  Hooks into: #cvFile input
     // ═══════════════════════════════════════════
-    function initReferralAutoExtract() {
-        var cvInput = document.getElementById("cvFile");
-        if (!cvInput) return; // Not on this page
+    function fillReferralFromCV(statusEl, file) {
+        if (!file) return;
+        var ext = file.name.split(".").pop().toLowerCase();
+        if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
 
-        var statusEl = createStatusDiv(cvInput);
+        showStatus(statusEl, "parsing", "Extracting details from your CV...");
 
-        cvInput.addEventListener("change", function() {
-            var file = this.files && this.files[0];
-            if (!file) return;
-            var ext = file.name.split(".").pop().toLowerCase();
-            if (ext !== "pdf" && ext !== "docx" && ext !== "doc") return;
+        extractTextFromFile(file).then(function(text) {
+            if (!text || text.trim().length < 30) {
+                showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
+                return;
+            }
+            var info = parseCVText(text);
+            var filled = 0;
 
-            showStatus(statusEl, "parsing", "Extracting details from your CV...");
+            if (setIfEmpty(document.getElementById("candidateName"), info.fullName)) filled++;
+            if (setIfEmpty(document.getElementById("phone"), info.phone)) filled++;
+            if (setIfEmpty(document.getElementById("linkedin"), info.linkedin)) filled++;
+            if (setIfEmpty(document.getElementById("company"), info.company)) filled++;
+            if (setIfEmpty(document.getElementById("designation"), info.designation)) filled++;
+            if (setIfEmpty(document.getElementById("experience"), info.experience)) filled++;
+            if (setIfEmpty(document.getElementById("location"), info.location)) filled++;
+            if (setIfEmpty(document.getElementById("ctc"), info.currentCTC)) filled++;
+            if (setIfEmpty(document.getElementById("expectedCTC"), info.expectedCTC)) filled++;
+            if (setIfEmpty(document.getElementById("panNumber"), info.pan)) filled++;
 
-            extractTextFromFile(file).then(function(text) {
-                if (!text || text.trim().length < 30) {
-                    showStatus(statusEl, "warn", "Could not extract enough text from CV. Please fill in details manually.");
-                    return;
+            // Notice period (select dropdown)
+            if (info.noticePeriodDays !== undefined) {
+                var npSelect = document.getElementById("noticePeriod");
+                if (npSelect && !npSelect.value) {
+                    var val = "";
+                    if (info.noticePeriodDays === 0) val = "Immediate";
+                    else if (info.noticePeriodDays <= 15) val = "15 days";
+                    else if (info.noticePeriodDays <= 30) val = "30 days";
+                    else if (info.noticePeriodDays <= 60) val = "60 days";
+                    else if (info.noticePeriodDays <= 90) val = "90 days";
+                    else val = "90+ days";
+                    npSelect.value = val; filled++;
                 }
-                var info = parseCVText(text);
-                var filled = 0;
+            }
+            // Qualification (select dropdown)
+            if (info.qualification) {
+                var qSelect = document.getElementById("qualification");
+                if (qSelect && !qSelect.value) { qSelect.value = info.qualification; filled++; }
+            }
 
-                if (setIfEmpty(document.getElementById("candidateName"), info.fullName)) filled++;
-                if (setIfEmpty(document.getElementById("phone"), info.phone)) filled++;
-                if (setIfEmpty(document.getElementById("linkedin"), info.linkedin)) filled++;
-                if (setIfEmpty(document.getElementById("company"), info.company)) filled++;
-                if (setIfEmpty(document.getElementById("designation"), info.designation)) filled++;
-                if (setIfEmpty(document.getElementById("experience"), info.experience)) filled++;
-                if (setIfEmpty(document.getElementById("location"), info.location)) filled++;
-                if (setIfEmpty(document.getElementById("ctc"), info.currentCTC)) filled++;
-                if (setIfEmpty(document.getElementById("expectedCTC"), info.expectedCTC)) filled++;
-                if (setIfEmpty(document.getElementById("panNumber"), info.pan)) filled++;
-
-                // Notice period (select dropdown)
-                if (info.noticePeriodDays !== undefined) {
-                    var npSelect = document.getElementById("noticePeriod");
-                    if (npSelect && !npSelect.value) {
-                        var val = "";
-                        if (info.noticePeriodDays === 0) val = "Immediate";
-                        else if (info.noticePeriodDays <= 15) val = "15 days";
-                        else if (info.noticePeriodDays <= 30) val = "30 days";
-                        else if (info.noticePeriodDays <= 60) val = "60 days";
-                        else if (info.noticePeriodDays <= 90) val = "90 days";
-                        else val = "90+ days";
-                        npSelect.value = val; filled++;
-                    }
-                }
-                // Qualification (select dropdown)
-                if (info.qualification) {
-                    var qSelect = document.getElementById("qualification");
-                    if (qSelect && !qSelect.value) { qSelect.value = info.qualification; filled++; }
-                }
-
-                if (filled > 0) {
-                    showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
-                } else {
-                    showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
-                }
-            }).catch(function(err) {
-                console.error("CV parse error:", err);
-                showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
-            });
+            if (filled > 0) {
+                showStatus(statusEl, "success", filled + " field" + (filled > 1 ? "s" : "") + " auto-filled from your CV. Please review for accuracy.");
+            } else {
+                showStatus(statusEl, "info", "CV parsed but no empty fields could be auto-filled.");
+            }
+        }).catch(function(err) {
+            console.error("CV parse error:", err);
+            showStatus(statusEl, "warn", "Could not parse CV automatically. Please fill in details manually.");
         });
+    }
+
+    function initReferralAutoExtract() {
+        // Hook 1: CV auto-fill input at the top of the form
+        var cvAutoFillRef = document.getElementById("cvAutoFillRef");
+        if (cvAutoFillRef) {
+            var statusEl1 = createStatusDiv(cvAutoFillRef);
+            cvAutoFillRef.addEventListener("change", function() {
+                fillReferralFromCV(statusEl1, this.files && this.files[0]);
+            });
+        }
+
+        // Hook 2: Original cvFile input (also triggers auto-fill for remaining empty fields)
+        var cvInput = document.getElementById("cvFile");
+        if (cvInput) {
+            var statusEl2 = createStatusDiv(cvInput);
+            cvInput.addEventListener("change", function() {
+                fillReferralFromCV(statusEl2, this.files && this.files[0]);
+            });
+        }
+
+        // If neither input exists, we're not on this page
+        if (!cvAutoFillRef && !cvInput) return;
     }
 
     // ─── Initialize on DOM ready ───
