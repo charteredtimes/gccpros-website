@@ -483,7 +483,8 @@
                     <div class="two-column">
                         <div class="form-group">
                             <label for="phone" class="required">Phone</label>
-                            <input type="tel" id="phone" name="phone" placeholder="+91" required>
+                            <input type="tel" id="phone" name="phone" placeholder="+91 9876543210" required>
+                            <span class="error-text hidden" id="phoneError">Please enter a valid 10-digit mobile number</span>
                         </div>
 
                         <div class="form-group">
@@ -912,6 +913,20 @@
         });
 
         // LinkedIn validation on blur
+        document.getElementById('phone').addEventListener('blur', function() {
+            var val = this.value.trim();
+            var digits = val.replace(/\D/g, '');
+            var err = document.getElementById('phoneError');
+            if (val && digits.length < 10) {
+                err.textContent = 'Please enter a valid 10-digit mobile number';
+                err.classList.remove('hidden');
+                this.classList.add('has-error');
+            } else {
+                err.classList.add('hidden');
+                this.classList.remove('has-error');
+            }
+        });
+
         document.getElementById('linkedin').addEventListener('blur', function() {
             var val = this.value.trim();
             var err = document.getElementById('linkedinError');
@@ -936,6 +951,17 @@
             // Validate required fields
             if (!this.checkValidity()) {
                 showMessage('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+
+            // Validate Phone (must have at least 10 digits)
+            const phoneVal = (document.getElementById('phone').value || '').trim();
+            const phoneDigits = phoneVal.replace(/\D/g, '');
+            if (phoneDigits.length < 10) {
+                document.getElementById('phoneError').textContent = 'Please enter a valid 10-digit mobile number';
+                document.getElementById('phoneError').classList.remove('hidden');
+                document.getElementById('phone').classList.add('has-error');
+                showMessage('A valid phone number is required (minimum 10 digits).', 'error');
                 return;
             }
 
