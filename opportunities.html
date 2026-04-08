@@ -6677,17 +6677,8 @@
                 return;
             }
 
-            // Check if email exists
-            const loginType = selectedLoginType;
-            try {
-                const exists = await checkEmailExists(email, loginType);
-                if (!exists) {
-                    const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
-                    showToast('No ' + typeLabel + ' account found for this email.', 'error');
-                    return;
-                }
-            } catch(e) { /* allow to continue if check fails */ }
-
+            // Skip email-exists check — allow forgot-password even for ghost registrations
+            // (accounts lost due to earlier sync issues). Recovery happens at password-set step.
             fpEmail = email;
 
             // Send OTP via backend
