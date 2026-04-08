@@ -662,10 +662,13 @@
         </div>
 
         <div id="successState" class="hidden">
-            <div class="form-container success-page">
-                <div class="success-icon">✓</div>
-                <h2>Thank You!</h2>
-                <p id="successMessage"></p>
+            <div class="form-container success-page" style="text-align:center;padding:3rem 2rem;">
+                <div class="success-icon" style="font-size:3rem;margin-bottom:1rem;">✅</div>
+                <h2 style="color:#0B1120;margin-bottom:1rem;">Thank You!</h2>
+                <p id="successMessage" style="font-size:1.05rem;color:#333;line-height:1.7;max-width:500px;margin:0 auto;"></p>
+                <div style="margin-top:2rem;">
+                    <a href="https://www.gccpros.com/opportunities.html" style="display:inline-block;background:#D4A843;color:#0B1120;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:700;">Explore More Opportunities</a>
+                </div>
             </div>
         </div>
     </div>
@@ -1021,8 +1024,7 @@
 
                 if (result.success) {
                     // Show success message
-                    const successMessage = `Thank you! Your information has been submitted. ${escapeHtml(referralData.referrerName)} will be notified.`;
-                    document.getElementById('successMessage').innerHTML = successMessage;
+                    document.getElementById('successMessage').innerHTML = 'Thanks for submitting your profile. We will review your application and get in touch soon.';
                     showState('success');
                 } else {
                     submitBtn.disabled = false;
