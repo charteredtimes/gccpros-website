@@ -3871,18 +3871,43 @@
                 <input type="hidden" id="appJobId" name="jobId">
                 <input type="hidden" id="appJobTitle" name="jobTitle">
 
-                <!-- Section 1: Pre-filled from profile (read-only summary) -->
+                <!-- Section 1: Pre-filled from profile (editable) -->
                 <div style="background:var(--cream);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
-                    <h4 style="margin:0 0 0.5rem;font-size:0.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;">Your Profile</h4>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1.5rem;font-size:0.88rem;">
-                        <div><strong>Name:</strong> <span id="appProfileName">—</span></div>
-                        <div><strong>Email:</strong> <span id="appProfileEmail">—</span></div>
-                        <div><strong>Phone:</strong> <span id="appProfilePhone">—</span></div>
-                        <div><strong>Location:</strong> <span id="appProfileLocation">—</span></div>
-                        <div><strong>Experience:</strong> <span id="appProfileExp">—</span> yrs</div>
-                        <div><strong>Notice Period:</strong> <span id="appProfileNotice">—</span> days</div>
-                        <div><strong>Current CTC:</strong> <span id="appProfileCTC">—</span> LPA</div>
-                        <div><strong>Expected CTC:</strong> <span id="appProfileExpCTC">—</span> LPA</div>
+                    <h4 style="margin:0 0 0.25rem;font-size:0.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;">Your Profile</h4>
+                    <p style="font-size:0.75rem;color:var(--muted);margin:0 0 0.75rem;">Pre-filled from your registration. You can edit any field before applying.</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1rem;">
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Full Name</label>
+                            <input type="text" id="appProfileName" readonly style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:#f1f5f9;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Email</label>
+                            <input type="email" id="appProfileEmail" readonly style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:#f1f5f9;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Phone</label>
+                            <input type="tel" id="appProfilePhone" style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Current Location <span style="color:#dc2626;">*</span></label>
+                            <input type="text" id="appProfileLocation" required style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Total Experience (yrs) <span style="color:#dc2626;">*</span></label>
+                            <input type="number" id="appProfileExp" min="0" step="0.5" required style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Notice Period (days) <span style="color:#dc2626;">*</span></label>
+                            <input type="number" id="appProfileNotice" min="0" required style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Current CTC (LPA) <span style="color:#dc2626;">*</span></label>
+                            <input type="number" id="appProfileCTC" min="0" step="0.1" required style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.78rem;font-weight:600;margin-bottom:0.15rem;">Expected CTC (LPA) <span style="color:#dc2626;">*</span></label>
+                            <input type="number" id="appProfileExpCTC" min="0" step="0.1" required style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:100%;">
+                        </div>
                     </div>
                 </div>
 
@@ -5437,7 +5462,8 @@
                 location: data.currentLocation,
                 currentCTC: data.currentCTC,
                 expectedCTC: data.expectedCTC,
-                experience: data.totalExperience
+                experience: data.totalExperience,
+                noticePeriod: data.noticePeriod || ''
             };
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
@@ -5726,7 +5752,16 @@
                     name: statusData.name || email.split('@')[0],
                     email: email,
                     type: statusData.type || loginType,
-                    domain: statusData.domain || ''
+                    domain: statusData.domain || '',
+                    phone: statusData.phone || '',
+                    linkedin: statusData.linkedin || '',
+                    currentCompany: statusData.currentCompany || '',
+                    designation: statusData.designation || '',
+                    location: statusData.location || '',
+                    experience: statusData.experience || '',
+                    currentCTC: statusData.currentCTC || '',
+                    expectedCTC: statusData.expectedCTC || '',
+                    noticePeriod: statusData.noticePeriod || ''
                 };
 
                 showLoginLoading(true, 'Loading your dashboard...');
@@ -7083,15 +7118,16 @@
             document.getElementById('appJobTitle').value = job.title;
             document.getElementById('appModalTitle').textContent = 'Apply: ' + job.title;
 
-            // Pre-fill profile info (read-only display)
-            document.getElementById('appProfileName').textContent = currentUser.name || '—';
-            document.getElementById('appProfileEmail').textContent = currentUser.email || '—';
-            document.getElementById('appProfilePhone').textContent = currentUser.phone || '—';
-            document.getElementById('appProfileLocation').textContent = currentUser.location || '—';
-            document.getElementById('appProfileExp').textContent = currentUser.experience || '—';
-            document.getElementById('appProfileNotice').textContent = currentUser.noticePeriod || '—';
-            document.getElementById('appProfileCTC').textContent = currentUser.currentCTC || '—';
-            document.getElementById('appProfileExpCTC').textContent = currentUser.expectedCTC || '—';
+            // Pre-fill profile info (editable inputs)
+            document.getElementById('appProfileName').value = currentUser.name || '';
+            document.getElementById('appProfileEmail').value = currentUser.email || '';
+            document.getElementById('appProfilePhone').value = currentUser.phone || '';
+            document.getElementById('appProfileLocation').value = currentUser.location || '';
+            document.getElementById('appProfileExp').value = currentUser.experience || '';
+            document.getElementById('appProfileNotice').value = currentUser.noticePeriod || '';
+            // Strip " LPA" suffix if present so the number input works
+            document.getElementById('appProfileCTC').value = (currentUser.currentCTC || '').toString().replace(/\s*LPA\s*/i, '') || '';
+            document.getElementById('appProfileExpCTC').value = (currentUser.expectedCTC || '').toString().replace(/\s*LPA\s*/i, '') || '';
 
             // Populate skills checkboxes from job's skills array
             const skillsContainer = document.getElementById('appSkillsContainer');
@@ -7235,17 +7271,27 @@
                 });
             }
 
+            // Read editable profile fields (user may have updated them)
+            const appName = document.getElementById('appProfileName').value || '';
+            const appEmail = document.getElementById('appProfileEmail').value || '';
+            const appPhone = document.getElementById('appProfilePhone').value || '';
+            const appLocation = document.getElementById('appProfileLocation').value || '';
+            const appExp = document.getElementById('appProfileExp').value || '';
+            const appNotice = document.getElementById('appProfileNotice').value || '';
+            const appCTC = document.getElementById('appProfileCTC').value ? document.getElementById('appProfileCTC').value + ' LPA' : '';
+            const appExpCTC = document.getElementById('appProfileExpCTC').value ? document.getElementById('appProfileExpCTC').value + ' LPA' : '';
+
             const payload = {
                 action: 'submitJobApplication',
                 userId: currentUser.userId || '',
-                applicantName: currentUser.name || '',
-                email: currentUser.email || '',
-                phone: currentUser.phone || '',
-                location: currentUser.location || '',
-                experience: currentUser.experience || '',
-                noticePeriod: currentUser.noticePeriod || '',
-                currentCTC: currentUser.currentCTC || '',
-                expectedCTC: currentUser.expectedCTC || '',
+                applicantName: appName,
+                email: appEmail,
+                phone: appPhone,
+                location: appLocation,
+                experience: appExp,
+                noticePeriod: appNotice,
+                currentCTC: appCTC,
+                expectedCTC: appExpCTC,
                 jobId: document.getElementById('appJobId').value,
                 jobTitle: document.getElementById('appJobTitle').value,
                 selectedSkills: selectedSkills,
