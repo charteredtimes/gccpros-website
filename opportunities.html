@@ -5368,6 +5368,9 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
+            // Mark email as verified (OTP was already confirmed above)
+            data.emailVerified = true;
+
             // Combine phone code + number
             data.phone = (data.phoneCode || '+91') + ' ' + data.phone;
             if (data.altPhone) data.altPhone = (data.altPhoneCode || '+91') + ' ' + data.altPhone;
@@ -5375,8 +5378,12 @@
             if (data.currentCTC) data.currentCTC = data.currentCTC + ' LPA';
             if (data.expectedCTC) data.expectedCTC = data.expectedCTC + ' LPA';
 
-            // Include PAN number
-            if (jsPanInput) data.panNumber = (jsPanInput.value || '').toUpperCase().trim();
+            // Include PAN number (optional for job seekers)
+            var jsPanField = form.querySelector('input[name="panNumber"]');
+            if (jsPanField && jsPanField.value) data.panNumber = jsPanField.value.toUpperCase().trim();
+
+            // Map referredBy to referredByCode (backend expects this key)
+            if (data.referredBy) { data.referredByCode = data.referredBy; }
 
             data.action = 'submitApplication';
 
@@ -5510,6 +5517,9 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
+            // Mark email as verified (OTP was already confirmed above)
+            data.emailVerified = true;
+
             // Attach CV data
             data.cvBase64 = cvBase64;
             data.cvFileName = cvFile.name;
@@ -5519,13 +5529,11 @@
             data.phone = (data.phoneCode || '+91') + ' ' + data.phone;
             if (data.altPhone) data.altPhone = (data.altPhoneCode || '+91') + ' ' + data.altPhone;
 
-            // Format CTC as LPA
-            if (data.currentCTC) data.currentCTC = data.currentCTC + ' LPA';
-
             data.action = 'registerReferrer';
 
             // Include PAN number
-            if (refPanInput) data.panNumber = (refPanInput.value || '').toUpperCase().trim();
+            var refPanField = form.querySelector('input[name="panNumber"]');
+            if (refPanField && refPanField.value) data.panNumber = refPanField.value.toUpperCase().trim();
 
             // Include password if set (manual registration)
             const refRegPass = document.getElementById('refRegPassword');
