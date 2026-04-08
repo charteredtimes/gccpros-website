@@ -1036,9 +1036,48 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.08);
             border-color: var(--gold);
         }
+        .rec-job-urgent-badge {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: urgentPulse 2s ease-in-out infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .rec-job-urgent-badge::before {
+            content: '\26A1';
+            font-size: 0.7rem;
+        }
+        @keyframes urgentPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+        }
+        .recommended-job-card.urgent-card {
+            border: 1.5px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 2px 12px rgba(239, 68, 68, 0.08);
+        }
+        .rec-job-new-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
         .rec-job-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
             margin-bottom: 0.5rem;
         }
         .rec-job-domain {
@@ -4588,7 +4627,8 @@
 { id:"GCC-FIN-016", title:"Assistant Manager Finance", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Flexible", qualification:"Commerce Graduate / CA or CA Inter preferred", budget:"₹12–15 LPA", level:"Mid", description:"Handle end-to-end finance and accounting operations with India-focused operations knowledge. Mid-sized company background preferred.", responsibilities:["Support end-to-end finance and accounting operations","Prepare monthly financial statements and MIS","Handle reconciliations and variance analysis","Support audit processes and compliance requirements","Maintain books of accounts and journal entries"], skills:["Finance & Accounting","India Operations","Reconciliations","MIS Reporting","SAP S/4HANA","Excel","Auditor Support"], referralAmount:50000, status:"Active" },
 { id:"GCC-FIN-017", title:"Senior Manager – Taxation", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Permanent", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Leadership Level", qualification:"Chartered Accountant (mandatory)", budget:"~₹25 LPA", level:"Senior–Lead", description:"Head the taxation function covering direct and indirect tax expertise for India operations with people management responsibilities.", responsibilities:["Head direct and indirect tax function for India operations","Manage tax compliance, planning, and advisory","Lead a team of tax professionals","Handle transfer pricing and international tax matters","Coordinate with external consultants and tax authorities"], skills:["Chartered Accountant","Direct Tax","Indirect Tax","GST","Transfer Pricing","International Tax","People Management","SAP Tax Module","Tax Planning"], referralAmount:50000, status:"Active" },
 { id:"GCC-FIN-018", title:"Short-Term Finance Consultant", company:"Leading Industrial Group (GCC)", domain:"Finance", type:"Contract", location:"Pune (Kalyani Nagar)", mode:"On-site", experience:"Senior level", qualification:"CA / MBA Finance preferred", budget:"Competitive (Monthly)", level:"Senior", contractDuration:"2–3 Months", description:"Short-term consultant to support data analysis, financial modeling, audit management, and investor data compilation. Self-starter with minimal learning curve required.", responsibilities:["Perform data analysis and financial modeling","Support audit management processes","Compile investor data and reports","Drive financial process improvements","Work independently with minimal supervision"], skills:["Financial Modeling","Data Analysis","Audit Management","Investor Reporting","Excel Advanced","Self-starter","Big Four Experience preferred"], referralAmount:50000, status:"Active" },
-{ id:"GCC-FIN-019", title:"Chartered Accountant – Audit / DD Assistance", company:"Confidential (GCC)", domain:"Finance", type:"Contract", location:"Local candidates preferred", mode:"On-site", experience:"0–3 Years", qualification:"Chartered Accountant (qualified)", budget:"Competitive (Monthly)", level:"Junior–Mid", contractDuration:"2 Months (extendable by 1 month)", description:"Short-term audit and due diligence assistance role involving preparation of book closure workings, schedules, financials, reconciliations, and support for audit/DD data requirements. No cab or OPE reimbursement provided.", responsibilities:["Prepare book closure workings and schedules","Prepare financials and reconciliations","Support audit and due diligence data requirements","Assist with statutory filings and documentation","Coordinate with audit teams on data requests"], skills:["Chartered Accountant","Audit","Due Diligence","Book Closure","Reconciliations","Financials Preparation","Statutory Compliance","Excel"], referralAmount:25000, status:"Active" }
+{ id:"GCC-FIN-019", title:"Chartered Accountant – Audit / DD Assistance", company:"Confidential (GCC)", domain:"Finance", type:"Contract", location:"Local candidates preferred", mode:"On-site", experience:"0–3 Years", qualification:"Chartered Accountant (qualified)", budget:"Competitive (Monthly)", level:"Junior–Mid", contractDuration:"2 Months (extendable by 1 month)", description:"Short-term audit and due diligence assistance role involving preparation of book closure workings, schedules, financials, reconciliations, and support for audit/DD data requirements. No cab or OPE reimbursement provided.", responsibilities:["Prepare book closure workings and schedules","Prepare financials and reconciliations","Support audit and due diligence data requirements","Assist with statutory filings and documentation","Coordinate with audit teams on data requests"], skills:["Chartered Accountant","Audit","Due Diligence","Book Closure","Reconciliations","Financials Preparation","Statutory Compliance","Excel"], referralAmount:25000, status:"Urgent" },
+{ id:"GCC-FIN-020", title:"Global Travel & Expense Manager", company:"Leading Consumer Intelligence Company (GCC)", domain:"Finance", type:"Permanent", location:"India", mode:"Hybrid", experience:"8+ Years", qualification:"Bachelor's in Finance / Accounting / Business Administration", budget:"Competitive", level:"Senior", description:"End-to-end management of global Travel & Expense reimbursement processes and Corporate/Purchasing Card programs within Finance Operations (Accounts Payable / Procure-to-Pay). Strategic leadership, operational governance, and day-to-day oversight ensuring policy compliance, operational excellence, and financial integrity across all regions.", responsibilities:["Oversee all aspects of T&E reimbursement and P-Card programs including card issuance, spending limits, and user training","Develop, enforce, and ensure compliance with T&E and P-Card policies; conduct regular audits to identify non-compliance and fraud risks","Lead the T&E processing team using Concur T&E, focusing on operational efficiency and accuracy","Generate regular reports on T&E and P-Card usage, compliance, and trends for management decision-making","Manage month-end closing activities in SAP environment for P2P T&E related activities","Maintain vendor relationships with travel agencies and card issuers; negotiate favorable terms","Drive continuous improvement initiatives, automation, and technology enhancements within T&E workflows","Support crisis recovery planning for business travel and card usage during emergencies"], skills:["T&E Management","Concur","SAP Finance","P-Card Programs","Compliance & Audit","Vendor Management","Stakeholder Management","Lean Six Sigma","Data Analysis","Team Leadership"], referralAmount:50000, status:"Urgent", postedDate:"2026-04-08" }
         ];
 
         // ═══════════ JOBS SYNC (5-minute auto-refresh from Google Sheet) ═══════════
@@ -4746,23 +4786,32 @@
 
         var activeDomainFilter = 'myDomain'; // 'myDomain', 'all', or a specific domain name
 
+        // Helper: a job is visible if status is Active or Urgent (anything except Inactive/Closed)
+        function isJobVisible(job) {
+            var s = (job.status || '').toLowerCase();
+            return s === 'active' || s === 'urgent';
+        }
+        function isJobUrgent(job) {
+            return (job.status || '').toLowerCase() === 'urgent';
+        }
+
         function buildDomainFilterChips() {
             const container = document.getElementById('domainFilterToggle');
             if (!container) return;
 
             // Collect unique domains from JOBS_DATA
             const domainSet = new Set();
-            JOBS_DATA.forEach(j => { if (j.status === 'Active') domainSet.add(j.domain); });
+            JOBS_DATA.forEach(j => { if (isJobVisible(j)) domainSet.add(j.domain); });
             const domains = Array.from(domainSet).sort();
 
             // Count jobs per domain
             const domainCounts = {};
             JOBS_DATA.forEach(j => {
-                if (j.status === 'Active') {
+                if (isJobVisible(j)) {
                     domainCounts[j.domain] = (domainCounts[j.domain] || 0) + 1;
                 }
             });
-            const totalActive = JOBS_DATA.filter(j => j.status === 'Active').length;
+            const totalActive = JOBS_DATA.filter(j => isJobVisible(j)).length;
 
             const userDomain = (currentUser && currentUser.domain && currentUser.domain !== 'Other') ? currentUser.domain : '';
             activeDomainFilter = userDomain ? 'myDomain' : 'all';
@@ -6999,11 +7048,22 @@
                 container.innerHTML = '<p style="text-align:center; color:var(--muted); padding:1.5rem;">No matching opportunities found for your domain.</p>';
                 return;
             }
-            let activeJobs = jobs.filter(j => j.status === 'Active');
+            let activeJobs = jobs.filter(j => isJobVisible(j));
 
-            // Sort: user's domain first, then others alphabetically
+            // Sort: urgent first, then newest (by postedDate desc), then user's domain, then alphabetically
             const userDomain = (currentUser && currentUser.domain) ? currentUser.domain : '';
             activeJobs.sort((a, b) => {
+                // Urgent roles always first
+                const aUrgent = isJobUrgent(a) ? 0 : 1;
+                const bUrgent = isJobUrgent(b) ? 0 : 1;
+                if (aUrgent !== bUrgent) return aUrgent - bUrgent;
+                // Newest posted jobs next (jobs with postedDate come before those without)
+                const aDate = a.postedDate || '';
+                const bDate = b.postedDate || '';
+                if (aDate && !bDate) return -1;
+                if (!aDate && bDate) return 1;
+                if (aDate && bDate && aDate !== bDate) return bDate.localeCompare(aDate);
+                // Then user's domain first
                 const aMatch = a.domain === userDomain ? 0 : 1;
                 const bMatch = b.domain === userDomain ? 0 : 1;
                 if (aMatch !== bMatch) return aMatch - bMatch;
@@ -7023,11 +7083,18 @@
             }
 
             // Build job cards
-            let html = displayJobs.map((job, idx) => `
-                <div class="recommended-job-card" data-card-index="${idx}">
+            let html = displayJobs.map((job, idx) => {
+                const urgent = isJobUrgent(job);
+                const isNew = job.postedDate && (Date.now() - new Date(job.postedDate).getTime()) < 7 * 24 * 60 * 60 * 1000;
+                return `
+                <div class="recommended-job-card${urgent ? ' urgent-card' : ''}" data-card-index="${idx}">
                     <div class="rec-job-header">
                         <span class="rec-job-domain">${job.domain}</span>
-                        <span class="rec-job-type">${job.type}</span>
+                        <div style="display:flex;gap:4px;align-items:center;">
+                            ${urgent ? '<span class="rec-job-urgent-badge">Urgent</span>' : ''}
+                            ${isNew ? '<span class="rec-job-new-badge">New</span>' : ''}
+                            <span class="rec-job-type">${job.type}</span>
+                        </div>
                     </div>
                     <h4 class="rec-job-title">${job.title}</h4>
                     <p class="rec-job-company">${job.company}</p>
@@ -7041,7 +7108,7 @@
                     <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
                     <button class="rec-job-apply-btn" data-apply-job="${job.id}" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
                 </div>
-            `).join('');
+            `}).join('');
 
             // Job count badge
             html += '<div style="grid-column:1/-1;text-align:center;padding:0.5rem 0 0;"><span style="font-size:0.8rem;color:var(--muted);">Showing ' + displayJobs.length + ' of ' + totalActive + ' active opportunities</span></div>';
@@ -7068,9 +7135,11 @@
             if (!job) return;
             document.getElementById('jdModalTitle').textContent = job.title;
             const body = document.getElementById('jobDetailBody');
+            const jdUrgent = isJobUrgent(job);
             body.innerHTML = `
                 <p style="font-size:0.9rem;color:var(--muted);margin:0 0 0.75rem;">${job.company}</p>
                 <div class="jd-meta">
+                    ${jdUrgent ? '<span style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-weight:700;">⚡ Urgent Hiring</span>' : ''}
                     <span>${job.domain}</span>
                     <span>${job.type}</span>
                     <span>${job.location}</span>
@@ -7357,10 +7426,10 @@
             if (!jobSelect || !filteredJobs || filteredJobs.length === 0) return;
 
             jobSelect.innerHTML = '<option value="">Select a Job</option>';
-            filteredJobs.forEach(job => {
+            filteredJobs.filter(j => isJobVisible(j)).forEach(job => {
                 const option = document.createElement('option');
                 option.value = job.id;
-                option.textContent = `${job.id} - ${job.title}`;
+                option.textContent = `${job.id} - ${job.title}` + (isJobUrgent(job) ? ' ⚡ Urgent' : '');
                 jobSelect.appendChild(option);
             });
         }
@@ -7402,7 +7471,7 @@
                 }
                 tbody.innerHTML = apps.map(app => {
                     const job = JOBS_DATA.find(j => j.id === app.jobId);
-                    const jobActive = job && job.status === 'Active';
+                    const jobActive = job && isJobVisible(job);
                     const company = job ? job.company : '—';
 
                     // If the job was removed or marked inactive, override display status
@@ -7493,7 +7562,7 @@
 
                         // Check if the referred job is still active
                         const refJob = ref.jobId ? JOBS_DATA.find(j => j.id === ref.jobId) : null;
-                        const jobActive = refJob && refJob.status === 'Active';
+                        const jobActive = refJob && isJobVisible(refJob);
                         if (!jobActive && !['Placed','Paid','Rejected'].includes(status)) {
                             status = 'Role Inactive';
                         }
@@ -7618,8 +7687,19 @@
 
             const userDomain = currentUser.domain || '';
             // Partners only see their domain jobs — no cross-domain
-            let jobs = JOBS_DATA.filter(j => j.status === 'Active' && j.domain === userDomain);
-            jobs.sort((a, b) => a.title.localeCompare(b.title));
+            let jobs = JOBS_DATA.filter(j => isJobVisible(j) && j.domain === userDomain);
+            // Sort: urgent first, then newest, then alphabetical
+            jobs.sort((a, b) => {
+                const aUrgent = isJobUrgent(a) ? 0 : 1;
+                const bUrgent = isJobUrgent(b) ? 0 : 1;
+                if (aUrgent !== bUrgent) return aUrgent - bUrgent;
+                const aDate = a.postedDate || '';
+                const bDate = b.postedDate || '';
+                if (aDate && !bDate) return -1;
+                if (!aDate && bDate) return 1;
+                if (aDate && bDate && aDate !== bDate) return bDate.localeCompare(aDate);
+                return a.title.localeCompare(b.title);
+            });
 
             const countEl = document.getElementById('partnerJobCount');
             if (countEl) countEl.textContent = jobs.length + ' active in ' + (userDomain || 'All');
@@ -7633,11 +7713,18 @@
                 return;
             }
 
-            let html = display.map((job, idx) => `
-                <div class="recommended-job-card" data-card-index="${idx}">
+            let html = display.map((job, idx) => {
+                const urgent = isJobUrgent(job);
+                const isNew = job.postedDate && (Date.now() - new Date(job.postedDate).getTime()) < 7 * 24 * 60 * 60 * 1000;
+                return `
+                <div class="recommended-job-card${urgent ? ' urgent-card' : ''}" data-card-index="${idx}">
                     <div class="rec-job-header">
                         <span class="rec-job-domain">${job.domain}</span>
-                        <span class="rec-job-type">${job.type}</span>
+                        <div style="display:flex;gap:4px;align-items:center;">
+                            ${urgent ? '<span class="rec-job-urgent-badge">Urgent</span>' : ''}
+                            ${isNew ? '<span class="rec-job-new-badge">New</span>' : ''}
+                            <span class="rec-job-type">${job.type}</span>
+                        </div>
                     </div>
                     <h4 class="rec-job-title">${job.title}</h4>
                     <p class="rec-job-company">${job.company}</p>
@@ -7652,7 +7739,7 @@
                     <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
                     <button class="rec-job-apply-btn" style="background:var(--brand-blue);" onclick="prefillReferralForJob('${job.id}')">Refer Candidate</button>
                 </div>
-            `).join('');
+            `}).join('');
 
             html += '<div style="grid-column:1/-1;text-align:center;padding:0.5rem 0;"><span style="font-size:0.8rem;color:var(--muted);">Showing ' + display.length + ' of ' + jobs.length + ' jobs</span></div>';
 
