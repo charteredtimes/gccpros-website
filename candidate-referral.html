@@ -488,7 +488,7 @@
 
                         <div class="form-group">
                             <label for="linkedin" class="required">LinkedIn Profile</label>
-                            <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
+                            <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" required>
                             <span class="error-text hidden" id="linkedinError">Please enter a valid LinkedIn URL (e.g., https://linkedin.com/in/yourprofile)</span>
                         </div>
                     </div>
@@ -533,8 +533,22 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="location" class="required">Location</label>
-                        <input type="text" id="location" name="location" placeholder="City, State" required>
+                        <label for="location" class="required">Current City</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Bangalore" required>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="willingToRelocate" class="required">Willing to Relocate?</label>
+                            <select id="willingToRelocate" name="willingToRelocate" required>
+                                <option value="">Select</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <!-- spacer for grid alignment -->
+                        </div>
                     </div>
                 </div>
 
@@ -544,8 +558,8 @@
 
                     <div class="two-column">
                         <div class="form-group">
-                            <label for="ctc">Current CTC (LPA)</label>
-                            <input type="number" id="ctc" name="ctc" min="0" step="0.1" placeholder="e.g., 10.5">
+                            <label for="ctc" class="required">Current CTC (LPA)</label>
+                            <input type="number" id="ctc" name="ctc" min="0" step="0.1" placeholder="e.g., 10.5" required>
                         </div>
 
                         <div class="form-group">
@@ -566,6 +580,11 @@
                             <option value="90+ days">90+ days</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="reasonForChange" class="required">Reason for Change</label>
+                        <textarea id="reasonForChange" name="reasonForChange" rows="3" placeholder="e.g., Career growth, better compensation, relocation, etc." required style="width:100%;padding:0.6rem 0.8rem;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
+                    </div>
                 </div>
 
                 <!-- PAN Number -->
@@ -578,14 +597,14 @@
                     </div>
                 </div>
 
-                <!-- CV Upload -->
-                <div class="form-section">
+                <!-- CV Upload (hidden if already uploaded via top auto-fill) -->
+                <div class="form-section" id="bottomCVSection">
                     <h3>CV Upload</h3>
 
                     <div class="form-group">
                         <label class="required">Upload CV</label>
                         <div class="file-upload">
-                            <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required>
+                            <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx">
                             <label for="cvFile" class="file-upload-label">
                                 <div>
                                     <svg style="width: 32px; height: 32px; margin-bottom: 8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -599,6 +618,16 @@
                             <div id="fileSize" class="file-size hidden"></div>
                             <div class="file-help">Please upload your most recent CV. This will replace any older version in our database.</div>
                             <div class="error-text hidden" id="fileError"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CV uploaded confirmation (shown when uploaded via top auto-fill) -->
+                <div class="form-section" id="cvUploadedConfirm" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <span style="font-size:1.2rem;">✅</span>
+                        <div>
+                            <strong style="color:#166534;">CV Uploaded Successfully</strong>
+                            <div id="cvUploadedFileName" style="font-size:0.85rem;color:#555;margin-top:0.25rem;"></div>
                         </div>
                     </div>
                 </div>
@@ -846,12 +875,21 @@
             cvLabel.classList.add('has-file');
         }
 
-        // Top CV auto-fill input: also sets selectedFile for form submission
+        // Top CV auto-fill input: sets selectedFile AND hides bottom CV section
         var cvAutoFillInput = document.getElementById('cvAutoFillRef');
         if (cvAutoFillInput) {
             cvAutoFillInput.addEventListener('change', function() {
                 var file = this.files && this.files[0];
-                if (file) handleFileSelection(file);
+                if (file) {
+                    handleFileSelection(file);
+                    // Hide bottom CV upload section and show confirmation
+                    var bottomCV = document.getElementById('bottomCVSection');
+                    var cvConfirm = document.getElementById('cvUploadedConfirm');
+                    var cvConfirmName = document.getElementById('cvUploadedFileName');
+                    if (bottomCV) bottomCV.style.display = 'none';
+                    if (cvConfirm) cvConfirm.style.display = '';
+                    if (cvConfirmName) cvConfirmName.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                }
             });
         }
 
@@ -924,10 +962,14 @@
                 return;
             }
 
-            // Validate CV
+            // Validate CV (could be uploaded at top or bottom)
             if (!selectedFile) {
-                document.getElementById('fileError').textContent = 'Please upload a CV.';
-                document.getElementById('fileError').classList.remove('hidden');
+                showMessage('Please upload your CV using the upload section at the top or bottom of the form.', 'error');
+                // Show bottom CV section if hidden
+                var bottomCV = document.getElementById('bottomCVSection');
+                if (bottomCV) bottomCV.style.display = '';
+                var cvConfirm = document.getElementById('cvUploadedConfirm');
+                if (cvConfirm) cvConfirm.style.display = 'none';
                 return;
             }
 
@@ -953,11 +995,13 @@
                     company: document.getElementById('company').value,
                     designation: document.getElementById('designation').value,
                     experience: parseFloat(document.getElementById('experience').value),
-                    ctc: document.getElementById('ctc').value ? parseFloat(document.getElementById('ctc').value) : null,
+                    ctc: document.getElementById('ctc').value ? parseFloat(document.getElementById('ctc').value) : '',
                     expectedCTC: parseFloat(document.getElementById('expectedCTC').value),
                     noticePeriod: document.getElementById('noticePeriod').value,
                     location: document.getElementById('location').value,
                     qualification: document.getElementById('qualification').value,
+                    willingToRelocate: document.getElementById('willingToRelocate').value,
+                    reasonForChange: document.getElementById('reasonForChange').value,
                     panNumber: panNumber,
                     cvBase64: cvBase64,
                     cvFileName: selectedFile.name,
