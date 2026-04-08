@@ -6773,6 +6773,35 @@
                 console.log('Password reset result:', result);
 
                 if (result.success === false) {
+                    // Account not found — attempt recovery (creates minimal row + sets password)
+                    if (result.error && result.error.indexOf('not found') !== -1) {
+                        console.log('Account not found — attempting recovery for', fpEmail);
+                        try {
+                            const recoverPayload = {
+                                action: 'resetPassword',
+                                email: fpEmail,
+                                password: newPass,
+                                type: selectedLoginType,
+                                recover: true,
+                                fullName: fpEmail.split('@')[0]
+                            };
+                            const recoverRes = await fetch(APPS_SCRIPT_URL, {
+                                method: 'POST',
+                                body: JSON.stringify(recoverPayload),
+                                redirect: 'follow'
+                            });
+                            const recoverResult = await recoverRes.json();
+                            if (recoverResult.success) {
+                                showToast('Account recovered and password set! You can now login.', 'success');
+                                fpOtpCode = null;
+                                fpEmail = null;
+                                setTimeout(() => { resetLoginForm(new Event('click')); }, 1500);
+                                return;
+                            }
+                        } catch (recErr) {
+                            console.error('Recovery failed:', recErr);
+                        }
+                    }
                     showToast(result.error || 'Password reset failed. Please try again.', 'error');
                     return;
                 }
