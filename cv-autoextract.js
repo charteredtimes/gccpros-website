@@ -348,7 +348,30 @@
         if (cvAutoFill) {
             var statusEl1 = createStatusDiv(cvAutoFill);
             cvAutoFill.addEventListener("change", function() {
-                fillJobSeekerFromCV(form, statusEl1, this.files && this.files[0]);
+                var file = this.files && this.files[0];
+                fillJobSeekerFromCV(form, statusEl1, file);
+
+                // Sync with Step 3: hide duplicate resume upload, show confirmation
+                if (file) {
+                    var step3Group = document.getElementById("jsStep3ResumeGroup");
+                    var step3Confirm = document.getElementById("jsStep3ResumeUploaded");
+                    var step3CVName = document.getElementById("jsStep3CVName");
+                    if (step3Group) step3Group.style.display = "none";
+                    if (step3Confirm) step3Confirm.style.display = "block";
+                    if (step3CVName) step3CVName.textContent = file.name;
+
+                    // Also copy the file to the resume input so form submission includes it
+                    var resumeInput = form.querySelector('input[name="resume"]');
+                    if (resumeInput) {
+                        try {
+                            var dt = new DataTransfer();
+                            dt.items.add(file);
+                            resumeInput.files = dt.files;
+                        } catch(e) {
+                            // DataTransfer not supported in older browsers — ignore
+                        }
+                    }
+                }
             });
         }
 
