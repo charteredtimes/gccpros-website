@@ -5655,6 +5655,12 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
+            // v32: Ensure email is included even if field was disabled after OTP verification
+            // (disabled fields are excluded from FormData)
+            if (!data.email || !data.email.trim()) {
+                data.email = document.getElementById('jsEmail').value.trim();
+            }
+
             // Mark email as verified (OTP was already confirmed above)
             data.emailVerified = true;
 
@@ -5874,6 +5880,11 @@
 
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+
+            // v32: Ensure email is included even if field was disabled after OTP verification
+            if (!data.email || !data.email.trim()) {
+                data.email = document.getElementById('refEmail').value.trim();
+            }
 
             // Mark email as verified (OTP was already confirmed above)
             data.emailVerified = true;
