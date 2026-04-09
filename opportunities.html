@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-09-v30">
+    <meta name="version" content="2026-04-10-v31">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -5746,89 +5746,96 @@
             if (jsSubmitBtn) { jsSubmitBtn.disabled = true; jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
             // v30: BULLETPROOF SUBMISSION — retry engine with verification
-            const result = await fetchWithRetry(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                redirect: 'follow'
-            }, {
-                maxRetries: 2,
-                timeout: 45000,
-                email: data.email,
-                regType: 'jobSeeker',
-                onAttempt: function(attempt, total, extraMsg) {
-                    if (jsSubmitBtn) {
-                        if (attempt === 1) jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
-                        else if (extraMsg) jsSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
-                        else jsSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+            // Wrapped in try/catch to guarantee no false success ever shows
+            try {
+                const result = await fetchWithRetry(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                }, {
+                    maxRetries: 2,
+                    timeout: 45000,
+                    email: data.email,
+                    regType: 'jobSeeker',
+                    onAttempt: function(attempt, total, extraMsg) {
+                        if (jsSubmitBtn) {
+                            if (attempt === 1) jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
+                            else if (extraMsg) jsSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
+                            else jsSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+                        }
                     }
-                }
-            });
+                });
 
-            console.log('[GCCPROs] Job seeker final result:', result);
+                console.log('[GCCPROs] Job seeker final result:', result);
 
-            if (result.success === false) {
-                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                if (!result || result.success === false) {
+                    if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
 
-                // v30: If "Email already registered", offer Login button instead of just an error
-                if (result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
-                    showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
-                    setTimeout(function() {
-                        closeModal('jobSeekerModal');
-                        showModal('loginModal');
-                        // Pre-select Job Seeker login type
-                        var jsLoginRadio = document.querySelector('input[name="loginType"][value="jobSeeker"]');
-                        if (jsLoginRadio) jsLoginRadio.checked = true;
-                        // Pre-fill email in login form
-                        var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
-                        if (loginEmail) loginEmail.value = data.email || '';
-                    }, 1500);
+                    // v30: If "Email already registered", offer Login button instead of just an error
+                    if (result && result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
+                        showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
+                        setTimeout(function() {
+                            closeModal('jobSeekerModal');
+                            showModal('loginModal');
+                            var jsLoginRadio = document.querySelector('input[name="loginType"][value="jobSeeker"]');
+                            if (jsLoginRadio) jsLoginRadio.checked = true;
+                            var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
+                            if (loginEmail) loginEmail.value = data.email || '';
+                        }, 1500);
+                        return;
+                    }
+
+                    showToast((result && result.error) || 'Registration failed. Please try again.', 'error', 6000);
+                    if (result && result.exhaustedRetries) {
+                        showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                    }
                     return;
                 }
 
-                showToast(result.error || 'Registration failed. Please try again.', 'error', 6000);
-                if (result.exhaustedRetries) {
-                    showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                // v30: If this was recovered from a timeout, log it
+                if (result.recoveredFromTimeout) {
+                    console.log('[GCCPROs] Registration recovered from timeout — entry verified in sheet');
                 }
+                if (result.idempotent) {
+                    console.log('[GCCPROs] Registration was idempotent — entry already existed');
+                }
+
+                // Clean up backup on success
+                try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
+
+                const successMsg = document.createElement('div');
+                successMsg.className = 'success-message';
+                successMsg.innerHTML = `
+                    <h3>Welcome to GCCPROs!</h3>
+                    <p>Your registration is confirmed. You now have full access to your dashboard and recommended opportunities.</p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">A welcome email has been sent to your inbox.</p>
+                `;
+
+                form.parentElement.insertBefore(successMsg, form);
+                form.style.display = 'none';
+
+                setTimeout(() => {
+                    closeModal('jobSeekerModal');
+                    form.style.display = 'block';
+                    successMsg.remove();
+                    form.reset();
+                    currentJobSeekerStep = 0;
+                    switchJobSeekerStep(0);
+                    otpVerified['jobSeeker'] = false;
+                    document.getElementById('jsOtpSection').classList.remove('active');
+                    document.getElementById('jsEmail').disabled = false;
+                    document.getElementById('jsEmailBtn').disabled = false;
+                    document.getElementById('jsEmailBtn').textContent = 'Send OTP';
+                    document.getElementById('jsEmailBtn').style.background = '';
+                    showUserConsole();
+                }, 3000);
+
+            } catch (submitErr) {
+                console.error('[GCCPROs] Job seeker registration error:', submitErr);
+                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                showToast('Registration failed: ' + (submitErr.message || 'Unknown error. Please try again or contact admin@gccpros.com'), 'error', 6000);
                 return;
             }
-
-            // v30: If this was recovered from a timeout, log it
-            if (result.recoveredFromTimeout) {
-                console.log('[GCCPROs] Registration recovered from timeout — entry verified in sheet');
-            }
-            if (result.idempotent) {
-                console.log('[GCCPROs] Registration was idempotent — entry already existed');
-            }
-
-            // Clean up backup on success
-            try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
-
-            const successMsg = document.createElement('div');
-            successMsg.className = 'success-message';
-            successMsg.innerHTML = `
-                <h3>Welcome to GCCPROs!</h3>
-                <p>Your registration is confirmed. You now have full access to your dashboard and recommended opportunities.</p>
-                <p style="margin-top: 1rem; font-size: 0.9rem;">A welcome email has been sent to your inbox.</p>
-            `;
-
-            form.parentElement.insertBefore(successMsg, form);
-            form.style.display = 'none';
-
-            setTimeout(() => {
-                closeModal('jobSeekerModal');
-                form.style.display = 'block';
-                successMsg.remove();
-                form.reset();
-                currentJobSeekerStep = 0;
-                switchJobSeekerStep(0);
-                otpVerified['jobSeeker'] = false;
-                document.getElementById('jsOtpSection').classList.remove('active');
-                document.getElementById('jsEmail').disabled = false;
-                document.getElementById('jsEmailBtn').disabled = false;
-                document.getElementById('jsEmailBtn').textContent = 'Send OTP';
-                document.getElementById('jsEmailBtn').style.background = '';
-                showUserConsole();
-            }, 3000);
         }
 
         async function submitReferrerForm(event) {
@@ -5951,82 +5958,91 @@
             if (refSubmitBtn) { refSubmitBtn.disabled = true; refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
             // v30: BULLETPROOF SUBMISSION — retry engine with verification
-            const result = await fetchWithRetry(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                redirect: 'follow'
-            }, {
-                maxRetries: 2,
-                timeout: 45000,
-                email: data.email,
-                regType: 'referrer',
-                onAttempt: function(attempt, total, extraMsg) {
-                    if (refSubmitBtn) {
-                        if (attempt === 1) refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
-                        else if (extraMsg) refSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
-                        else refSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+            // Wrapped in try/catch to guarantee no false success ever shows
+            try {
+                const result = await fetchWithRetry(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                }, {
+                    maxRetries: 2,
+                    timeout: 45000,
+                    email: data.email,
+                    regType: 'referrer',
+                    onAttempt: function(attempt, total, extraMsg) {
+                        if (refSubmitBtn) {
+                            if (attempt === 1) refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
+                            else if (extraMsg) refSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
+                            else refSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+                        }
                     }
-                }
-            });
+                });
 
-            console.log('[GCCPROs] Referrer final result:', result);
+                console.log('[GCCPROs] Referrer final result:', result);
 
-            if (result.success === false) {
-                // v30: If genuinely already registered, redirect to login
-                if (result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
-                    showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
-                    setTimeout(function() {
-                        closeModal('referrerModal');
-                        showModal('loginModal');
-                        var partnerLoginRadio = document.querySelector('input[name="loginType"][value="referrer"]');
-                        if (partnerLoginRadio) partnerLoginRadio.checked = true;
-                        var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
-                        if (loginEmail) loginEmail.value = data.email || '';
-                    }, 1500);
+                if (!result || result.success === false) {
+                    // v30: If genuinely already registered, redirect to login
+                    if (result && result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
+                        showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
+                        setTimeout(function() {
+                            closeModal('referrerModal');
+                            showModal('loginModal');
+                            var partnerLoginRadio = document.querySelector('input[name="loginType"][value="referrer"]');
+                            if (partnerLoginRadio) partnerLoginRadio.checked = true;
+                            var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
+                            if (loginEmail) loginEmail.value = data.email || '';
+                        }, 1500);
+                        return;
+                    }
+                    showToast((result && result.error) || 'Registration failed. Please try again.', 'error', 6000);
+                    if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                    if (result && result.exhaustedRetries) {
+                        showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                    }
                     return;
                 }
-                showToast(result.error || 'Registration failed. Please try again.', 'error', 6000);
-                if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
-                if (result.exhaustedRetries) {
-                    showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+
+                if (result.recoveredFromTimeout) {
+                    console.log('[GCCPROs] Partner registration recovered from timeout');
                 }
+
+                // Clean up backup on success
+                try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
+
+                const successMsg = document.createElement('div');
+                successMsg.className = 'success-message';
+                successMsg.innerHTML = `
+                    <h3>Thank You for Registering!</h3>
+                    <p>Your partner application has been submitted successfully and is now under review.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.9rem;">You will receive an <strong>email notification within 48 hours</strong> once your registration is accepted.</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;">After approval, you'll get full access to your personalized partner dashboard.</p>
+                `;
+
+                form.parentElement.insertBefore(successMsg, form);
+                form.style.display = 'none';
+
+                setTimeout(() => {
+                    closeModal('referrerModal');
+                    form.style.display = 'block';
+                    successMsg.remove();
+                    form.reset();
+                    currentReferrerStep = 0;
+                    switchReferrerStep(0);
+                    otpVerified['referrer'] = false;
+                    document.getElementById('refOtpSection').classList.remove('active');
+                    document.getElementById('refEmail').disabled = false;
+                    document.getElementById('refEmailBtn').disabled = false;
+                    document.getElementById('refEmailBtn').textContent = 'Send OTP';
+                    document.getElementById('refEmailBtn').style.background = '';
+                    // Do NOT show dashboard — partner needs admin approval first
+                }, 4000);
+
+            } catch (submitErr) {
+                console.error('[GCCPROs] Partner registration error:', submitErr);
+                if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                showToast('Registration failed: ' + (submitErr.message || 'Unknown error. Please try again or contact admin@gccpros.com'), 'error', 6000);
                 return;
             }
-
-            if (result.recoveredFromTimeout) {
-                console.log('[GCCPROs] Partner registration recovered from timeout');
-            }
-
-            // Clean up backup on success
-            try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
-
-            const successMsg = document.createElement('div');
-            successMsg.className = 'success-message';
-            successMsg.innerHTML = `
-                <h3>Thank You for Registering!</h3>
-                <p>Your partner application has been submitted successfully and is now under review.</p>
-                <p style="margin-top: 0.75rem; font-size: 0.9rem;">You will receive an <strong>email notification within 48 hours</strong> once your registration is accepted.</p>
-                <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;">After approval, you'll get full access to your personalized partner dashboard.</p>
-            `;
-
-            form.parentElement.insertBefore(successMsg, form);
-            form.style.display = 'none';
-
-            setTimeout(() => {
-                closeModal('referrerModal');
-                form.style.display = 'block';
-                successMsg.remove();
-                form.reset();
-                currentReferrerStep = 0;
-                switchReferrerStep(0);
-                otpVerified['referrer'] = false;
-                document.getElementById('refOtpSection').classList.remove('active');
-                document.getElementById('refEmail').disabled = false;
-                document.getElementById('refEmailBtn').disabled = false;
-                document.getElementById('refEmailBtn').textContent = 'Send OTP';
-                document.getElementById('refEmailBtn').style.background = '';
-                // Do NOT show dashboard — partner needs admin approval first
-            }, 4000);
         }
 
         var selectedLoginType = 'jobSeeker';
