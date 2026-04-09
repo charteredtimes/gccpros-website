@@ -4298,27 +4298,39 @@
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem;">
                                 <div class="form-group">
                                     <label>Domain</label>
-                                    <input type="text" id="profileJSDomain" disabled style="background:#F3F4F6;">
+                                    <select id="profileJSDomain">
+                                        <option value="">Select Domain</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="HR">HR</option>
+                                        <option value="Operations">Operations</option>
+                                        <option value="Legal">Legal</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Supply Chain">Supply Chain</option>
+                                        <option value="Analytics">Analytics</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Experience</label>
-                                    <input type="text" id="profileJSExperience" disabled style="background:#F3F4F6;">
+                                    <label>Total Experience (years)</label>
+                                    <input type="number" id="profileJSExperience" min="0" max="50" step="1" placeholder="e.g. 12">
                                 </div>
                                 <div class="form-group">
-                                    <label>Current CTC</label>
-                                    <input type="text" id="profileJSCurrentCTC" disabled style="background:#F3F4F6;">
+                                    <label>Current CTC (LPA)</label>
+                                    <input type="text" id="profileJSCurrentCTC" placeholder="e.g. 25 LPA">
                                 </div>
                                 <div class="form-group">
-                                    <label>Expected CTC</label>
-                                    <input type="text" id="profileJSExpectedCTC" disabled style="background:#F3F4F6;">
+                                    <label>Expected CTC (LPA)</label>
+                                    <input type="text" id="profileJSExpectedCTC" placeholder="e.g. 35 LPA">
                                 </div>
                                 <div class="form-group">
-                                    <label>Notice Period</label>
-                                    <input type="text" id="profileJSNoticePeriod" disabled style="background:#F3F4F6;">
+                                    <label>Notice Period (days)</label>
+                                    <input type="text" id="profileJSNoticePeriod" placeholder="e.g. 30">
                                 </div>
                                 <div class="form-group">
                                     <label>LinkedIn</label>
-                                    <input type="text" id="profileJSLinkedin" disabled style="background:#F3F4F6;">
+                                    <input type="text" id="profileJSLinkedin" placeholder="linkedin.com/in/your-profile">
                                 </div>
                             </div>
                         </div>
@@ -5921,22 +5933,86 @@
             document.getElementById('passwordForm').reset();
         }
 
-        function submitProfileForm(event) {
+        async function submitProfileForm(event) {
             event.preventDefault();
-            // Update currentUser with profile form data
-            if (currentUser) {
-                const form = event.target;
-                const formData = new FormData(form);
-                currentUser.name = formData.get('fullName') || currentUser.name;
-                currentUser.phone = formData.get('phone') || currentUser.phone;
-                currentUser.currentCompany = formData.get('currentCompany') || currentUser.currentCompany;
-                currentUser.designation = formData.get('designation') || currentUser.designation;
-                currentUser.location = formData.get('location') || currentUser.location;
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                document.getElementById('consoleUserName').textContent = currentUser.name;
+            if (!currentUser || !currentUser.email) {
+                showToast('Please log in first', 'error');
+                return;
             }
-            updateProfileCompleteness();
-            showToast('Profile updated successfully!', 'success');
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving...'; }
+
+            // Collect common fields
+            var payload = {
+                action: 'updateProfile',
+                email: currentUser.email,
+                type: currentUser.type || 'jobSeeker',
+                fullName: formData.get('fullName') || '',
+                phone: formData.get('phone') || '',
+                currentCompany: formData.get('currentCompany') || '',
+                designation: formData.get('designation') || '',
+                location: formData.get('location') || ''
+            };
+
+            // Collect Job Seeker career details
+            if (currentUser.type === 'jobSeeker' || (!currentUser.type || currentUser.type !== 'referrer')) {
+                var jsDomain = document.getElementById('profileJSDomain');
+                var jsExp = document.getElementById('profileJSExperience');
+                var jsCTC = document.getElementById('profileJSCurrentCTC');
+                var jsExpCTC = document.getElementById('profileJSExpectedCTC');
+                var jsNotice = document.getElementById('profileJSNoticePeriod');
+                var jsLinkedin = document.getElementById('profileJSLinkedin');
+                if (jsDomain) payload.domain = jsDomain.value || '';
+                if (jsExp) payload.experience = jsExp.value || '';
+                if (jsCTC) payload.currentCTC = jsCTC.value || '';
+                if (jsExpCTC) payload.expectedCTC = jsExpCTC.value || '';
+                if (jsNotice) payload.noticePeriod = jsNotice.value || '';
+                if (jsLinkedin) {
+                    var linkedVal = jsLinkedin.value.trim();
+                    if (linkedVal) linkedVal = normalizeLinkedInUrl(linkedVal);
+                    payload.linkedin = linkedVal;
+                    jsLinkedin.value = linkedVal;
+                }
+            }
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    // Update local sessionStorage
+                    currentUser.name = payload.fullName || currentUser.name;
+                    currentUser.phone = payload.phone || currentUser.phone;
+                    currentUser.currentCompany = payload.currentCompany || currentUser.currentCompany;
+                    currentUser.designation = payload.designation || currentUser.designation;
+                    currentUser.location = payload.location || currentUser.location;
+                    if (payload.domain !== undefined) currentUser.domain = payload.domain;
+                    if (payload.experience !== undefined) currentUser.experience = payload.experience;
+                    if (payload.currentCTC !== undefined) currentUser.currentCTC = payload.currentCTC;
+                    if (payload.expectedCTC !== undefined) currentUser.expectedCTC = payload.expectedCTC;
+                    if (payload.noticePeriod !== undefined) currentUser.noticePeriod = payload.noticePeriod;
+                    if (payload.linkedin !== undefined) currentUser.linkedin = payload.linkedin;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    document.getElementById('consoleUserName').textContent = currentUser.name;
+                    updateProfileCompleteness();
+                    showToast('Profile saved successfully!', 'success');
+                } else {
+                    showToast('Error saving profile: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                console.error('Profile save error:', err);
+                showToast('Network error — please try again', 'error');
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Changes'; }
+            }
         }
 
         function submitAdminForm(event) {
@@ -7507,13 +7583,53 @@
                 if (result.success) {
                     closeModal('jobApplicationModal');
                     showToast('Application submitted! ID: ' + result.applicationId, 'success');
+
+                    // Sync changed application fields back to user profile in Google Sheet
+                    try {
+                        var profileSync = {
+                            action: 'updateProfile',
+                            email: currentUser.email,
+                            type: currentUser.type || 'jobSeeker',
+                            fullName: appName,
+                            phone: appPhone,
+                            location: appLocation,
+                            experience: appExp,
+                            noticePeriod: appNotice,
+                            currentCTC: appCTC,
+                            expectedCTC: appExpCTC
+                        };
+                        fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            redirect: 'follow',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(profileSync)
+                        }).then(function() {
+                            // Update local session too
+                            if (appName) currentUser.name = appName;
+                            if (appPhone) currentUser.phone = appPhone;
+                            if (appLocation) currentUser.location = appLocation;
+                            if (appExp) currentUser.experience = appExp;
+                            if (appNotice) currentUser.noticePeriod = appNotice;
+                            if (appCTC) currentUser.currentCTC = appCTC;
+                            if (appExpCTC) currentUser.expectedCTC = appExpCTC;
+                            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                            // Refresh profile fields if visible
+                            if (document.getElementById('profileJSExperience')) document.getElementById('profileJSExperience').value = currentUser.experience || '';
+                            if (document.getElementById('profileJSCurrentCTC')) document.getElementById('profileJSCurrentCTC').value = currentUser.currentCTC || '';
+                            if (document.getElementById('profileJSExpectedCTC')) document.getElementById('profileJSExpectedCTC').value = currentUser.expectedCTC || '';
+                            if (document.getElementById('profileJSNoticePeriod')) document.getElementById('profileJSNoticePeriod').value = currentUser.noticePeriod || '';
+                            if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = currentUser.phone || '';
+                            if (document.getElementById('profileLocation')) document.getElementById('profileLocation').value = currentUser.location || '';
+                        }).catch(function(e) { console.log('Profile sync after app:', e); });
+                    } catch(syncErr) { console.log('Profile sync error:', syncErr); }
+
+                    // Update recent activity (read job title BEFORE form reset clears it)
+                    const activityJobTitle = document.getElementById('appJobTitle').value;
                     document.getElementById('jobApplicationForm').reset();
 
-                    // Update recent activity
                     const activity = document.getElementById('recentActivity');
                     if (activity) {
-                        const jobTitle = document.getElementById('appJobTitle').value;
-                        activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + jobTitle + ' — <em>Just now</em> (ID: ' + result.applicationId + ')</div>';
+                        activity.innerHTML = '<div style="text-align:left; padding:0.5rem;"><strong>Applied:</strong> ' + activityJobTitle + ' — <em>Just now</em> (ID: ' + result.applicationId + ')</div>';
                     }
 
                     // Reload application history and update stats from backend
