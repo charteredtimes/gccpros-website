@@ -2883,6 +2883,7 @@
                     <div style="font-size:0.75rem;color:var(--muted);">Same email can have both a Job Seeker and Partner account</div>
                 </div>
 
+                <!-- v33: Google Sign-In is the only login method -->
                 <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('login')" style="margin-bottom:0.5rem;">
                     <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -2890,29 +2891,9 @@
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
-                    Continue with Google
+                    Sign In with Google
                 </button>
-                <p style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:0.25rem;">Recommended — fast and secure</p>
-
-                <div class="form-divider">or sign in with email</div>
-
-                <div id="loginManualFields">
-                    <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
-                        <input type="email" name="email">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Password <span class="required">*</span></label>
-                        <input type="password" name="password">
-                    </div>
-
-                    <div style="margin-bottom: 1rem; text-align: right;">
-                        <a href="#" onclick="showForgotPasswordForm(event)" style="color: var(--brand-blue); text-decoration: none; font-size: 0.85rem;">Forgot Password?</a>
-                    </div>
-
-                    <button type="submit" class="form-submit-btn">Sign In</button>
-                </div>
+                <p style="text-align:center;font-size:0.8rem;color:var(--muted);margin-bottom:0.25rem;">Fast, secure, and no password needed</p>
 
                 <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">
                     Don't have an account? <a href="#" onclick="switchToRegister(event)" style="color: var(--brand-blue); text-decoration: none;">Register</a>
@@ -2947,17 +2928,22 @@
 
                 <!-- JS Step 1: Personal Details -->
                 <div class="form-step-content active" id="jsStep1">
-                <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('jobSeeker')">
-                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
-                </button>
+                <!-- v33: Google Sign-In is required to capture email -->
+                <div style="background:#f0f4ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:center;">
+                    <p style="font-size:0.85rem;color:#1e40af;margin:0 0 0.75rem;font-weight:600;">Step 1: Sign in with Google to verify your email</p>
+                    <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('jobSeeker')" id="jsGoogleSignInBtn">
+                        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Continue with Google
+                    </button>
+                    <p style="font-size:0.75rem;color:var(--muted);margin:0.5rem 0 0;">Your Google email will be used for your account</p>
+                </div>
 
-                <div class="form-divider">or register manually</div>
+                <div class="form-divider">then complete your profile</div>
 
                 <!-- CV Upload (auto-fill) — placed at the top for quick form filling -->
                 <div style="background:#f0f9ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
@@ -2974,31 +2960,11 @@
                     <input type="text" name="fullName" required>
                 </div>
 
+                <!-- v33: Email is captured from Google Sign-In, shown read-only -->
                 <div class="form-group">
                     <label>Email <span class="required">*</span></label>
-                    <div class="email-action-group">
-                        <input type="email" name="email" id="jsEmail" required>
-                        <button type="button" class="send-otp-btn" id="jsEmailBtn" onclick="sendOTP('jobSeeker')">Send OTP</button>
-                    </div>
-                    <div class="captcha-group" id="jsOtpCaptchaGroup" style="margin-top:6px;">
-                        <span class="captcha-question" id="jsOtpCaptchaQ"></span>
-                        <span style="margin:0 4px;">=</span>
-                        <input type="number" class="captcha-input" id="jsOtpCaptchaA" placeholder="?" style="width:60px;">
-                        <button type="button" class="captcha-refresh" onclick="generateCaptcha('jsOtp')" title="New question">↻</button>
-                    </div>
-                    <div class="field-error" id="jsOtpCaptchaError">Incorrect answer, please try again</div>
-                    <div class="otp-section" id="jsOtpSection">
-                        <div class="otp-timer" id="jsOtpTimer"></div>
-                        <div class="otp-inputs">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                            <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'jobSeeker')">
-                        </div>
-                        <button type="button" class="verify-btn" id="jsVerifyBtn" onclick="verifyOTP('jobSeeker')" disabled>Verify OTP</button>
-                    </div>
+                    <input type="email" name="email" id="jsEmail" required readonly style="background:#f0f4ff;cursor:not-allowed;">
+                    <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Captured from your Google account</div>
                 </div>
 
                 <div class="form-group">
@@ -3049,21 +3015,7 @@
                     <div class="field-error" id="jsLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                 </div>
 
-                <div id="jsPasswordFields">
-                    <div class="form-group">
-                        <label>Create Password <span class="required">*</span></label>
-                        <input type="password" name="regPassword" id="jsRegPassword" required minlength="8" onkeyup="checkRegPasswordStrength('js')">
-                        <div class="password-strength">
-                            <div class="password-strength-bar" id="jsStrengthBar"></div>
-                        </div>
-                        <span style="font-size:0.75rem;color:var(--muted);">Min 8 characters, include uppercase, number, and special character</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm Password <span class="required">*</span></label>
-                        <input type="password" name="regConfirmPassword" id="jsConfirmPassword" required minlength="8">
-                        <div class="field-error" id="jsPasswordMatchError">Passwords do not match</div>
-                    </div>
-                </div>
+                <!-- v33: Password fields removed — Google Sign-In only -->
 
                 </div>
                 <!-- End JS Step 1 -->
@@ -3228,48 +3180,33 @@
 
                 <!-- Step 1: Personal Details -->
                 <div class="form-step-content active">
-                    <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('referrer')">
-                        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Continue with Google
-                    </button>
+                    <!-- v33: Google Sign-In is required to capture email -->
+                    <div style="background:#f0f4ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:center;">
+                        <p style="font-size:0.85rem;color:#1e40af;margin:0 0 0.75rem;font-weight:600;">Step 1: Sign in with Google to verify your email</p>
+                        <button type="button" class="google-signin-btn" onclick="initiateGoogleSignIn('referrer')" id="refGoogleSignInBtn">
+                            <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            Continue with Google
+                        </button>
+                        <p style="font-size:0.75rem;color:var(--muted);margin:0.5rem 0 0;">Your Google email will be used for your account</p>
+                    </div>
 
-                    <div class="form-divider">or register manually</div>
+                    <div class="form-divider">then complete your profile</div>
 
                     <div class="form-group">
                         <label>Full Name <span class="required">*</span></label>
                         <input type="text" name="fullName" required>
                     </div>
 
+                    <!-- v33: Email is captured from Google Sign-In, shown read-only -->
                     <div class="form-group">
                         <label>Email <span class="required">*</span></label>
-                        <div class="email-action-group">
-                            <input type="email" name="email" id="refEmail" required>
-                            <button type="button" class="send-otp-btn" id="refEmailBtn" onclick="sendOTP('referrer')">Send OTP</button>
-                        </div>
-                        <div class="captcha-group" id="refOtpCaptchaGroup" style="margin-top:6px;">
-                            <span class="captcha-question" id="refOtpCaptchaQ"></span>
-                            <span style="margin:0 4px;">=</span>
-                            <input type="number" class="captcha-input" id="refOtpCaptchaA" placeholder="?" style="width:60px;">
-                            <button type="button" class="captcha-refresh" onclick="generateCaptcha('refOtp')" title="New question">↻</button>
-                        </div>
-                        <div class="field-error" id="refOtpCaptchaError">Incorrect answer, please try again</div>
-                        <div class="otp-section" id="refOtpSection">
-                            <div class="otp-timer" id="refOtpTimer"></div>
-                            <div class="otp-inputs">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleOtpInput(this, 'referrer')">
-                            </div>
-                            <button type="button" class="verify-btn" id="refVerifyBtn" onclick="verifyOTP('referrer')" disabled>Verify OTP</button>
-                        </div>
+                        <input type="email" name="email" id="refEmail" required readonly style="background:#f0f4ff;cursor:not-allowed;">
+                        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Captured from your Google account</div>
                     </div>
 
                     <div class="form-group">
@@ -3336,21 +3273,7 @@
                         <div class="field-error" id="partnerCVError" style="display:none;">Please upload a PDF or Word file under 5 MB</div>
                     </div>
 
-                    <div id="refPasswordFields">
-                        <div class="form-group">
-                            <label>Create Password <span class="required">*</span></label>
-                            <input type="password" name="regPassword" id="refRegPassword" required minlength="8" onkeyup="checkRegPasswordStrength('ref')">
-                            <div class="password-strength">
-                                <div class="password-strength-bar" id="refStrengthBar"></div>
-                            </div>
-                            <span style="font-size:0.75rem;color:var(--muted);">Min 8 characters, include uppercase, number, and special character</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm Password <span class="required">*</span></label>
-                            <input type="password" name="regConfirmPassword" id="refConfirmPassword" required minlength="8">
-                            <div class="field-error" id="refPasswordMatchError">Passwords do not match</div>
-                        </div>
-                    </div>
+                    <!-- v33: Password fields removed — Google Sign-In only -->
 
                 </div>
 
@@ -4518,30 +4441,9 @@
                 <div id="settingsTab" class="console-tab" style="display:none;">
                     <h2 style="margin-bottom: 1.5rem;">Settings</h2>
 
-                    <h3 style="margin-bottom: 1rem; margin-top: 1.5rem;">Change Password</h3>
-                    <form id="passwordForm" onsubmit="submitPasswordForm(event)" style="max-width: 400px;">
-                        <div class="form-group">
-                            <label>Current Password <span class="required">*</span></label>
-                            <input type="password" name="currentPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label>New Password <span class="required">*</span></label>
-                            <input type="password" name="newPassword" id="newPassword" onkeyup="checkPasswordStrength()" required>
-                            <div class="password-strength">
-                                <div class="password-strength-bar" id="strengthBar"></div>
-                            </div>
-                            <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem;">
-                                Min 8 chars, 1 uppercase, 1 number, 1 special char
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm Password <span class="required">*</span></label>
-                            <input type="password" name="confirmPassword" required>
-                        </div>
-                        <button type="submit" class="form-submit-btn">Update Password</button>
-                    </form>
+                    <!-- v33: Password section removed — Google Sign-In only, no passwords -->
 
-                    <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Email Notifications</h3>
+                    <h3 style="margin-bottom: 1rem; margin-top: 1.5rem;">Email Notifications</h3>
                     <div class="checkbox-group">
                         <div class="checkbox-item">
                             <input type="checkbox" id="emailNewJobs" checked>
@@ -5151,165 +5053,7 @@
             return false;
         }
 
-        async function sendOTP(type) {
-            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
-            const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
-            const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
-            const timer = type === 'jobSeeker' ? 'jsOtpTimer' : 'refOtpTimer';
-
-            const email = document.getElementById(emailField).value.trim();
-            if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showToast('Please enter a valid email address', 'error');
-                return;
-            }
-
-            // Verify CAPTCHA before sending OTP
-            const captchaPrefix = type === 'jobSeeker' ? 'jsOtp' : 'refOtp';
-            if (!verifyCaptcha(captchaPrefix)) {
-                showToast('Please solve the math question correctly', 'error');
-                return;
-            }
-
-            const btn = document.getElementById(emailBtn);
-            const originalText = btn.textContent;
-            btn.disabled = true;
-
-            // v31: Only blacklist check before OTP — no email duplicate check.
-            // Backend uses upsert, so duplicates are impossible.
-            const regType = type === 'jobSeeker' ? 'jobSeeker' : 'referrer';
-            btn.textContent = 'Checking...';
-            try {
-                const blCheck = await checkEmailExists(email, regType);
-                if (blCheck === 'blacklisted') {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    return;
-                }
-            } catch (e) {
-                // Blacklist check failed — proceed anyway, backend will catch it
-                console.log('[GCCPROs] Blacklist check skipped:', e.message || e);
-            }
-
-            // Send OTP via backend
-            btn.textContent = 'Sending...';
-            try {
-                const otpController = new AbortController();
-                const otpTimeout = setTimeout(() => otpController.abort(), 30000);
-                const url = APPS_SCRIPT_URL + '?action=sendOTP&email=' + encodeURIComponent(email.toLowerCase());
-                const res = await fetch(url, { signal: otpController.signal });
-                clearTimeout(otpTimeout);
-                const result = await res.json();
-                if (!result.success) {
-                    showToast(result.error || 'Failed to send OTP. Please try again.', 'error');
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    return;
-                }
-            } catch (err) {
-                console.error('sendOTP error:', err);
-                const otpErrMsg = err.name === 'AbortError'
-                    ? 'OTP request timed out. Please try again.'
-                    : 'Could not send OTP. Please check your connection and try again.';
-                showToast(otpErrMsg, 'error');
-                btn.textContent = originalText;
-                btn.disabled = false;
-                return;
-            }
-
-            document.getElementById(otpSection).classList.add('active');
-            showToast('OTP sent to ' + email + '. Check your inbox (and spam folder).', 'success');
-
-            let timeLeft = 60;
-            document.getElementById(timer).textContent = 'Resend in ' + timeLeft + 's';
-            btn.textContent = 'OTP Sent';
-
-            const interval = setInterval(() => {
-                timeLeft--;
-                document.getElementById(timer).textContent = 'Resend in ' + timeLeft + 's';
-                if (timeLeft === 0) {
-                    clearInterval(interval);
-                    btn.disabled = false;
-                    btn.textContent = 'Resend OTP';
-                    document.getElementById(timer).textContent = '';
-                }
-            }, 1000);
-        }
-
-        function handleOtpInput(input, type) {
-            if (input.value.length === 1 && /[0-9]/.test(input.value)) {
-                if (input.nextElementSibling) {
-                    input.nextElementSibling.focus();
-                }
-            } else if (input.value.length === 0) {
-                if (input.previousElementSibling) {
-                    input.previousElementSibling.focus();
-                }
-            } else {
-                input.value = input.value.slice(0, 1);
-            }
-
-            const verifyBtn = type === 'jobSeeker' ? 'jsVerifyBtn' : 'refVerifyBtn';
-            const otpInputs = document.querySelectorAll(`${type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm'} .otp-input`);
-            const allFilled = Array.from(otpInputs).every(inp => inp.value.length === 1);
-            document.getElementById(verifyBtn).disabled = !allFilled;
-        }
-
-        async function verifyOTP(type) {
-            const formSelector = type === 'jobSeeker' ? '#jobSeekerForm' : '#referrerForm';
-            const otpInputs = document.querySelectorAll(formSelector + ' .otp-input');
-            const otp = Array.from(otpInputs).map(inp => inp.value).join('');
-
-            if (otp.length !== 6) {
-                showToast('Please enter a valid 6-digit OTP', 'error');
-                return;
-            }
-
-            const emailField = type === 'jobSeeker' ? 'jsEmail' : 'refEmail';
-            const email = document.getElementById(emailField).value.trim().toLowerCase();
-            const verifyBtn = type === 'jobSeeker' ? 'jsVerifyBtn' : 'refVerifyBtn';
-
-            document.getElementById(verifyBtn).disabled = true;
-            document.getElementById(verifyBtn).textContent = 'Verifying...';
-
-            try {
-                const verifyController = new AbortController();
-                const verifyTimeout = setTimeout(() => verifyController.abort(), 30000);
-                const url = APPS_SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp);
-                const res = await fetch(url, { signal: verifyController.signal });
-                clearTimeout(verifyTimeout);
-                const result = await res.json();
-
-                if (!result.valid) {
-                    showToast(result.error || 'Invalid OTP. Please try again.', 'error');
-                    document.getElementById(verifyBtn).disabled = false;
-                    document.getElementById(verifyBtn).textContent = 'Verify OTP';
-                    // Clear OTP inputs for retry
-                    otpInputs.forEach(inp => { inp.value = ''; });
-                    otpInputs[0].focus();
-                    return;
-                }
-            } catch (err) {
-                console.error('verifyOTP error:', err);
-                showToast('Verification failed. Please try again.', 'error');
-                document.getElementById(verifyBtn).disabled = false;
-                document.getElementById(verifyBtn).textContent = 'Verify OTP';
-                return;
-            }
-
-            // OTP verified successfully
-            otpVerified[type] = true;
-            const otpSection = type === 'jobSeeker' ? 'jsOtpSection' : 'refOtpSection';
-
-            document.getElementById(otpSection).classList.remove('active');
-            document.getElementById(emailField).disabled = true;
-
-            const emailBtn = type === 'jobSeeker' ? 'jsEmailBtn' : 'refEmailBtn';
-            document.getElementById(emailBtn).textContent = '✓ Verified';
-            document.getElementById(emailBtn).style.background = '#22c55e';
-            document.getElementById(emailBtn).disabled = true;
-
-            showToast('Email verified successfully!', 'success');
-        }
+        // v33: sendOTP, handleOtpInput, verifyOTP REMOVED — Google Sign-In only
 
         function validateJobSeekerStep(stepIndex) {
             const form = document.getElementById('jobSeekerForm');
@@ -5351,15 +5095,15 @@
                 }
             }
 
-            // Step 1: Check phone, linkedin, and EMAIL VERIFICATION
+            // Step 1: Check phone, linkedin, and EMAIL (from Google Sign-In)
             if (stepIndex === 0) {
-                // Email must be verified via OTP or Google Sign-In
-                if (!otpVerified['jobSeeker']) {
+                // v33: Email must be captured from Google Sign-In
+                const jsEmailInput = document.getElementById('jsEmail');
+                if (!jsEmailInput || !jsEmailInput.value.trim() || !jsEmailInput.value.includes('@')) {
                     valid = false;
-                    const emailInput = document.getElementById('jsEmail');
-                    if (emailInput) emailInput.classList.add('input-error');
-                    if (!firstInvalid) firstInvalid = emailInput;
-                    showToast('Please verify your email first. Click "Send OTP" or use Google Sign-In.', 'error');
+                    if (jsEmailInput) jsEmailInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = jsEmailInput;
+                    showToast('Please sign in with Google first to verify your email.', 'error');
                     return false;
                 }
 
@@ -5383,26 +5127,7 @@
                     }
                 }
 
-                // Password validation (only if password fields are visible — skipped for Google sign-in)
-                const jsPassFields = document.getElementById('jsPasswordFields');
-                if (jsPassFields && jsPassFields.style.display !== 'none') {
-                    const regPass = document.getElementById('jsRegPassword');
-                    const confirmPass = document.getElementById('jsConfirmPassword');
-                    if (regPass && regPass.value) {
-                        if (!validatePasswordStrength(regPass.value)) {
-                            valid = false;
-                            regPass.classList.add('input-error');
-                            if (!firstInvalid) firstInvalid = regPass;
-                            showToast('Password must be at least 8 characters with uppercase, number, and special character', 'error');
-                        } else if (confirmPass && regPass.value !== confirmPass.value) {
-                            valid = false;
-                            confirmPass.classList.add('input-error');
-                            const matchErr = document.getElementById('jsPasswordMatchError');
-                            if (matchErr) matchErr.classList.add('show');
-                            if (!firstInvalid) firstInvalid = confirmPass;
-                        }
-                    }
-                }
+                // v33: Password validation removed — Google Sign-In only
             }
 
             if (!valid && firstInvalid) {
@@ -5502,15 +5227,15 @@
                 }
             }
 
-            // Step 0: email verification, phone & linkedin specific validation
+            // Step 0: email (from Google Sign-In), phone & linkedin specific validation
             if (stepIndex === 0) {
-                // Email must be verified via OTP or Google Sign-In
-                if (!otpVerified['referrer']) {
+                // v33: Email must be captured from Google Sign-In
+                const refEmailInput = document.getElementById('refEmail');
+                if (!refEmailInput || !refEmailInput.value.trim() || !refEmailInput.value.includes('@')) {
                     valid = false;
-                    const emailInput = document.getElementById('refEmail');
-                    if (emailInput) emailInput.classList.add('input-error');
-                    if (!firstInvalid) firstInvalid = emailInput;
-                    showToast('Please verify your email first. Click "Send OTP" or use Google Sign-In.', 'error');
+                    if (refEmailInput) refEmailInput.classList.add('input-error');
+                    if (!firstInvalid) firstInvalid = refEmailInput;
+                    showToast('Please sign in with Google first to verify your email.', 'error');
                     return false;
                 }
 
@@ -5534,26 +5259,7 @@
                     }
                 }
 
-                // Password validation (only if password fields are visible — skipped for Google sign-in)
-                const refPassFields = document.getElementById('refPasswordFields');
-                if (refPassFields && refPassFields.style.display !== 'none') {
-                    const regPass = document.getElementById('refRegPassword');
-                    const confirmPass = document.getElementById('refConfirmPassword');
-                    if (regPass && regPass.value) {
-                        if (!validatePasswordStrength(regPass.value)) {
-                            valid = false;
-                            regPass.classList.add('input-error');
-                            if (!firstInvalid) firstInvalid = regPass;
-                            showToast('Password must be at least 8 characters with uppercase, number, and special character', 'error');
-                        } else if (confirmPass && regPass.value !== confirmPass.value) {
-                            valid = false;
-                            confirmPass.classList.add('input-error');
-                            const matchErr = document.getElementById('refPasswordMatchError');
-                            if (matchErr) matchErr.classList.add('show');
-                            if (!firstInvalid) firstInvalid = confirmPass;
-                        }
-                    }
-                }
+                // v33: Password validation removed — Google Sign-In only
             }
 
             if (!valid && firstInvalid) {
@@ -5619,8 +5325,10 @@
         async function submitJobSeekerForm(event) {
             event.preventDefault();
 
-            if (!otpVerified['jobSeeker']) {
-                showToast('Please verify your email with OTP', 'error');
+            // v33: Email must be from Google Sign-In
+            const jsEmailVal = document.getElementById('jsEmail').value.trim();
+            if (!jsEmailVal || !jsEmailVal.includes('@')) {
+                showToast('Please sign in with Google first to verify your email.', 'error');
                 return;
             }
 
@@ -5655,13 +5363,12 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
-            // v32: Ensure email is included even if field was disabled after OTP verification
-            // (disabled fields are excluded from FormData)
+            // v33: Email from read-only field (Google Sign-In) — ensure it's included
             if (!data.email || !data.email.trim()) {
-                data.email = document.getElementById('jsEmail').value.trim();
+                data.email = jsEmailVal;
             }
 
-            // Mark email as verified (OTP was already confirmed above)
+            // v33: Email verified via Google Sign-In
             data.emailVerified = true;
 
             // Combine phone code + number
@@ -5680,12 +5387,7 @@
 
             data.action = 'submitApplication';
 
-            // Include password if set (manual registration)
-            const jsRegPass = document.getElementById('jsRegPassword');
-            if (jsRegPass && jsRegPass.value) {
-                data.password = jsRegPass.value;
-            }
-            // Remove confirm password from data payload
+            // v33: No password with Google Sign-In only
             delete data.regPassword;
             delete data.regConfirmPassword;
 
@@ -5799,12 +5501,11 @@
                     form.reset();
                     currentJobSeekerStep = 0;
                     switchJobSeekerStep(0);
-                    otpVerified['jobSeeker'] = false;
-                    document.getElementById('jsOtpSection').classList.remove('active');
-                    document.getElementById('jsEmail').disabled = false;
-                    document.getElementById('jsEmailBtn').disabled = false;
-                    document.getElementById('jsEmailBtn').textContent = 'Send OTP';
-                    document.getElementById('jsEmailBtn').style.background = '';
+                    // v33: Reset Google Sign-In state for fresh registration
+                    var jsEmailInput = document.getElementById('jsEmail');
+                    if (jsEmailInput) { jsEmailInput.value = ''; jsEmailInput.style.background = ''; jsEmailInput.style.borderColor = ''; }
+                    var jsGoogleSection = document.getElementById('jsGoogleSignInBtn');
+                    if (jsGoogleSection && jsGoogleSection.parentElement) jsGoogleSection.parentElement.style.display = '';
                     showUserConsole();
                 }, 3000);
 
@@ -5819,8 +5520,10 @@
         async function submitReferrerForm(event) {
             event.preventDefault();
 
-            if (!otpVerified['referrer']) {
-                showToast('Please verify your email with OTP', 'error');
+            // v33: Email must be from Google Sign-In
+            const refEmailVal = document.getElementById('refEmail').value.trim();
+            if (!refEmailVal || !refEmailVal.includes('@')) {
+                showToast('Please sign in with Google first to verify your email.', 'error');
                 return;
             }
 
@@ -5881,12 +5584,12 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
-            // v32: Ensure email is included even if field was disabled after OTP verification
+            // v33: Email from read-only field (Google Sign-In) — ensure it's included
             if (!data.email || !data.email.trim()) {
-                data.email = document.getElementById('refEmail').value.trim();
+                data.email = refEmailVal;
             }
 
-            // Mark email as verified (OTP was already confirmed above)
+            // v33: Email verified via Google Sign-In
             data.emailVerified = true;
 
             // Attach CV data
@@ -5904,12 +5607,7 @@
             var refPanField = form.querySelector('input[name="panNumber"]');
             if (refPanField && refPanField.value) data.panNumber = refPanField.value.toUpperCase().trim();
 
-            // Include password if set (manual registration)
-            const refRegPass = document.getElementById('refRegPassword');
-            if (refRegPass && refRegPass.value) {
-                data.password = refRegPass.value;
-            }
-            // Remove confirm password from data payload
+            // v33: No password with Google Sign-In only
             delete data.regPassword;
             delete data.regConfirmPassword;
 
@@ -5995,12 +5693,11 @@
                     form.reset();
                     currentReferrerStep = 0;
                     switchReferrerStep(0);
-                    otpVerified['referrer'] = false;
-                    document.getElementById('refOtpSection').classList.remove('active');
-                    document.getElementById('refEmail').disabled = false;
-                    document.getElementById('refEmailBtn').disabled = false;
-                    document.getElementById('refEmailBtn').textContent = 'Send OTP';
-                    document.getElementById('refEmailBtn').style.background = '';
+                    // v33: Reset Google Sign-In state for fresh registration
+                    var refEmailInput = document.getElementById('refEmail');
+                    if (refEmailInput) { refEmailInput.value = ''; refEmailInput.style.background = ''; refEmailInput.style.borderColor = ''; }
+                    var refGoogleSection = document.getElementById('refGoogleSignInBtn');
+                    if (refGoogleSection && refGoogleSection.parentElement) refGoogleSection.parentElement.style.display = '';
                     // Do NOT show dashboard — partner needs admin approval first
                 }, 4000);
 
@@ -6042,99 +5739,14 @@
             }
         }
 
+        // v33: Manual login removed — Google Sign-In only
         async function submitLoginForm(event) {
             event.preventDefault();
-            const form = event.target;
-            const emailField = form.querySelector('input[name="email"]');
-            const passwordField = form.querySelector('input[name="password"]');
-            if (!emailField || !passwordField) return;
-            const email = emailField.value;
-            const password = passwordField.value;
-            if (!email || !password) {
-                showToast('Please enter both email and password', 'error');
-                return;
-            }
-            const loginType = selectedLoginType;
-            const loginBtn = form.querySelector('button[type="submit"]');
-
-            // Show loading state
-            if (loginBtn) { loginBtn.classList.add('login-btn-loading'); loginBtn.textContent = 'Signing in...'; }
-            showLoginLoading(true, 'Signing you in...');
-
-            try {
-                // v28: Added 20s timeout to login
-                const loginCtrl = new AbortController();
-                const loginTmout = setTimeout(() => loginCtrl.abort(), 20000);
-                const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim()) + '&type=' + encodeURIComponent(loginType) + '&password=' + encodeURIComponent(password);
-                const res = await fetch(url, { signal: loginCtrl.signal });
-                clearTimeout(loginTmout);
-                const statusData = await res.json();
-
-                if (statusData.blacklisted) {
-                    showToast('This account has been blocked. Please contact support at admin@gccpros.com', 'error');
-                    showLoginLoading(false);
-                    if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
-                    return;
-                }
-
-                if (!statusData.exists) {
-                    const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
-                    showToast('No ' + typeLabel + ' account found for this email. Please register first.', 'error');
-                    showLoginLoading(false);
-                    if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
-                    return;
-                }
-
-                currentUser = {
-                    name: statusData.name || email.split('@')[0],
-                    email: email,
-                    type: statusData.type || loginType,
-                    domain: statusData.domain || '',
-                    phone: statusData.phone || '',
-                    linkedin: statusData.linkedin || '',
-                    currentCompany: statusData.currentCompany || '',
-                    designation: statusData.designation || '',
-                    location: statusData.location || '',
-                    experience: statusData.experience || '',
-                    currentCTC: statusData.currentCTC || '',
-                    expectedCTC: statusData.expectedCTC || '',
-                    noticePeriod: statusData.noticePeriod || ''
-                };
-
-                showLoginLoading(true, 'Loading your dashboard...');
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                closeModal('loginModal');
-                // Pass statusData so showUserConsole skips the duplicate checkStatus call
-                showUserConsole(statusData);
-                form.reset();
-                if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
-            } catch (err) {
-                console.error('[GCCPROs] Login check error:', err);
-                // v28 SECURITY: Never grant access on backend failure — require verified status
-                showLoginLoading(false);
-                showToast('Could not verify your account. Please check your connection and try again.', 'error');
-                if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
-            }
+            // Redirect to Google Sign-In
+            initiateGoogleSignIn('login');
         }
 
-        function submitPasswordForm(event) {
-            event.preventDefault();
-            const newPassword = document.querySelector('#passwordForm input[name="newPassword"]').value;
-            const confirmPassword = document.querySelector('#passwordForm input[name="confirmPassword"]').value;
-
-            if (newPassword !== confirmPassword) {
-                showToast('Passwords do not match', 'error');
-                return;
-            }
-
-            if (!validatePasswordStrength(newPassword)) {
-                showToast('Password does not meet requirements', 'error');
-                return;
-            }
-
-            showToast('Password changed successfully!', 'success');
-            document.getElementById('passwordForm').reset();
-        }
+        // v33: submitPasswordForm REMOVED — Google Sign-In only, no passwords
 
         async function submitProfileForm(event) {
             event.preventDefault();
@@ -6731,7 +6343,7 @@
 
         async function handleGoogleTokenResponse(tokenResponse) {
             if (tokenResponse.error) {
-                showToast('Google sign-in failed. Please try again or register manually.', 'error');
+                showToast('Google sign-in failed. Please try again.', 'error');
                 return;
             }
 
@@ -6870,6 +6482,7 @@
             }
         }
 
+        // v33: Simplified — Google Sign-In is the only auth path
         function prefillGoogleRegistrationForm(userInfo) {
             if (googleSignInType === 'jobSeeker') {
                 closeModal('loginModal');
@@ -6878,36 +6491,16 @@
                 const form = document.getElementById('jobSeekerForm');
                 // Pre-fill name and email from Google
                 form.querySelector('[name="fullName"]').value = userInfo.name;
-                form.querySelector('[name="email"]').value = userInfo.email;
-
-                // Lock the email field and mark as verified (it's from Google)
                 const emailInput = document.getElementById('jsEmail');
                 emailInput.value = userInfo.email;
-                emailInput.readOnly = true;
                 emailInput.style.background = '#f0f9f0';
                 emailInput.style.borderColor = '#059669';
-                otpVerified['jobSeeker'] = true;
 
-                // Hide OTP section and change button to show verified
-                const otpBtn = document.getElementById('jsEmailBtn');
-                otpBtn.textContent = '✓ Verified';
-                otpBtn.disabled = true;
-                otpBtn.style.background = '#059669';
-                document.getElementById('jsOtpSection').style.display = 'none';
+                // Hide the Google Sign-In button section (already signed in)
+                const googleSection = form.querySelector('[id="jsGoogleSignInBtn"]');
+                if (googleSection && googleSection.parentElement) googleSection.parentElement.style.display = 'none';
 
-                // Hide the Google button, divider, and password fields since Google handles auth
-                const googleBtn = form.querySelector('.google-signin-btn');
-                const divider = form.querySelector('.form-divider');
-                if (googleBtn) googleBtn.style.display = 'none';
-                if (divider) divider.style.display = 'none';
-                const jsPassFields = document.getElementById('jsPasswordFields');
-                if (jsPassFields) {
-                    jsPassFields.style.display = 'none';
-                    // Remove required from hidden password fields
-                    jsPassFields.querySelectorAll('input[required]').forEach(inp => inp.removeAttribute('required'));
-                }
-
-                // Scroll modal to the phone field
+                // Focus on phone field
                 setTimeout(() => {
                     const phoneField = form.querySelector('[name="phone"]');
                     if (phoneField) phoneField.focus();
@@ -6926,31 +6519,13 @@
                     if (nameField) nameField.value = userInfo.name;
                     if (emailField) {
                         emailField.value = userInfo.email;
-                        emailField.readOnly = true;
                         emailField.style.background = '#f0f9f0';
                         emailField.style.borderColor = '#059669';
                     }
-                    otpVerified['referrer'] = true;
 
-                    // Mark OTP as verified and hide OTP section
-                    const otpBtn = document.getElementById('refEmailBtn');
-                    if (otpBtn) {
-                        otpBtn.textContent = '✓ Verified';
-                        otpBtn.disabled = true;
-                        otpBtn.style.background = '#059669';
-                    }
-                    const otpSection = document.getElementById('refOtpSection');
-                    if (otpSection) otpSection.style.display = 'none';
-
-                    const googleBtn = form.querySelector('.google-signin-btn');
-                    const divider = form.querySelector('.form-divider');
-                    if (googleBtn) googleBtn.style.display = 'none';
-                    if (divider) divider.style.display = 'none';
-                    const refPassFields = document.getElementById('refPasswordFields');
-                    if (refPassFields) {
-                        refPassFields.style.display = 'none';
-                        refPassFields.querySelectorAll('input[required]').forEach(inp => inp.removeAttribute('required'));
-                    }
+                    // Hide the Google Sign-In button section (already signed in)
+                    const googleSection = form.querySelector('[id="refGoogleSignInBtn"]');
+                    if (googleSection && googleSection.parentElement) googleSection.parentElement.style.display = 'none';
 
                     // Focus on phone field
                     setTimeout(() => {
@@ -6969,242 +6544,8 @@
             showJobSeekerModal();
         }
 
-        function showForgotPasswordForm(event) {
-            event.preventDefault();
-            const form = document.getElementById('loginForm');
-            const loginType = selectedLoginType;
-            const typeLabel = loginType === 'jobSeeker' ? 'Job Seeker' : 'Partner';
-
-            // Replace login form content with forgot password flow
-            const manualFields = document.getElementById('loginManualFields');
-            if (!manualFields) return;
-
-            manualFields.innerHTML = `
-                <div id="forgotPasswordFlow">
-                    <div id="fpStep1">
-                        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">Enter your registered email and we'll send you an OTP to reset your password.</p>
-                        <div class="form-group">
-                            <label>Email <span class="required">*</span></label>
-                            <input type="email" id="fpEmail" required placeholder="Enter your registered email">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0.5rem;">
-                            <label>Verify you're human <span class="required">*</span></label>
-                            <div class="captcha-group">
-                                <span class="captcha-question" id="fpCaptchaQ"></span>
-                                <span style="margin:0 4px;">=</span>
-                                <input type="number" class="captcha-input" id="fpCaptchaA" placeholder="?" style="width:60px;">
-                                <button type="button" class="captcha-refresh" onclick="generateCaptcha('fp')" title="New question">↻</button>
-                            </div>
-                            <div class="field-error" id="fpCaptchaError">Incorrect answer, please try again</div>
-                        </div>
-                        <button type="button" class="form-submit-btn" onclick="sendForgotPasswordOTP()">Send Reset OTP</button>
-                    </div>
-                    <div id="fpStep2" style="display:none;">
-                        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">Enter the 6-digit OTP sent to your email.</p>
-                        <div class="form-group">
-                            <div class="otp-inputs" id="fpOtpInputs">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                                <input type="text" class="otp-input" maxlength="1" onkeyup="handleFpOtpInput(this)">
-                            </div>
-                        </div>
-                        <button type="button" class="form-submit-btn" onclick="verifyForgotPasswordOTP()">Verify OTP</button>
-                    </div>
-                    <div id="fpStep3" style="display:none;">
-                        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">Set your new password.</p>
-                        <div class="form-group">
-                            <label>New Password <span class="required">*</span></label>
-                            <input type="password" id="fpNewPassword" required minlength="8" onkeyup="checkRegPasswordStrength('fp')">
-                            <div class="password-strength">
-                                <div class="password-strength-bar" id="fpStrengthBar"></div>
-                            </div>
-                            <span style="font-size:0.75rem;color:var(--muted);">Min 8 characters, include uppercase, number, and special character</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm Password <span class="required">*</span></label>
-                            <input type="password" id="fpConfirmPassword" required minlength="8">
-                        </div>
-                        <button type="button" class="form-submit-btn" onclick="submitForgotPasswordReset()">Reset Password</button>
-                    </div>
-                    <div style="margin-top:1rem;text-align:center;">
-                        <a href="#" onclick="resetLoginForm(event)" style="color:var(--brand-blue);text-decoration:none;font-size:0.85rem;">Back to Login</a>
-                    </div>
-                </div>
-            `;
-            // Initialize forgot-password captcha after HTML is injected
-            generateCaptcha('fp');
-        }
-
-        let fpOtpCode = null;
-        let fpEmail = null;
-
-        async function sendForgotPasswordOTP() {
-            const email = document.getElementById('fpEmail').value.trim();
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showToast('Please enter a valid email address', 'error');
-                return;
-            }
-
-            // Verify CAPTCHA before sending OTP
-            if (!verifyCaptcha('fp')) {
-                showToast('Please solve the math question correctly', 'error');
-                return;
-            }
-
-            // Skip email-exists check — allow forgot-password even for ghost registrations
-            // (accounts lost due to earlier sync issues). Recovery happens at password-set step.
-            fpEmail = email;
-
-            // Send OTP via backend
-            try {
-                const url = APPS_SCRIPT_URL + '?action=sendOTP&email=' + encodeURIComponent(email.toLowerCase());
-                const res = await fetch(url);
-                const result = await res.json();
-                if (result.success) {
-                    showToast('OTP sent to ' + email, 'success');
-                    document.getElementById('fpStep1').style.display = 'none';
-                    document.getElementById('fpStep2').style.display = 'block';
-                } else {
-                    showToast(result.error || 'Failed to send OTP. Please try again.', 'error');
-                }
-            } catch(err) {
-                // Fallback: generate local OTP for demo
-                fpOtpCode = String(Math.floor(100000 + Math.random() * 900000));
-                showToast('OTP sent to ' + email, 'success');
-                document.getElementById('fpStep1').style.display = 'none';
-                document.getElementById('fpStep2').style.display = 'block';
-            }
-        }
-
-        function handleFpOtpInput(el) {
-            if (el.value.length === 1 && el.nextElementSibling) {
-                el.nextElementSibling.focus();
-            }
-        }
-
-        async function verifyForgotPasswordOTP() {
-            const inputs = document.querySelectorAll('#fpOtpInputs .otp-input');
-            let otp = '';
-            inputs.forEach(inp => otp += inp.value);
-            if (otp.length !== 6) {
-                showToast('Please enter the complete 6-digit OTP', 'error');
-                return;
-            }
-
-            // Verify OTP via backend
-            try {
-                const url = APPS_SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(fpEmail.toLowerCase()) + '&otp=' + encodeURIComponent(otp);
-                const res = await fetch(url);
-                const result = await res.json();
-                if (result.valid) {
-                    showToast('OTP verified! Set your new password.', 'success');
-                    document.getElementById('fpStep2').style.display = 'none';
-                    document.getElementById('fpStep3').style.display = 'block';
-                } else {
-                    showToast('Invalid OTP. Please try again.', 'error');
-                }
-            } catch(err) {
-                showToast('Could not verify OTP. Please check your connection and try again.', 'error');
-            }
-        }
-
-        async function submitForgotPasswordReset() {
-            const newPass = document.getElementById('fpNewPassword').value;
-            const confirmPass = document.getElementById('fpConfirmPassword').value;
-
-            if (newPass !== confirmPass) {
-                showToast('Passwords do not match', 'error');
-                return;
-            }
-            if (!validatePasswordStrength(newPass)) {
-                showToast('Password must be at least 8 characters with uppercase, number, and special character', 'error');
-                return;
-            }
-
-            // Send to backend and WAIT for confirmation
-            try {
-                const payload = {
-                    action: 'resetPassword',
-                    email: fpEmail,
-                    password: newPass,
-                    type: selectedLoginType
-                };
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    redirect: 'follow'
-                });
-                const result = await response.json();
-                console.log('Password reset result:', result);
-
-                if (result.success === false) {
-                    // Account not found — attempt recovery (creates minimal row + sets password)
-                    if (result.error && result.error.indexOf('not found') !== -1) {
-                        console.log('Account not found — attempting recovery for', fpEmail);
-                        try {
-                            const recoverPayload = {
-                                action: 'resetPassword',
-                                email: fpEmail,
-                                password: newPass,
-                                type: selectedLoginType,
-                                recover: true,
-                                fullName: fpEmail.split('@')[0]
-                            };
-                            const recoverRes = await fetch(APPS_SCRIPT_URL, {
-                                method: 'POST',
-                                body: JSON.stringify(recoverPayload),
-                                redirect: 'follow'
-                            });
-                            const recoverResult = await recoverRes.json();
-                            if (recoverResult.success) {
-                                showToast('Account recovered and password set! You can now login.', 'success');
-                                fpOtpCode = null;
-                                fpEmail = null;
-                                setTimeout(() => { resetLoginForm(new Event('click')); }, 1500);
-                                return;
-                            }
-                        } catch (recErr) {
-                            console.error('Recovery failed:', recErr);
-                        }
-                    }
-                    showToast(result.error || 'Password reset failed. Please try again.', 'error');
-                    return;
-                }
-
-                showToast('Password reset successfully! You can now login.', 'success');
-                fpOtpCode = null;
-                fpEmail = null;
-                // Reset back to login form
-                setTimeout(() => { resetLoginForm(new Event('click')); }, 1500);
-            } catch(err) {
-                console.error('Password reset error:', err);
-                showToast('Network error — could not reset password. Please try again.', 'error');
-            }
-        }
-
-        function resetLoginForm(event) {
-            if (event && event.preventDefault) event.preventDefault();
-            const manualFields = document.getElementById('loginManualFields');
-            if (manualFields) {
-                manualFields.innerHTML = `
-                    <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
-                        <input type="email" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label>Password <span class="required">*</span></label>
-                        <input type="password" name="password">
-                    </div>
-                    <div style="margin-bottom: 1rem; text-align: right;">
-                        <a href="#" onclick="showForgotPasswordForm(event)" style="color: var(--brand-blue); text-decoration: none; font-size: 0.85rem;">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="form-submit-btn">Sign In</button>
-                `;
-            }
-        }
+        // v33: showForgotPasswordForm, sendForgotPasswordOTP, verifyForgotPasswordOTP,
+        // submitForgotPasswordReset, resetLoginForm ALL REMOVED — Google Sign-In only, no passwords
 
         // Referral Coins & Partner Invite
         function generateReferralLink() {
@@ -8639,41 +7980,7 @@ Date: _______________
             showToast('Logged out successfully', 'success');
         }
 
-        function checkPasswordStrength() {
-            const password = document.getElementById('newPassword').value;
-            const strengthBar = document.getElementById('strengthBar');
-            let strength = 0;
-
-            if (password.length >= 8) strength++;
-            if (/[A-Z]/.test(password)) strength++;
-            if (/[0-9]/.test(password)) strength++;
-            if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-            strengthBar.className = 'password-strength-bar';
-            if (strength === 1) strengthBar.classList.add('weak');
-            else if (strength === 2) strengthBar.classList.add('fair');
-            else if (strength >= 3) strengthBar.classList.add('strong');
-        }
-
-        function validatePasswordStrength(password) {
-            return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
-        }
-
-        function checkRegPasswordStrength(prefix) {
-            const passwordEl = document.getElementById(prefix + (prefix === 'fp' ? 'NewPassword' : 'RegPassword'));
-            const strengthBar = document.getElementById(prefix + 'StrengthBar');
-            if (!passwordEl || !strengthBar) return;
-            const password = passwordEl.value;
-            let strength = 0;
-            if (password.length >= 8) strength++;
-            if (/[A-Z]/.test(password)) strength++;
-            if (/[0-9]/.test(password)) strength++;
-            if (/[^A-Za-z0-9]/.test(password)) strength++;
-            strengthBar.className = 'password-strength-bar';
-            if (strength === 1) strengthBar.classList.add('weak');
-            else if (strength === 2) strengthBar.classList.add('fair');
-            else if (strength >= 3) strengthBar.classList.add('strong');
-        }
+        // v33: checkPasswordStrength, validatePasswordStrength, checkRegPasswordStrength all REMOVED — no passwords
 
         function showToast(message, type = 'success', duration = 3000) {
             const toast = document.createElement('div');
