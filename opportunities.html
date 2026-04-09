@@ -5000,10 +5000,14 @@
 
         // ═══════════ Backend Duplicate Email Check ═══════════
         async function checkEmailExists(email, regType) {
+            // v28: Added 15s timeout
+            const ctrl = new AbortController();
+            const tmout = setTimeout(() => ctrl.abort(), 15000);
             try {
                 let url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
                 if (regType) url += '&type=' + encodeURIComponent(regType);
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: ctrl.signal });
+                clearTimeout(tmout);
                 const data = await res.json();
                 if (data.blacklisted) {
                     showToast('This email has been blocked. Please contact support at admin@gccpros.com', 'error');
@@ -5011,7 +5015,10 @@
                 }
                 return data.exists === true;
             } catch (err) {
-                console.log('Email check failed (backend unreachable), allowing registration:', err);
+                clearTimeout(tmout);
+                console.log('Email check failed:', err);
+                // v28: On timeout/network error, allow registration to proceed
+                // (backend will do the real duplicate check on submission anyway)
                 return false;
             }
         }
@@ -5884,8 +5891,12 @@
             showLoginLoading(true, 'Signing you in...');
 
             try {
+                // v28: Added 20s timeout to login
+                const loginCtrl = new AbortController();
+                const loginTmout = setTimeout(() => loginCtrl.abort(), 20000);
                 const url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim()) + '&type=' + encodeURIComponent(loginType) + '&password=' + encodeURIComponent(password);
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: loginCtrl.signal });
+                clearTimeout(loginTmout);
                 const statusData = await res.json();
 
                 if (statusData.blacklisted) {
@@ -5928,17 +5939,9 @@
                 if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
             } catch (err) {
                 console.error('[GCCPROs] Login check error:', err);
-                currentUser = {
-                    name: email.split('@')[0],
-                    email: email,
-                    type: loginType,
-                    domain: ''
-                };
-                showLoginLoading(true, 'Loading your dashboard...');
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                closeModal('loginModal');
-                showUserConsole();
-                form.reset();
+                // v28 SECURITY: Never grant access on backend failure — require verified status
+                showLoginLoading(false);
+                showToast('Could not verify your account. Please check your connection and try again.', 'error');
                 if (loginBtn) { loginBtn.classList.remove('login-btn-loading'); loginBtn.textContent = 'Sign In'; }
             }
         }
@@ -6617,6 +6620,10 @@
                         }
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
+                        // v28 SECURITY: Cannot verify account — block access
+                        showLoginLoading(false);
+                        showToast('Could not verify your account. Please try again.', 'error');
+                        return;
                     }
                     showLoginLoading(true, 'Loading your dashboard...');
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -6667,6 +6674,10 @@
                         }
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
+                        // v28 SECURITY: Cannot verify account — block access
+                        showLoginLoading(false);
+                        showToast('Could not verify your account. Please try again.', 'error');
+                        return;
                     }
                     showLoginLoading(true, 'Loading your dashboard...');
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -7060,15 +7071,82 @@
 
 
         async function checkUserStatus(email, type) {
+            // v28: Added 20s timeout to prevent hanging
+            const ctrl = new AbortController();
+            const tmout = setTimeout(() => ctrl.abort(), 20000);
             try {
                 var url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(email.toLowerCase().trim());
                 if (type) url += '&type=' + encodeURIComponent(type);
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: ctrl.signal });
+                clearTimeout(tmout);
                 const data = await res.json();
                 return data; // { exists, status, type }
             } catch (err) {
+                clearTimeout(tmout);
                 console.log('Status check failed:', err);
-                return { exists: false, status: 'unknown', type: null };
+                // v28 SECURITY: Do NOT return a permissive default — throw so callers must handle failure
+                throw err;
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // v28 SECURITY: Periodic session re-validation for partners
+        // Re-checks partner status every 2 minutes.
+        // If partner is deleted, blacklisted, or no longer Accepted → immediate forced logout.
+        // ═══════════════════════════════════════
+        var _partnerRevalidationInterval = null;
+
+        function startPartnerRevalidation() {
+            // Only run for partners
+            if (!currentUser || currentUser.type !== 'referrer') return;
+            // Clear any existing interval
+            if (_partnerRevalidationInterval) clearInterval(_partnerRevalidationInterval);
+
+            _partnerRevalidationInterval = setInterval(async function() {
+                if (!currentUser || currentUser.type !== 'referrer') {
+                    clearInterval(_partnerRevalidationInterval);
+                    _partnerRevalidationInterval = null;
+                    return;
+                }
+                try {
+                    console.log('[GCCPROs] Partner session re-validation check...');
+                    var url = APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(currentUser.email.toLowerCase()) + '&type=referrer&_t=' + Date.now();
+                    const ctrl = new AbortController();
+                    const tmout = setTimeout(() => ctrl.abort(), 15000);
+                    const res = await fetch(url, { signal: ctrl.signal });
+                    clearTimeout(tmout);
+                    const data = await res.json();
+
+                    // If partner no longer exists, is blacklisted, or status is not Accepted → force logout
+                    if (data.blacklisted) {
+                        console.warn('[GCCPROs] Partner blacklisted — forcing logout');
+                        clearInterval(_partnerRevalidationInterval);
+                        showToast('Your account has been blocked. Please contact admin@gccpros.com', 'error');
+                        setTimeout(function() { handleLogout(); }, 2000);
+                    } else if (!data.exists) {
+                        console.warn('[GCCPROs] Partner deleted from system — forcing logout');
+                        clearInterval(_partnerRevalidationInterval);
+                        showToast('Your partner account is no longer active. Please contact admin@gccpros.com', 'error');
+                        setTimeout(function() { handleLogout(); }, 2000);
+                    } else if (data.status !== 'Accepted') {
+                        console.warn('[GCCPROs] Partner no longer Accepted (status: ' + data.status + ') — forcing logout');
+                        clearInterval(_partnerRevalidationInterval);
+                        showToast('Your partner access has been revoked. Please contact admin@gccpros.com', 'error');
+                        setTimeout(function() { handleLogout(); }, 2000);
+                    } else {
+                        console.log('[GCCPROs] Partner session valid (Accepted)');
+                    }
+                } catch (err) {
+                    // Network error during re-check — don't kick out, just log and retry next interval
+                    console.log('[GCCPROs] Partner re-validation fetch failed (will retry):', err);
+                }
+            }, 120000); // Every 2 minutes (120,000 ms)
+        }
+
+        function stopPartnerRevalidation() {
+            if (_partnerRevalidationInterval) {
+                clearInterval(_partnerRevalidationInterval);
+                _partnerRevalidationInterval = null;
             }
         }
 
@@ -7102,28 +7180,45 @@
                 document.getElementById('profileEmail').value = currentUser.email;
 
                 // Use pre-fetched status from login if available, otherwise fetch fresh
-                let statusData = prefetchedStatus || { exists: false, status: 'unknown', type: null };
-                if (!prefetchedStatus) {
+                let statusData = prefetchedStatus || null;
+                if (!statusData) {
                     showDashboardLoading(true, 'Verifying your account...', 25);
                     try {
+                        const verifyCtrl = new AbortController();
+                        const verifyTmout = setTimeout(() => verifyCtrl.abort(), 20000);
                         statusData = await checkUserStatus(currentUser.email, currentUser.type);
+                        clearTimeout(verifyTmout);
                         console.log('[GCCPROs] checkUserStatus response:', JSON.stringify(statusData));
                     } catch (e) {
-                        console.log('[GCCPROs] checkUserStatus failed, continuing without backend data:', e);
+                        console.log('[GCCPROs] checkUserStatus failed:', e);
+                        statusData = null;
                     }
                 }
+
                 showDashboardLoading(true, 'Loading your profile...', 50);
                 const pendingOverlay = document.getElementById('pendingApprovalOverlay');
+                const userType = (statusData && statusData.type) ? statusData.type : currentUser.type;
 
-                const userType = statusData.type || currentUser.type;
-                if (statusData.exists && statusData.status !== 'Accepted' && statusData.status !== 'unknown' && userType !== 'jobSeeker') {
-                    // Only partners need admin approval — job seekers are auto-approved
-                    const pendingMsg = document.getElementById('pendingMessage');
-                    pendingMsg.textContent = 'We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application.';
-                    pendingOverlay.classList.add('active');
-                    return;
+                // v28 SECURITY: Partners MUST have verified "Accepted" status from backend.
+                // If backend check failed or status is not Accepted, block partner access entirely.
+                if (userType === 'referrer' || currentUser.type === 'referrer') {
+                    if (!statusData || !statusData.exists || statusData.status !== 'Accepted') {
+                        const pendingMsg = document.getElementById('pendingMessage');
+                        if (!statusData || !statusData.exists) {
+                            pendingMsg.textContent = 'Could not verify your account status. Please try logging in again.';
+                        } else if (statusData.status === 'Rejected') {
+                            pendingMsg.textContent = 'Your partner application was not approved. Please contact admin@gccpros.com for details.';
+                        } else {
+                            pendingMsg.textContent = 'We appreciate your interest in joining the GCCPROs partner network. Our team is reviewing your application. You will receive an email once accepted.';
+                        }
+                        pendingOverlay.classList.add('active');
+                        showDashboardLoading(false);
+                        return;
+                    }
+                    // Partner is Accepted — allow access
+                    if (pendingOverlay) pendingOverlay.classList.remove('active');
                 } else {
-                    // User is approved or is a job seeker (auto-approved) — allow access
+                    // Job seekers are auto-approved — allow access
                     if (pendingOverlay) pendingOverlay.classList.remove('active');
                 }
 
@@ -7219,6 +7314,8 @@
                     showDashboardLoading(true, 'Fetching your earnings...', 85);
                     // Fire async fetch (non-blocking)
                     loadPartnerEarnings().catch(function(e) { console.log('loadPartnerEarnings bg error:', e); });
+                    // v28 SECURITY: Start periodic re-validation (every 2 min)
+                    startPartnerRevalidation();
                 }
 
                 showDashboardLoading(true, 'Almost ready!', 100);
@@ -7227,12 +7324,18 @@
             } catch (err) {
                 console.error('[GCCPROs] showUserConsole error:', err);
                 showDashboardLoading(false);
-                // Fallback: still try to render jobs even if something above failed
-                try {
-                    document.getElementById('recommendedJobsSection').style.display = 'block';
-                    buildDomainFilterChips();
-                    renderRecommendedJobs();
-                } catch (e2) { console.error('[GCCPROs] fallback renderJobs also failed:', e2); }
+                // v28 SECURITY: On error, only allow fallback for job seekers, NOT partners
+                if (currentUser && currentUser.type !== 'referrer') {
+                    try {
+                        document.getElementById('recommendedJobsSection').style.display = 'block';
+                        buildDomainFilterChips();
+                        renderRecommendedJobs();
+                    } catch (e2) { console.error('[GCCPROs] fallback renderJobs also failed:', e2); }
+                } else {
+                    // Partner — do NOT show anything on error. Force re-login.
+                    showToast('Could not verify your partner account. Please log in again.', 'error');
+                    setTimeout(function() { handleLogout(); }, 2000);
+                }
             }
         }
 
@@ -8316,6 +8419,7 @@ Date: _______________
         function logoutUser() { handleLogout(); }
 
         function handleLogout() {
+            stopPartnerRevalidation(); // v28: Stop periodic re-checks
             currentUser = null;
             sessionStorage.removeItem('currentUser');
             // Smooth fade-out then reset dashboard state
@@ -8391,13 +8495,13 @@ Date: _______________
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('GCCPROs landing page loaded v8');
+            console.log('GCCPROs landing page loaded v28');
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
+                // v28: showUserConsole will re-verify status from backend before granting access
                 showUserConsole();
             }
-
         });
     </script>
 
