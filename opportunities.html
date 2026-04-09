@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-09-v27">
+    <meta name="version" content="2026-04-09-v28">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -5058,11 +5058,14 @@
                 }
             } catch (e) { console.log('Email check skipped:', e); }
 
-            // Send OTP via backend
+            // Send OTP via backend (v28: added 30s timeout)
             btn.textContent = 'Sending...';
             try {
+                const otpController = new AbortController();
+                const otpTimeout = setTimeout(() => otpController.abort(), 30000);
                 const url = APPS_SCRIPT_URL + '?action=sendOTP&email=' + encodeURIComponent(email.toLowerCase());
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: otpController.signal });
+                clearTimeout(otpTimeout);
                 const result = await res.json();
                 if (!result.success) {
                     showToast(result.error || 'Failed to send OTP. Please try again.', 'error');
@@ -5072,7 +5075,10 @@
                 }
             } catch (err) {
                 console.error('sendOTP error:', err);
-                showToast('Could not send OTP. Please check your connection and try again.', 'error');
+                const otpErrMsg = err.name === 'AbortError'
+                    ? 'OTP request timed out. Please try again.'
+                    : 'Could not send OTP. Please check your connection and try again.';
+                showToast(otpErrMsg, 'error');
                 btn.textContent = originalText;
                 btn.disabled = false;
                 return;
@@ -5134,8 +5140,11 @@
             document.getElementById(verifyBtn).textContent = 'Verifying...';
 
             try {
+                const verifyController = new AbortController();
+                const verifyTimeout = setTimeout(() => verifyController.abort(), 30000);
                 const url = APPS_SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp);
-                const res = await fetch(url);
+                const res = await fetch(url, { signal: verifyController.signal });
+                clearTimeout(verifyTimeout);
                 const result = await res.json();
 
                 if (!result.valid) {
@@ -5592,57 +5601,35 @@
             const jsSubmitBtn = form.querySelector('button[type="submit"]');
             if (jsSubmitBtn) { jsSubmitBtn.disabled = true; jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
-            // v27: Send to backend with retry-safe handling for slow Apps Script responses
+            // v28: Clean submission with 45-second timeout (Apps Script can be slow)
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 45000);
+
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(data),
-                    redirect: 'follow'
+                    redirect: 'follow',
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
+
                 const result = await response.json();
                 console.log('Job seeker registration result:', result);
 
                 if (result.success === false) {
-                    // v27: If "already registered", the previous attempt likely succeeded silently.
-                    // Verify and treat as success if user just registered moments ago.
-                    if (result.error && result.error.toLowerCase().includes('already registered')) {
-                        const statusCheck = await fetch(APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(data.email.toLowerCase()) + '&type=jobSeeker');
-                        const statusResult = await statusCheck.json();
-                        if (statusResult.exists && statusResult.name) {
-                            console.log('v27: Registration actually succeeded on previous attempt');
-                            showToast('Registration successful! Welcome to GCCPROs.', 'success');
-                            // fall through to success flow below
-                        } else {
-                            showToast(result.error, 'error');
-                            if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
-                            return;
-                        }
-                    } else {
-                        showToast(result.error || 'Registration failed. Please try again.', 'error');
-                        if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.error('Job seeker registration error:', err);
-                // v27: On network error, check if registration actually went through
-                try {
-                    const recoveryCheck = await fetch(APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(data.email.toLowerCase()) + '&type=jobSeeker');
-                    const recoveryResult = await recoveryCheck.json();
-                    if (recoveryResult.exists && recoveryResult.name) {
-                        console.log('v27: Registration succeeded despite network error');
-                        showToast('Registration successful! Welcome to GCCPROs.', 'success');
-                        // fall through to success flow below
-                    } else {
-                        showToast('Network error — please check your connection and try again.', 'error');
-                        if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
-                        return;
-                    }
-                } catch (recoveryErr) {
-                    showToast('Network error — please check your connection and try again.', 'error');
+                    showToast(result.error || 'Registration failed. Please try again.', 'error');
                     if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
                     return;
                 }
+            } catch (err) {
+                console.error('Job seeker registration error:', err);
+                const msg = err.name === 'AbortError'
+                    ? 'Request timed out — the server is slow. Please wait a moment and try again.'
+                    : 'Network error — please check your connection and try again.';
+                showToast(msg, 'error');
+                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                return;
             }
 
             const successMsg = document.createElement('div');
@@ -5787,57 +5774,35 @@
             const refSubmitBtn = form.querySelector('button[type="submit"]');
             if (refSubmitBtn) { refSubmitBtn.disabled = true; refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
-            // v27: Send to backend with retry-safe handling for slow Apps Script responses
+            // v28: Clean submission with 45-second timeout
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 45000);
+
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(data),
-                    redirect: 'follow'
+                    redirect: 'follow',
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
+
                 const result = await response.json();
                 console.log('Referrer registration result:', result);
 
                 if (result.success === false) {
-                    // v27: If "already registered", the previous attempt likely succeeded silently.
-                    // Verify and treat as success if user just registered moments ago.
-                    if (result.error && result.error.toLowerCase().includes('already registered')) {
-                        const statusCheck = await fetch(APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(data.email.toLowerCase()) + '&type=referrer');
-                        const statusResult = await statusCheck.json();
-                        if (statusResult.exists && statusResult.name) {
-                            console.log('v27: Registration actually succeeded on previous attempt');
-                            showToast('Registration successful! Your application is under review.', 'success');
-                            // fall through to success flow below
-                        } else {
-                            showToast(result.error, 'error');
-                            if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
-                            return;
-                        }
-                    } else {
-                        showToast(result.error || 'Registration failed. Please try again.', 'error');
-                        if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.error('Referrer registration error:', err);
-                // v27: On network error, check if registration actually went through
-                try {
-                    const recoveryCheck = await fetch(APPS_SCRIPT_URL + '?action=checkStatus&email=' + encodeURIComponent(data.email.toLowerCase()) + '&type=referrer');
-                    const recoveryResult = await recoveryCheck.json();
-                    if (recoveryResult.exists && recoveryResult.name) {
-                        console.log('v27: Registration succeeded despite network error');
-                        showToast('Registration successful! Your application is under review.', 'success');
-                        // fall through to success flow below
-                    } else {
-                        showToast('Network error — please check your connection and try again.', 'error');
-                        if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
-                        return;
-                    }
-                } catch (recoveryErr) {
-                    showToast('Network error — please check your connection and try again.', 'error');
+                    showToast(result.error || 'Registration failed. Please try again.', 'error');
                     if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
                     return;
                 }
+            } catch (err) {
+                console.error('Referrer registration error:', err);
+                const msg = err.name === 'AbortError'
+                    ? 'Request timed out — the server is slow. Please wait a moment and try again.'
+                    : 'Network error — please check your connection and try again.';
+                showToast(msg, 'error');
+                if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                return;
             }
 
             const successMsg = document.createElement('div');
