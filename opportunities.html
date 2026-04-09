@@ -3042,7 +3042,7 @@
 
                 <div class="form-group">
                     <label>LinkedIn Profile <span class="required">*</span></label>
-                    <input type="url" name="linkedin" placeholder="https://www.linkedin.com/in/your-profile" required pattern="https?://(www\.)?linkedin\.com/in/.+" title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
+                    <input type="text" name="linkedin" placeholder="linkedin.com/in/your-profile" required title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
                     <div class="field-error" id="jsLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                 </div>
 
@@ -3302,7 +3302,7 @@
 
                     <div class="form-group">
                         <label>LinkedIn Profile <span class="required">*</span></label>
-                        <input type="url" name="linkedin" placeholder="https://www.linkedin.com/in/your-profile" required pattern="https?://(www\.)?linkedin\.com/in/.+" title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
+                        <input type="text" name="linkedin" placeholder="linkedin.com/in/your-profile" required title="Must be a LinkedIn profile URL (linkedin.com/in/...)">
                         <div class="field-error" id="refLinkedinError">Must be a valid LinkedIn profile URL (e.g. linkedin.com/in/yourname)</div>
                     </div>
 
@@ -4781,10 +4781,28 @@
             return true;
         }
 
+        function normalizeLinkedInUrl(raw) {
+            var url = raw.trim();
+            if (!url) return '';
+            // Strip any protocol prefix
+            url = url.replace(/^https?:\/\//i, '');
+            // Strip leading www.
+            url = url.replace(/^www\./i, '');
+            // Now should start with linkedin.com/...
+            // Re-add canonical prefix
+            if (/^linkedin\.com\//i.test(url)) {
+                url = 'https://www.linkedin.com/' + url.replace(/^linkedin\.com\//i, '');
+            }
+            // Remove trailing slash
+            url = url.replace(/\/+$/, '');
+            return url;
+        }
+
         function validateLinkedIn(input, errorId) {
-            const url = input.value.trim();
-            const pattern = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i;
-            const errorEl = document.getElementById(errorId);
+            var url = normalizeLinkedInUrl(input.value);
+            input.value = url; // auto-correct the field
+            var pattern = /^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+/i;
+            var errorEl = document.getElementById(errorId);
             if (!pattern.test(url)) {
                 if (errorEl) errorEl.classList.add('show');
                 input.classList.add('input-error');
@@ -5160,8 +5178,9 @@
                     fieldValid = input.value.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
                 } else if (input.type === 'tel') {
                     fieldValid = input.value.replace(/\D/g, '').length >= 10;
-                } else if (input.type === 'url' || input.name === 'linkedin') {
-                    fieldValid = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(input.value.trim());
+                } else if (input.name === 'linkedin') {
+                    input.value = normalizeLinkedInUrl(input.value);
+                    fieldValid = /^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+/i.test(input.value);
                 } else if (input.tagName === 'SELECT') {
                     fieldValid = input.value !== '';
                 } else if (input.type === 'checkbox') {
@@ -5198,12 +5217,15 @@
                     if (!firstInvalid) firstInvalid = phoneInput;
                 }
                 const linkedinInput = step.querySelector('input[name="linkedin"]');
-                if (linkedinInput && !/^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(linkedinInput.value.trim())) {
-                    valid = false;
-                    const linkedErr = document.getElementById('jsLinkedinError');
-                    if (linkedErr) linkedErr.classList.add('show');
-                    linkedinInput.classList.add('input-error');
-                    if (!firstInvalid) firstInvalid = linkedinInput;
+                if (linkedinInput) {
+                    linkedinInput.value = normalizeLinkedInUrl(linkedinInput.value);
+                    if (!/^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+/i.test(linkedinInput.value)) {
+                        valid = false;
+                        const linkedErr = document.getElementById('jsLinkedinError');
+                        if (linkedErr) linkedErr.classList.add('show');
+                        linkedinInput.classList.add('input-error');
+                        if (!firstInvalid) firstInvalid = linkedinInput;
+                    }
                 }
 
                 // Password validation (only if password fields are visible — skipped for Google sign-in)
@@ -5307,8 +5329,9 @@
                     fieldValid = input.value.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
                 } else if (input.type === 'tel') {
                     fieldValid = input.value.replace(/\D/g, '').length >= 10;
-                } else if (input.type === 'url' || input.name === 'linkedin') {
-                    fieldValid = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(input.value.trim());
+                } else if (input.name === 'linkedin') {
+                    input.value = normalizeLinkedInUrl(input.value);
+                    fieldValid = /^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+/i.test(input.value);
                 } else if (input.tagName === 'SELECT') {
                     fieldValid = input.value !== '';
                 } else if (input.type === 'checkbox') {
@@ -5345,12 +5368,15 @@
                     if (!firstInvalid) firstInvalid = phoneInput;
                 }
                 const linkedinInput = step.querySelector('input[name="linkedin"]');
-                if (linkedinInput && !/^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i.test(linkedinInput.value.trim())) {
-                    valid = false;
-                    const linkedErr = document.getElementById('refLinkedinError');
-                    if (linkedErr) linkedErr.classList.add('show');
-                    linkedinInput.classList.add('input-error');
-                    if (!firstInvalid) firstInvalid = linkedinInput;
+                if (linkedinInput) {
+                    linkedinInput.value = normalizeLinkedInUrl(linkedinInput.value);
+                    if (!/^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+/i.test(linkedinInput.value)) {
+                        valid = false;
+                        const linkedErr = document.getElementById('refLinkedinError');
+                        if (linkedErr) linkedErr.classList.add('show');
+                        linkedinInput.classList.add('input-error');
+                        if (!firstInvalid) firstInvalid = linkedinInput;
+                    }
                 }
 
                 // Password validation (only if password fields are visible — skipped for Google sign-in)
@@ -5986,10 +6012,12 @@
             const errDiv = document.getElementById('refLinkedInError');
             const val = (input.value || '').trim();
             if (val.length === 0) { errDiv.style.display = 'none'; input.style.borderColor = ''; return; }
-            const valid = val.toLowerCase().includes('linkedin.com/in/') || val.toLowerCase().includes('linkedin.com/pub/');
+            var normalized = normalizeLinkedInUrl(val);
+            input.value = normalized;
+            var valid = /^https:\/\/www\.linkedin\.com\/(in|pub)\/[A-Za-z0-9\-_%]+/i.test(normalized);
             if (!valid) {
                 errDiv.style.display = 'block';
-                errDiv.textContent = val.includes('linkedin.com') ? 'URL should include /in/ or /pub/ (e.g. linkedin.com/in/username)' : 'Must be a LinkedIn profile URL (linkedin.com/in/...)';
+                errDiv.textContent = normalized.includes('linkedin.com') ? 'URL should include /in/ or /pub/ (e.g. linkedin.com/in/username)' : 'Must be a LinkedIn profile URL (linkedin.com/in/...)';
                 input.style.borderColor = '#dc2626';
             } else {
                 errDiv.style.display = 'none';
