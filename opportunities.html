@@ -2977,6 +2977,13 @@
                         <input type="email" name="email" id="jsEmail" required>
                         <button type="button" class="send-otp-btn" id="jsEmailBtn" onclick="sendOTP('jobSeeker')">Send OTP</button>
                     </div>
+                    <div class="captcha-group" id="jsOtpCaptchaGroup" style="margin-top:6px;">
+                        <span class="captcha-question" id="jsOtpCaptchaQ"></span>
+                        <span style="margin:0 4px;">=</span>
+                        <input type="number" class="captcha-input" id="jsOtpCaptchaA" placeholder="?" style="width:60px;">
+                        <button type="button" class="captcha-refresh" onclick="generateCaptcha('jsOtp')" title="New question">↻</button>
+                    </div>
+                    <div class="field-error" id="jsOtpCaptchaError">Incorrect answer, please try again</div>
                     <div class="otp-section" id="jsOtpSection">
                         <div class="otp-timer" id="jsOtpTimer"></div>
                         <div class="otp-inputs">
@@ -3241,6 +3248,13 @@
                             <input type="email" name="email" id="refEmail" required>
                             <button type="button" class="send-otp-btn" id="refEmailBtn" onclick="sendOTP('referrer')">Send OTP</button>
                         </div>
+                        <div class="captcha-group" id="refOtpCaptchaGroup" style="margin-top:6px;">
+                            <span class="captcha-question" id="refOtpCaptchaQ"></span>
+                            <span style="margin:0 4px;">=</span>
+                            <input type="number" class="captcha-input" id="refOtpCaptchaA" placeholder="?" style="width:60px;">
+                            <button type="button" class="captcha-refresh" onclick="generateCaptcha('refOtp')" title="New question">↻</button>
+                        </div>
+                        <div class="field-error" id="refOtpCaptchaError">Incorrect answer, please try again</div>
                         <div class="otp-section" id="refOtpSection">
                             <div class="otp-timer" id="refOtpTimer"></div>
                             <div class="otp-inputs">
@@ -4710,7 +4724,7 @@
         let currentUser = null;
 
         // ═══════════ CAPTCHA System ═══════════
-        const captchaData = { js: {}, ref: {} };
+        const captchaData = { js: {}, ref: {}, jsOtp: {}, refOtp: {}, fp: {} };
 
         function generateCaptcha(prefix) {
             const ops = ['+', '-', '×'];
@@ -4749,6 +4763,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             generateCaptcha('js');
             generateCaptcha('ref');
+            generateCaptcha('jsOtp');
+            generateCaptcha('refOtp');
         });
 
         // ═══════════ Form Validation Helpers ═══════════
@@ -4977,6 +4993,13 @@
             const email = document.getElementById(emailField).value.trim();
             if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 showToast('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Verify CAPTCHA before sending OTP
+            const captchaPrefix = type === 'jobSeeker' ? 'jsOtp' : 'refOtp';
+            if (!verifyCaptcha(captchaPrefix)) {
+                showToast('Please solve the math question correctly', 'error');
                 return;
             }
 
@@ -6649,6 +6672,16 @@
                             <label>Email <span class="required">*</span></label>
                             <input type="email" id="fpEmail" required placeholder="Enter your registered email">
                         </div>
+                        <div class="form-group" style="margin-bottom:0.5rem;">
+                            <label>Verify you're human <span class="required">*</span></label>
+                            <div class="captcha-group">
+                                <span class="captcha-question" id="fpCaptchaQ"></span>
+                                <span style="margin:0 4px;">=</span>
+                                <input type="number" class="captcha-input" id="fpCaptchaA" placeholder="?" style="width:60px;">
+                                <button type="button" class="captcha-refresh" onclick="generateCaptcha('fp')" title="New question">↻</button>
+                            </div>
+                            <div class="field-error" id="fpCaptchaError">Incorrect answer, please try again</div>
+                        </div>
                         <button type="button" class="form-submit-btn" onclick="sendForgotPasswordOTP()">Send Reset OTP</button>
                     </div>
                     <div id="fpStep2" style="display:none;">
@@ -6686,6 +6719,8 @@
                     </div>
                 </div>
             `;
+            // Initialize forgot-password captcha after HTML is injected
+            generateCaptcha('fp');
         }
 
         let fpOtpCode = null;
@@ -6695,6 +6730,12 @@
             const email = document.getElementById('fpEmail').value.trim();
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 showToast('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Verify CAPTCHA before sending OTP
+            if (!verifyCaptcha('fp')) {
+                showToast('Please solve the math question correctly', 'error');
                 return;
             }
 
