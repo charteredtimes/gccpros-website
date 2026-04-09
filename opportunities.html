@@ -5,7 +5,10 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-09-v29">
+    <meta name="version" content="2026-04-09-v30">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>GCC Opportunities — GCCPROs | Talent & Career Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -4998,29 +5001,154 @@
             navLinks.classList.toggle('active');
         }
 
+        // ═══════════════════════════════════════════════════════════
+        // v30: BULLETPROOF REGISTRATION ENGINE
+        // ═══════════════════════════════════════════════════════════
+
+        /**
+         * Generate a unique registration token for idempotent retries.
+         * If the client retries after a timeout, the backend recognizes the
+         * same email and returns success instead of "already registered".
+         */
+        function generateRegistrationToken() {
+            return 'reg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        /**
+         * Smart fetch with retry + exponential backoff.
+         * - Retries on network errors, timeouts, and 5xx server errors.
+         * - Does NOT retry on 4xx (client errors) or explicit {retryable: false}.
+         * - After each failed attempt, checks if registration already went through.
+         */
+        async function fetchWithRetry(url, options, config) {
+            const maxRetries = config.maxRetries || 2;
+            const baseTimeout = config.timeout || 45000;
+            const email = config.email || '';
+            const regType = config.regType || '';
+            let lastError = null;
+
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                const timeout = baseTimeout + (attempt * 10000); // Add 10s per retry
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                try {
+                    console.log('[GCCPROs] Registration attempt ' + (attempt + 1) + '/' + (maxRetries + 1) + ' (timeout: ' + timeout + 'ms)');
+                    if (config.onAttempt) config.onAttempt(attempt + 1, maxRetries + 1);
+
+                    const response = await fetch(url, { ...options, signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    const result = await response.json();
+                    console.log('[GCCPROs] Attempt ' + (attempt + 1) + ' result:', result);
+
+                    // If backend returned success → done
+                    if (result.success) return result;
+
+                    // If backend said it's retryable and we have retries left → retry
+                    if (result.retryable && attempt < maxRetries) {
+                        console.log('[GCCPROs] Retryable error, waiting before retry...');
+                        await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+                        continue;
+                    }
+
+                    // Non-retryable error (PAN duplicate, etc.) → return immediately
+                    return result;
+
+                } catch (err) {
+                    clearTimeout(timeoutId);
+                    lastError = err;
+                    console.warn('[GCCPROs] Attempt ' + (attempt + 1) + ' failed:', err.name, err.message);
+
+                    // Before retrying, check if the registration actually went through
+                    // (server may have written the row but the response was lost)
+                    if (email && attempt < maxRetries) {
+                        try {
+                            console.log('[GCCPROs] Verifying if registration went through despite error...');
+                            if (config.onAttempt) config.onAttempt(attempt + 1, maxRetries + 1, 'Verifying...');
+                            const verifyResult = await checkEmailExists(email, regType);
+                            if (verifyResult === true) {
+                                // Registration DID go through — treat as success
+                                console.log('[GCCPROs] Verification confirmed: registration succeeded despite timeout!');
+                                return { success: true, message: 'Registration confirmed', recoveredFromTimeout: true };
+                            }
+                        } catch (verifyErr) {
+                            console.log('[GCCPROs] Verification check also failed:', verifyErr);
+                        }
+                    }
+
+                    // Wait before retrying (exponential backoff: 3s, 6s)
+                    if (attempt < maxRetries) {
+                        const waitMs = 3000 * (attempt + 1);
+                        console.log('[GCCPROs] Waiting ' + waitMs + 'ms before retry...');
+                        await new Promise(r => setTimeout(r, waitMs));
+                    }
+                }
+            }
+
+            // All retries exhausted — one final verification
+            if (email) {
+                try {
+                    console.log('[GCCPROs] Final verification after all retries exhausted...');
+                    const finalCheck = await checkEmailExists(email, regType);
+                    if (finalCheck === true) {
+                        return { success: true, message: 'Registration confirmed', recoveredFromTimeout: true };
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            // Truly failed
+            const errMsg = lastError && lastError.name === 'AbortError'
+                ? 'The server is taking too long to respond. Your registration data has been saved — please try again or contact admin@gccpros.com'
+                : 'Network error — please check your connection and try again. If the problem persists, contact admin@gccpros.com';
+            return { success: false, error: errMsg, exhaustedRetries: true };
+        }
+
+        /**
+         * Save registration form data to sessionStorage as a backup.
+         * If everything fails, this data can be recovered.
+         */
+        function backupFormData(data, type) {
+            try {
+                var backup = { type: type, data: data, timestamp: new Date().toISOString() };
+                // Remove large binary fields from backup to fit in sessionStorage
+                var backupClean = Object.assign({}, data);
+                delete backupClean.cvBase64;
+                backup.data = backupClean;
+                sessionStorage.setItem('registrationBackup', JSON.stringify(backup));
+                console.log('[GCCPROs] Form data backed up to sessionStorage');
+            } catch (e) {
+                console.log('[GCCPROs] Could not backup form data:', e);
+            }
+        }
+
         // ═══════════ Backend Duplicate Email Check ═══════════
         async function checkEmailExists(email, regType) {
-            // v28: Added 15s timeout
-            const ctrl = new AbortController();
-            const tmout = setTimeout(() => ctrl.abort(), 15000);
-            try {
-                let url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
-                if (regType) url += '&type=' + encodeURIComponent(regType);
-                const res = await fetch(url, { signal: ctrl.signal });
-                clearTimeout(tmout);
-                const data = await res.json();
-                if (data.blacklisted) {
-                    showToast('This email has been blocked. Please contact support at admin@gccpros.com', 'error');
-                    return 'blacklisted';
+            // v30: Retry email check up to 2 times with shorter timeout
+            for (let attempt = 0; attempt < 2; attempt++) {
+                const ctrl = new AbortController();
+                const tmout = setTimeout(() => ctrl.abort(), 10000 + (attempt * 5000));
+                try {
+                    let url = APPS_SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email.toLowerCase().trim());
+                    if (regType) url += '&type=' + encodeURIComponent(regType);
+                    const res = await fetch(url, { signal: ctrl.signal });
+                    clearTimeout(tmout);
+                    const data = await res.json();
+                    if (data.blacklisted) {
+                        showToast('This email has been blocked. Please contact support at admin@gccpros.com', 'error');
+                        return 'blacklisted';
+                    }
+                    return data.exists === true;
+                } catch (err) {
+                    clearTimeout(tmout);
+                    console.log('[GCCPROs] Email check attempt ' + (attempt+1) + ' failed:', err.name);
+                    if (attempt === 0) continue; // retry once
+                    // v30: On all failures, allow registration to proceed
+                    // Backend is the final authority on duplicates — never block a user here
+                    return false;
                 }
-                return data.exists === true;
-            } catch (err) {
-                clearTimeout(tmout);
-                console.log('Email check failed:', err);
-                // v28: On timeout/network error, allow registration to proceed
-                // (backend will do the real duplicate check on submission anyway)
-                return false;
             }
+            return false;
         }
 
         async function sendOTP(type) {
@@ -5044,28 +5172,31 @@
 
             const btn = document.getElementById(emailBtn);
             const originalText = btn.textContent;
-            btn.textContent = 'Checking...';
             btn.disabled = true;
 
-            // Check for duplicate email (type-aware: same email can have both job seeker + partner)
+            // v30: REMOVED client-side email duplicate check from OTP flow.
+            // This was the root cause of false "Email already registered" errors.
+            // The backend does its own authoritative check on form submit — that's the
+            // single source of truth. Only keep the blacklist check (security-critical).
             const regType = type === 'jobSeeker' ? 'jobSeeker' : 'referrer';
+            btn.textContent = 'Checking...';
             try {
-                const exists = await checkEmailExists(email, regType);
-                if (exists === 'blacklisted') {
+                const blCheck = await checkEmailExists(email, regType);
+                if (blCheck === 'blacklisted') {
                     btn.textContent = originalText;
                     btn.disabled = false;
                     return;
                 }
-                if (exists) {
-                    const typeLabel = type === 'jobSeeker' ? 'Job Seeker' : 'Partner';
-                    showToast('This email is already registered as ' + typeLabel + '. Please use Login instead.', 'error');
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    return;
+                // v30: If email exists, just log it — DON'T block OTP.
+                // Backend will catch genuine duplicates on form submit with a clear message.
+                if (blCheck === true) {
+                    console.log('[GCCPROs] Email may already exist, but allowing OTP to proceed. Backend is authoritative.');
                 }
-            } catch (e) { console.log('Email check skipped:', e); }
+            } catch (e) {
+                console.log('[GCCPROs] Email pre-check skipped (non-blocking):', e.message || e);
+            }
 
-            // Send OTP via backend (v28: added 30s timeout)
+            // Send OTP via backend
             btn.textContent = 'Sending...';
             try {
                 const otpController = new AbortController();
@@ -5584,7 +5715,13 @@
                 }
             }
 
-            console.log('Job Seeker Registration:', data);
+            console.log('[GCCPROs] Job Seeker Registration payload prepared');
+
+            // v30: Generate idempotency token for safe retries
+            data.registrationToken = generateRegistrationToken();
+
+            // v30: Backup form data in case everything fails
+            backupFormData(data, 'jobSeeker');
 
             // Set currentUser with domain and full profile data
             currentUser = {
@@ -5608,36 +5745,63 @@
             const jsSubmitBtn = form.querySelector('button[type="submit"]');
             if (jsSubmitBtn) { jsSubmitBtn.disabled = true; jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
-            // v28: Clean submission with 45-second timeout (Apps Script can be slow)
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 45000);
+            // v30: BULLETPROOF SUBMISSION — retry engine with verification
+            const result = await fetchWithRetry(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            }, {
+                maxRetries: 2,
+                timeout: 45000,
+                email: data.email,
+                regType: 'jobSeeker',
+                onAttempt: function(attempt, total, extraMsg) {
+                    if (jsSubmitBtn) {
+                        if (attempt === 1) jsSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
+                        else if (extraMsg) jsSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
+                        else jsSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+                    }
+                }
+            });
 
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    redirect: 'follow',
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
+            console.log('[GCCPROs] Job seeker final result:', result);
 
-                const result = await response.json();
-                console.log('Job seeker registration result:', result);
+            if (result.success === false) {
+                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
 
-                if (result.success === false) {
-                    showToast(result.error || 'Registration failed. Please try again.', 'error');
-                    if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+                // v30: If "Email already registered", offer Login button instead of just an error
+                if (result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
+                    showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
+                    setTimeout(function() {
+                        closeModal('jobSeekerModal');
+                        showModal('loginModal');
+                        // Pre-select Job Seeker login type
+                        var jsLoginRadio = document.querySelector('input[name="loginType"][value="jobSeeker"]');
+                        if (jsLoginRadio) jsLoginRadio.checked = true;
+                        // Pre-fill email in login form
+                        var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
+                        if (loginEmail) loginEmail.value = data.email || '';
+                    }, 1500);
                     return;
                 }
-            } catch (err) {
-                console.error('Job seeker registration error:', err);
-                const msg = err.name === 'AbortError'
-                    ? 'Request timed out — the server is slow. Please wait a moment and try again.'
-                    : 'Network error — please check your connection and try again.';
-                showToast(msg, 'error');
-                if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
+
+                showToast(result.error || 'Registration failed. Please try again.', 'error', 6000);
+                if (result.exhaustedRetries) {
+                    showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                }
                 return;
             }
+
+            // v30: If this was recovered from a timeout, log it
+            if (result.recoveredFromTimeout) {
+                console.log('[GCCPROs] Registration recovered from timeout — entry verified in sheet');
+            }
+            if (result.idempotent) {
+                console.log('[GCCPROs] Registration was idempotent — entry already existed');
+            }
+
+            // Clean up backup on success
+            try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -5765,7 +5929,13 @@
                 data.referredByCode = referredBy;
             }
 
-            console.log('Referrer Registration:', data);
+            console.log('[GCCPROs] Referrer Registration payload prepared');
+
+            // v30: Generate idempotency token for safe retries
+            data.registrationToken = generateRegistrationToken();
+
+            // v30: Backup form data
+            backupFormData(data, 'referrer');
 
             // Set currentUser with domain
             currentUser = {
@@ -5776,41 +5946,59 @@
             };
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-            // Send to backend
             // Show loading state
             const refSubmitBtn = form.querySelector('button[type="submit"]');
             if (refSubmitBtn) { refSubmitBtn.disabled = true; refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...'; }
 
-            // v28: Clean submission with 45-second timeout
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 45000);
+            // v30: BULLETPROOF SUBMISSION — retry engine with verification
+            const result = await fetchWithRetry(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            }, {
+                maxRetries: 2,
+                timeout: 45000,
+                email: data.email,
+                regType: 'referrer',
+                onAttempt: function(attempt, total, extraMsg) {
+                    if (refSubmitBtn) {
+                        if (attempt === 1) refSubmitBtn.innerHTML = '<span class="loading"></span> Registering...';
+                        else if (extraMsg) refSubmitBtn.innerHTML = '<span class="loading"></span> ' + extraMsg;
+                        else refSubmitBtn.innerHTML = '<span class="loading"></span> Retrying (' + attempt + '/' + total + ')...';
+                    }
+                }
+            });
 
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    redirect: 'follow',
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
+            console.log('[GCCPROs] Referrer final result:', result);
 
-                const result = await response.json();
-                console.log('Referrer registration result:', result);
-
-                if (result.success === false) {
-                    showToast(result.error || 'Registration failed. Please try again.', 'error');
-                    if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+            if (result.success === false) {
+                // v30: If genuinely already registered, redirect to login
+                if (result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
+                    showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
+                    setTimeout(function() {
+                        closeModal('referrerModal');
+                        showModal('loginModal');
+                        var partnerLoginRadio = document.querySelector('input[name="loginType"][value="referrer"]');
+                        if (partnerLoginRadio) partnerLoginRadio.checked = true;
+                        var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
+                        if (loginEmail) loginEmail.value = data.email || '';
+                    }, 1500);
                     return;
                 }
-            } catch (err) {
-                console.error('Referrer registration error:', err);
-                const msg = err.name === 'AbortError'
-                    ? 'Request timed out — the server is slow. Please wait a moment and try again.'
-                    : 'Network error — please check your connection and try again.';
-                showToast(msg, 'error');
+                showToast(result.error || 'Registration failed. Please try again.', 'error', 6000);
                 if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
+                if (result.exhaustedRetries) {
+                    showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                }
                 return;
             }
+
+            if (result.recoveredFromTimeout) {
+                console.log('[GCCPROs] Partner registration recovered from timeout');
+            }
+
+            // Clean up backup on success
+            try { sessionStorage.removeItem('registrationBackup'); } catch(e) {}
 
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
@@ -8516,7 +8704,7 @@ Date: _______________
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('GCCPROs landing page loaded v29');
+            console.log('GCCPROs landing page loaded v30');
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
