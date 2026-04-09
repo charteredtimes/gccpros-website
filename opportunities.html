@@ -5,7 +5,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1K276GXQK6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="2026-04-10-v31">
+    <meta name="version" content="2026-04-10-v32">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -5174,10 +5174,8 @@
             const originalText = btn.textContent;
             btn.disabled = true;
 
-            // v30: REMOVED client-side email duplicate check from OTP flow.
-            // This was the root cause of false "Email already registered" errors.
-            // The backend does its own authoritative check on form submit — that's the
-            // single source of truth. Only keep the blacklist check (security-critical).
+            // v31: Only blacklist check before OTP — no email duplicate check.
+            // Backend uses upsert, so duplicates are impossible.
             const regType = type === 'jobSeeker' ? 'jobSeeker' : 'referrer';
             btn.textContent = 'Checking...';
             try {
@@ -5187,13 +5185,9 @@
                     btn.disabled = false;
                     return;
                 }
-                // v30: If email exists, just log it — DON'T block OTP.
-                // Backend will catch genuine duplicates on form submit with a clear message.
-                if (blCheck === true) {
-                    console.log('[GCCPROs] Email may already exist, but allowing OTP to proceed. Backend is authoritative.');
-                }
             } catch (e) {
-                console.log('[GCCPROs] Email pre-check skipped (non-blocking):', e.message || e);
+                // Blacklist check failed — proceed anyway, backend will catch it
+                console.log('[GCCPROs] Blacklist check skipped:', e.message || e);
             }
 
             // Send OTP via backend
@@ -5768,36 +5762,14 @@
 
                 console.log('[GCCPROs] Job seeker final result:', result);
 
+                // v31: Clean error handling — no "already registered" possible with upsert backend
                 if (!result || result.success === false) {
                     if (jsSubmitBtn) { jsSubmitBtn.disabled = false; jsSubmitBtn.innerHTML = 'Complete Registration'; }
-
-                    // v30: If "Email already registered", offer Login button instead of just an error
-                    if (result && result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
-                        showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
-                        setTimeout(function() {
-                            closeModal('jobSeekerModal');
-                            showModal('loginModal');
-                            var jsLoginRadio = document.querySelector('input[name="loginType"][value="jobSeeker"]');
-                            if (jsLoginRadio) jsLoginRadio.checked = true;
-                            var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
-                            if (loginEmail) loginEmail.value = data.email || '';
-                        }, 1500);
-                        return;
-                    }
-
                     showToast((result && result.error) || 'Registration failed. Please try again.', 'error', 6000);
                     if (result && result.exhaustedRetries) {
-                        showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                        showToast('If the issue persists, please email admin@gccpros.com', 'info', 8000);
                     }
                     return;
-                }
-
-                // v30: If this was recovered from a timeout, log it
-                if (result.recoveredFromTimeout) {
-                    console.log('[GCCPROs] Registration recovered from timeout — entry verified in sheet');
-                }
-                if (result.idempotent) {
-                    console.log('[GCCPROs] Registration was idempotent — entry already existed');
                 }
 
                 // Clean up backup on success
@@ -5980,30 +5952,14 @@
 
                 console.log('[GCCPROs] Referrer final result:', result);
 
+                // v31: Clean error handling — no "already registered" possible with upsert backend
                 if (!result || result.success === false) {
-                    // v30: If genuinely already registered, redirect to login
-                    if (result && result.error && result.error.toLowerCase().indexOf('already registered') !== -1) {
-                        showToast('This email is already registered. Redirecting to Login...', 'info', 4000);
-                        setTimeout(function() {
-                            closeModal('referrerModal');
-                            showModal('loginModal');
-                            var partnerLoginRadio = document.querySelector('input[name="loginType"][value="referrer"]');
-                            if (partnerLoginRadio) partnerLoginRadio.checked = true;
-                            var loginEmail = document.querySelector('#loginModal input[name="email"], #loginModal input[type="email"]');
-                            if (loginEmail) loginEmail.value = data.email || '';
-                        }, 1500);
-                        return;
-                    }
                     showToast((result && result.error) || 'Registration failed. Please try again.', 'error', 6000);
                     if (refSubmitBtn) { refSubmitBtn.disabled = false; refSubmitBtn.innerHTML = 'Submit for Admin Review'; }
                     if (result && result.exhaustedRetries) {
-                        showToast('Your data has been saved locally. If the issue persists, please email admin@gccpros.com', 'info', 8000);
+                        showToast('If the issue persists, please email admin@gccpros.com', 'info', 8000);
                     }
                     return;
-                }
-
-                if (result.recoveredFromTimeout) {
-                    console.log('[GCCPROs] Partner registration recovered from timeout');
                 }
 
                 // Clean up backup on success
