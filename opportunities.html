@@ -3483,6 +3483,25 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label>Interested Opportunity Channels</label>
+                        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">Select the channels you'd like to participate in (besides Job Referrals, which is always active)</p>
+                        <div class="multiselect-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestTraining" value="on">
+                                <label>Training & Workshops</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestMentoring" value="on">
+                                <label>Mentoring</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="interestAdvisory" value="on">
+                                <label>Advisory & Consulting</label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Step 3: Referral Incentive Rules & Agreement -->
@@ -5769,7 +5788,10 @@
                 name: data.fullName || data.email.split('@')[0],
                 email: data.email,
                 type: 'referrer',
-                domain: data.primaryDomain || 'Other'
+                domain: data.primaryDomain || 'Other',
+                interestTraining: data.interestTraining || '',
+                interestMentoring: data.interestMentoring || '',
+                interestAdvisory: data.interestAdvisory || ''
             };
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
@@ -6533,6 +6555,9 @@
                             if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
                             if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
+                            if (profileData.interestTraining) currentUser.interestTraining = profileData.interestTraining;
+                            if (profileData.interestMentoring) currentUser.interestMentoring = profileData.interestMentoring;
+                            if (profileData.interestAdvisory) currentUser.interestAdvisory = profileData.interestAdvisory;
                         } else {
                             var typeLabel = loginAs === 'jobSeeker' ? 'Job Seeker' : 'Partner';
                             showLoginLoading(false);
@@ -6592,6 +6617,9 @@
                             if (profileData.expectedCTC) currentUser.expectedCTC = profileData.expectedCTC;
                             if (profileData.noticePeriod) currentUser.noticePeriod = profileData.noticePeriod;
                             if (profileData.name) currentUser.name = profileData.name;
+                            if (profileData.interestTraining) currentUser.interestTraining = profileData.interestTraining;
+                            if (profileData.interestMentoring) currentUser.interestMentoring = profileData.interestMentoring;
+                            if (profileData.interestAdvisory) currentUser.interestAdvisory = profileData.interestAdvisory;
                         }
                     } catch (e) {
                         console.log('Could not fetch profile on login:', e);
