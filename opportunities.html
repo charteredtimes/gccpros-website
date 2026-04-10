@@ -7192,7 +7192,12 @@
                 ${(job.referralAmount && currentUser && currentUser.type === 'referrer') ? '<div class="jd-referral">Referral Bonus: ₹'+job.referralAmount.toLocaleString('en-IN')+'</div>' : ''}
             `;
             const applyBtn = document.getElementById('jdApplyBtn');
-            applyBtn.setAttribute('onclick', "closeModal('jobDetailModal'); applyForJob('" + jobId + "');");
+            if (currentUser && currentUser.type === 'referrer') {
+                applyBtn.style.display = 'none';
+            } else {
+                applyBtn.style.display = '';
+                applyBtn.setAttribute('onclick', "closeModal('jobDetailModal'); applyForJob('" + jobId + "');");
+            }
             showModal('jobDetailModal');
         }
 
