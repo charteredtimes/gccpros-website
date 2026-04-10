@@ -1185,6 +1185,132 @@
             background: var(--brand-blue);
             color: var(--white);
         }
+        /* Refer a Friend Button */
+        .rec-job-refer-btn {
+            background: transparent;
+            color: #059669;
+            border: 1.5px solid #059669;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .rec-job-refer-btn:hover {
+            background: #059669;
+            color: #fff;
+        }
+        /* Share Popup */
+        .share-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .share-popup-overlay.active { display: flex; }
+        .share-popup {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.75rem;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .share-popup h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1.1rem;
+            color: var(--ink);
+        }
+        .share-popup .share-job-title {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+        .share-popup-close {
+            position: absolute;
+            top: 12px; right: 14px;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--muted);
+            line-height: 1;
+        }
+        .share-channels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .share-channel-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 0.75rem 0.5rem;
+            border: 1px solid #e8e4e0;
+            border-radius: 12px;
+            background: #faf7f2;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .share-channel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--brand-blue);
+        }
+        .share-channel-btn .share-icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .share-channel-btn.wa .share-icon { background: #25D366; color: #fff; }
+        .share-channel-btn.email .share-icon { background: #4A90D9; color: #fff; }
+        .share-channel-btn.li .share-icon { background: #0A66C2; color: #fff; }
+        .share-channel-btn.tw .share-icon { background: #1DA1F2; color: #fff; }
+        .share-link-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .share-link-row input {
+            flex: 1;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid #e8e4e0;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            background: #faf7f2;
+            color: var(--ink);
+        }
+        .share-link-row button {
+            padding: 0.55rem 1rem;
+            background: var(--brand-blue);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
         /* Job Detail Modal */
         .job-detail-body { padding: 0 0.5rem; }
         .job-detail-body h4 { font-size: 0.95rem; margin: 1rem 0 0.4rem; color: var(--ink); }
@@ -3985,6 +4111,20 @@
     </div>
 
     <!-- Job Detail Modal -->
+    <!-- Share Job Popup -->
+    <div class="share-popup-overlay" id="sharePopup">
+        <div class="share-popup">
+            <button class="share-popup-close" onclick="closeSharePopup()">&times;</button>
+            <h3>Refer this Job to a Friend</h3>
+            <div class="share-job-title" id="shareJobTitle"></div>
+            <div class="share-channels" id="shareChannels"></div>
+            <div class="share-link-row">
+                <input type="text" id="shareJobLink" readonly>
+                <button onclick="copyShareLink()">Copy</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="jobDetailModal">
         <div class="modal-content" style="max-width:680px;">
             <div class="modal-header">
@@ -6569,6 +6709,58 @@
             });
         }
 
+        // ═══════════ SHARE JOB / REFER A FRIEND ═══════════
+        function openSharePopup(jobId) {
+            const job = JOBS_DATA.find(j => j.id === jobId);
+            if (!job) return;
+
+            const baseUrl = window.location.origin + '/opportunities.html';
+            const shareUrl = baseUrl + '?job=' + encodeURIComponent(jobId);
+            const title = job.title + (job.company ? ' at ' + job.company : '');
+            const text = 'Check out this opportunity: ' + title + ' — ' + (job.location || '') + ' (' + (job.type || '') + ')';
+
+            document.getElementById('shareJobTitle').textContent = title;
+            document.getElementById('shareJobLink').value = shareUrl;
+
+            const channels = document.getElementById('shareChannels');
+            channels.innerHTML = `
+                <a class="share-channel-btn wa" href="https://wa.me/?text=${encodeURIComponent(text + '\n\nApply here: ' + shareUrl)}" target="_blank" rel="noopener">
+                    <span class="share-icon">&#9993;</span>WhatsApp
+                </a>
+                <a class="share-channel-btn email" href="mailto:?subject=${encodeURIComponent('Job Opportunity: ' + title)}&body=${encodeURIComponent(text + '\n\nApply here: ' + shareUrl)}" target="_blank">
+                    <span class="share-icon">&#9993;</span>Email
+                </a>
+                <a class="share-channel-btn li" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener">
+                    <span class="share-icon">in</span>LinkedIn
+                </a>
+                <a class="share-channel-btn tw" href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener">
+                    <span class="share-icon">&#120143;</span>X
+                </a>
+            `;
+
+            document.getElementById('sharePopup').classList.add('active');
+        }
+
+        function closeSharePopup() {
+            document.getElementById('sharePopup').classList.remove('active');
+        }
+
+        function copyShareLink() {
+            const input = document.getElementById('shareJobLink');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Job link copied!', 'success');
+            }).catch(() => {
+                document.execCommand('copy');
+                showToast('Job link copied!', 'success');
+            });
+        }
+
+        // Close share popup on overlay click
+        document.getElementById('sharePopup').addEventListener('click', function(e) {
+            if (e.target === this) closeSharePopup();
+        });
+
         // Check if visitor came via referral link
         function checkReferralParam() {
             const params = new URLSearchParams(window.location.search);
@@ -6934,7 +7126,10 @@
                     <p class="rec-job-desc">${job.description}</p>
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
                     <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
-                    <button class="rec-job-apply-btn" data-apply-job="${job.id}" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
+                    <div style="display:flex;gap:0.5rem;">
+                        <button class="rec-job-apply-btn" style="flex:1;" data-apply-job="${job.id}" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply Now</button>
+                        <button class="rec-job-refer-btn" style="flex:1;" onclick="openSharePopup('${job.id}')">Refer a Friend</button>
+                    </div>
                 </div>
             `}).join('');
 
@@ -7624,7 +7819,10 @@
                     <div class="rec-job-skills">${(job.skills || []).slice(0, 4).map(s => '<span class="rec-skill-tag">' + s + '</span>').join('')}</div>
                     ${job.referralAmount ? '<div style="margin:0.5rem 0 0.25rem;padding:0.45rem 0.75rem;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.14));border:1px solid rgba(16,185,129,0.25);border-radius:8px;display:flex;align-items:center;gap:0.4rem;"><span style="font-size:0.95rem;">💰</span><span style="font-size:0.8rem;font-weight:700;color:#059669;">Referral Bonus: ₹' + job.referralAmount.toLocaleString('en-IN') + '</span></div>' : ''}
                     <button class="rec-job-view-btn" onclick="viewJobDetails('${job.id}')">View Details</button>
-                    <button class="rec-job-apply-btn" style="background:var(--brand-blue);" onclick="prefillReferralForJob('${job.id}')">Refer Candidate</button>
+                    <div style="display:flex;gap:0.5rem;">
+                        <button class="rec-job-apply-btn" style="flex:1;background:var(--brand-blue);" onclick="prefillReferralForJob('${job.id}')">Refer Candidate</button>
+                        <button class="rec-job-refer-btn" style="flex:1;" onclick="openSharePopup('${job.id}')">Share Job</button>
+                    </div>
                 </div>
             `}).join('');
 
