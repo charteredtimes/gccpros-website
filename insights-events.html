@@ -937,6 +937,209 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   </div>
 </section>
 
+<!-- ════════════════════════════════════════════════════════════
+     HYDERABAD COFFEE ROUNDTABLE — RSVP FORM (added 2026-04-21)
+     Anchor: #rsvp-hyderabad  (shareable link target)
+     Posts to existing GCCPROs Apps Script with action=submitEventRSVP.
+     Lands in the "Event RSVPs" tab (auto-created server-side).
+══════════════════════════════════════════════════════════════ -->
+<section id="rsvp-hyderabad" style="padding:80px 0;background:linear-gradient(180deg,var(--cream) 0%,#FFF7E9 100%);scroll-margin-top:80px;">
+  <div class="container" style="padding:0 80px;max-width:1100px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:start;" class="rsvp-grid">
+
+      <!-- Left: invitation copy -->
+      <div>
+        <div class="eyebrow" style="color:var(--gold);background:rgba(201,151,58,0.12);border-color:rgba(201,151,58,0.3);">By invitation · Hyderabad</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);font-weight:900;line-height:1.15;letter-spacing:-0.8px;color:var(--ink);margin:14px 0 16px;">
+          Hyderabad GCC Leaders<br><em style="color:var(--gold);font-style:italic;">Coffee Roundtable</em>
+        </h2>
+        <p style="font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:24px;">
+          A small, in-person coffee chat with GCC leaders operating from Hyderabad. No vendors, no pitches, no panels — just an honest peer conversation on what is actually working (and breaking) inside India's GCCs in 2026. Hosted by <strong style="color:var(--ink);">CA. Shammi Prabhakar</strong>, Founder, GCCPROs.
+        </p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Date</div>
+            <div style="font-size:15px;font-weight:600;color:var(--ink);">Tuesday, 12 May 2026</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">City</div>
+            <div style="font-size:15px;font-weight:600;color:var(--ink);">Hyderabad · in person</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Format</div>
+            <div style="font-size:15px;font-weight:600;color:var(--ink);">Coffee chat · ~90 mins</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Who</div>
+            <div style="font-size:15px;font-weight:600;color:var(--ink);">GCC leaders only · curated</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(26,58,107,0.06);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;font-size:13px;color:var(--ink);line-height:1.7;">
+          Seats are limited and confirmed manually. Submit your details below — we will write back with the venue and exact time once your seat is confirmed.
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(10,22,40,0.06);">
+        <form id="rsvpHydForm" novalidate>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);margin-bottom:4px;">Request your seat</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Hyderabad · 12 May 2026 · By invitation</div>
+
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field"><span>Full name <em>*</em></span><input name="fullName" type="text" required></label>
+            <label class="rsvp-field"><span>Designation / Title <em>*</em></span><input name="designation" type="text" required placeholder="e.g. MD &amp; Site Leader"></label>
+          </div>
+
+          <label class="rsvp-field"><span>Company (GCC) <em>*</em></span><input name="company" type="text" required placeholder="Parent / group company name"></label>
+
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field"><span>Work email <em>*</em></span><input name="email" type="email" required></label>
+            <label class="rsvp-field"><span>Phone / WhatsApp</span><input name="phone" type="tel" placeholder="+91 ..."></label>
+          </div>
+
+          <label class="rsvp-field"><span>LinkedIn profile</span><input name="linkedin" type="url" placeholder="https://linkedin.com/in/..."></label>
+
+          <label class="rsvp-field"><span>Hyderabad office address</span><input name="officeAddress" type="text" placeholder="HITEC City / Gachibowli / Madhapur / ..."></label>
+
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field"><span>GCC headcount in Hyderabad</span><input name="headcountHyderabad" type="text" inputmode="numeric" placeholder="e.g. 850"></label>
+            <label class="rsvp-field"><span>GCC headcount in India (total)</span><input name="headcountIndia" type="text" inputmode="numeric" placeholder="e.g. 3500"></label>
+          </div>
+
+          <div class="rsvp-field">
+            <span>Domains run from Hyderabad (tick all that apply)</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Technology"> Technology</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Engineering"> Engineering</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Finance"> Finance</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Operations"> Operations</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="HR / People"> HR / People</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Analytics / Data"> Analytics / Data</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Procurement / SCM"> Procurement / SCM</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Other"> Other</label>
+            </div>
+          </div>
+
+          <label class="rsvp-field"><span>What would you like discussed at the table?</span><textarea name="topics" rows="3" placeholder="One or two themes you want the room to dig into."></textarea></label>
+
+          <label class="rsvp-chk-line">
+            <input type="checkbox" name="confirmAttendance" required>
+            <span>I confirm I can be physically present in Hyderabad on 12 May 2026 if my seat is confirmed.</span>
+          </label>
+
+          <button type="submit" id="rsvpSubmitBtn" style="margin-top:18px;width:100%;background:var(--ink);color:#fff;padding:14px 22px;border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.3px;cursor:pointer;transition:all 0.2s;">Request my seat</button>
+          <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:14px;font-size:13px;line-height:1.6;"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.rsvp-field{display:block;margin-bottom:14px;}
+.rsvp-field > span{display:block;font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px;letter-spacing:0.2px;}
+.rsvp-field > span em{color:#c0392b;font-style:normal;margin-left:2px;}
+.rsvp-field input,.rsvp-field textarea{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:#fff;transition:border 0.15s,box-shadow 0.15s;}
+.rsvp-field input:focus,.rsvp-field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,151,58,0.15);}
+.rsvp-field textarea{resize:vertical;min-height:84px;}
+.rsvp-chk{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink);background:var(--cream);border:1px solid var(--border);border-radius:100px;padding:6px 12px;cursor:pointer;}
+.rsvp-chk input{margin:0;}
+.rsvp-chk-line{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink);line-height:1.55;margin-top:6px;}
+.rsvp-chk-line input{margin-top:3px;flex-shrink:0;}
+#rsvpSubmitBtn:hover{background:var(--gold);color:var(--ink);}
+#rsvpSubmitBtn:disabled{opacity:0.65;cursor:not-allowed;}
+.rsvp-msg-ok{color:#1f7a3a;background:rgba(31,122,58,0.08);border:1px solid rgba(31,122,58,0.25);padding:10px 14px;border-radius:8px;}
+.rsvp-msg-err{color:#a82a2a;background:rgba(168,42,42,0.06);border:1px solid rgba(168,42,42,0.25);padding:10px 14px;border-radius:8px;}
+@media(max-width:900px){
+  #rsvp-hyderabad .container{padding:0 24px !important;}
+  #rsvp-hyderabad .rsvp-grid{grid-template-columns:1fr !important;gap:32px !important;}
+  #rsvp-hyderabad .rsvp-row{grid-template-columns:1fr !important;}
+}
+</style>
+
+<script>
+(function(){
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX307EtV6k2t1-sFuutjZrCIhIPZg5p73GDobn034LKJttOinjwuZaWjiNoVZSvoGoxQ/exec';
+  var form = document.getElementById('rsvpHydForm');
+  if (!form) return;
+  var btn = document.getElementById('rsvpSubmitBtn');
+  var msg = document.getElementById('rsvpMsg');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    msg.className = '';
+    msg.textContent = '';
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    var domains = Array.prototype.map.call(
+      form.querySelectorAll('input[name="domains"]:checked'),
+      function(el){ return el.value; }
+    );
+
+    var payload = {
+      action: 'submitEventRSVP',
+      eventName: 'Hyderabad GCC Leaders Coffee Roundtable',
+      eventCity: 'Hyderabad',
+      eventDate: '2026-05-12',
+      fullName:           form.fullName.value.trim(),
+      designation:        form.designation.value.trim(),
+      company:            form.company.value.trim(),
+      email:              form.email.value.trim(),
+      phone:              form.phone.value.trim(),
+      linkedin:           form.linkedin.value.trim(),
+      officeAddress:      form.officeAddress.value.trim(),
+      headcountHyderabad: form.headcountHyderabad.value.trim(),
+      headcountIndia:     form.headcountIndia.value.trim(),
+      domains:            domains,
+      topics:             form.topics.value.trim(),
+      confirmAttendance:  form.confirmAttendance.checked,
+      source:             'insights-events.html#rsvp-hyderabad'
+    };
+
+    btn.disabled = true;
+    var originalLabel = btn.textContent;
+    btn.textContent = 'Sending...';
+
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      // No custom headers => browser sends a "simple" request (no CORS preflight),
+      // matching how the rest of the site posts to this Apps Script endpoint.
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    })
+    .then(function(r){ return r.json().catch(function(){ return { success:false, error:'Bad server response' }; }); })
+    .then(function(res){
+      if (res && res.success) {
+        msg.className = 'rsvp-msg-ok';
+        msg.textContent = res.message || 'Thank you. Your RSVP has been received — we will write back to confirm your seat.';
+        form.reset();
+        if (typeof gtag === 'function') {
+          gtag('event', 'rsvp_submit', { event_category: 'Hyderabad Roundtable', event_label: payload.company });
+        }
+      } else {
+        msg.className = 'rsvp-msg-err';
+        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to admin@gccpros.com.';
+      }
+    })
+    .catch(function(err){
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Network error. Please check your connection and try again, or email admin@gccpros.com.';
+      console.error('RSVP submit error:', err);
+    })
+    .then(function(){
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
+  });
+})();
+</script>
+
 <!-- EVENTS & MEDIA SECTION -->
 <section style="padding:60px 0;background:var(--ink);">
   <div class="container" style="padding:0 80px;">
@@ -966,6 +1169,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
           <div style="background:var(--blue-light);border-radius:12px;padding:28px;border-left:4px solid var(--gold);">
             <div style="font-size:12px;color:var(--blue-mid);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">What's Next</div>
             <p style="font-size:13px;color:var(--ink);line-height:1.7;">Monthly city roundtables across Bengaluru, Pune, Hyderabad and Delhi NCR. GCC Leaders Podcast. Industry advocacy meetings with policy makers. Small, curated, peer-only — always.</p>
+            <a href="#rsvp-hyderabad" style="display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:0.4px;color:var(--ink);background:var(--gold);padding:9px 16px;border-radius:8px;text-decoration:none;">Hyderabad · 12 May 2026 — Request a seat →</a>
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
