@@ -184,6 +184,107 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   .nav-links{display:none!important;}
 }
 
+/* ── CORE TIER GATING ── */
+.core-tier-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+.core-tier-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue-mid);padding:7px 16px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid rgba(35,86,164,0.2);}
+.core-tier-pill::before{content:'●';color:var(--blue-mid);font-size:10px;line-height:1;}
+.access-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.3px;}
+.access-tag::before{content:'🔒';font-size:12px;line-height:1;}
+.gate-callout{background:var(--blue-light);border:1px solid rgba(35,86,164,0.18);border-radius:14px;padding:28px 32px;margin-top:32px;display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start;}
+.gate-icon{width:52px;height:52px;border-radius:12px;background:var(--blue-mid);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.gate-body h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-0.3px;}
+.gate-body p{font-size:13.5px;color:var(--text);line-height:1.75;margin-bottom:12px;}
+.gate-rules{list-style:none;padding:0;margin:0 0 14px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;}
+.gate-rules li{font-size:13px;color:var(--text);line-height:1.6;padding-left:22px;position:relative;}
+.gate-rules li.yes::before{content:'✓';position:absolute;left:0;top:0;color:#1FA463;font-weight:800;}
+.gate-rules li.no::before{content:'✕';position:absolute;left:0;top:0;color:#D04A4A;font-weight:800;}
+.gate-foot{font-size:12px;color:var(--muted);padding-top:12px;border-top:1px solid rgba(35,86,164,0.12);margin-top:4px;}
+.gate-foot strong{color:var(--ink);font-weight:700;}
+@media(max-width:700px){
+  .gate-callout{grid-template-columns:1fr;padding:24px 20px;}
+  .gate-icon{width:44px;height:44px;font-size:20px;}
+  .gate-rules{grid-template-columns:1fr;}
+}
+
+/* ── LAUNCH ANNOUNCEMENT RIBBON ── */
+.launch-ribbon{background:linear-gradient(90deg,var(--gold) 0%,var(--gold-light) 100%);color:var(--ink);padding:10px 16px;text-align:center;font-size:13px;font-weight:600;letter-spacing:0.2px;position:relative;z-index:50;}
+.launch-ribbon a{color:var(--ink);text-decoration:underline;font-weight:700;}
+.launch-ribbon .mini-dot{display:inline-block;width:7px;height:7px;background:var(--ink);border-radius:50%;margin-right:8px;vertical-align:middle;animation:pulse 2s infinite;}
+
+/* ── ENTERPRISE LAUNCH / COUNTDOWN ── */
+.enterprise-launch{background:linear-gradient(135deg,#0A1628 0%,#1A3A6B 100%);position:relative;overflow:hidden;color:#fff;padding:80px 80px;text-align:center;}
+.enterprise-launch::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:56px 56px;}
+.enterprise-launch::after{content:'';position:absolute;top:-150px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,151,58,0.18) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+.launch-inner{position:relative;z-index:1;max-width:1040px;margin:0 auto;}
+.launch-eyebrow{display:inline-flex;align-items:center;gap:10px;background:rgba(201,151,58,0.14);border:1px solid rgba(201,151,58,0.35);padding:8px 18px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:24px;}
+.pulse-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
+.launch-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4.4vw,50px);font-weight:900;line-height:1.08;color:#fff;letter-spacing:-1.2px;margin-bottom:16px;}
+.launch-title em{color:var(--gold);font-style:italic;}
+.launch-sub{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.75;max-width:720px;margin:0 auto 36px;font-weight:300;}
+.countdown{display:flex;justify-content:center;gap:14px;margin:0 auto 32px;flex-wrap:wrap;}
+.cd-item{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px 24px;min-width:96px;backdrop-filter:blur(8px);}
+.cd-num{font-family:'Playfair Display',serif;font-size:44px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+.cd-lbl{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.8px;margin-top:8px;font-weight:600;}
+.cd-sep{display:flex;align-items:center;color:rgba(201,151,58,0.4);font-size:32px;font-weight:300;margin:0 -4px;}
+.launch-live{display:none;align-items:center;justify-content:center;gap:10px;background:rgba(37,211,102,0.14);border:1px solid rgba(37,211,102,0.45);padding:14px 26px;border-radius:100px;font-size:14px;font-weight:700;color:#25D366;margin:0 auto 32px;max-width:fit-content;}
+.launch-live.on{display:inline-flex;}
+.launch-live .live-dot{width:9px;height:9px;background:#25D366;border-radius:50%;animation:pulse 1.4s infinite;}
+.launch-meta{font-size:12px;color:rgba(255,255,255,0.4);margin-top:18px;letter-spacing:0.3px;}
+.launch-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ── ENTERPRISE MODEL GRID ── */
+.enterprise-section{background:var(--white);}
+.ent-top{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:36px;flex-wrap:wrap;}
+.ent-top-left{flex:1;min-width:280px;}
+.ent-tier-pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--gold-light);padding:7px 16px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.ent-tier-pill::before{content:'★';color:var(--gold);font-size:12px;}
+.ent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.ent-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;transition:all 0.25s;overflow:hidden;}
+.ent-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));opacity:0;transition:opacity 0.25s;}
+.ent-card:hover{background:#fff;border-color:rgba(201,151,58,0.35);transform:translateY(-3px);box-shadow:0 14px 34px rgba(10,22,40,0.08);}
+.ent-card:hover::after{opacity:1;}
+.ent-num{position:absolute;top:22px;right:24px;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1.2px;}
+.ent-icon{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,rgba(201,151,58,0.14),rgba(201,151,58,0.04));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;border:1px solid rgba(201,151,58,0.18);}
+.ent-card h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:10px;letter-spacing:-0.3px;}
+.ent-card p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.ent-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.ent-tag{background:rgba(35,86,164,0.08);color:var(--blue-mid);font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px;letter-spacing:0.2px;}
+
+/* ── WAITLIST ── */
+.waitlist-section{background:var(--cream);padding:80px 80px;}
+.waitlist-card{background:linear-gradient(135deg,var(--ink) 0%,var(--blue) 100%);border-radius:20px;padding:56px 48px;text-align:center;position:relative;overflow:hidden;max-width:900px;margin:0 auto;}
+.waitlist-card::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.05) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+.waitlist-inner{position:relative;z-index:1;}
+.waitlist-eyebrow{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.waitlist-card h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.6vw,40px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-0.8px;margin-bottom:14px;}
+.waitlist-card h2 em{color:var(--gold-light);font-style:italic;}
+.waitlist-card p{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:560px;margin:0 auto 28px;font-weight:300;}
+.waitlist-form{display:flex;flex-direction:column;gap:10px;max-width:560px;margin:0 auto;}
+.waitlist-row{display:flex;gap:10px;flex-wrap:wrap;}
+.waitlist-input{flex:1;min-width:200px;padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.08);color:#fff;font-family:inherit;font-size:14px;outline:none;transition:all 0.2s;}
+.waitlist-input.invalid{border-color:#FF9B9B;background:rgba(225,90,90,0.08);}
+.waitlist-input::placeholder{color:rgba(255,255,255,0.35);}
+.waitlist-input:focus{border-color:var(--gold);background:rgba(255,255,255,0.12);}
+.waitlist-btn{background:var(--gold);color:var(--ink);padding:14px 26px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap;}
+.waitlist-btn:hover{background:var(--gold-light);}
+.waitlist-note{font-size:12px;color:rgba(255,255,255,0.4);margin-top:16px;}
+.waitlist-msg{display:none;margin-top:18px;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;}
+.waitlist-msg.ok{display:block;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.35);color:#5EE49A;}
+.waitlist-msg.err{display:block;background:rgba(225,90,90,0.12);border:1px solid rgba(225,90,90,0.35);color:#FF9B9B;}
+
+@media(max-width:900px){
+  .enterprise-launch{padding:56px 24px;}
+  .cd-item{padding:14px 18px;min-width:76px;}
+  .cd-num{font-size:34px;}
+  .cd-sep{display:none;}
+  .ent-grid{grid-template-columns:1fr;}
+  .ent-top{flex-direction:column;align-items:stretch;gap:16px;}
+  .waitlist-section{padding:56px 20px;}
+  .waitlist-card{padding:40px 24px;border-radius:16px;}
+  .waitlist-form{flex-direction:column;}
+  .waitlist-btn{width:100%;}
+}
+
 </style>
 </head>
 <body>
@@ -254,11 +355,174 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   </div>
 </div>
 
+<!-- ENTERPRISE TIER — LAUNCH COUNTDOWN -->
+<section class="enterprise-launch" id="enterprise-launch">
+  <div class="launch-inner">
+    <div class="launch-eyebrow">
+      <span class="pulse-dot"></span>
+      Enterprise Tier · Waitlist opens 5 May 2026 · 12:00 PM IST
+    </div>
+    <h1 class="launch-title">The <em>deepest</em> GCC intelligence<br>India has ever had.</h1>
+    <p class="launch-sub">Beyond the 9 core fields — every record in the Enterprise Tier carries <strong style="color:#fff;font-weight:600;">leadership, entity, financial, capability and maturity intelligence</strong>, each field sourced and dated. Built for investors, M&amp;A teams, GCC heads, site-selection advisors and enterprise partners.</p>
+
+    <!-- Countdown -->
+    <div class="countdown" id="countdown" aria-live="polite">
+      <div class="cd-item"><div class="cd-num" id="cd-days">--</div><div class="cd-lbl">Days</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-item"><div class="cd-num" id="cd-hours">--</div><div class="cd-lbl">Hours</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-item"><div class="cd-num" id="cd-mins">--</div><div class="cd-lbl">Minutes</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-item"><div class="cd-num" id="cd-secs">--</div><div class="cd-lbl">Seconds</div></div>
+    </div>
+
+    <!-- Post-launch live badge (hidden until countdown hits zero) -->
+    <div class="launch-live" id="launchLive" role="status">
+      <span class="live-dot"></span>
+      Waitlist is now open — apply below
+    </div>
+
+    <div class="launch-cta-row">
+      <a href="#waitlist" class="btn-primary" id="launchCta">Notify me when it opens →</a>
+      <a href="#enterprise-model" class="btn-ghost" style="color:rgba(255,255,255,0.85);border-color:rgba(255,255,255,0.25);">See what's inside</a>
+    </div>
+    <div class="launch-meta">No card. No commitment. You're just first in the queue.</div>
+  </div>
+</section>
+
+<!-- ENTERPRISE MODEL — EXPANDED DATA COVERAGE -->
+<section class="enterprise-section fields-section" id="enterprise-model">
+  <div class="ent-top">
+    <div class="ent-top-left">
+      <div class="section-label">Enterprise Model · Expanded Coverage</div>
+      <h2 class="section-title">Seven layers of<br>GCC intelligence</h2>
+      <p class="section-sub" style="margin-bottom:0;">Every field verified, sourced and dated. No inferred data, no pattern-matched guesses.</p>
+    </div>
+    <div class="ent-tier-pill">Enterprise Tier · Launching 5 May 2026</div>
+  </div>
+
+  <div class="ent-grid">
+    <div class="ent-card">
+      <div class="ent-num">01</div>
+      <div class="ent-icon">👥</div>
+      <h3>Leadership &amp; Mapping</h3>
+      <p>India site head and complete global executive mapping — current role, verified tenure in position and LinkedIn profile for every leader in the hierarchy.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">India site head</span>
+        <span class="ent-tag">Global exec map</span>
+        <span class="ent-tag">Tenures</span>
+        <span class="ent-tag">LinkedIn</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">02</div>
+      <div class="ent-icon">🏛️</div>
+      <h3>Entity &amp; Legal</h3>
+      <p>Year of establishment, CIN, legal structure (Pvt Ltd / LLP / Branch / Project Office) and full registered office address — the entity profile in one view.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Year established</span>
+        <span class="ent-tag">CIN</span>
+        <span class="ent-tag">Legal structure</span>
+        <span class="ent-tag">Registered office</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">03</div>
+      <div class="ent-icon">📊</div>
+      <h3>Headcount Intelligence</h3>
+      <p>Headcount band with the source of disclosure and the date of last validation. If we can't source it, we don't publish it.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Headcount band</span>
+        <span class="ent-tag">Source</span>
+        <span class="ent-tag">Validation date</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">04</div>
+      <div class="ent-icon">💰</div>
+      <h3>Financial Performance</h3>
+      <p>India-entity revenue, YoY growth, transfer pricing markup and net profit — drawn from MCA filings and annual disclosures, dated to the filing year.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Revenue</span>
+        <span class="ent-tag">YoY growth</span>
+        <span class="ent-tag">TP markup</span>
+        <span class="ent-tag">Net profit</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">05</div>
+      <div class="ent-icon">🛠️</div>
+      <h3>Capability Depth</h3>
+      <p>Tech stack, Centers of Excellence and sub-domain tagging — understand capability at cluster level, not just function level.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Tech stack</span>
+        <span class="ent-tag">CoEs</span>
+        <span class="ent-tag">Sub-domain tags</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">06</div>
+      <div class="ent-icon">🚀</div>
+      <h3>Maturity &amp; Setup Model</h3>
+      <p>Gen 1 to Gen 4 maturity classification, setup model (greenfield / acquired / captive) and BOT partner where the entity originated via a build-operate-transfer.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Gen 1 → Gen 4</span>
+        <span class="ent-tag">Setup model</span>
+        <span class="ent-tag">BOT partner</span>
+      </div>
+    </div>
+
+    <div class="ent-card">
+      <div class="ent-num">07</div>
+      <div class="ent-icon">🌐</div>
+      <h3>Parent Linkage</h3>
+      <p>Group global turnover and complete parent-company linkage — so you see every subsidiary of the same group operating an India GCC, not just one.</p>
+      <div class="ent-tags">
+        <span class="ent-tag">Group turnover</span>
+        <span class="ent-tag">Parent linkage</span>
+        <span class="ent-tag">Subsidiary map</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist-section" id="waitlist">
+  <div class="waitlist-card">
+    <div class="waitlist-inner">
+      <div class="waitlist-eyebrow">Join the waitlist</div>
+      <h2>Be first through the door on<br><em>5 May 2026</em>.</h2>
+      <p>Enterprise Tier opens to a limited cohort first. Drop your work email and we'll notify you the moment the waitlist form goes live — and hold your place in the queue.</p>
+      <form class="waitlist-form" id="waitlistForm" onsubmit="return submitWaitlist(event)">
+        <div class="waitlist-row">
+          <input class="waitlist-input" type="text" id="waitlistName" placeholder="Full name" required autocomplete="name">
+          <input class="waitlist-input" type="text" id="waitlistCompany" placeholder="Company" required autocomplete="organization">
+        </div>
+        <div class="waitlist-row">
+          <input class="waitlist-input" type="email" id="waitlistEmail" placeholder="you@yourcompany.com (corporate email)" required autocomplete="email">
+          <button class="waitlist-btn" type="submit" id="waitlistBtn">Notify me →</button>
+        </div>
+      </form>
+      <div class="waitlist-note"><strong style="color:rgba(255,255,255,0.65);">B2B only · Corporate email required.</strong> We do not accept personal email providers (Gmail, Yahoo, Hotmail, Outlook, iCloud, Rediffmail, etc.). We'll never share your details.</div>
+      <div class="waitlist-msg" id="waitlistMsg" role="alert" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
 <!-- WHAT'S IN THE DATABASE -->
 <section class="fields-section">
+  <div class="core-tier-head">
+    <span class="core-tier-pill">Core Tier · Free for verified GCC professionals</span>
+    <span class="access-tag">Gated · Private individual use only</span>
+  </div>
   <div class="section-label">Data Fields</div>
   <h2 class="section-title">What's in every<br>GCC record</h2>
-  <p class="section-sub">9 verified data fields per GCC — updated continuously by our member community and research team.</p>
+  <p class="section-sub">9 verified data fields per GCC — updated continuously by our member community and research team. Available free to individuals who work inside a GCC, for their personal professional use.</p>
 
   <div class="fields-grid">
     <div class="field-card">
@@ -313,6 +577,26 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
     <div class="acc-track"><div class="acc-fill"></div></div>
     <div class="acc-pct">95%</div>
     <div class="acc-note">Community-verified · Continuously improved</div>
+  </div>
+
+  <!-- GATED ACCESS NOTICE — CORE TIER -->
+  <div class="gate-callout">
+    <div class="gate-icon">🔒</div>
+    <div class="gate-body">
+      <h3>Private access · For GCC professionals only</h3>
+      <p>The Core Tier is a <strong>free, gated resource</strong> built exclusively for individuals employed inside a Global Capability Centre in India — to help them map peers, benchmark their own function, and navigate the ecosystem. It is <strong>not</strong> a commercial data product.</p>
+      <ul class="gate-rules">
+        <li class="yes">Currently employed inside a GCC in India</li>
+        <li class="no">Staffing / RPO agencies &amp; recruiters</li>
+        <li class="yes">Used for personal professional reference</li>
+        <li class="no">Sales prospecting or lead generation</li>
+        <li class="yes">Verified via work email &amp; LinkedIn</li>
+        <li class="no">Resale, scraping or bulk extraction</li>
+        <li class="yes">5 searches + 10 profile views / day</li>
+        <li class="no">Enterprise or commercial B2B use</li>
+      </ul>
+      <div class="gate-foot"><strong>Are you an enterprise buyer, investor, advisor or agency?</strong> The Core Tier isn't built for you. The <a href="#enterprise-launch" style="color:var(--blue-mid);font-weight:700;">Enterprise Tier</a> — launching 5 May 2026 — is. <a href="#waitlist" style="color:var(--blue-mid);font-weight:700;">Join the waitlist →</a></div>
+    </div>
   </div>
 </section>
 
@@ -369,63 +653,6 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   </div>
 </section>
 
-<!-- ACCESS TIERS -->
-<section class="access-section">
-  <div class="section-label">Access</div>
-  <h2 class="section-title">Two ways to engage<br>with the database</h2>
-  <p class="section-sub">The full database is exclusive to verified GCC professionals. A public directory listing is available to all.</p>
-
-  <div class="access-grid">
-    <div class="access-card member">
-      <span class="access-badge">Member Access</span>
-      <div class="access-title">Full Database Search</div>
-      <p class="access-desc">Complete access to all 2,400+ GCC records with advanced search, filters, and full company profiles including leadership details.</p>
-      <ul class="access-features">
-        <li>Search by 9 data fields</li>
-        <li>Full company profile with all fields</li>
-        <li>Leader names and details</li>
-        <li>5 searches + 10 profile views per day</li>
-        <li>Suggest corrections & earn Loyalty Coins</li>
-        <li>Submit new GCCs to earn 100 coins</li>
-      </ul>
-      <a href="https://portal.gccpros.com" class="btn-white">Search the database →</a>
-    </div>
-    <!-- Public Access card removed -->
-  </div>
-</section>
-
-<!-- CTA -->
-<section style="background:var(--ink);text-align:center;padding:80px;position:relative;overflow:hidden;">
-  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(201,151,58,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,151,58,0.04) 1px,transparent 1px);background-size:48px 48px;"></div>
-  <div style="position:relative;z-index:1;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Get access</div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,44px);font-weight:900;color:#fff;letter-spacing:-0.8px;margin-bottom:16px;">India's GCC database is<br>waiting for you</h2>
-    <p style="font-size:16px;color:rgba(255,255,255,0.5);margin-bottom:36px;font-weight:300;">Join 350+ verified GCC professionals already using the portal</p>
-    <a href="https://portal.gccpros.com/register" class="btn-primary" style="margin-right:12px;">Apply for membership →</a>
-    <a href="https://portal.gccpros.com" class="btn-ghost">Member login</a>
-  </div>
-</section>
-
-<!-- Member Access Section -->
-<section style="background:linear-gradient(135deg, #0B1120 0%, #1E3A5F 100%);padding:60px 0;text-align:center;">
-  <div class="container" style="max-width:800px;margin:0 auto;padding:0 48px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;">Member Access</div>
-    <h2 style="color:#fff;margin-bottom:12px;font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;letter-spacing:-0.8px;">Your Gateway to the GCC Ecosystem</h2>
-    <p style="color:rgba(255,255,255,0.7);margin-bottom:32px;font-size:15px;line-height:1.7;">Join 2,400+ indexed GCCs, connect with verified leaders, and access exclusive intelligence.</p>
-
-    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
-      <a href="https://portal.gccpros.com/register" style="display:inline-block;background:var(--gold);color:var(--ink);padding:14px 32px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#F0C87A'" onmouseout="this.style.background='var(--gold)'">Apply for Membership →</a>
-      <a href="https://portal.gccpros.com" style="display:inline-block;background:transparent;color:#fff;padding:14px 32px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,0.3);transition:all 0.2s;" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.3)'">Member Login →</a>
-    </div>
-
-    <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,0.5);">
-      <span>✓ Verified GCC leaders</span>
-      <span>✓ Exclusive search portal</span>
-      <span>✓ Industry intelligence</span>
-    </div>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -471,6 +698,168 @@ document.querySelectorAll('.mobile-menu .nav-links a').forEach(link => {
     document.body.style.overflow = '';
   });
 });
+
+/* ── ENTERPRISE TIER LAUNCH COUNTDOWN ──
+   Target: 5 May 2026, 12:00 PM IST (UTC+5:30) */
+(function(){
+  var TARGET_MS = new Date('2026-05-05T12:00:00+05:30').getTime();
+  var LAUNCH_DATE_LABEL = '5 May 2026 · 12:00 PM IST';
+  var POST_LAUNCH_URL = 'https://portal.gccpros.com/waitlist'; // becomes live on launch
+
+  var daysEl   = document.getElementById('cd-days');
+  var hoursEl  = document.getElementById('cd-hours');
+  var minsEl   = document.getElementById('cd-mins');
+  var secsEl   = document.getElementById('cd-secs');
+  var cdEl     = document.getElementById('countdown');
+  var liveEl   = document.getElementById('launchLive');
+  var ctaEl    = document.getElementById('launchCta');
+  if (!daysEl) return;
+
+  function pad(n){ n = Math.floor(n); return (n < 10 ? '0' : '') + n; }
+
+  var intervalHandle = null;
+  function tick(){
+    var diff = TARGET_MS - Date.now();
+    if (diff <= 0){
+      if (cdEl) cdEl.style.display = 'none';
+      if (liveEl) liveEl.classList.add('on');
+      if (ctaEl){
+        ctaEl.textContent = 'Join the waitlist →';
+        ctaEl.setAttribute('href', POST_LAUNCH_URL);
+      }
+      if (intervalHandle) clearInterval(intervalHandle);
+      return;
+    }
+    var d = diff / 86400000;
+    var h = (diff / 3600000) % 24;
+    var m = (diff / 60000) % 60;
+    var s = (diff / 1000) % 60;
+    daysEl.textContent  = pad(d);
+    hoursEl.textContent = pad(h);
+    minsEl.textContent  = pad(m);
+    secsEl.textContent  = pad(s);
+  }
+  tick();
+  intervalHandle = setInterval(tick, 1000);
+})();
+
+/* ── WAITLIST SUBMISSION — B2B corporate-email gate + Apps Script repository ── */
+var GCCPROS_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX307EtV6k2t1-sFuutjZrCIhIPZg5p73GDobn034LKJttOinjwuZaWjiNoVZSvoGoxQ/exec';
+
+/* Personal/consumer email providers — blocked client-side.
+   Server applies the same list as defence-in-depth. */
+var PERSONAL_EMAIL_DOMAINS = {
+  'gmail.com':1,'googlemail.com':1,
+  'yahoo.com':1,'yahoo.in':1,'yahoo.co.in':1,'yahoo.co.uk':1,'ymail.com':1,'rocketmail.com':1,
+  'hotmail.com':1,'hotmail.co.uk':1,'hotmail.co.in':1,'outlook.com':1,'outlook.in':1,'live.com':1,'live.in':1,'msn.com':1,'passport.com':1,
+  'icloud.com':1,'me.com':1,'mac.com':1,
+  'aol.com':1,'aim.com':1,
+  'rediffmail.com':1,'rediff.com':1,
+  'protonmail.com':1,'proton.me':1,'pm.me':1,
+  'mail.com':1,'gmx.com':1,'gmx.net':1,'gmx.us':1,
+  'yandex.com':1,'yandex.ru':1,
+  'qq.com':1,'163.com':1,'126.com':1,'sina.com':1,'foxmail.com':1,
+  'tutanota.com':1,'tutamail.com':1,'tuta.io':1,
+  'fastmail.com':1,'hushmail.com':1,
+  'zohomail.com':1,
+  'inbox.com':1,'email.com':1,'post.com':1,'iname.com':1,
+  'myself.com':1,'usa.com':1,'consultant.com':1,
+  'hey.com':1
+};
+
+function isCorporateEmail(addr){
+  if (!addr || typeof addr !== 'string') return false;
+  var at = addr.lastIndexOf('@');
+  if (at < 1) return false;
+  var domain = addr.slice(at+1).trim().toLowerCase();
+  if (!domain || domain.indexOf('.') === -1) return false;
+  return !PERSONAL_EMAIL_DOMAINS[domain];
+}
+
+function escHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function submitWaitlist(e){
+  if (e && e.preventDefault) e.preventDefault();
+  var nameEl    = document.getElementById('waitlistName');
+  var companyEl = document.getElementById('waitlistCompany');
+  var emailEl   = document.getElementById('waitlistEmail');
+  var btn       = document.getElementById('waitlistBtn');
+  var msg       = document.getElementById('waitlistMsg');
+
+  [nameEl, companyEl, emailEl].forEach(function(el){ el.classList.remove('invalid'); });
+
+  var name    = (nameEl.value    || '').trim();
+  var company = (companyEl.value || '').trim();
+  var email   = (emailEl.value   || '').trim().toLowerCase();
+
+  msg.className = 'waitlist-msg';
+  msg.textContent = '';
+
+  if (!name || !company || !email){
+    msg.className = 'waitlist-msg err';
+    msg.textContent = 'Please fill in your full name, company, and corporate email.';
+    if (!name) nameEl.classList.add('invalid');
+    if (!company) companyEl.classList.add('invalid');
+    if (!email) emailEl.classList.add('invalid');
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    msg.className = 'waitlist-msg err';
+    msg.textContent = 'That email doesn\u2019t look like a valid address. Please check and try again.';
+    emailEl.classList.add('invalid');
+    return false;
+  }
+  if (!isCorporateEmail(email)){
+    msg.className = 'waitlist-msg err';
+    msg.innerHTML = 'The Enterprise Tier waitlist is <strong>B2B only</strong>. Please submit your <strong>corporate email address</strong> (no Gmail, Yahoo, Hotmail, Outlook, iCloud, Rediffmail, etc.).';
+    emailEl.classList.add('invalid');
+    emailEl.focus();
+    return false;
+  }
+
+  var origLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  var payload = {
+    action: 'submitEnterpriseWaitlist',
+    fullName: name,
+    company: company,
+    email: email,
+    source: 'database.html/#waitlist',
+    page: (location && location.pathname) || 'database',
+    referrer: document.referrer || '',
+    userAgent: (navigator && navigator.userAgent) || ''
+  };
+
+  fetch(GCCPROS_APPS_SCRIPT_URL, {
+    method: 'POST',
+    // no custom headers — avoids CORS preflight on Apps Script web apps
+    body: JSON.stringify(payload)
+  })
+  .then(function(resp){ return resp.json().catch(function(){ return { success:true }; }); })
+  .then(function(data){
+    btn.disabled = false;
+    btn.textContent = origLabel;
+    if (data && data.success === false){
+      msg.className = 'waitlist-msg err';
+      msg.textContent = (data.error) || 'We could not save your entry just now. Please try again in a moment.';
+      return;
+    }
+    msg.className = 'waitlist-msg ok';
+    msg.innerHTML = 'You\u2019re on the list, <strong>' + escHtml(name) + '</strong>. We\u2019ll email <strong>' + escHtml(email) + '</strong> the moment the Enterprise Tier waitlist form goes live on <strong>5 May 2026</strong>.';
+    try { if (typeof gtag === 'function') gtag('event', 'waitlist_signup', { tier: 'enterprise', launch_date: '2026-05-05', company: company }); } catch(_){}
+    nameEl.value = ''; companyEl.value = ''; emailEl.value = '';
+  })
+  .catch(function(err){
+    btn.disabled = false;
+    btn.textContent = origLabel;
+    msg.className = 'waitlist-msg err';
+    msg.textContent = 'Network error — please check your connection and try again.';
+  });
+
+  return false;
+}
 </script>
 </body>
 </html>
