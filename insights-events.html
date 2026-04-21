@@ -521,6 +521,48 @@ html.menu-open{overflow:hidden;}
           <button type="submit" id="rsvpSubmitBtn" style="margin-top:18px;width:100%;background:var(--ink);color:#fff;padding:14px 22px;border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.3px;cursor:pointer;transition:all 0.2s;">Request my seat</button>
           <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:14px;font-size:13px;line-height:1.6;"></div>
         </form>
+
+        <!-- ─── Thank-you panel (shown on successful submission, hidden by default) ─── -->
+        <div id="rsvpThankYou" role="status" aria-live="polite" hidden style="text-align:center;padding:8px 4px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(31,164,99,0.12);color:#1F7A48;display:flex;align-items:center;justify-content:center;margin:6px auto 18px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);letter-spacing:-0.4px;margin-bottom:8px;">
+            Thank you<span id="rsvpThankYouName"></span>.
+          </div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.7;margin:0 auto 18px;max-width:440px;">
+            Your RSVP has landed with <strong style="color:var(--ink);">Shammi Prabhakar Singh</strong> directly &mdash; no auto-emails, no cold outreach from anyone else.
+          </p>
+
+          <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:left;margin:0 auto 20px;max-width:480px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">What happens now</div>
+            <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--ink);line-height:1.65;">
+              <li style="display:flex;gap:10px;padding:5px 0;">
+                <span style="color:var(--gold);font-weight:700;flex:0 0 auto;">&rsaquo;</span>
+                <span>We close the room within <strong>5&ndash;7 days</strong> and lock the curated list of ~12 leaders.</span>
+              </li>
+              <li style="display:flex;gap:10px;padding:5px 0;">
+                <span style="color:var(--gold);font-weight:700;flex:0 0 auto;">&rsaquo;</span>
+                <span>If your seat is confirmed, you'll get a <strong>personal note from Shammi</strong> with the venue, exact time and the confirmed attendee list.</span>
+              </li>
+              <li style="display:flex;gap:10px;padding:5px 0;">
+                <span style="color:var(--gold);font-weight:700;flex:0 0 auto;">&rsaquo;</span>
+                <span>Need anything in the meantime? Write to <a href="mailto:admin@gccpros.com?subject=Hyderabad%20Roundtable%20%2812%20May%202026%29" style="color:var(--gold);font-weight:600;text-decoration:none;">admin@gccpros.com</a> or WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">While you wait &mdash; stay in the loop:</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px;">
+            <a href="https://shammip.substack.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#FF6719;color:#fff;font-weight:700;font-size:12.5px;padding:9px 16px;border-radius:100px;text-decoration:none;">Subscribe on Substack</a>
+            <a href="https://www.linkedin.com/company/gccpros/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#0A66C2;color:#fff;font-weight:700;font-size:12.5px;padding:9px 16px;border-radius:100px;text-decoration:none;">Follow GCCPROs on LinkedIn</a>
+          </div>
+
+          <div style="border-top:1px solid var(--border);margin-top:18px;padding-top:14px;font-size:12px;color:var(--muted);">
+            Know another GCC leader who should be at the table?
+            <a href="#" id="rsvpAnotherBtn" style="color:var(--gold);font-weight:700;text-decoration:none;margin-left:4px;">Submit another RSVP &rarr;</a>
+          </div>
+        </div>
       </div>
 
     <!-- WHAT HAPPENS NEXT - compact 4-step strip (4-col desktop, 2-col tablet/mobile) -->
@@ -1411,6 +1453,20 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       }
     });
 
+  /* "Submit another RSVP" — reverse the thank-you state and bring the form back. */
+  var anotherBtn = document.getElementById('rsvpAnotherBtn');
+  if (anotherBtn) {
+    anotherBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var ty = document.getElementById('rsvpThankYou');
+      if (ty) ty.hidden = true;
+      form.style.display = '';
+      try { form.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(_){}
+      var first = form.querySelector('input[name="fullName"]');
+      if (first) try { first.focus({ preventScroll:true }); } catch(_){ first.focus(); }
+    });
+  }
+
   /* ─────────────── Submit handler ─────────────── */
 
   form.addEventListener('submit', function(e){
@@ -1572,10 +1628,18 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     .then(function(r){ return r.json().catch(function(){ return { success:false, error:'Bad server response' }; }); })
     .then(function(res){
       if (res && res.success) {
-        msg.className = 'rsvp-msg-ok';
-        msg.textContent = res.message || 'Thank you. Your RSVP has been received — we will write back to confirm your seat.';
+        /* Hide form, show the thank-you panel with the submitter's first name. */
+        var firstName = (val.fullName || '').split(/\s+/)[0] || '';
+        var nameSpan = document.getElementById('rsvpThankYouName');
+        if (nameSpan) nameSpan.textContent = firstName ? (', ' + firstName) : '';
+        form.style.display = 'none';
+        msg.className = ''; msg.textContent = '';
+        var ty = document.getElementById('rsvpThankYou');
+        if (ty) ty.hidden = false;
         form.reset();
         clearAllErrors();
+        /* Smooth-scroll the thank-you into view so it's visible on long forms. */
+        try { (ty || form).scrollIntoView({ behavior:'smooth', block:'center' }); } catch(_){ }
         if (typeof gtag === 'function') {
           gtag('event', 'rsvp_submit', { event_category: 'Hyderabad Roundtable', event_label: payload.company });
         }
