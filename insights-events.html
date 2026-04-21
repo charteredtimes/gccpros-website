@@ -459,8 +459,9 @@ html.menu-open{overflow:hidden;}
           </label>
 
           <label class="rsvp-field" data-field="officeAddress">
-            <span>Hyderabad office address</span>
-            <input name="officeAddress" type="text" maxlength="200" autocomplete="address-line1" placeholder="HITEC City / Gachibowli / Madhapur / ...">
+            <span>Hyderabad office address <em>*</em></span>
+            <input name="officeAddress" type="text" required minlength="4" maxlength="200" autocomplete="address-line1" placeholder="e.g. HITEC City, Madhapur — building / block / area">
+            <div class="rsvp-hint">Locality is enough — e.g. "HITEC City", "Gachibowli Block 4" or full building address.</div>
             <div class="rsvp-err"></div>
           </label>
 
@@ -1342,6 +1343,74 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     });
   });
 
+  /* ─────────────── Live (on-blur) validation ───────────────
+     Warns the user the moment they leave a bad field — instead
+     of holding all errors back until the submit click. Empty
+     optional fields are silently left alone; empty required
+     fields will still be flagged at submit time.                */
+
+  function validateOne(name){
+    var el = form[name];
+    if (!el) return;
+    var v = (el.value || '').trim();
+    if (!v) { clearError(name); return; }  // don't nag empty fields on blur
+
+    if (name === 'fullName') {
+      if (!isValidName(v)) setError(name, 'Enter first and last name (letters only, 3\u201380 chars).');
+      else clearError(name);
+
+    } else if (name === 'designation') {
+      if (v.length < 2) setError(name, 'Designation looks too short.');
+      else clearError(name);
+
+    } else if (name === 'company') {
+      if (v.length < 2) setError(name, 'Company name looks too short.');
+      else clearError(name);
+
+    } else if (name === 'email') {
+      var lc = v.toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lc)) setError(name, 'That email doesn\u2019t look valid.');
+      else if (!isCorporateEmail(lc)) setError(name, 'Corporate email only \u2014 personal providers (Gmail, Yahoo, Hotmail, Outlook, iCloud, Rediffmail, etc.) are not accepted.');
+      else clearError(name);
+
+    } else if (name === 'phone') {
+      if (!/^\+?[\d\s\-\(\)]+$/.test(v)) setError(name, 'Only digits, spaces, +, -, ( and ) allowed.');
+      else if (!isValidIndianMobile(v)) {
+        var d = normalizeIndianPhone(v);
+        if (d.length !== 10) setError(name, 'Must be exactly 10 digits (country code +91 is optional).');
+        else setError(name, 'Not a valid Indian mobile \u2014 must start with 6, 7, 8 or 9.');
+      } else clearError(name);
+
+    } else if (name === 'linkedin') {
+      if (!/^https?:\/\//i.test(v)) setError(name, 'Must start with https:// \u2014 copy the full URL from your LinkedIn profile.');
+      else if (!/linkedin\.com/i.test(v)) setError(name, 'That doesn\u2019t look like a LinkedIn URL.');
+      else if (!isLinkedInProfile(v)) setError(name, 'Personal profile only \u2014 the URL must contain /in/ (company, pulse, feed and jobs URLs aren\u2019t accepted).');
+      else clearError(name);
+
+    } else if (name === 'officeAddress') {
+      if (v.length < 4) setError(name, 'Address looks too short \u2014 include at least the area name (e.g. HITEC City).');
+      else if (!/[a-zA-Z\u0900-\u097F]/.test(v)) setError(name, 'Address must contain letters \u2014 not just digits or symbols.');
+      else clearError(name);
+
+    } else if (name === 'headcountHyderabad' || name === 'headcountIndia') {
+      if (!/^\d{1,7}$/.test(v)) setError(name, 'Digits only \u2014 no commas, spaces or text.');
+      else {
+        var n = parseInt(v, 10);
+        var cap = (name === 'headcountHyderabad') ? 200000 : 500000;
+        if (n < 1 || n > cap) setError(name, 'Enter a realistic headcount (1 \u2013 ' + cap.toLocaleString() + ').');
+        else clearError(name);
+      }
+    }
+  }
+
+  ['fullName','designation','company','email','phone','linkedin','officeAddress','headcountHyderabad','headcountIndia']
+    .forEach(function(n){
+      var inp = form[n];
+      if (inp && inp.addEventListener) {
+        inp.addEventListener('blur', function(){ validateOne(n); });
+      }
+    });
+
   /* ─────────────── Submit handler ─────────────── */
 
   form.addEventListener('submit', function(e){
@@ -1416,6 +1485,11 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     else if (!/^https?:\/\//i.test(val.linkedin)) fail('linkedin', 'Must start with https:// — copy the full URL from your LinkedIn profile.');
     else if (!/linkedin\.com/i.test(val.linkedin)) fail('linkedin', 'That doesn\u2019t look like a LinkedIn URL.');
     else if (!isLinkedInProfile(val.linkedin)) fail('linkedin', 'Personal profile only — the URL must contain /in/ (company, pulse, feed and jobs URLs aren\u2019t accepted).');
+
+    // Office address — required, non-trivial, must contain letters (not digits/symbols only)
+    if (!val.officeAddress) fail('officeAddress', 'Please enter your Hyderabad office area / locality.');
+    else if (val.officeAddress.length < 4) fail('officeAddress', 'Address looks too short — include at least the area name (e.g. HITEC City).');
+    else if (!/[a-zA-Z\u0900-\u097F]/.test(val.officeAddress)) fail('officeAddress', 'Address must contain letters — not just digits or symbols.');
 
     // Headcounts — numeric, sane range
     if (val.headcountHyderabad) {
