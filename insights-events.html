@@ -983,33 +983,77 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
       <!-- Right: form -->
       <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(10,22,40,0.06);">
-        <form id="rsvpHydForm" novalidate>
+        <form id="rsvpHydForm" novalidate autocomplete="on">
           <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);margin-bottom:4px;">Request your seat</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Hyderabad · 12 May 2026 · By invitation</div>
 
-          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field"><span>Full name <em>*</em></span><input name="fullName" type="text" required></label>
-            <label class="rsvp-field"><span>Designation / Title <em>*</em></span><input name="designation" type="text" required placeholder="e.g. MD &amp; Site Leader"></label>
+          <!-- Honeypot (bots love this; humans never see it) -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+            <label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label>
           </div>
 
-          <label class="rsvp-field"><span>Company (GCC) <em>*</em></span><input name="company" type="text" required placeholder="Parent / group company name"></label>
-
           <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field"><span>Work email <em>*</em></span><input name="email" type="email" required></label>
-            <label class="rsvp-field"><span>Phone / WhatsApp</span><input name="phone" type="tel" placeholder="+91 ..."></label>
+            <label class="rsvp-field" data-field="fullName">
+              <span>Full name <em>*</em></span>
+              <input name="fullName" type="text" required maxlength="80" autocomplete="name">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="designation">
+              <span>Designation / Title <em>*</em></span>
+              <input name="designation" type="text" required maxlength="120" autocomplete="organization-title" placeholder="e.g. MD &amp; Site Leader">
+              <div class="rsvp-err"></div>
+            </label>
           </div>
 
-          <label class="rsvp-field"><span>LinkedIn profile</span><input name="linkedin" type="url" placeholder="https://linkedin.com/in/..."></label>
-
-          <label class="rsvp-field"><span>Hyderabad office address</span><input name="officeAddress" type="text" placeholder="HITEC City / Gachibowli / Madhapur / ..."></label>
+          <label class="rsvp-field" data-field="company">
+            <span>Company (GCC) <em>*</em></span>
+            <input name="company" type="text" required maxlength="120" autocomplete="organization" placeholder="Parent / group company name">
+            <div class="rsvp-err"></div>
+          </label>
 
           <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field"><span>GCC headcount in Hyderabad</span><input name="headcountHyderabad" type="text" inputmode="numeric" placeholder="e.g. 850"></label>
-            <label class="rsvp-field"><span>GCC headcount in India (total)</span><input name="headcountIndia" type="text" inputmode="numeric" placeholder="e.g. 3500"></label>
+            <label class="rsvp-field" data-field="email">
+              <span>Work email <em>*</em></span>
+              <input name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@yourcompany.com">
+              <div class="rsvp-hint">Corporate email only — no Gmail / Yahoo / Hotmail / Outlook / iCloud / Rediffmail.</div>
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="phone">
+              <span>Phone / WhatsApp <em>*</em></span>
+              <input name="phone" type="tel" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="9876543210">
+              <div class="rsvp-hint">10-digit Indian mobile. Country code (+91) optional — the extra digits are stripped.</div>
+              <div class="rsvp-err"></div>
+            </label>
           </div>
 
-          <div class="rsvp-field">
-            <span>Domains run from Hyderabad (tick all that apply)</span>
+          <label class="rsvp-field" data-field="linkedin">
+            <span>LinkedIn profile <em>*</em></span>
+            <input name="linkedin" type="url" required maxlength="200" autocomplete="url" spellcheck="false" placeholder="https://www.linkedin.com/in/your-handle">
+            <div class="rsvp-hint">Personal profile URL only (must contain <code style="background:var(--cream);padding:1px 4px;border-radius:3px;font-size:11px;">/in/</code>). Company pages, pulse posts and feed URLs will be rejected.</div>
+            <div class="rsvp-err"></div>
+          </label>
+
+          <label class="rsvp-field" data-field="officeAddress">
+            <span>Hyderabad office address</span>
+            <input name="officeAddress" type="text" maxlength="200" autocomplete="address-line1" placeholder="HITEC City / Gachibowli / Madhapur / ...">
+            <div class="rsvp-err"></div>
+          </label>
+
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="headcountHyderabad">
+              <span>GCC headcount in Hyderabad</span>
+              <input name="headcountHyderabad" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 850">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="headcountIndia">
+              <span>GCC headcount in India (total)</span>
+              <input name="headcountIndia" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 3500">
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+
+          <div class="rsvp-field" data-field="domains">
+            <span>Domains run from Hyderabad <em>*</em> <span style="font-weight:400;color:var(--muted);">(tick at least one)</span></span>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
               <label class="rsvp-chk"><input type="checkbox" name="domains" value="Technology"> Technology</label>
               <label class="rsvp-chk"><input type="checkbox" name="domains" value="Engineering"> Engineering</label>
@@ -1020,14 +1064,22 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
               <label class="rsvp-chk"><input type="checkbox" name="domains" value="Procurement / SCM"> Procurement / SCM</label>
               <label class="rsvp-chk"><input type="checkbox" name="domains" value="Other"> Other</label>
             </div>
+            <div class="rsvp-err"></div>
           </div>
 
-          <label class="rsvp-field"><span>What would you like discussed at the table?</span><textarea name="topics" rows="3" placeholder="One or two themes you want the room to dig into."></textarea></label>
-
-          <label class="rsvp-chk-line">
-            <input type="checkbox" name="confirmAttendance" required>
-            <span>I confirm I can be physically present in Hyderabad on 12 May 2026 if my seat is confirmed.</span>
+          <label class="rsvp-field" data-field="topics">
+            <span>What would you like discussed at the table?</span>
+            <textarea name="topics" rows="3" maxlength="600" placeholder="One or two themes you want the room to dig into."></textarea>
+            <div class="rsvp-err"></div>
           </label>
+
+          <div class="rsvp-field" data-field="confirmAttendance" style="margin-top:4px;">
+            <label class="rsvp-chk-line">
+              <input type="checkbox" name="confirmAttendance" required>
+              <span>I confirm I can be physically present in Hyderabad on 12 May 2026 if my seat is confirmed. <em style="color:#c0392b;font-style:normal;">*</em></span>
+            </label>
+            <div class="rsvp-err"></div>
+          </div>
 
           <button type="submit" id="rsvpSubmitBtn" style="margin-top:18px;width:100%;background:var(--ink);color:#fff;padding:14px 22px;border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.3px;cursor:pointer;transition:all 0.2s;">Request my seat</button>
           <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:14px;font-size:13px;line-height:1.6;"></div>
@@ -1050,6 +1102,13 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 .rsvp-chk-line input{margin-top:3px;flex-shrink:0;}
 #rsvpSubmitBtn:hover{background:var(--gold);color:var(--ink);}
 #rsvpSubmitBtn:disabled{opacity:0.65;cursor:not-allowed;}
+.rsvp-field.invalid > input,
+.rsvp-field.invalid > textarea{border-color:#D04A4A;box-shadow:0 0 0 3px rgba(208,74,74,0.12);}
+.rsvp-field .rsvp-err{display:none;color:#D04A4A;font-size:11.5px;margin-top:6px;line-height:1.45;font-weight:500;}
+.rsvp-field.invalid .rsvp-err{display:block;}
+.rsvp-field .rsvp-hint{color:var(--muted);font-size:11px;margin-top:5px;line-height:1.5;}
+.rsvp-msg-ok{background:rgba(31,164,99,0.10);border:1px solid rgba(31,164,99,0.3);color:#157A48;padding:12px 14px;border-radius:8px;}
+.rsvp-msg-err{background:rgba(208,74,74,0.08);border:1px solid rgba(208,74,74,0.3);color:#A53030;padding:12px 14px;border-radius:8px;}
 .rsvp-msg-ok{color:#1f7a3a;background:rgba(31,122,58,0.08);border:1px solid rgba(31,122,58,0.25);padding:10px 14px;border-radius:8px;}
 .rsvp-msg-err{color:#a82a2a;background:rgba(168,42,42,0.06);border:1px solid rgba(168,42,42,0.25);padding:10px 14px;border-radius:8px;}
 @media(max-width:900px){
@@ -1067,38 +1126,242 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
   var btn = document.getElementById('rsvpSubmitBtn');
   var msg = document.getElementById('rsvpMsg');
 
+  /* ─────────────── Validation rules ─────────────── */
+
+  // Personal / free-webmail providers — blocked so only corporate emails come through.
+  // Keep in sync with PERSONAL_EMAIL_DOMAINS_V36 in Apps Script.
+  var PERSONAL_EMAIL_DOMAINS = {
+    'gmail.com':1,'googlemail.com':1,
+    'yahoo.com':1,'yahoo.in':1,'yahoo.co.in':1,'yahoo.co.uk':1,'ymail.com':1,'rocketmail.com':1,
+    'hotmail.com':1,'hotmail.co.uk':1,'hotmail.co.in':1,'outlook.com':1,'outlook.in':1,'live.com':1,'live.in':1,'msn.com':1,'passport.com':1,
+    'icloud.com':1,'me.com':1,'mac.com':1,
+    'aol.com':1,'aim.com':1,
+    'rediffmail.com':1,'rediff.com':1,
+    'protonmail.com':1,'proton.me':1,'pm.me':1,
+    'mail.com':1,'gmx.com':1,'gmx.net':1,'gmx.us':1,
+    'yandex.com':1,'yandex.ru':1,
+    'qq.com':1,'163.com':1,'126.com':1,'sina.com':1,'foxmail.com':1,
+    'tutanota.com':1,'tutamail.com':1,'tuta.io':1,
+    'fastmail.com':1,'hushmail.com':1,
+    'zohomail.com':1,
+    'inbox.com':1,'email.com':1,'post.com':1,'iname.com':1,
+    'myself.com':1,'usa.com':1,'consultant.com':1,
+    'hey.com':1
+  };
+
+  function isCorporateEmail(addr){
+    if (!addr) return false;
+    var at = addr.lastIndexOf('@');
+    if (at < 1) return false;
+    var domain = addr.slice(at+1).trim().toLowerCase();
+    if (!domain || domain.indexOf('.') === -1) return false;
+    return !PERSONAL_EMAIL_DOMAINS[domain];
+  }
+
+  /* Normalise an Indian phone: strip everything non-numeric, then drop a
+     leading 91 or 0 if the raw total is 12 or 11 digits respectively.
+     Returns the 10-digit subscriber number, or '' if not recoverable. */
+  function normalizeIndianPhone(raw){
+    if (!raw) return '';
+    var digits = String(raw).replace(/\D+/g,'');
+    if (digits.length === 12 && digits.indexOf('91') === 0) digits = digits.slice(2);
+    else if (digits.length === 11 && digits.charAt(0) === '0') digits = digits.slice(1);
+    return digits;
+  }
+  function isValidIndianMobile(raw){
+    var d = normalizeIndianPhone(raw);
+    return /^[6-9]\d{9}$/.test(d);
+  }
+
+  /* LinkedIn personal profile only — must match /in/<handle>.
+     Rejects /company/, /school/, /pulse/, /feed/, /jobs/, bare linkedin.com, etc. */
+  var LINKEDIN_PROFILE_RE = /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/in\/[a-zA-Z0-9\-\_%\.]{2,100}\/?(\?.*)?$/i;
+  function isLinkedInProfile(url){
+    if (!url) return false;
+    return LINKEDIN_PROFILE_RE.test(url.trim());
+  }
+
+  /* Full name: at least two word-chars, must contain a space (first + last),
+     no pure digits / emojis / URLs. */
+  function isValidName(s){
+    if (!s) return false;
+    var v = s.trim();
+    if (v.length < 3 || v.length > 80) return false;
+    if (/\d/.test(v)) return false;
+    if (!/\s/.test(v)) return false;
+    if (!/^[\p{L}\p{M}\s.'\-]+$/u.test(v)) return false;
+    return true;
+  }
+
+  /* ─────────────── Error helpers ─────────────── */
+
+  function fieldEl(name){ return form.querySelector('[data-field="'+name+'"]'); }
+  function setError(name, message){
+    var el = fieldEl(name); if (!el) return;
+    el.classList.add('invalid');
+    var errEl = el.querySelector('.rsvp-err');
+    if (errEl) errEl.textContent = message;
+  }
+  function clearError(name){
+    var el = fieldEl(name); if (!el) return;
+    el.classList.remove('invalid');
+    var errEl = el.querySelector('.rsvp-err');
+    if (errEl) errEl.textContent = '';
+  }
+  function clearAllErrors(){
+    form.querySelectorAll('.rsvp-field.invalid').forEach(function(el){ el.classList.remove('invalid'); });
+    form.querySelectorAll('.rsvp-err').forEach(function(el){ el.textContent = ''; });
+    msg.className = ''; msg.textContent = '';
+  }
+
+  // Clear error on that field when user starts typing/changing
+  form.querySelectorAll('input, textarea').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var parent = inp.closest('.rsvp-field');
+      if (parent && parent.classList.contains('invalid')) {
+        var name = parent.getAttribute('data-field');
+        if (name) clearError(name);
+      }
+    });
+    inp.addEventListener('change', function(){
+      var parent = inp.closest('.rsvp-field');
+      if (parent && parent.classList.contains('invalid')) {
+        var name = parent.getAttribute('data-field');
+        if (name) clearError(name);
+      }
+    });
+  });
+
+  /* ─────────────── Submit handler ─────────────── */
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    msg.className = '';
-    msg.textContent = '';
+    clearAllErrors();
 
-    if (!form.checkValidity()) {
-      form.reportValidity();
+    // Honeypot — bots fill this, humans can't see it
+    if (form._website && form._website.value) {
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Submission blocked.';
       return;
     }
+
+    var val = {
+      fullName:           (form.fullName.value || '').trim(),
+      designation:        (form.designation.value || '').trim(),
+      company:            (form.company.value || '').trim(),
+      email:              (form.email.value || '').trim().toLowerCase(),
+      phoneRaw:           (form.phone.value || '').trim(),
+      linkedin:           (form.linkedin.value || '').trim(),
+      officeAddress:      (form.officeAddress.value || '').trim(),
+      headcountHyderabad: (form.headcountHyderabad.value || '').trim(),
+      headcountIndia:     (form.headcountIndia.value || '').trim(),
+      topics:             (form.topics.value || '').trim(),
+      confirmAttendance:  !!form.confirmAttendance.checked
+    };
 
     var domains = Array.prototype.map.call(
       form.querySelectorAll('input[name="domains"]:checked'),
       function(el){ return el.value; }
     );
 
+    var firstErrorField = null;
+    function fail(name, message){
+      setError(name, message);
+      if (!firstErrorField) firstErrorField = name;
+    }
+
+    // Full name
+    if (!val.fullName) fail('fullName', 'Please enter your full name.');
+    else if (!isValidName(val.fullName)) fail('fullName', 'Enter first and last name (letters only, 3–80 chars).');
+
+    // Designation
+    if (!val.designation) fail('designation', 'Please enter your designation.');
+    else if (val.designation.length < 2) fail('designation', 'Designation looks too short.');
+
+    // Company
+    if (!val.company) fail('company', 'Please enter your GCC / parent company name.');
+    else if (val.company.length < 2) fail('company', 'Company name looks too short.');
+
+    // Email
+    if (!val.email) fail('email', 'Please enter your work email.');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.email)) fail('email', 'That email doesn\u2019t look valid.');
+    else if (!isCorporateEmail(val.email)) fail('email', 'Corporate email only — personal providers (Gmail, Yahoo, Hotmail, Outlook, iCloud, Rediffmail, etc.) are not accepted.');
+
+    // Phone — strictly 10-digit Indian mobile (after stripping +91 / 0 prefix)
+    var phoneNormalized = normalizeIndianPhone(val.phoneRaw);
+    if (!val.phoneRaw) fail('phone', 'Please enter your mobile number.');
+    else if (!/^\+?[\d\s\-\(\)]+$/.test(val.phoneRaw)) fail('phone', 'Phone number can only contain digits, spaces, +, -, ( and ).');
+    else if (!isValidIndianMobile(val.phoneRaw)) {
+      if (phoneNormalized.length !== 10) fail('phone', 'Must be exactly 10 digits (country code +91 is optional).');
+      else fail('phone', 'Not a valid Indian mobile number — must start with 6, 7, 8 or 9.');
+    }
+
+    // LinkedIn — profile URL only
+    if (!val.linkedin) fail('linkedin', 'Please paste your LinkedIn profile URL.');
+    else if (!/^https?:\/\//i.test(val.linkedin)) fail('linkedin', 'Must start with https:// — copy the full URL from your LinkedIn profile.');
+    else if (!/linkedin\.com/i.test(val.linkedin)) fail('linkedin', 'That doesn\u2019t look like a LinkedIn URL.');
+    else if (!isLinkedInProfile(val.linkedin)) fail('linkedin', 'Personal profile only — the URL must contain /in/ (company, pulse, feed and jobs URLs aren\u2019t accepted).');
+
+    // Headcounts — numeric, sane range
+    if (val.headcountHyderabad) {
+      if (!/^\d{1,7}$/.test(val.headcountHyderabad)) fail('headcountHyderabad', 'Digits only — no commas, spaces or text.');
+      else {
+        var hHyd = parseInt(val.headcountHyderabad, 10);
+        if (hHyd < 1 || hHyd > 200000) fail('headcountHyderabad', 'Enter a realistic headcount (1 – 200,000).');
+      }
+    }
+    if (val.headcountIndia) {
+      if (!/^\d{1,7}$/.test(val.headcountIndia)) fail('headcountIndia', 'Digits only — no commas, spaces or text.');
+      else {
+        var hInd = parseInt(val.headcountIndia, 10);
+        if (hInd < 1 || hInd > 500000) fail('headcountIndia', 'Enter a realistic headcount (1 – 500,000).');
+      }
+    }
+    if (val.headcountHyderabad && val.headcountIndia && /^\d+$/.test(val.headcountHyderabad) && /^\d+$/.test(val.headcountIndia)) {
+      if (parseInt(val.headcountHyderabad, 10) > parseInt(val.headcountIndia, 10)) {
+        fail('headcountIndia', 'India total must be at least as large as Hyderabad headcount.');
+      }
+    }
+
+    // Domains — at least one
+    if (domains.length === 0) fail('domains', 'Please tick at least one domain your Hyderabad centre operates.');
+
+    // Topics — optional, but if present, length cap is already enforced by maxlength
+
+    // Attendance checkbox
+    if (!val.confirmAttendance) fail('confirmAttendance', 'Please confirm you can be in Hyderabad on 12 May 2026.');
+
+    if (firstErrorField) {
+      var el = fieldEl(firstErrorField);
+      if (el) {
+        var input = el.querySelector('input, textarea');
+        try { (input || el).scrollIntoView({ behavior:'smooth', block:'center' }); } catch(_) {}
+        if (input) setTimeout(function(){ try { input.focus({ preventScroll:true }); } catch(_){ input.focus(); } }, 200);
+      }
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Please fix the highlighted field(s) above and try again.';
+      return;
+    }
+
+    // All clear — build payload (store phone as normalised 10-digit string)
     var payload = {
       action: 'submitEventRSVP',
       eventName: 'Hyderabad GCC Leaders Coffee Roundtable',
       eventCity: 'Hyderabad',
       eventDate: '2026-05-12',
-      fullName:           form.fullName.value.trim(),
-      designation:        form.designation.value.trim(),
-      company:            form.company.value.trim(),
-      email:              form.email.value.trim(),
-      phone:              form.phone.value.trim(),
-      linkedin:           form.linkedin.value.trim(),
-      officeAddress:      form.officeAddress.value.trim(),
-      headcountHyderabad: form.headcountHyderabad.value.trim(),
-      headcountIndia:     form.headcountIndia.value.trim(),
+      fullName:           val.fullName,
+      designation:        val.designation,
+      company:            val.company,
+      email:              val.email,
+      phone:              phoneNormalized,
+      phoneRaw:           val.phoneRaw,
+      linkedin:           val.linkedin,
+      officeAddress:      val.officeAddress,
+      headcountHyderabad: val.headcountHyderabad,
+      headcountIndia:     val.headcountIndia,
       domains:            domains,
-      topics:             form.topics.value.trim(),
-      confirmAttendance:  form.confirmAttendance.checked,
+      topics:             val.topics,
+      confirmAttendance:  val.confirmAttendance,
       source:             'insights-events.html#rsvp-hyderabad'
     };
 
@@ -1119,6 +1382,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         msg.className = 'rsvp-msg-ok';
         msg.textContent = res.message || 'Thank you. Your RSVP has been received — we will write back to confirm your seat.';
         form.reset();
+        clearAllErrors();
         if (typeof gtag === 'function') {
           gtag('event', 'rsvp_submit', { event_category: 'Hyderabad Roundtable', event_label: payload.company });
         }
