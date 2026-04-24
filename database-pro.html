@@ -750,6 +750,76 @@ a { color: inherit; text-decoration: none; }
   40% { opacity: 1; transform: scale(1); }
 }
 
+/* B2C data-depth panel (mirrors the Enterprise block, in light treatment) */
+.b2c-fields {
+  margin: 16px 28px 0;
+  padding: 18px 22px 20px;
+  background: linear-gradient(180deg, var(--ivory), var(--cream));
+  border: 1px solid var(--gold-soft);
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+}
+.b2c-fields-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.b2c-fields-head-left { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.b2c-fields-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); font-weight: 700;
+}
+.b2c-fields-count {
+  font-family: var(--serif);
+  font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1;
+}
+.b2c-fields-count em {
+  color: var(--gold-deep); font-style: normal; font-size: 12px;
+  font-weight: 500; letter-spacing: 0.3px; margin-left: 6px;
+}
+.b2c-fields-upsell {
+  font-size: 10px; color: var(--gold-deep); letter-spacing: 0.5px;
+  background: var(--paper); border: 1px solid var(--gold-soft);
+  padding: 5px 10px; border-radius: 2px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+.b2c-fields-list {
+  list-style: none; counter-reset: b2c-field;
+  padding: 0; margin: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px;
+}
+.b2c-fields-list li {
+  counter-increment: b2c-field;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(10,22,40,0.06);
+}
+.b2c-fields-list li:first-child, .b2c-fields-list li:nth-child(2) {
+  border-top: none; padding-top: 0;
+}
+.b2c-fields-list li::before {
+  content: counter(b2c-field, decimal-leading-zero);
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: var(--gold); letter-spacing: 1px;
+  min-width: 20px; padding-top: 2px;
+}
+.b2c-fields-list li div { flex: 1; }
+.b2c-fields-list strong {
+  display: block; font-size: 12.5px; color: var(--ink); font-weight: 600;
+  line-height: 1.3;
+}
+.b2c-fields-list span {
+  display: block; font-size: 11px; color: var(--muted);
+  margin-top: 2px; line-height: 1.5;
+}
+@media (max-width: 640px) {
+  .b2c-fields-list { grid-template-columns: 1fr; }
+}
+
 .personal-use-notice {
   margin: 16px 28px 24px;
   padding: 12px 16px;
@@ -1405,6 +1475,28 @@ a { color: inherit; text-decoration: none; }
         </div>
       </div>
 
+      <div class="b2c-fields">
+        <div class="b2c-fields-head">
+          <div class="b2c-fields-head-left">
+            <span class="b2c-fields-label">Data per profile</span>
+            <div class="b2c-fields-count">10 <em>curated fields</em></div>
+          </div>
+          <span class="b2c-fields-upsell">Need more? See Enterprise edition</span>
+        </div>
+        <ol class="b2c-fields-list">
+          <li><div><strong>Company &amp; Group Company</strong><span>Parent entity and India unit identity</span></div></li>
+          <li><div><strong>GCC City &amp; State</strong><span>Find companies in your city</span></div></li>
+          <li><div><strong>HQ Country</strong><span>US / German / Japanese / etc. firms</span></div></li>
+          <li><div><strong>Industry</strong><span>Sector filter</span></div></li>
+          <li><div><strong>GCC Domains</strong><span>What the India unit actually does - Engineering, Finance, Data/AI</span></div></li>
+          <li><div><strong>Headcount Band</strong><span>1-50 &middot; 50-500 &middot; 500-5k &middot; 5k+ - size without exact counts</span></div></li>
+          <li><div><strong>Year of Establishment &amp; Maturity Gen</strong><span>Stability and scope signal</span></div></li>
+          <li><div><strong>Setup Model</strong><span>Captive &middot; BOT &middot; JV - career risk perception</span></div></li>
+          <li><div><strong>Glassdoor Rating</strong><span>Employee sentiment</span></div></li>
+          <li><div><strong>Great Place to Work Certified</strong><span>Culture signal</span></div></li>
+        </ol>
+      </div>
+
       <div class="personal-use-notice">
         <strong>Fair-use commitment:</strong> This portal is licensed for <strong>individual, personal research only</strong>.
         Bulk extraction, automated scraping, resale, or sharing of credentials violates your membership terms. All access is watermarked and logged.
@@ -1785,8 +1877,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (_cachedEmail) {
     document.getElementById('user-pill').textContent =
       _cachedEmail.split('@')[0] + ' - Sign out';
-    if (!isAllowedTester(_cachedEmail)) { showClosedBetaState(); return; }
     setTimeout(fetchCreditBalance, 600);
+  } else {
+    // No cached email - show the inline sign-in card immediately so
+    // the user never sees a stuck "Loading..." state.
+    document.getElementById('user-pill').textContent = 'Sign in';
+    showSignInState();
   }
 
   // Initial hint
@@ -1797,40 +1893,87 @@ auth.onAuthStateChanged(u => {
   if (u) {
     currentUser = u;
     localStorage.setItem('gcc_token', u.email);
+    _cachedEmail = u.email;
     document.getElementById('user-pill').textContent =
       (u.displayName || u.email.split('@')[0]) + ' - Sign out';
-    if (!isAllowedTester(u.email)) { showClosedBetaState(); return; }
     fetchCreditBalance();
   } else {
+    // Firebase has no session. If we also have no cached email, show
+    // the inline sign-in card. On file:// and on hosts not in Firebase's
+    // authorized-domains list, Firebase will always report "no user"
+    // so the inline card is the only sign-in path.
     if (!_cachedEmail) {
-      // Local / beta testing fallback - Firebase can't auth on file:// so
-      // we offer a manual sign-in. On production this branch is rarely hit
-      // because users come from the gccpros.com sign-in page.
-      var isProd = (location.protocol === 'https:' && /gccpros\.com$/.test(location.hostname));
-      if (isProd) {
-        window.location.href = 'index';
-      } else {
-        var email = prompt('Closed-beta sign-in\n\nEnter your email:');
-        if (email && email.indexOf('@') > 0) {
-          _cachedEmail = email.toLowerCase().trim();
-          localStorage.setItem('gcc_token', _cachedEmail);
-          document.getElementById('user-pill').textContent = _cachedEmail.split('@')[0] + ' - Sign out';
-          if (!isAllowedTester(_cachedEmail)) { showClosedBetaState(); return; }
-          fetchCreditBalance();
-        }
-      }
+      document.getElementById('user-pill').textContent = 'Sign in';
+      showSignInState();
     }
   }
 });
 
+// ── INLINE SIGN-IN CARD ──────────────────────────────────
+function showSignInState() {
+  var wrap = document.getElementById('results-wrap');
+  if (!wrap) return;
+  wrap.innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--gold);padding:42px 28px;text-align:left;max-width:none;">' +
+      '<div style="text-align:center;margin-bottom:22px;">' +
+        '<div class="sb-icon" style="margin:0 auto 12px;">\u2192</div>' +
+        '<h3 style="font-size:19px;">Sign in to Database Pro</h3>' +
+        '<p style="max-width:420px;margin:6px auto 0;">Enter your work email to continue. New members land in an approval queue - typically cleared within one business day.</p>' +
+      '</div>' +
+      '<form onsubmit="submitSignIn(event)" style="max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:10px;">' +
+        '<label class="field-label" for="signin-email" style="margin-top:6px;">Work email</label>' +
+        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email" autofocus>' +
+        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:4px;">Continue</button>' +
+        '<div id="signin-err" class="modal-err" style="margin-top:8px;"></div>' +
+      '</form>' +
+      '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:18px;">By continuing you agree to the <a href="https://www.gccpros.com/terms" target="_blank" style="color:var(--gold-deep);text-decoration:underline;">terms of use</a>. Individual licence - personal research only.</p>' +
+    '</div>';
+}
+
+function submitSignIn(ev) {
+  ev.preventDefault();
+  var input = document.getElementById('signin-email');
+  var errBox = document.getElementById('signin-err');
+  var email = (input.value || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 3) {
+    if (errBox) { errBox.textContent = 'Please enter a valid email address.'; errBox.style.display = 'block'; }
+    return;
+  }
+  _cachedEmail = email;
+  localStorage.setItem('gcc_token', email);
+  document.getElementById('user-pill').textContent = email.split('@')[0] + ' - Sign out';
+  fetchCreditBalance();
+}
+
 document.getElementById('user-pill').addEventListener('click', () => {
+  var pill = document.getElementById('user-pill');
+  // If we're currently unauthenticated, clicking the pill brings up
+  // the inline sign-in card instead of asking about sign-out.
+  if (!_cachedEmail || (pill && pill.textContent === 'Sign in')) {
+    showSignInState();
+    setTimeout(function(){
+      var el = document.getElementById('signin-email');
+      if (el) el.focus();
+    }, 100);
+    return;
+  }
   if (confirm('Sign out of GCCPROs?')) {
     localStorage.removeItem('gcc_token');
-    var isProd = (location.protocol === 'https:' && /gccpros\.com$/.test(location.hostname));
-    auth.signOut().then(() => {
-      if (isProd) window.location.href = 'index';
-      else location.reload();
-    });
+    _cachedEmail = '';
+    currentUser = null;
+    _credits = null;
+    _accountStatus = null;
+    _monthlyReveals = 0;
+    _revealedThisMonth = new Set();
+    try { auth.signOut(); } catch(_) {}
+    pill.textContent = 'Sign in';
+    // Greyed-out empty state for credits/meter
+    document.getElementById('credit-chip-num').textContent = '-';
+    document.getElementById('cm-num').textContent = '-';
+    document.getElementById('cm-label').textContent = 'Sign in to see your credits';
+    document.getElementById('cm-reveals-num').textContent = '-';
+    document.getElementById('cm-fill').style.width = '0%';
+    showSignInState();
   }
 });
 
