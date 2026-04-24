@@ -1905,6 +1905,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   updateCostText();
 
+  // First, handle any auth return flow (magic link or Google redirect).
+  // These are async but we kick them off and let onAuthStateChanged pick up.
+  var returningFromEmailLink = false;
+  try { returningFromEmailLink = auth.isSignInWithEmailLink(window.location.href); } catch(_){}
+  if (returningFromEmailLink) {
+    document.getElementById('user-pill').textContent = 'Signing you in...';
+    handleEmailLinkReturn();
+    return; // onAuthStateChanged handles the rest
+  }
+  // Kick off redirect-result check (no-op if we didn't come from redirect)
+  handleGoogleRedirectReturn();
+
   // Hide page if not authed - check early
   if (_cachedEmail) {
     document.body.classList.add('is-authed');
@@ -1983,20 +1995,102 @@ function showSignInState() {
 async function signInWithGoogle() {
   var errBox = document.getElementById('signin-err');
   if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
   try {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    // Popup flow - Firebase opens the Google chooser, returns the verified user.
-    // onAuthStateChanged will fire with the user and we take it from there.
     await auth.signInWithPopup(provider);
+    return; // onAuthStateChanged handles the rest
   } catch (e) {
+    // Popup blocked or closed - fall back to full-page redirect which is more
+    // compatible with strict browsers and cross-origin isolation policies.
+    if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request' || e.code === 'auth/operation-not-supported-in-this-environment')) {
+      try {
+        localStorage.setItem('gcc_auth_method', 'google_redirect');
+        await auth.signInWithRedirect(provider);
+        return;
+      } catch (r) { e = r; }
+    }
     var msg;
-    if (e && e.code === 'auth/popup-blocked')   msg = 'Your browser blocked the sign-in popup. Please allow popups for gccpros.com and try again.';
-    else if (e && e.code === 'auth/popup-closed-by-user') msg = 'Sign-in was cancelled. Click the button to try again.';
-    else if (e && e.code === 'auth/unauthorized-domain')  msg = 'This domain is not authorised for sign-in. Ask the admin to whitelist it.';
-    else if (e && e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is not enabled yet. Ask the admin to turn it on in Firebase Console.';
+    if (e && e.code === 'auth/popup-closed-by-user') msg = 'Sign-in was cancelled. Click the button to try again.';
+    else if (e && e.code === 'auth/unauthorized-domain')  msg = 'This domain is not authorised for sign-in. Ask the admin to whitelist it in Firebase.';
+    else if (e && e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is not enabled. Ask the admin to turn it on in Firebase Console.';
+    else if (e && e.code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
     else msg = 'Could not sign in with Google. Please try again, or use the email option below.';
     if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
+  }
+}
+
+// Email magic-link sign-in - Firebase sends a one-time link to the user's
+// inbox. Clicking it brings them back here, verified. No passwords needed.
+async function sendEmailLink(email) {
+  var errBox = document.getElementById('signin-err');
+  var actionCodeSettings = {
+    url: window.location.origin + window.location.pathname,
+    handleCodeInApp: true
+  };
+  try {
+    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    localStorage.setItem('gcc_pending_email', email);
+    showCheckYourEmailState(email);
+  } catch (e) {
+    var msg;
+    if (e && e.code === 'auth/invalid-email') msg = 'That email doesn\'t look valid. Please check and try again.';
+    else if (e && e.code === 'auth/unauthorized-continue-uri') msg = 'This domain is not authorised for email sign-in. Ask the admin to whitelist it in Firebase.';
+    else if (e && e.code === 'auth/operation-not-allowed') msg = 'Email-link sign-in is not enabled. Ask the admin to turn on "Email link (passwordless sign-in)" in Firebase Console.';
+    else msg = 'Could not send the sign-in link. Please try again, or use Google sign-in above.';
+    if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
+  }
+}
+
+function showCheckYourEmailState(email) {
+  var wrap = document.getElementById('results-wrap');
+  if (!wrap) return;
+  wrap.innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--success);padding:42px 28px;text-align:center;">' +
+      '<div class="sb-icon" style="color:var(--success);border-color:var(--success);margin:0 auto 14px;">&check;</div>' +
+      '<h3 style="font-size:19px;">Check your inbox</h3>' +
+      '<p style="max-width:440px;margin:8px auto 0;">We just sent a sign-in link to <strong style="color:var(--ink);">' + escHtml(email) + '</strong>. Click the link from the same browser to finish signing in.</p>' +
+      '<p style="font-size:11px;color:var(--muted);margin-top:18px;">Link expires in 1 hour. Check your spam folder if it doesn\'t arrive within a minute. <a href="#" onclick="showSignInState();return false;" style="color:var(--gold-deep);text-decoration:underline;">Try a different email</a></p>' +
+    '</div>';
+}
+
+// Check on page load whether we're arriving from a magic link
+async function handleEmailLinkReturn() {
+  try {
+    if (!auth.isSignInWithEmailLink(window.location.href)) return false;
+    var email = localStorage.getItem('gcc_pending_email') || '';
+    if (!email) {
+      email = prompt('Please confirm your email to complete sign-in:') || '';
+      if (!email) return false;
+    }
+    email = email.toLowerCase().trim();
+    await auth.signInWithEmailLink(email, window.location.href);
+    localStorage.removeItem('gcc_pending_email');
+    // Clean the URL so refresh doesn't retry
+    try { history.replaceState(null, '', location.pathname); } catch (_) {}
+    return true;
+  } catch (e) {
+    console.warn('Email-link return error', e);
+    var errBox = document.getElementById('signin-err');
+    if (errBox) {
+      errBox.textContent = (e && e.code === 'auth/invalid-action-code')
+        ? 'That sign-in link has expired or already been used. Please request a new one.'
+        : 'Could not complete sign-in. Please try again.';
+      errBox.style.display = 'block';
+    }
+    return false;
+  }
+}
+
+// Also finalise any Google redirect-flow sign-in
+async function handleGoogleRedirectReturn() {
+  try {
+    var result = await auth.getRedirectResult();
+    // If we have a user, onAuthStateChanged will pick it up
+    return result && result.user ? true : false;
+  } catch (e) {
+    console.warn('Redirect result error', e);
+    return false;
   }
 }
 
@@ -2004,16 +2098,17 @@ function submitSignIn(ev) {
   ev.preventDefault();
   var input = document.getElementById('signin-email');
   var errBox = document.getElementById('signin-err');
+  var btn = ev.target.querySelector('button[type="submit"]');
   var email = (input.value || '').trim().toLowerCase();
+  if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
   if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 3) {
     if (errBox) { errBox.textContent = 'Please enter a valid email address.'; errBox.style.display = 'block'; }
     return;
   }
-  _cachedEmail = email;
-  localStorage.setItem('gcc_token', email);
-  document.body.classList.add('is-authed');
-  document.getElementById('user-pill').textContent = email.split('@')[0] + ' - Sign out';
-  fetchCreditBalance();
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
+  sendEmailLink(email).finally(function(){
+    if (btn) { btn.disabled = false; btn.textContent = 'Continue with email'; }
+  });
 }
 
 document.getElementById('user-pill').addEventListener('click', () => {
@@ -2820,16 +2915,17 @@ async function submitCorrection() {
   if (!note) { errBox.textContent = 'Please add a note explaining the change.'; errBox.style.display = 'block'; return; }
   btn.disabled = true; btn.textContent = 'Submitting...';
   const token = getToken();
+  const v = function(id){ return document.getElementById(id).value.trim(); };
   const url = SCRIPT_URL + '?action=submitCorrection&token=' + encodeURIComponent(token)
-    + '&company='  + encodeURIComponent(document.getElementById('corr-company').value.trim())
-    + '&group='    + encodeURIComponent(document.getElementById('corr-group').value.trim())
-    + '&country='  + encodeURIComponent(document.getElementById('corr-country').value.trim())
-    + '&city='     + encodeURIComponent(document.getElementById('corr-city').value.trim())
-    + '&industry=' + encodeURIComponent(document.getElementById('corr-industry').value.trim())
-    + '&domain='   + encodeURIComponent(document.getElementById('corr-domain').value.trim())
-    + '&headcount='+ encodeURIComponent(document.getElementById('corr-headcount').value.trim())
-    + '&leader1='  + encodeURIComponent(document.getElementById('corr-leader1').value.trim())
-    + '&leader2='  + encodeURIComponent(document.getElementById('corr-leader2').value.trim())
+    + '&company='  + encodeURIComponent(v('corr-company'))
+    + '&group='    + encodeURIComponent(v('corr-group'))
+    + '&country='  + encodeURIComponent(v('corr-country'))
+    + '&city='     + encodeURIComponent(v('corr-city'))
+    + '&industry=' + encodeURIComponent(v('corr-industry'))
+    + '&domain='   + encodeURIComponent(v('corr-domain'))
+    + '&headcount='+ encodeURIComponent(v('corr-headcount'))
+    + '&leader1='  + encodeURIComponent(v('corr-leader1'))
+    + '&leader2='  + encodeURIComponent(v('corr-leader2'))
     + '&note='     + encodeURIComponent(note);
   try { await fetch(url, { mode: 'no-cors' }); } catch(e) {}
   okBox.style.display = 'block';
@@ -2867,10 +2963,6 @@ async function changePassword() {
     const cred = firebase.auth.EmailAuthProvider.credential(user.email, current);
     await user.reauthenticateWithCredential(cred);
     await user.updatePassword(newPwd);
-    try {
-      const syncUrl = SCRIPT_URL + '?action=updatePassword&email=' + encodeURIComponent(user.email) + '&newPassword=' + encodeURIComponent(newPwd) + '&token=' + encodeURIComponent(user.email);
-      await fetch(syncUrl, { mode: 'no-cors' });
-    } catch(syncErr) {}
     okBox.style.display = 'block';
     btn.textContent = 'Done';
     setTimeout(closePwdModal, 2500);
