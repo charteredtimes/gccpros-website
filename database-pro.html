@@ -53,6 +53,42 @@ body {
 button { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 
+/* ── PUBLIC GATE ──────────────────────────────────────────────
+   Everything that reveals pricing, field lists, feature specs, or
+   credit amounts is hidden until the body has .is-authed. Added by
+   JS after successful sign-in. Keeps the portal spec invisible to
+   non-members (and to competitors). */
+body:not(.is-authed) .credit-meter,
+body:not(.is-authed) .search-panel,
+body:not(.is-authed) .b2c-fields,
+body:not(.is-authed) .personal-use-notice,
+body:not(.is-authed) .ent-features,
+body:not(.is-authed) .ent-data-depth,
+body:not(.is-authed) .ent-stats-row,
+body:not(.is-authed) .credit-chip,
+body:not(.is-authed) .pwd-btn-auth,
+body:not(.is-authed) .panel-sub-auth {
+  display: none !important;
+}
+/* Kill the nav "Password" button pre-login */
+body:not(.is-authed) .btn-ghost[onclick*="openPwdModal"] { display: none !important; }
+
+/* Hide the "Sign in to access" sub-line once authed */
+body.is-authed .panel-sub-public { display: none; }
+body:not(.is-authed) .panel-sub-auth { display: none; }
+
+/* Generic pre-login teaser in enterprise poster (shown when .is-authed is OFF) */
+.ent-pre-auth-teaser { display: none; }
+body:not(.is-authed) .ent-pre-auth-teaser {
+  display: block;
+  padding: 22px 28px;
+  position: relative; z-index: 1;
+}
+.ent-pre-auth-teaser p {
+  font-size: 13px; color: rgba(255,255,255,0.72);
+  line-height: 1.7; font-weight: 300; max-width: 460px;
+}
+
 /* ── TOP BAR ────────────────────────────────────────────────── */
 .topbar {
   background: var(--ink);
@@ -1402,7 +1438,8 @@ a { color: inherit; text-decoration: none; }
         <span class="personal-badge">Individual Access · Personal Use Only</span>
         <div class="panel-kicker">Edition One</div>
         <h2 class="panel-title">Search the GCC Database</h2>
-        <p class="panel-sub">Pay-as-you-go · 20 credits per 5-result page · 100 credits to reveal a company · 50 reveals/month cap · Manual approval required for new members.</p>
+        <p class="panel-sub panel-sub-auth">Pay-as-you-go &middot; Manual approval required for new members.</p>
+        <p class="panel-sub panel-sub-public">Sign in to access the Individual tier. Invite-only beta &middot; manual approval &middot; credits issued on approval.</p>
       </div>
 
       <!-- credit meter -->
@@ -1518,19 +1555,24 @@ a { color: inherit; text-decoration: none; }
         <strong>Ethical usage only.</strong> Licensed for internal research and decision-support. Not for resale, list-building, cold outreach, or automated harvesting. Every seat is named; every query is logged.
       </div>
 
+      <!-- Shown only pre-login, replaces the features/data-depth grid -->
+      <div class="ent-pre-auth-teaser">
+        <p>Enterprise licensing is a bespoke annual engagement with controlled access, custom data depth and audit-grade governance. Full spec and pricing shared under NDA with qualified prospects. Join the waitlist below and our team will reach out.</p>
+      </div>
+
       <div class="ent-features">
         <div class="ent-features-label">What's included</div>
         <ul class="ent-feat-list">
-          <li><strong>Unlimited search</strong> across 2,430+ GCCs</li>
-          <li><strong>Bulk exports</strong> (CSV / Excel, audit-controlled)</li>
+          <li><strong>Unlimited search</strong> across the full GCC universe</li>
+          <li><strong>Controlled bulk export</strong> with audit trail</li>
           <li><strong>Team seats</strong> with role-based access</li>
-          <li><strong>Single Sign-On</strong> (Google, Microsoft, Okta)</li>
-          <li><strong>REST API</strong> access with quotas</li>
-          <li><strong>Saved searches</strong> &amp; custom dashboards</li>
-          <li><strong>Dedicated Customer Success Manager</strong> &amp; onboarding</li>
-          <li><strong>Quarterly refresh</strong> briefings</li>
-          <li><strong>Data Processing Agreement</strong> &amp; <strong>Master Service Agreement</strong> on request</li>
-          <li><strong>Priority corrections</strong> &amp; research service-level agreement</li>
+          <li><strong>Enterprise Single Sign-On</strong></li>
+          <li><strong>API access</strong> for approved integrations</li>
+          <li><strong>Saved searches</strong> &amp; dashboards</li>
+          <li><strong>Dedicated Customer Success</strong> support</li>
+          <li><strong>Quarterly research</strong> briefings</li>
+          <li><strong>Legal &amp; compliance</strong> paperwork on request</li>
+          <li><strong>Priority corrections</strong> &amp; research service agreement</li>
         </ul>
       </div>
 
@@ -1538,57 +1580,47 @@ a { color: inherit; text-decoration: none; }
         <div class="ent-data-head">
           <div class="ent-data-head-left">
             <span class="ent-features-label" style="margin:0;">Data depth per GCC profile</span>
-            <div class="ent-data-count">54 <em>fields</em></div>
+            <div class="ent-data-count">50+ <em>attributes</em></div>
           </div>
-          <span class="ent-vs">vs. 10 fields on Individual</span>
+          <span class="ent-vs">vs. Individual tier</span>
         </div>
         <div class="data-cat-grid">
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Identity &amp; Legal</span><span class="dc-count">8</span></div>
-            <div class="dc-fields">Company Name, Group Company, Industry, CIN / LLP ID, Legal Structure, HQ Country, Registered Office Address, SEZ / STPI Unit</div>
+            <div class="dc-head"><span class="dc-title">Identity &amp; Legal</span></div>
+            <div class="dc-fields">Entity, legal, regulatory positioning.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Location &amp; Footprint</span><span class="dc-count">7</span></div>
-            <div class="dc-fields">GCC City, State, Office Area (sqft), Building / Tech Park, Other India Offices (by city), Other India Office Addresses, Other Countries GCC Units</div>
+            <div class="dc-head"><span class="dc-title">Location &amp; Footprint</span></div>
+            <div class="dc-fields">India and global offices, site details.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Scale</span><span class="dc-count">4</span></div>
-            <div class="dc-fields">Headcount (Latest), Headcount Absolute (Estimated), Headcount Source, Headcount Date</div>
+            <div class="dc-head"><span class="dc-title">Scale</span></div>
+            <div class="dc-fields">Headcount trajectory with audit trail.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Financials</span><span class="dc-count">10</span></div>
-            <div class="dc-fields">Latest Revenue (INR Cr), Latest Financial Year, FY24 Revenue (USD mn), FY25 Revenue (USD mn), Revenue Growth YoY (%), Net Profit (INR Cr), Transfer Pricing Markup (%), Group Global Turnover, Group Turnover FY, Group Turnover Source</div>
+            <div class="dc-head"><span class="dc-title">Financials</span></div>
+            <div class="dc-fields">India-entity and group-level KPIs.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Maturity &amp; Model</span><span class="dc-count">4</span></div>
-            <div class="dc-fields">Year of Establishment (India), Maturity Level (Gen 1-4), Setup Model, Setup Partner (if BOT)</div>
+            <div class="dc-head"><span class="dc-title">Maturity &amp; Model</span></div>
+            <div class="dc-fields">Setup, vintage, generation markers.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Leadership</span><span class="dc-count">6</span></div>
-            <div class="dc-fields">Leader 1 Name, Leader 1 LinkedIn URL, Leader 1 Tenure (Years), Leader 2 Name, Leader 2 LinkedIn URL, Functional Heads (Names)</div>
+            <div class="dc-head"><span class="dc-title">Leadership</span></div>
+            <div class="dc-fields">Named leaders and functional heads.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Capability &amp; Tech</span><span class="dc-count">6</span></div>
-            <div class="dc-fields">GCC Domains, Sub-Domains Tagged, Tech Stack, Centers of Excellence / Labs, Finance Domain Active &amp; Sub-Domain, IPs Registered (India-attributable)</div>
+            <div class="dc-head"><span class="dc-title">Capability &amp; Tech</span></div>
+            <div class="dc-fields">Domains, stack, centres, IP assets.</div>
           </div>
-
           <div class="data-cat">
-            <div class="dc-head"><span class="dc-title">Market &amp; Culture</span><span class="dc-count">4</span></div>
-            <div class="dc-fields">Recent Press / News (last 6 months), Strategic Initiatives, Glassdoor Rating, Great Place to Work Certified</div>
+            <div class="dc-head"><span class="dc-title">Market &amp; Culture</span></div>
+            <div class="dc-fields">Signals, sentiment, strategic moves.</div>
           </div>
-
           <div class="data-cat" style="grid-column: 1 / -1;">
-            <div class="dc-head"><span class="dc-title">Data Quality &amp; Validation</span><span class="dc-count">5</span></div>
-            <div class="dc-fields">Confidence, Validation Notes / Commentary, % Completion, Updated Confidence, Headcount (bucketed audit)</div>
+            <div class="dc-head"><span class="dc-title">Data Quality &amp; Validation</span></div>
+            <div class="dc-fields">Every field sourced, dated, scored. Full spec shared under NDA with enterprise prospects.</div>
           </div>
-
         </div>
       </div>
 
@@ -1875,12 +1907,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Hide page if not authed - check early
   if (_cachedEmail) {
+    document.body.classList.add('is-authed');
     document.getElementById('user-pill').textContent =
       _cachedEmail.split('@')[0] + ' - Sign out';
     setTimeout(fetchCreditBalance, 600);
   } else {
     // No cached email - show the inline sign-in card immediately so
     // the user never sees a stuck "Loading..." state.
+    document.body.classList.remove('is-authed');
     document.getElementById('user-pill').textContent = 'Sign in';
     showSignInState();
   }
@@ -1894,15 +1928,15 @@ auth.onAuthStateChanged(u => {
     currentUser = u;
     localStorage.setItem('gcc_token', u.email);
     _cachedEmail = u.email;
+    document.body.classList.add('is-authed');
     document.getElementById('user-pill').textContent =
       (u.displayName || u.email.split('@')[0]) + ' - Sign out';
     fetchCreditBalance();
   } else {
     // Firebase has no session. If we also have no cached email, show
-    // the inline sign-in card. On file:// and on hosts not in Firebase's
-    // authorized-domains list, Firebase will always report "no user"
-    // so the inline card is the only sign-in path.
+    // the inline sign-in card.
     if (!_cachedEmail) {
+      document.body.classList.remove('is-authed');
       document.getElementById('user-pill').textContent = 'Sign in';
       showSignInState();
     }
@@ -1941,6 +1975,7 @@ function submitSignIn(ev) {
   }
   _cachedEmail = email;
   localStorage.setItem('gcc_token', email);
+  document.body.classList.add('is-authed');
   document.getElementById('user-pill').textContent = email.split('@')[0] + ' - Sign out';
   fetchCreditBalance();
 }
@@ -1966,13 +2001,8 @@ document.getElementById('user-pill').addEventListener('click', () => {
     _monthlyReveals = 0;
     _revealedThisMonth = new Set();
     try { auth.signOut(); } catch(_) {}
+    document.body.classList.remove('is-authed');
     pill.textContent = 'Sign in';
-    // Greyed-out empty state for credits/meter
-    document.getElementById('credit-chip-num').textContent = '-';
-    document.getElementById('cm-num').textContent = '-';
-    document.getElementById('cm-label').textContent = 'Sign in to see your credits';
-    document.getElementById('cm-reveals-num').textContent = '-';
-    document.getElementById('cm-fill').style.width = '0%';
     showSignInState();
   }
 });
