@@ -355,7 +355,86 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
   </div>
 </div>
 
-<!-- ENTERPRISE TIER — LAUNCH COUNTDOWN -->
+<!-- ========== DATABASE PRO - PRIVATE BETA BANNER (self-contained) ========== -->
+<style>
+  .dbpro-strip {
+    background: linear-gradient(180deg,#0F1F3A 0%,#081224 100%);
+    border-top: 1px solid rgba(201,151,58,0.25);
+    border-bottom: 1px solid rgba(201,151,58,0.25);
+    padding: 56px 80px; color: #fff; position: relative; overflow: hidden;
+  }
+  .dbpro-strip::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle,rgba(201,151,58,0.12),transparent 70%);
+    pointer-events: none;
+  }
+  .dbpro-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.6fr 1fr;
+    gap: 48px; align-items: center; position: relative; z-index: 1;
+  }
+  .dbpro-pill {
+    display: inline-block;
+    background: rgba(201,151,58,0.15);
+    border: 1px solid rgba(201,151,58,0.4);
+    color: #F0C87A; font-size: 10px; font-weight: 800;
+    letter-spacing: 1.8px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 100px; margin-bottom: 14px;
+  }
+  .dbpro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700; line-height: 1.25;
+    color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;
+  }
+  .dbpro-title em { color: #F0C87A; font-style: italic; }
+  .dbpro-sub {
+    font-size: 14px; color: rgba(255,255,255,0.68);
+    line-height: 1.75; font-weight: 300; max-width: 560px;
+  }
+  .dbpro-sub strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+  .dbpro-right {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  }
+  .dbpro-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #C9973A; color: #0A1628;
+    padding: 15px 30px; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    text-decoration: none; transition: all 0.2s; white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .dbpro-cta:hover { background: #F0C87A; transform: translateY(-1px); }
+  .dbpro-meta {
+    font-size: 11px; color: rgba(255,255,255,0.42); letter-spacing: 0.3px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  @media (max-width: 900px) {
+    .dbpro-strip { padding: 40px 24px; }
+    .dbpro-inner { grid-template-columns: 1fr; gap: 24px; }
+    .dbpro-right { align-items: flex-start; }
+    .dbpro-title { font-size: 22px; }
+  }
+</style>
+<section class="dbpro-strip">
+  <div class="dbpro-inner">
+    <div class="dbpro-left">
+      <span class="dbpro-pill">New &middot; Invite-only beta</span>
+      <div class="dbpro-title"><em>Database Pro</em> &mdash; individual-access tier is live in private beta</div>
+      <p class="dbpro-sub">
+        Pay-as-you-go research access for jobseekers, analysts and consultants who need to dig into one employer at a time.
+        <strong>200-credit welcome bonus</strong>, reveal up to <strong>50 companies a month</strong>, ten curated fields per profile including city, domains, setup model, maturity, Glassdoor and Great Place to Work.
+        Sits between the free directory and the upcoming Enterprise Tier.
+      </p>
+    </div>
+    <div class="dbpro-right">
+      <a href="/database-pro.html" class="dbpro-cta">Request preview access &rarr;</a>
+      <div class="dbpro-meta">Manual approval &middot; ~1 business day &middot; Beta pricing locked</div>
+    </div>
+  </div>
+</section>
+
+<!-- ENTERPRISE TIER - LAUNCH COUNTDOWN -->
 <section class="enterprise-launch" id="enterprise-launch">
   <div class="launch-inner">
     <div class="launch-eyebrow">
@@ -678,7 +757,7 @@ footer{background:var(--ink);padding:48px 80px 32px;border-top:1px solid rgba(20
       WhatsApp Channel
     </a>
   </div>
-  <div class="footer-bottom">© 2026 GCCPROs · Founded by CA. Shammi Prabhakar Singh · +91-85069-76700</div>
+  <div class="footer-bottom">© 2026 GCCPROs · Founded by Shammi Prabhakar Singh · +91-85069-76700</div>
 </footer>
 
 

@@ -1,0 +1,2635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs - Database Pro</title>
+<meta name="description" content="GCCPROs Database Pro - Research-grade access to India's Global Capability Center ecosystem. Individual and Enterprise editions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   GCCPROs Intelligence Portal - v2
+   Aesthetic reference: BCG / Big 4 / Gartner
+   Palette: Deep navy · Ivory · Muted gold · Graphite
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --ink:        #0A1628;
+  --ink-soft:   #152338;
+  --navy:       #1A3A6B;
+  --navy-soft:  #264B7D;
+  --gold:       #B8893A;
+  --gold-deep:  #8B6420;
+  --gold-soft:  #EAD4A8;
+  --cream:      #FAF7F2;
+  --ivory:      #F5F1E8;
+  --paper:      #FFFFFF;
+  --graphite:   #4A5568;
+  --muted:      #6B7A99;
+  --muted-2:    #98A2B8;
+  --line:       rgba(10,22,40,0.08);
+  --line-2:     rgba(10,22,40,0.15);
+  --success:    #2D7A4E;
+  --warn:       #C17B2B;
+  --danger:     #B23B3B;
+  --serif:      'Playfair Display', Georgia, serif;
+  --sans:       'Inter', -apple-system, system-ui, sans-serif;
+  --mono:       'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+}
+
+* , *::before , *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ── TOP BAR ────────────────────────────────────────────────── */
+.topbar {
+  background: var(--ink);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.brand-mark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+.brand-accent { color: var(--gold-soft); }
+.brand-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.18);
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.topnav a {
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  font-weight: 400;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+.topnav a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.topnav a.active { color: var(--gold-soft); }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.region-picker {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 28px 7px 12px;
+  cursor: pointer;
+  font-family: var(--sans);
+  letter-spacing: 0.3px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5l3 3 3-3' stroke='white' stroke-width='1.3' fill='none' stroke-linecap='round' opacity='0.7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.region-picker option { background: var(--ink); color: #fff; }
+
+.credit-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(184,137,58,0.15), rgba(184,137,58,0.06));
+  border: 1px solid rgba(184,137,58,0.35);
+  border-radius: 4px;
+  padding: 7px 14px;
+  color: var(--gold-soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  font-family: var(--mono);
+}
+.credit-chip:hover { background: rgba(184,137,58,0.2); }
+.credit-chip .c-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(184,137,58,0.6);
+}
+.credit-chip strong { color: #fff; }
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.65);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+
+.user-pill {
+  background: var(--navy);
+  color: #fff;
+  border: 1px solid var(--navy-soft);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-pill:hover { background: var(--danger); border-color: var(--danger); }
+
+/* ── HERO STRIP ─────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color: #fff;
+  padding: 30px 36px 36px;
+  position: relative;
+  border-bottom: 3px solid var(--gold);
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(800px 200px at 80% 100%, rgba(184,137,58,0.08), transparent 60%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  max-width: 1440px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-breadcrumb {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+.hero-title em { color: var(--gold-soft); font-style: normal; }
+.hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 8px;
+  font-weight: 300;
+  max-width: 620px;
+  line-height: 1.6;
+}
+.hero-stats {
+  display: flex;
+  gap: 28px;
+  flex-shrink: 0;
+}
+.stat-block {
+  text-align: right;
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-top: 4px;
+}
+
+/* ── MAIN GRID ──────────────────────────────────────────────── */
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 36px 48px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 28px;
+  align-items: stretch;
+}
+@media (max-width: 960px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ── PANEL (shared shell) ───────────────────────────────────── */
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(10,22,40,0.03), 0 8px 24px rgba(10,22,40,0.04);
+}
+.panel-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-kicker {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.panel-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.panel-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 400;
+}
+.panel-body { padding: 24px 28px; }
+
+/* ── INDIVIDUAL PORTAL (LEFT) ───────────────────────────────── */
+.individual-portal { display: flex; flex-direction: column; }
+
+.personal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ivory);
+  border: 1px solid var(--gold-soft);
+  color: var(--gold-deep);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.personal-badge::before { content: '●'; color: var(--gold); font-size: 8px; }
+
+.credit-meter {
+  background: linear-gradient(180deg, var(--ivory), var(--cream));
+  border: 1px solid var(--gold-soft);
+  border-left: 3px solid var(--gold);
+  padding: 16px 22px;
+  margin: 18px 28px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-radius: 2px;
+}
+.credit-meter-left { flex: 1; min-width: 200px; }
+.credit-meter-num {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.credit-meter-num span { color: var(--muted); font-size: 14px; font-weight: 400; }
+.credit-meter-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--graphite);
+  margin-top: 4px;
+  font-weight: 500;
+}
+.credit-meter-bar {
+  height: 4px;
+  background: rgba(10,22,40,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 10px;
+  max-width: 280px;
+}
+.credit-meter-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+  transition: width 0.4s ease;
+}
+.credit-meter-cta {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  padding: 11px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.credit-meter-cta:hover { background: var(--navy); }
+
+/* search panel */
+.search-panel { padding: 22px 28px 10px; }
+.search-row-top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.search-field {
+  flex: 1;
+  min-width: 180px;
+}
+.field-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--graphite);
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+.field-select, .search-input {
+  width: 100%;
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-family: var(--sans);
+  color: var(--ink);
+  outline: none;
+  background: var(--paper);
+  transition: border 0.15s;
+  font-weight: 500;
+}
+.field-select:focus, .search-input:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px rgba(10,22,40,0.06);
+}
+.field-select {
+  appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5l3 3 3-3' stroke='%230A1628' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.search-action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.search-input-main { flex: 1; }
+.search-btn {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  padding: 11px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.search-btn:hover { background: var(--navy); }
+.search-btn::after { content: '→'; font-size: 14px; }
+.search-cost {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 10px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.search-cost b { color: var(--gold-deep); font-weight: 600; font-family: var(--mono); }
+
+/* results */
+.results-area {
+  padding: 8px 28px 22px;
+  min-height: 200px;
+}
+.result-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0 12px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.result-count {
+  font-size: 12px;
+  color: var(--graphite);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.secure-badge {
+  font-size: 10px;
+  background: var(--ivory);
+  color: var(--gold-deep);
+  padding: 3px 10px;
+  border-radius: 2px;
+  border: 1px solid var(--gold-soft);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.result-list {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.result-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.result-row:last-child { border-bottom: none; }
+.result-row:hover { background: var(--ivory); }
+.r-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-2);
+  width: 28px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+.r-body { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 3px; }
+.r-name { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.1px; }
+.r-match { font-size: 11px; color: var(--muted); font-weight: 400; }
+.r-arrow { font-size: 14px; color: var(--gold); font-weight: 400; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.pg-btn {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  border: 1px solid var(--line-2);
+  background: var(--paper);
+  font-size: 12px;
+  color: var(--graphite);
+  cursor: pointer;
+  font-family: var(--sans);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-weight: 500;
+  transition: all 0.12s;
+}
+.pg-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.pg-btn:hover:not(.active) { background: var(--ivory); border-color: var(--ink); }
+.pg-info { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; font-family: var(--mono); }
+
+.submit-nudge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--ivory);
+  border: 1px dashed var(--gold);
+  border-radius: 2px;
+  padding: 16px 20px;
+  margin-top: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.submit-nudge:hover { background: var(--gold-soft); border-style: solid; }
+.nudge-icon {
+  width: 32px; height: 32px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 300;
+  flex-shrink: 0;
+}
+.nudge-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.nudge-text strong { font-size: 13px; font-weight: 600; color: var(--ink); }
+.nudge-text span { font-size: 12px; color: var(--graphite); }
+.nudge-arrow { font-size: 18px; color: var(--gold); }
+
+.beta-note {
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 16px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--graphite);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* detail card */
+.back-link {
+  font-size: 12px;
+  color: var(--graphite);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.back-link:hover { color: var(--ink); }
+.detail-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 28px;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.detail-company {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.detail-city-tag {
+  font-size: 11px;
+  color: var(--gold-deep);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  display: inline-block;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 2px;
+}
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:500px){ .detail-grid{ grid-template-columns: 1fr; } }
+.detail-field {
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 12px 16px;
+  border-left: 2px solid var(--gold);
+}
+.detail-field label {
+  font-size: 9px;
+  color: var(--gold-deep);
+  display: block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+.detail-field p { font-size: 13px; font-weight: 500; color: var(--ink); }
+
+.confidence-row {
+  margin-top: 14px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+.confidence-row .c-lbl {
+  color: var(--graphite);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 10px;
+}
+.confidence-row .c-val { font-size: 12px; font-weight: 700; }
+
+.confidential-strip {
+  background: var(--ink);
+  color: rgba(255,255,255,0.75);
+  border-radius: 2px;
+  padding: 10px 16px;
+  margin-top: 10px;
+  font-size: 10px;
+  line-height: 1.7;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+.confidential-strip strong { color: var(--gold-soft); }
+
+.correction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--ivory);
+  border: 1px dashed var(--gold);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.correction-bar:hover { background: var(--gold-soft); }
+.correction-bar span { font-size: 12px; color: var(--gold-deep); font-weight: 600; }
+.correction-bar small { font-size: 11px; color: var(--graphite); }
+
+/* empty/loading states */
+.state-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 54px 24px;
+  text-align: center;
+}
+.state-box .sb-icon {
+  width: 52px; height: 52px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  font-family: var(--serif);
+  font-size: 22px;
+}
+.state-box h3 { font-family: var(--serif); font-size: 18px; color: var(--ink); margin-bottom: 6px; font-weight: 500; }
+.state-box p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 380px; margin: 0 auto; }
+
+.loading-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin: 16px 0;
+}
+.loading-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: dot 1.2s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: .2s; }
+.loading-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dot {
+  0%, 80%, 100% { opacity: .25; transform: scale(.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+.personal-use-notice {
+  margin: 16px 28px 24px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+  letter-spacing: 0.2px;
+}
+.personal-use-notice strong { color: var(--ink); font-weight: 600; }
+
+/* ── ENTERPRISE POSTER (RIGHT) ──────────────────────────────── */
+.enterprise-poster {
+  background: linear-gradient(160deg, var(--ink) 0%, var(--ink-soft) 50%, #1C2D4A 100%);
+  color: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 24px rgba(10,22,40,0.12);
+}
+.enterprise-poster::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(184,137,58,0.18), transparent 70%);
+  pointer-events: none;
+}
+.enterprise-poster::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(184,137,58,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.ent-top {
+  padding: 22px 28px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+.ent-kicker {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  font-weight: 600;
+}
+.ent-pill {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: rgba(184,137,58,0.18);
+  border: 1px solid var(--gold);
+  color: var(--gold-soft);
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.ent-hero {
+  padding: 20px 28px 24px;
+  position: relative;
+  z-index: 1;
+}
+.ent-title {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.ent-title em { color: var(--gold-soft); font-style: normal; }
+.ent-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 420px;
+}
+
+.ethical-strip {
+  margin: 0 28px;
+  padding: 12px 16px;
+  background: rgba(184,137,58,0.1);
+  border: 1px solid rgba(184,137,58,0.35);
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  font-size: 11px;
+  color: var(--gold-soft);
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+.ethical-strip strong { color: #fff; font-weight: 600; }
+
+.ent-features {
+  padding: 22px 28px 4px;
+  position: relative;
+  z-index: 1;
+}
+.ent-features-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.ent-feat-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 18px;
+}
+.ent-feat-list li {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.55;
+}
+.ent-feat-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 10px; height: 1px;
+  background: var(--gold);
+}
+.ent-feat-list li strong { color: #fff; font-weight: 600; }
+
+.ent-data-depth {
+  margin: 6px 28px 0;
+  padding: 20px 0 6px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 1;
+}
+.ent-data-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ent-data-head-left {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ent-data-count {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+.ent-data-count em { color: var(--gold-soft); font-style: normal; font-size: 13px; font-weight: 400; letter-spacing: 0.5px; margin-left: 6px; }
+.ent-vs {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  background: rgba(184,137,58,0.14);
+  border: 1px solid rgba(184,137,58,0.3);
+  padding: 4px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.data-cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+.data-cat {
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.data-cat:first-child, .data-cat:nth-child(2) { border-top: none; padding-top: 0; }
+.dc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.dc-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.dc-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold-soft);
+  font-weight: 500;
+}
+.dc-fields {
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.55;
+  letter-spacing: 0.1px;
+}
+
+.waitlist-card {
+  margin: 18px 28px 22px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 2px;
+  padding: 20px 22px;
+  position: relative;
+  z-index: 1;
+}
+.waitlist-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  color: #fff;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.waitlist-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.waitlist-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.waitlist-form input {
+  flex: 1;
+  min-width: 160px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-family: var(--sans);
+  outline: none;
+  transition: all 0.15s;
+}
+.waitlist-form input::placeholder { color: rgba(255,255,255,0.4); }
+.waitlist-form input:focus { border-color: var(--gold); background: rgba(255,255,255,0.12); }
+.waitlist-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: 2px;
+  padding: 10px 22px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.waitlist-btn:hover { background: var(--gold-soft); }
+
+.ent-stats-row {
+  padding: 18px 28px 22px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-around;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.ent-stat { text-align: center; }
+.ent-stat-num {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+.ent-stat-lbl {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+
+/* ── MODALS (shared) ────────────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,22,40,0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--paper);
+  border-radius: 2px;
+  padding: 28px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(10,22,40,0.25);
+  border-top: 3px solid var(--gold);
+}
+.modal h3 {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.55; }
+.modal label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--graphite);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.modal input[type=text],
+.modal input[type=email],
+.modal input[type=password],
+.modal textarea {
+  width: 100%;
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: var(--sans);
+  color: var(--ink);
+  outline: none;
+  transition: border 0.15s;
+  background: var(--paper);
+  margin-bottom: 12px;
+}
+.modal input:focus, .modal textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px rgba(10,22,40,0.06);
+}
+.modal textarea { resize: vertical; min-height: 70px; font-family: var(--sans); }
+.modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+.btn-primary {
+  flex: 1;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-primary:hover { background: var(--navy); }
+.btn-primary:disabled { background: var(--muted-2); cursor: not-allowed; }
+.btn-secondary {
+  flex: 1;
+  background: var(--ivory);
+  color: var(--ink);
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: var(--gold-soft); border-color: var(--gold); }
+
+.modal-err {
+  background: #FEF0F0;
+  border: 1px solid #F5C4C4;
+  border-left: 3px solid var(--danger);
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--danger);
+  margin-bottom: 12px;
+  display: none;
+}
+.modal-ok {
+  background: #F0F7F2;
+  border: 1px solid #B6D7BE;
+  border-left: 3px solid var(--success);
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--success);
+  margin-bottom: 12px;
+  display: none;
+}
+
+/* buy credits */
+.pack-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.pack {
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 16px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--paper);
+  position: relative;
+}
+.pack:hover { border-color: var(--gold); background: var(--ivory); }
+.pack.selected { border-color: var(--ink); background: var(--ivory); border-width: 2px; padding: 15px 13px; }
+.pack-coins {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.pack-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.pack-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold-deep);
+  margin-top: 8px;
+  font-family: var(--mono);
+}
+.pack-searches { font-size: 10px; color: var(--graphite); margin-top: 4px; }
+.pack-tag {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 3px 7px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.currency-toggle {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.currency-toggle button {
+  background: var(--paper);
+  border: none;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.currency-toggle button.active { background: var(--ink); color: #fff; }
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.55);
+  padding: 20px 36px;
+  font-size: 11px;
+  line-height: 1.7;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+.site-footer a { color: var(--gold-soft); }
+.site-footer a:hover { color: #fff; }
+
+/* ── UTILITIES ──────────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .topbar { padding: 12px 16px; gap: 12px; flex-wrap: wrap; }
+  .topnav { display: none; }
+  .hero { padding: 22px 16px; }
+  .hero-title { font-size: 26px; }
+  .hero-stats { display: none; }
+  .main { padding: 20px 16px 32px; }
+  .panel-body, .search-panel, .results-area { padding-left: 18px; padding-right: 18px; }
+  .credit-meter { margin-left: 18px; margin-right: 18px; }
+  .ent-feat-list { grid-template-columns: 1fr; }
+}
+</style>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════ TOP BAR ═══════════════════════ -->
+<nav class="topbar" role="navigation" aria-label="Primary">
+  <div class="brand">
+    <span class="brand-mark">GCC<span class="brand-accent">PROs</span></span>
+    <span class="brand-tag">Database Pro</span>
+  </div>
+  <div class="topnav">
+    <a href="https://www.gccpros.com/index">Home</a>
+    <a href="https://www.gccpros.com/insights-events">Insights</a>
+    <a href="https://www.gccpros.com/industry-council">Council</a>
+    <a href="https://www.gccpros.com/database" class="active">Database</a>
+    <a href="https://www.gccpros.com/opportunities">Opportunities</a>
+  </div>
+  <div class="topbar-right">
+    <select class="region-picker" id="region-picker" aria-label="Region and currency">
+      <option value="IN">🇮🇳 India · INR</option>
+      <option value="INTL">🌐 International · USD</option>
+    </select>
+    <button class="credit-chip" id="credit-chip" onclick="openBuyCredits()" title="View credits and buy more">
+      <span class="c-dot"></span>
+      <span><strong id="credit-chip-num">-</strong> credits</span>
+    </button>
+    <button class="btn-ghost" onclick="openPwdModal()" title="Change password">Password</button>
+    <button class="user-pill" id="user-pill">Loading…</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO STRIP ═══════════════════════ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-breadcrumb">GCCPROs · Database Pro · India GCC Intelligence</div>
+      <h1 class="hero-title">India's <em>Global Capability Center</em> Database</h1>
+      <p class="hero-sub">Research-grade access to 2,430+ verified GCCs across cities, industries, domains and setup models. Used by researchers, talent leaders and strategy teams across the ecosystem.</p>
+    </div>
+    <div class="hero-stats" aria-hidden="true">
+      <div class="stat-block">
+        <div class="stat-num">2,430+</div>
+        <div class="stat-label">Verified GCCs</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">2,145+</div>
+        <div class="stat-label">Fully Profiled</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">95%</div>
+        <div class="stat-label">Target Accuracy</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════ MAIN GRID ═══════════════════════ -->
+<main class="main">
+  <div class="grid">
+
+    <!-- ─── LEFT: INDIVIDUAL PORTAL ─── -->
+    <section class="panel individual-portal" aria-label="Individual search portal">
+      <div class="panel-header">
+        <span class="personal-badge">Individual Access · Personal Use Only</span>
+        <div class="panel-kicker">Edition One</div>
+        <h2 class="panel-title">Search the GCC Database</h2>
+        <p class="panel-sub">Pay-as-you-go · 20 credits per 5-result page · 100 credits to reveal a company · 50 reveals/month cap · Manual approval required for new members.</p>
+      </div>
+
+      <!-- credit meter -->
+      <div class="credit-meter">
+        <div class="credit-meter-left">
+          <div class="credit-meter-num"><span id="cm-num">-</span><span> credits</span></div>
+          <div class="credit-meter-label" id="cm-label">Loading balance…</div>
+          <div class="credit-meter-bar"><div class="credit-meter-bar-fill" id="cm-fill" style="width:0%;"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:140px;">
+          <div style="text-align:right;">
+            <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ink);line-height:1;"><span id="cm-reveals-num">-</span><span style="color:var(--muted);font-weight:400;"> / 50</span></div>
+            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--graphite);margin-top:3px;font-weight:600;">Reveals this month</div>
+          </div>
+          <button class="credit-meter-cta" onclick="openBuyCredits()">Top up</button>
+        </div>
+      </div>
+
+      <!-- search panel -->
+      <div class="search-panel">
+        <div class="search-row-top">
+          <div class="search-field">
+            <label class="field-label" for="field-select">Filter 1</label>
+            <select id="field-select" class="field-select" onchange="onFieldChange()">
+              <option value="city">GCC City</option>
+              <option value="company">Company Name</option>
+              <option value="group">Group Company</option>
+              <option value="country">HQ Country</option>
+              <option value="industry">Industry</option>
+              <option value="domain">GCC Domains</option>
+              <option value="headcount">Headcount</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label class="field-label" for="field-select-2">Filter 2 (optional)</label>
+            <select id="field-select-2" class="field-select" onchange="onFieldChange2()">
+              <option value="">- None -</option>
+              <option value="city">GCC City</option>
+              <option value="company">Company Name</option>
+              <option value="group">Group Company</option>
+              <option value="country">HQ Country</option>
+              <option value="industry">Industry</option>
+              <option value="domain">GCC Domains</option>
+              <option value="headcount">Headcount</option>
+            </select>
+          </div>
+        </div>
+        <div class="search-action-row">
+          <input type="text" id="search-input" class="search-input search-input-main" placeholder="e.g. Pune, Mumbai, Bengaluru" autocomplete="off">
+        </div>
+        <div class="search-action-row" style="margin-top:10px;">
+          <input type="text" id="search-input-2" class="search-input search-input-main" placeholder="Optional second filter…" autocomplete="off" disabled style="opacity:0.5;">
+          <button class="search-btn" onclick="doSearch(1)">Search</button>
+        </div>
+        <div class="search-cost">
+          <span>Page of 5 results = <b id="search-cost-text">20 credits (₹20)</b></span>
+          <span style="margin:0 8px;color:var(--line-2);">|</span>
+          <span>Reveal a company = <b id="reveal-cost-text">100 credits (₹100)</b></span>
+          <span style="margin:0 8px;color:var(--line-2);">|</span>
+          <span>Monthly reveal cap: <b>50 companies</b></span>
+        </div>
+      </div>
+
+      <!-- results -->
+      <div id="results-wrap" class="results-area">
+        <div class="state-box">
+          <div class="sb-icon">Q</div>
+          <h3>Begin your research</h3>
+          <p>Each search returns a page of 5 companies for 20 credits (~₹20 / $0.25). Revealing a full company profile costs 100 credits. You can reveal up to 50 unique companies per month.</p>
+        </div>
+      </div>
+
+      <div class="personal-use-notice">
+        <strong>Fair-use commitment:</strong> This portal is licensed for <strong>individual, personal research only</strong>.
+        Bulk extraction, automated scraping, resale, or sharing of credentials violates your membership terms. All access is watermarked and logged.
+      </div>
+    </section>
+
+    <!-- ─── RIGHT: ENTERPRISE POSTER ─── -->
+    <aside class="enterprise-poster" aria-label="Enterprise edition">
+      <div class="ent-top">
+        <div class="ent-kicker">Edition Two · Corporate</div>
+        <span class="ent-pill">Launching Soon</span>
+      </div>
+      <div class="ent-hero">
+        <h2 class="ent-title">The <em>Enterprise</em> Edition.</h2>
+        <p class="ent-tagline">Built for talent, strategy and market-intelligence teams inside GCCs, consulting firms and investors. Available via annual license - deployed securely with audit-grade controls.</p>
+      </div>
+
+      <div class="ethical-strip">
+        <strong>Ethical usage only.</strong> Licensed for internal research and decision-support. Not for resale, list-building, cold outreach, or automated harvesting. Every seat is named; every query is logged.
+      </div>
+
+      <div class="ent-features">
+        <div class="ent-features-label">What's included</div>
+        <ul class="ent-feat-list">
+          <li><strong>Unlimited search</strong> across 2,430+ GCCs</li>
+          <li><strong>Bulk exports</strong> (CSV / Excel, audit-controlled)</li>
+          <li><strong>Team seats</strong> with role-based access</li>
+          <li><strong>Single Sign-On</strong> (Google, Microsoft, Okta)</li>
+          <li><strong>REST API</strong> access with quotas</li>
+          <li><strong>Saved searches</strong> &amp; custom dashboards</li>
+          <li><strong>Dedicated Customer Success Manager</strong> &amp; onboarding</li>
+          <li><strong>Quarterly refresh</strong> briefings</li>
+          <li><strong>Data Processing Agreement</strong> &amp; <strong>Master Service Agreement</strong> on request</li>
+          <li><strong>Priority corrections</strong> &amp; research service-level agreement</li>
+        </ul>
+      </div>
+
+      <div class="ent-data-depth">
+        <div class="ent-data-head">
+          <div class="ent-data-head-left">
+            <span class="ent-features-label" style="margin:0;">Data depth per GCC profile</span>
+            <div class="ent-data-count">54 <em>fields</em></div>
+          </div>
+          <span class="ent-vs">vs. 10 fields on Individual</span>
+        </div>
+        <div class="data-cat-grid">
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Identity &amp; Legal</span><span class="dc-count">8</span></div>
+            <div class="dc-fields">Company Name, Group Company, Industry, CIN / LLP ID, Legal Structure, HQ Country, Registered Office Address, SEZ / STPI Unit</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Location &amp; Footprint</span><span class="dc-count">7</span></div>
+            <div class="dc-fields">GCC City, State, Office Area (sqft), Building / Tech Park, Other India Offices (by city), Other India Office Addresses, Other Countries GCC Units</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Scale</span><span class="dc-count">4</span></div>
+            <div class="dc-fields">Headcount (Latest), Headcount Absolute (Estimated), Headcount Source, Headcount Date</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Financials</span><span class="dc-count">10</span></div>
+            <div class="dc-fields">Latest Revenue (INR Cr), Latest Financial Year, FY24 Revenue (USD mn), FY25 Revenue (USD mn), Revenue Growth YoY (%), Net Profit (INR Cr), Transfer Pricing Markup (%), Group Global Turnover, Group Turnover FY, Group Turnover Source</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Maturity &amp; Model</span><span class="dc-count">4</span></div>
+            <div class="dc-fields">Year of Establishment (India), Maturity Level (Gen 1-4), Setup Model, Setup Partner (if BOT)</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Leadership</span><span class="dc-count">6</span></div>
+            <div class="dc-fields">Leader 1 Name, Leader 1 LinkedIn URL, Leader 1 Tenure (Years), Leader 2 Name, Leader 2 LinkedIn URL, Functional Heads (Names)</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Capability &amp; Tech</span><span class="dc-count">6</span></div>
+            <div class="dc-fields">GCC Domains, Sub-Domains Tagged, Tech Stack, Centers of Excellence / Labs, Finance Domain Active &amp; Sub-Domain, IPs Registered (India-attributable)</div>
+          </div>
+
+          <div class="data-cat">
+            <div class="dc-head"><span class="dc-title">Market &amp; Culture</span><span class="dc-count">4</span></div>
+            <div class="dc-fields">Recent Press / News (last 6 months), Strategic Initiatives, Glassdoor Rating, Great Place to Work Certified</div>
+          </div>
+
+          <div class="data-cat" style="grid-column: 1 / -1;">
+            <div class="dc-head"><span class="dc-title">Data Quality &amp; Validation</span><span class="dc-count">5</span></div>
+            <div class="dc-fields">Confidence, Validation Notes / Commentary, % Completion, Updated Confidence, Headcount (bucketed audit)</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="waitlist-card">
+        <div class="waitlist-title">Join the Enterprise waitlist</div>
+        <div class="waitlist-sub">Early-access partners get founder pricing and direct input into the roadmap.</div>
+        <form class="waitlist-form" onsubmit="joinWaitlist(event)">
+          <input type="email" id="wl-email" placeholder="Work email" required>
+          <input type="text" id="wl-company" placeholder="Company" required>
+          <button class="waitlist-btn" type="submit">Request Access</button>
+        </form>
+        <div id="wl-msg" style="font-size:11px;color:var(--gold-soft);margin-top:10px;display:none;"></div>
+      </div>
+
+      <div class="ent-stats-row">
+        <div class="ent-stat"><div class="ent-stat-num">50+</div><div class="ent-stat-lbl">Early Partners</div></div>
+        <div class="ent-stat"><div class="ent-stat-num">Jun '26</div><div class="ent-stat-lbl">Launch Target</div></div>
+        <div class="ent-stat"><div class="ent-stat-num">Private</div><div class="ent-stat-lbl">Beta</div></div>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════ MODALS ═══════════════════════ -->
+
+<!-- Reveal Confirmation Modal -->
+<div class="modal-overlay" id="reveal-modal" onclick="if(event.target===this)closeRevealModal()">
+  <div class="modal" style="max-width:420px;">
+    <h3>Reveal company profile?</h3>
+    <p class="modal-sub" id="reveal-company-name" style="font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:500;margin-bottom:16px;">-</p>
+    <div style="background:var(--cream);border-left:3px solid var(--gold);padding:14px 16px;border-radius:2px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+        <span style="color:var(--graphite);">Cost</span>
+        <span style="font-weight:700;color:var(--ink);font-family:var(--mono);"><span id="reveal-cost-display">100 credits</span> (<span id="reveal-price-display">₹100</span>)</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+        <span style="color:var(--graphite);">Your balance</span>
+        <span style="font-weight:700;color:var(--ink);font-family:var(--mono);" id="reveal-balance-display">-</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span style="color:var(--graphite);">Reveals left this month</span>
+        <span style="font-weight:700;color:var(--ink);font-family:var(--mono);" id="reveal-remaining-display">-</span>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+      Once revealed, you can re-view this profile for the rest of the calendar month at no extra cost. Only a curated set of fields is exposed on the Individual edition.
+    </p>
+    <div class="modal-err" id="reveal-err"></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeRevealModal()">Cancel</button>
+      <button class="btn-primary" id="reveal-confirm-btn" onclick="confirmReveal()">Reveal for 100 credits</button>
+    </div>
+  </div>
+</div>
+
+<!-- Buy Credits Modal -->
+<div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
+  <div class="modal" style="max-width:480px;">
+    <h3>Top up credits</h3>
+    <p class="modal-sub">Credits never expire. Each credit is worth &#8377;1 or USD 0.0125. Secure checkout.</p>
+
+    <div class="currency-toggle" id="currency-toggle">
+      <button id="cur-inr" class="active" onclick="setCurrency('INR')">₹ INR</button>
+      <button id="cur-usd" onclick="setCurrency('USD')">$ USD</button>
+    </div>
+
+    <div class="pack-grid" id="pack-grid"><!-- packs injected --></div>
+
+    <div id="buy-selected" style="display:none;background:var(--ivory);border:1px solid var(--gold-soft);border-radius:2px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--ink);font-weight:600;"></div>
+    <div class="modal-err" id="buy-err"></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeBuyCredits()">Close</button>
+      <button class="btn-primary" id="pay-btn" disabled onclick="initiatePayment()">Pay &amp; credit</button>
+    </div>
+    <p style="font-size:10px;color:var(--muted);margin:12px 0 0;text-align:center;line-height:1.5;">
+      Secure payment via Razorpay · UPI / Card / Net-banking accepted · Invoice emailed on success
+    </p>
+  </div>
+</div>
+
+<!-- Submit GCC Modal -->
+<div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
+  <div class="modal" style="max-width:520px;">
+    <h3>Submit a GCC for review</h3>
+    <p class="modal-sub">Fill in as many details as you know. Submissions are reviewed by GCCPROs editors before addition. Accepted submissions earn <strong>100 credits</strong>.</p>
+    <div class="modal-err" id="sub-err"></div>
+    <div class="modal-ok" id="sub-ok">Thank you. Your submission has been received and will be reviewed within 2-3 business days.</div>
+    <label>Company name *</label>
+    <input type="text" id="sub-company" placeholder="e.g. NielsenIQ India GCC">
+    <label>Group / parent company</label>
+    <input type="text" id="sub-group" placeholder="e.g. NielsenIQ Inc.">
+    <label>HQ country</label>
+    <input type="text" id="sub-country" placeholder="e.g. USA">
+    <label>GCC city *</label>
+    <input type="text" id="sub-city" placeholder="e.g. Pune">
+    <label>Industry *</label>
+    <input type="text" id="sub-industry" placeholder="e.g. Banking, Retail">
+    <label>GCC domains</label>
+    <input type="text" id="sub-domain" placeholder="e.g. Analytics, Technology">
+    <label>Headcount (approx.)</label>
+    <input type="text" id="sub-headcount" placeholder="e.g. 500-1000">
+    <label>Leader 1 name</label>
+    <input type="text" id="sub-leader1" placeholder="Name and designation">
+    <label>Leader 2 name</label>
+    <input type="text" id="sub-leader2" placeholder="Name and designation (if any)">
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeSubmitModal()">Cancel</button>
+      <button class="btn-primary" id="sub-save-btn" onclick="submitGCC()">Submit for review</button>
+    </div>
+  </div>
+</div>
+
+<!-- Correction Modal -->
+<div class="modal-overlay" id="correction-modal" onclick="if(event.target===this)closeCorrectionModal()">
+  <div class="modal" style="max-width:520px;">
+    <h3>Suggest a correction</h3>
+    <p class="modal-sub">Fields are pre-filled with current data. Edit only what needs correcting and add a note. Accepted corrections earn <strong>20 credits</strong>.</p>
+    <div class="modal-err" id="corr-err"></div>
+    <div class="modal-ok" id="corr-ok">Thank you - your correction has been submitted for editorial review.</div>
+    <label>Company name</label>
+    <input type="text" id="corr-company">
+    <label>Group / parent company</label>
+    <input type="text" id="corr-group">
+    <label>HQ country</label>
+    <input type="text" id="corr-country">
+    <label>GCC city</label>
+    <input type="text" id="corr-city">
+    <label>Industry</label>
+    <input type="text" id="corr-industry">
+    <label>GCC domains</label>
+    <input type="text" id="corr-domain">
+    <label>Headcount</label>
+    <input type="text" id="corr-headcount">
+    <label>Leader 1</label>
+    <input type="text" id="corr-leader1">
+    <label>Leader 2</label>
+    <input type="text" id="corr-leader2">
+    <label>Note to editor *</label>
+    <textarea id="corr-note" placeholder="What is incorrect and what should it be? Add sources if possible."></textarea>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeCorrectionModal()">Cancel</button>
+      <button class="btn-primary" id="corr-save-btn" onclick="submitCorrection()">Submit correction</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="pwd-modal" onclick="if(event.target===this)closePwdModal()">
+  <div class="modal">
+    <h3>Change password</h3>
+    <p class="modal-sub">Enter your current password and a new one - at least 6 characters.</p>
+    <div class="modal-err" id="pwd-err"></div>
+    <div class="modal-ok" id="pwd-ok">Password updated successfully.</div>
+    <label>Current password</label>
+    <input type="password" id="pwd-current">
+    <label>New password</label>
+    <input type="password" id="pwd-new">
+    <label>Confirm new password</label>
+    <input type="password" id="pwd-confirm">
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closePwdModal()">Cancel</button>
+      <button class="btn-primary" id="pwd-save-btn" onclick="changePassword()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="site-footer">
+  GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
+  · <a href="https://www.gccpros.com/faq-loyalty" target="_blank">Credits FAQ</a>
+  · <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>
+</footer>
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   GCCPROs Intelligence Portal - v2 client
+   Credit system:
+     • 200 signup bonus (10 free searches)
+     • 20 credits per search
+     • 1 credit = INR 1 = USD 0.0125
+     • Click to view profile = free
+   Backend: existing Apps Script + new credit actions (patch file)
+   ════════════════════════════════════════════════════════════════ */
+
+// ─────────────────────────────────────────────────────────────────
+// Deployment URL for the V2 Apps Script (GCC_Portal_V2_Script.gs).
+// After you deploy the standalone V2 script as a Web App, paste the
+// new /exec URL here. Until then, the portal will show errors on
+// every call - which is what we want, so the closed beta stays
+// inert rather than accidentally hitting the LIVE search script.
+// DO NOT reuse the live AKfycbz6HJbg... URL here - that would pull
+// the production Opportunities/Database script into this page.
+// ─────────────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
+
+// ── BETA ACCESS ──────────────────────────────────────────
+// No hardcoded allow-list. Access is gated entirely by the backend:
+// anyone who signs in lands on "Pending" until admin approves them
+// from admin-health.html. Admin can also pre-approve an email via
+// the "Add tester" panel there, which instantly creates an Approved
+// account so the user walks straight into the portal with 200 credits.
+function isAllowedTester(email) { return !!email; }
+
+// Firebase - same project as existing search.html
+firebase.initializeApp({
+  apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain:"gccpros-9aadb.firebaseapp.com",
+  projectId:"gccpros-9aadb",
+  storageBucket:"gccpros-9aadb.firebasestorage.app",
+  messagingSenderId:"764592723192",
+  appId:"1:764592723192:web:002a03f217b57d47f0570d"
+});
+const auth = firebase.auth();
+
+// ── STATE ────────────────────────────────────────────────
+const SEARCH_COST   = 20;               // credits per page of 5 results
+const REVEAL_COST   = 100;              // credits to reveal a full company profile
+const SIGNUP_BONUS  = 200;              // granted AFTER manual admin approval
+const MONTHLY_REVEAL_CAP = 50;          // max unique reveals per calendar month per user
+const INR_PER_CREDIT = 1;               // 1 credit = INR 1
+const USD_PER_CREDIT = 0.0125;          // 20 credits = USD 0.25; 100 credits = USD 1.25
+const DEFAULT_ALLOWANCE = 200;          // progress-bar baseline
+
+let currentUser = null;
+let _cachedEmail = localStorage.getItem('gcc_token') || '';
+let _credits = null;                    // null = loading; number = known
+let _isNewUser = false;
+let _totalAllowance = DEFAULT_ALLOWANCE;
+let _region = localStorage.getItem('gcc_region') || 'IN';
+let _currency = _region === 'INTL' ? 'USD' : 'INR';
+let lastQuery = '', lastField = 'city', lastResults = null;
+
+// New revenue-model state
+let _accountStatus = null;              // 'Pending' | 'Approved' | 'Suspended' | 'Rejected'
+let _monthlyReveals = 0;                // reveals charged this calendar month
+let _monthlyCap = MONTHLY_REVEAL_CAP;
+let _revealedThisMonth = new Set();     // company names already paid for this month (re-view = free)
+let _pendingRevealName = null;          // name in the confirm-reveal modal
+
+const FIELD_META = {
+  city    : { label: 'GCC City',      ph: 'e.g. Pune, Mumbai, Bengaluru' },
+  company : { label: 'Company Name',  ph: 'e.g. NielsenIQ India GCC' },
+  group   : { label: 'Group Company', ph: 'e.g. NielsenIQ, Bajaj Finserv' },
+  country : { label: 'HQ Country',    ph: 'e.g. USA, UK, Germany, India' },
+  industry: { label: 'Industry',      ph: 'e.g. Banking, Automotive, Retail' },
+  domain  : { label: 'GCC Domains',   ph: 'e.g. Analytics, Technology, Finance' },
+  headcount: { label: 'Headcount',    ph: 'e.g. 500, 1000' }
+  // Leader search is Enterprise-only - not exposed on the B2C portal.
+};
+
+// Credit packs - values in CREDITS; price in rupees / dollars
+const PACKS = {
+  INR: [
+    { credits: 200,  price: 200,  tag: null,          note: 'Starter' },
+    { credits: 500,  price: 500,  tag: null,          note: 'Standard' },
+    { credits: 1000, price: 950,  tag: 'Popular',     note: '5% off' },
+    { credits: 2500, price: 2250, tag: 'Best value',  note: '10% off' }
+  ],
+  USD: [
+    { credits: 200,  price: 2.5,  tag: null,          note: 'Starter' },
+    { credits: 500,  price: 6,    tag: null,          note: 'Standard' },
+    { credits: 1000, price: 11.5, tag: 'Popular',     note: '8% off' },
+    { credits: 2500, price: 27,   tag: 'Best value',  note: '14% off' }
+  ]
+};
+
+// ── INIT ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Region / currency setup
+  const regionSel = document.getElementById('region-picker');
+  regionSel.value = _region;
+  regionSel.addEventListener('change', () => {
+    _region = regionSel.value;
+    _currency = _region === 'INTL' ? 'USD' : 'INR';
+    localStorage.setItem('gcc_region', _region);
+    updateCostText();
+    if (document.getElementById('buy-modal').classList.contains('open')) {
+      setCurrency(_currency);
+    }
+  });
+  updateCostText();
+
+  // Hide page if not authed - check early
+  if (_cachedEmail) {
+    document.getElementById('user-pill').textContent =
+      _cachedEmail.split('@')[0] + ' - Sign out';
+    if (!isAllowedTester(_cachedEmail)) { showClosedBetaState(); return; }
+    setTimeout(fetchCreditBalance, 600);
+  }
+
+  // Initial hint
+  onFieldChange();
+});
+
+auth.onAuthStateChanged(u => {
+  if (u) {
+    currentUser = u;
+    localStorage.setItem('gcc_token', u.email);
+    document.getElementById('user-pill').textContent =
+      (u.displayName || u.email.split('@')[0]) + ' - Sign out';
+    if (!isAllowedTester(u.email)) { showClosedBetaState(); return; }
+    fetchCreditBalance();
+  } else {
+    if (!_cachedEmail) {
+      // Local / beta testing fallback - Firebase can't auth on file:// so
+      // we offer a manual sign-in. On production this branch is rarely hit
+      // because users come from the gccpros.com sign-in page.
+      var isProd = (location.protocol === 'https:' && /gccpros\.com$/.test(location.hostname));
+      if (isProd) {
+        window.location.href = 'index';
+      } else {
+        var email = prompt('Closed-beta sign-in\n\nEnter your email:');
+        if (email && email.indexOf('@') > 0) {
+          _cachedEmail = email.toLowerCase().trim();
+          localStorage.setItem('gcc_token', _cachedEmail);
+          document.getElementById('user-pill').textContent = _cachedEmail.split('@')[0] + ' - Sign out';
+          if (!isAllowedTester(_cachedEmail)) { showClosedBetaState(); return; }
+          fetchCreditBalance();
+        }
+      }
+    }
+  }
+});
+
+document.getElementById('user-pill').addEventListener('click', () => {
+  if (confirm('Sign out of GCCPROs?')) {
+    localStorage.removeItem('gcc_token');
+    var isProd = (location.protocol === 'https:' && /gccpros\.com$/.test(location.hostname));
+    auth.signOut().then(() => {
+      if (isProd) window.location.href = 'index';
+      else location.reload();
+    });
+  }
+});
+
+// ── TOKEN ────────────────────────────────────────────────
+function getToken() {
+  return (currentUser ? currentUser.email : null) || _cachedEmail || localStorage.getItem('gcc_token') || '';
+}
+
+// ── CREDITS ──────────────────────────────────────────────
+async function fetchCreditBalance() {
+  const token = getToken();
+  if (!token) return;
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getCreditBalance&token=' + encodeURIComponent(token));
+    const data = await res.json();
+    if (data.error && data.error !== 'new_user' && !data.newUser) {
+      console.warn('Credit fetch failed', data.error);
+      return;
+    }
+    // Brand new user - request approval (does NOT grant bonus; admin must approve)
+    if (data.newUser || data.error === 'new_user' || data.status === 'Pending') {
+      if (data.newUser || data.error === 'new_user') {
+        await requestApproval();
+      }
+      _accountStatus = 'Pending';
+      _credits = typeof data.credits === 'number' ? data.credits : 0;
+      renderCredits();
+      showPendingState();
+      return;
+    }
+    // Existing user - parse full account profile
+    _accountStatus = data.status || 'Approved';
+    _credits = (typeof data.credits === 'number') ? data.credits : 0;
+    _monthlyReveals = (typeof data.monthlyReveals === 'number') ? data.monthlyReveals : 0;
+    _monthlyCap = (typeof data.monthlyCap === 'number') ? data.monthlyCap : MONTHLY_REVEAL_CAP;
+    _revealedThisMonth = new Set(Array.isArray(data.revealedThisMonth) ? data.revealedThisMonth : []);
+    _totalAllowance = Math.max(_credits, DEFAULT_ALLOWANCE);
+
+    if (_accountStatus === 'Suspended') { renderCredits(); showSuspendedState(data.suspendedReason || ''); return; }
+    if (_accountStatus === 'Rejected')  { renderCredits(); showRejectedState(); return; }
+    if (_accountStatus === 'Pending')   { renderCredits(); showPendingState(); return; }
+
+    renderCredits();
+  } catch(err) {
+    console.warn('Credit fetch error', err);
+    // Offline fallback - degrade gracefully
+    const mirror = parseInt(localStorage.getItem('gcc_credits_' + getToken()) || '0', 10);
+    if (mirror > 0) { _credits = mirror; _accountStatus = 'Approved'; renderCredits(); }
+  }
+}
+
+async function requestApproval() {
+  const token = getToken();
+  try {
+    await fetch(SCRIPT_URL + '?action=requestApproval'
+      + '&token=' + encodeURIComponent(token)
+      + '&ua='    + encodeURIComponent(navigator.userAgent || '')
+      + '&ref='   + encodeURIComponent(document.referrer || ''), { mode: 'no-cors' });
+  } catch(e) { /* non-fatal - server still captures what it can */ }
+}
+
+function renderCredits() {
+  const n = (typeof _credits === 'number') ? _credits : 0;
+  const reveals = Math.floor(n / REVEAL_COST);
+  const searches = Math.floor(n / SEARCH_COST);
+  document.getElementById('credit-chip-num').textContent = n.toLocaleString('en-IN');
+  document.getElementById('cm-num').textContent = n.toLocaleString('en-IN');
+
+  // Balance label - lead with reveals (the scarce, high-value action)
+  let label;
+  if (n <= 0) {
+    label = 'No credits - top up to continue';
+  } else {
+    const valueStr = (_currency === 'USD')
+      ? '$' + (n * USD_PER_CREDIT).toFixed(2)
+      : '₹' + (n * INR_PER_CREDIT).toLocaleString('en-IN');
+    label = reveals + ' reveal' + (reveals === 1 ? '' : 's') + ' or ' + searches + ' search page' + (searches === 1 ? '' : 's') + ' · ' + valueStr;
+  }
+  document.getElementById('cm-label').textContent = label;
+
+  const pct = Math.max(4, Math.min(100, Math.round((n / _totalAllowance) * 100)));
+  document.getElementById('cm-fill').style.width = pct + '%';
+
+  // Monthly reveal counter
+  const mrEl = document.getElementById('cm-reveals-num');
+  if (mrEl) mrEl.textContent = _monthlyReveals;
+
+  // Mirror for offline degradation
+  if (getToken()) localStorage.setItem('gcc_credits_' + getToken(), String(n));
+}
+
+function updateCostText() {
+  const sCost = document.getElementById('search-cost-text');
+  const rCost = document.getElementById('reveal-cost-text');
+  if (sCost) {
+    const priceS = (_currency === 'USD') ? '$' + (SEARCH_COST * USD_PER_CREDIT).toFixed(2) : '₹' + (SEARCH_COST * INR_PER_CREDIT);
+    sCost.textContent = SEARCH_COST + ' credits (' + priceS + ')';
+  }
+  if (rCost) {
+    const priceR = (_currency === 'USD') ? '$' + (REVEAL_COST * USD_PER_CREDIT).toFixed(2).replace(/\.00$/,'') : '₹' + (REVEAL_COST * INR_PER_CREDIT);
+    rCost.textContent = REVEAL_COST + ' credits (' + priceR + ')';
+  }
+}
+
+// ── ACCOUNT-STATE SCREENS ────────────────────────────────
+function showPendingState() {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
+      <div class="sb-icon">⌛</div>
+      <h3>Your account is being verified</h3>
+      <p>We manually approve every individual-access member to keep the database fair and secure. Approvals typically complete within <strong>1 business day</strong>.</p>
+      <p style="margin-top:14px;">You will receive an email at <strong>${escHtml(getToken())}</strong> the moment your account is live. Your <strong>200-credit welcome bonus</strong> will be granted automatically on approval.</p>
+      <p style="margin-top:18px;font-size:11px;color:var(--muted);">Questions? Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> or WhatsApp +91-85069-76700.</p>
+    </div>`;
+}
+
+function showSuspendedState(reason) {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">
+      <div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">✕</div>
+      <h3>Account suspended</h3>
+      <p>Your account has been paused pending review. ${reason ? 'Reason: <em>' + escHtml(reason) + '</em>.' : ''}</p>
+      <p style="margin-top:14px;">Please contact <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> to resolve this.</p>
+    </div>`;
+}
+
+function showRejectedState() {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">
+      <div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">✕</div>
+      <h3>Access not approved</h3>
+      <p>We were unable to approve your application for individual access. If you believe this is in error, please email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>
+      <p style="margin-top:14px;">For organisations, the <strong>Enterprise edition</strong> is a better fit - use the waitlist form on the right to request access.</p>
+    </div>`;
+}
+
+function showMonthlyCapReached() {
+  const nextReset = _monthEndText();
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
+      <div class="sb-icon">✓</div>
+      <h3>Monthly reveal cap reached</h3>
+      <p>You have revealed <strong>${_monthlyCap} companies</strong> this calendar month. To protect the database and keep pricing honest, individual access is capped at 50 reveals per user per month.</p>
+      <p style="margin-top:14px;">Your cap resets on <strong>${nextReset}</strong>. You can still re-view any company you revealed this month at no extra cost - just search and click again.</p>
+      <p style="margin-top:14px;font-size:12px;">Need higher volume? The <strong>Enterprise edition</strong> offers unlimited reveals and bulk export. Join the waitlist on the right.</p>
+    </div>`;
+}
+
+function _monthEndText() {
+  const d = new Date();
+  const first = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  return first.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// Closed-beta screen - shown when TEST_MODE is on and the signed-in
+// email isn't in TEST_ALLOWED_EMAILS. We keep the Enterprise poster
+// visible on the right so visitors can still request access.
+function showClosedBetaState() {
+  const results = document.getElementById('results-wrap');
+  if (results) results.innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
+      <div class="sb-icon">β</div>
+      <h3>Closed beta</h3>
+      <p>This next-generation portal is in private testing with a small group of trusted users while pricing, approvals and safeguards are validated.</p>
+      <p style="margin-top:14px;">The current live database remains at <a href="https://www.gccpros.com/database" style="color:var(--gold-deep);font-weight:600;">www.gccpros.com/database</a>. If you would like to be added to the beta, email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);font-weight:600;">admin@gccpros.com</a>.</p>
+    </div>`;
+  // Hide the interactive affordances - credit meter, search panel, nudge
+  ['.credit-meter', '.search-panel', '.personal-use-notice'].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.style.display = 'none';
+  });
+  // Also grey out the credit chip in the nav so it doesn't look like they have credits
+  const chip = document.getElementById('credit-chip');
+  if (chip) { chip.style.opacity = '0.35'; chip.style.pointerEvents = 'none'; }
+}
+
+async function deductCredits(cost, reason) {
+  const token = getToken();
+  if (!token) return false;
+  try {
+    const url = SCRIPT_URL + '?action=deductCredits&token=' + encodeURIComponent(token) +
+                '&amount=' + cost + '&reason=' + encodeURIComponent(reason || 'search');
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error === 'insufficient_credits') {
+      showInsufficientCredits(data.balance || 0, cost);
+      return false;
+    }
+    if (data.error) {
+      // Server error - fall through to client-side optimistic deduction
+      _credits = Math.max(0, (_credits || 0) - cost);
+      renderCredits();
+      return true;
+    }
+    _credits = data.balance;
+    renderCredits();
+    return true;
+  } catch(e) {
+    // Network issue - optimistic client deduction, server will reconcile
+    _credits = Math.max(0, (_credits || 0) - cost);
+    renderCredits();
+    return true;
+  }
+}
+
+function showInsufficientCredits(balance, needed) {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box" style="border-top:3px solid var(--gold);">
+      <div class="sb-icon" style="color:var(--gold-deep);border-color:var(--gold);">!</div>
+      <h3>Out of credits</h3>
+      <p>You have <strong>${balance}</strong> credits - each search requires <strong>${needed}</strong>. Top up to continue your research.</p>
+      <button class="credit-meter-cta" style="margin-top:16px;" onclick="openBuyCredits()">Top up now</button>
+    </div>`;
+}
+
+// ── FIELD CHANGE ─────────────────────────────────────────
+function onFieldChange() {
+  const field = document.getElementById('field-select').value;
+  lastField = field;
+  const meta = FIELD_META[field];
+  const input = document.getElementById('search-input');
+  input.placeholder = meta.ph;
+  input.value = '';
+}
+function onFieldChange2() {
+  const field = document.getElementById('field-select-2').value;
+  const input = document.getElementById('search-input-2');
+  if (!field) { input.disabled = true; input.value = ''; input.placeholder = 'Optional second filter…'; input.style.opacity = '0.5'; return; }
+  input.disabled = false; input.style.opacity = '1';
+  input.placeholder = FIELD_META[field].ph;
+  input.value = '';
+}
+
+// ── SEARCH ───────────────────────────────────────────────
+const CLIENT_PAGE_SIZE = 5;
+const BATCH_SIZE = 1;   // one server page per paid search click
+let _allFetchedResults = [];
+let _totalServerPages = 1;
+let _lastServerPage = 0;
+let _currentClientPage = 1;
+let _searchParams = {};
+
+async function doSearch(page) {
+  page = page || 1;
+  const q = document.getElementById('search-input').value.trim();
+  const field = document.getElementById('field-select').value;
+  if (!q) { alert('Please type a search term first.'); return; }
+
+  const token = getToken();
+  if (!token) { alert('Please log in to search.'); window.location.href = 'index'; return; }
+
+  // Gate on account status - Pending/Suspended/Rejected users can't search
+  if (_accountStatus && _accountStatus !== 'Approved') {
+    if (_accountStatus === 'Pending')   return showPendingState();
+    if (_accountStatus === 'Suspended') return showSuspendedState();
+    if (_accountStatus === 'Rejected')  return showRejectedState();
+  }
+
+  // Require enough credits
+  if (typeof _credits !== 'number') {
+    alert('Your credit balance is still loading - one moment, then try again.');
+    return;
+  }
+  if (_credits < SEARCH_COST) {
+    showInsufficientCredits(_credits, SEARCH_COST);
+    return;
+  }
+
+  showLoading();
+  const ok = await deductCredits(SEARCH_COST, 'search:' + field);
+  if (!ok) return;
+
+  lastQuery = q; lastField = field;
+  const field2 = document.getElementById('field-select-2').value;
+  const q2 = (document.getElementById('search-input-2').value || '').trim();
+  const f2Param = (field2 && q2 ? '&field2=' + encodeURIComponent(field2) + '&q2=' + encodeURIComponent(q2) : '');
+
+  _allFetchedResults = [];
+  _lastServerPage = 0;
+  _searchParams = { token, field, q, f2Param };
+
+  const done = await _fetchBatch();
+  if (!done) return;
+  showPage(1);
+}
+
+async function _fetchBatch() {
+  const { token, field, q, f2Param } = _searchParams;
+  const startPage = _lastServerPage + 1;
+  const endPage = startPage + BATCH_SIZE - 1;
+
+  const fetches = [];
+  for (let p = startPage; p <= endPage; p++) {
+    const url = SCRIPT_URL + '?token=' + encodeURIComponent(token) +
+                '&field=' + field + '&q=' + encodeURIComponent(q) +
+                '&page=' + p + f2Param;
+    fetches.push(fetch(url).then(r => r.json()).catch(() => null));
+  }
+
+  try {
+    const responses = await Promise.all(fetches);
+    if (_lastServerPage === 0) {
+      const first = responses[0];
+      if (!first) { showState('Search failed', 'Please check your connection and try again.'); return false; }
+      if (first.error === 'Unauthorized') {
+        alert('Session expired. Please log in again.');
+        auth.signOut(); window.location.href = 'index'; return false;
+      }
+      if (first.error) { showState('No results', first.error); return false; }
+      _totalServerPages = first.pages || 1;
+    }
+    const seen = new Set(_allFetchedResults.map(r => r.name));
+    for (const data of responses) {
+      if (data && data.results && data.results.length > 0) {
+        if (data.pages) _totalServerPages = Math.max(_totalServerPages, data.pages);
+        for (const r of data.results) {
+          if (!seen.has(r.name)) { seen.add(r.name); _allFetchedResults.push(r); }
+        }
+      }
+    }
+    _lastServerPage = endPage;
+    if (_allFetchedResults.length === 0 && _lastServerPage <= BATCH_SIZE) {
+      showState('No results', 'Nothing matched "<strong>' + escHtml(lastQuery) + '</strong>" in <strong>' + escHtml(FIELD_META[lastField].label) + '</strong>. Try a different term.');
+      return false;
+    }
+    return true;
+  } catch(e) {
+    showState('Search failed', 'Please check your connection and try again.');
+    return false;
+  }
+}
+
+function _hasMoreServerPages() { return _lastServerPage < _totalServerPages; }
+
+function showPage(page) {
+  _currentClientPage = page;
+  const totalResults = _allFetchedResults.length;
+  const totalPages = Math.ceil(totalResults / CLIENT_PAGE_SIZE);
+  const startIdx = (page - 1) * CLIENT_PAGE_SIZE;
+  const endIdx = Math.min(startIdx + CLIENT_PAGE_SIZE, totalResults);
+  const pageResults = _allFetchedResults.slice(startIdx, endIdx);
+  lastResults = { page, _clientPaged: true };
+
+  const wrap = document.getElementById('results-wrap');
+  const startNum = startIdx + 1;
+  const fieldLabel = FIELD_META[lastField].label;
+  const rows = pageResults.map((r, i) =>
+    `<div class="result-row" onclick="showCompanyDetail('${escHtml(r.name).replace(/'/g,"\\'")}')" oncontextmenu="return false">
+       <span class="r-num">${String(startNum + i).padStart(2,'0')}</span>
+       <div class="r-body">
+         <span class="r-name">${escHtml(r.name)}</span>
+         ${lastField !== 'company' ? `<span class="r-match">${escHtml(fieldLabel)} - ${escHtml(r.matchedValue || '')}</span>` : ''}
+       </div>
+       <span class="r-arrow">›</span>
+     </div>`
+  ).join('');
+
+  let pagination = '';
+  if (totalPages > 1 || _hasMoreServerPages()) {
+    let btns = '';
+    if (page > 1) btns += `<button class="pg-btn" onclick="showPage(${page - 1})">‹ Prev</button>`;
+    for (let p = 1; p <= totalPages; p++) {
+      btns += `<button class="pg-btn${p === page ? ' active' : ''}" onclick="showPage(${p})">${p}</button>`;
+    }
+    if (page < totalPages) btns += `<button class="pg-btn" onclick="showPage(${page + 1})">Next ›</button>`;
+    else if (_hasMoreServerPages()) btns += `<button class="pg-btn" style="background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700;" onclick="loadMoreAndShow()" title="Fetches the next page of 5 results - 20 credits">More results · ${SEARCH_COST} credits ›</button>`;
+    pagination = `<div class="pagination">${btns}</div><div class="pg-info">Page ${page} of ${totalPages}${_hasMoreServerPages() ? ' +' : ''} · ${totalResults} results · ${CLIENT_PAGE_SIZE} per page</div>`;
+  }
+
+  const betaNote = `<div class="beta-note">⚠︎ <strong>Beta</strong> · Data targets 95% accuracy. Use <em>Suggest a correction</em> on any profile to help us improve it.</div>`;
+  wrap.innerHTML = `
+    <div class="result-meta">
+      <span class="result-count">${totalResults} results for "<strong>${escHtml(lastQuery)}</strong>"${_hasMoreServerPages() ? ' (more available)' : ''}</span>
+      <span class="secure-badge">Watermarked</span>
+    </div>
+    <div class="result-list" oncontextmenu="return false">${rows}</div>
+    ${pagination}
+    ${betaNote}
+    <div class="submit-nudge" onclick="openSubmitModal()">
+      <div class="nudge-icon">+</div>
+      <div class="nudge-text">
+        <strong>Didn't find a GCC? Submit it for review.</strong>
+        <span>Accepted submissions earn <strong>100 credits</strong> - enough for 1 profile reveal or 5 search pages.</span>
+      </div>
+      <div class="nudge-arrow">›</div>
+    </div>`;
+}
+
+async function loadMoreAndShow() {
+  // Each server-page fetch is a fresh "search" - deduct credits
+  if (_credits < SEARCH_COST) { showInsufficientCredits(_credits, SEARCH_COST); return; }
+  showLoading();
+  const ok = await deductCredits(SEARCH_COST, 'search:next_page');
+  if (!ok) return;
+  const fetched = await _fetchBatch();
+  if (!fetched) return;
+  showPage(_currentClientPage + 1);
+}
+
+// ── REVEAL FLOW ─────────────────────────────────────────
+// Clicking a result row: if company already revealed this month, fetch free;
+// otherwise show the paid-reveal confirmation modal.
+async function showCompanyDetail(name) {
+  // Gate on account status
+  if (_accountStatus && _accountStatus !== 'Approved') {
+    if (_accountStatus === 'Pending')   return showPendingState();
+    if (_accountStatus === 'Suspended') return showSuspendedState();
+    if (_accountStatus === 'Rejected')  return showRejectedState();
+  }
+
+  // Already paid this month? Free re-view.
+  if (_revealedThisMonth.has(name)) { return fetchAndRenderReveal(name, false); }
+
+  // Hit the monthly cap? Block before we even show the modal.
+  if (_monthlyReveals >= _monthlyCap) return showMonthlyCapReached();
+
+  // Not enough credits?
+  if ((_credits || 0) < REVEAL_COST) return showInsufficientCredits(_credits, REVEAL_COST);
+
+  openRevealModal(name);
+}
+
+function openRevealModal(name) {
+  _pendingRevealName = name;
+  document.getElementById('reveal-company-name').textContent = name;
+  document.getElementById('reveal-cost-display').textContent = REVEAL_COST + ' credits';
+  const priceR = (_currency === 'USD') ? '$' + (REVEAL_COST * USD_PER_CREDIT).toFixed(2).replace(/\.00$/,'') : '₹' + REVEAL_COST;
+  document.getElementById('reveal-price-display').textContent = priceR;
+  document.getElementById('reveal-balance-display').textContent = (_credits || 0).toLocaleString('en-IN') + ' credits';
+  document.getElementById('reveal-remaining-display').textContent = Math.max(0, _monthlyCap - _monthlyReveals) + ' of ' + _monthlyCap;
+  document.getElementById('reveal-err').style.display = 'none';
+  const btn = document.getElementById('reveal-confirm-btn');
+  btn.disabled = false;
+  btn.textContent = 'Reveal for ' + REVEAL_COST + ' credits';
+  document.getElementById('reveal-modal').classList.add('open');
+}
+
+function closeRevealModal() {
+  document.getElementById('reveal-modal').classList.remove('open');
+  _pendingRevealName = null;
+}
+
+async function confirmReveal() {
+  if (!_pendingRevealName) return;
+  const btn = document.getElementById('reveal-confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Revealing…';
+  const name = _pendingRevealName;
+  closeRevealModal();
+  return fetchAndRenderReveal(name, true);
+}
+
+async function fetchAndRenderReveal(name, shouldCharge) {
+  showLoading();
+  const token = getToken();
+  try {
+    const url = SCRIPT_URL + '?action=revealCompany'
+      + '&token=' + encodeURIComponent(token)
+      + '&company=' + encodeURIComponent(name);
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error === 'cap_reached') { showMonthlyCapReached(); return; }
+    if (data.error === 'insufficient_credits') { showInsufficientCredits(data.balance || _credits, REVEAL_COST); return; }
+    if (data.error === 'not_approved') {
+      if (data.status === 'Pending')   return showPendingState();
+      if (data.status === 'Suspended') return showSuspendedState(data.reason);
+      if (data.status === 'Rejected')  return showRejectedState();
+    }
+    if (data.error) { showState('Reveal failed', data.error); return; }
+
+    // Server returns the canonical balance and counter - trust it.
+    if (typeof data.balance === 'number') _credits = data.balance;
+    if (typeof data.monthlyReveals === 'number') _monthlyReveals = data.monthlyReveals;
+    if (data.charged) _revealedThisMonth.add(name);
+    renderCredits();
+    renderDetail(data.profile || data);
+  } catch(e) {
+    // Network fallback - optimistic state, but don't mark as paid (server reconciles)
+    if (shouldCharge) {
+      _credits = Math.max(0, (_credits || 0) - REVEAL_COST);
+      _monthlyReveals += 1;
+      _revealedThisMonth.add(name);
+      renderCredits();
+    }
+    showState('Reveal failed', 'Network issue. Your credits have not been charged - please retry.');
+  }
+}
+
+// ── RENDER DETAIL - 10 B2C-WHITELISTED FIELDS ONLY ──────
+// Leader contact data, granular headcount, domain process notes and
+// audit commentary are Enterprise-only and never rendered here.
+function renderDetail(data) {
+  const wrap = document.getElementById('results-wrap');
+  if (!data || data.error) {
+    wrap.innerHTML = `<span class="back-link" onclick="backToResults()">← Back</span>
+      <div class="state-box"><div class="sb-icon">!</div><h3>Company not found</h3><p>Could not load this profile. Please try again.</p></div>`;
+    return;
+  }
+  window._currentRecord = data;
+
+  const f = (lbl, val) => val ? `<div class="detail-field"><label>${lbl}</label><p>${escHtml(String(val))}</p></div>` : '';
+
+  // Bucket headcount on the client as well, defensively - server also sends bucketed,
+  // but if a raw number leaks through we still present a band.
+  const bucketedHeadcount = bucketHeadcount(data.headcountBucket || data.headcount);
+
+  const memberEmail = (currentUser ? currentUser.email : _cachedEmail) || 'GCCPROs Member';
+  const now = new Date();
+  const ts = now.toLocaleDateString('en-IN') + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const wmText = escHtml(memberEmail) + ' · ' + ts + ' · GCCPROs Confidential';
+  const watermark = `<div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:2px;z-index:0;">
+    ${Array.from({length:6},(_,i)=>`<div style="position:absolute;left:-20%;width:140%;transform:rotate(-28deg);top:${8+i*16}%;white-space:nowrap;font-size:10px;font-weight:600;color:rgba(10,22,40,0.05);letter-spacing:1.5px;user-select:none;-webkit-user-select:none;">${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}</div>`).join('')}
+  </div>`;
+
+  // Combined location (city + state) and maturity (year + gen)
+  const locationStr = [data.gccCity, data.gccState].filter(Boolean).join(', ');
+  const maturityStr = [
+    data.yearEstablished ? 'Est. ' + data.yearEstablished : null,
+    data.maturityGen ? 'Maturity ' + data.maturityGen : null
+  ].filter(Boolean).join(' · ');
+
+  // Glassdoor + GPTW rendered as badges
+  const sentimentBits = [];
+  if (data.glassdoorRating) {
+    sentimentBits.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--ivory);border:1px solid var(--gold-soft);color:var(--ink);padding:4px 10px;border-radius:2px;font-size:12px;font-weight:600;">★ ${escHtml(String(data.glassdoorRating))} <small style="font-size:9px;color:var(--muted);letter-spacing:1px;">GLASSDOOR</small></span>`);
+  }
+  if (data.gptwCertified && String(data.gptwCertified).toLowerCase() !== 'no' && String(data.gptwCertified).toLowerCase() !== 'n') {
+    sentimentBits.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:4px 10px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.5px;">✓ GREAT PLACE TO WORK</span>`);
+  }
+  const sentimentRow = sentimentBits.length
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;">${sentimentBits.join('')}</div>`
+    : '';
+
+  wrap.innerHTML = `
+    <span class="back-link" onclick="backToResults()">← Back to results</span>
+    <div class="detail-card" oncontextmenu="return false" onselectstart="return false">
+      ${watermark}
+      <div style="position:relative;z-index:1;">
+        <div class="detail-company">${escHtml(data.companyName || '')}</div>
+        ${data.groupCompany ? `<div style="font-size:12px;color:var(--muted);letter-spacing:0.3px;margin-bottom:10px;">Part of <strong style="color:var(--graphite);">${escHtml(data.groupCompany)}</strong></div>` : ''}
+        <div class="detail-city-tag">${escHtml(locationStr || data.gccCity || '')}</div>
+        <div class="detail-grid">
+          ${f('HQ country', data.hqCountry)}
+          ${f('Industry', data.industry)}
+          ${f('GCC domains', data.gccDomains)}
+          ${f('Headcount band', bucketedHeadcount)}
+          ${f('Maturity', maturityStr)}
+          ${f('Setup model', data.setupModel)}
+        </div>
+        ${sentimentRow}
+      </div>
+    </div>
+    <div class="confidential-strip">
+      🔒 <strong>Confidential - Individual licence.</strong> This profile is watermarked to your account. Leader contacts, granular headcount, domain processes and audit notes are reserved for <strong>Enterprise</strong> subscribers.
+    </div>
+    <div class="correction-bar" onclick="openCorrectionModal()">
+      <span>✎ Suggest a correction</span>
+      <small>Earn <strong>20 credits</strong> on acceptance</small>
+    </div>`;
+}
+
+// Headcount bucketing - matches the 4-band scheme agreed with Shammi
+// (1-50 / 50-500 / 500-5k / 5k+). Accepts either a raw number or an already-bucketed label.
+function bucketHeadcount(v) {
+  if (v == null || v === '') return '';
+  if (typeof v === 'string' && /-/.test(v)) return v;       // already a band
+  const n = parseInt(String(v).replace(/[^0-9]/g, ''), 10);
+  if (!n || isNaN(n)) return String(v);
+  if (n <= 50)    return '1-50';
+  if (n <= 500)   return '50-500';
+  if (n <= 5000)  return '500-5,000';
+  return '5,000+';
+}
+
+function backToResults() {
+  if (_allFetchedResults.length > 0) showPage(_currentClientPage || 1);
+  else showState('Begin your research', 'Select a filter, type your query and click Search.');
+}
+function showLoading() {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box"><div class="loading-dots"><span></span><span></span><span></span></div><p>Retrieving matches from the GCC database…</p></div>`;
+}
+function showState(title, msg) {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box"><div class="sb-icon">Q</div><h3>${title}</h3><p>${msg}</p></div>`;
+}
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── COPY GUARD ───────────────────────────────────────────
+document.addEventListener('copy', e => e.preventDefault());
+
+// ═══════════════════════ BUY CREDITS ═══════════════════════
+let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
+
+function openBuyCredits() {
+  setCurrency(_currency);
+  document.getElementById('buy-modal').classList.add('open');
+}
+function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
+
+function setCurrency(cur) {
+  _selectedCurrency = cur;
+  _selectedCredits = 0; _selectedPrice = 0;
+  document.getElementById('cur-inr').classList.toggle('active', cur === 'INR');
+  document.getElementById('cur-usd').classList.toggle('active', cur === 'USD');
+  const grid = document.getElementById('pack-grid');
+  grid.innerHTML = PACKS[cur].map((p, i) => {
+    const priceFmt = cur === 'INR' ? '₹' + p.price.toLocaleString('en-IN') : '$' + p.price.toFixed(2).replace(/\.00$/, '');
+    return `<div class="pack" onclick="selectPack(${i})" data-idx="${i}">
+      ${p.tag ? `<div class="pack-tag">${p.tag}</div>` : ''}
+      <div class="pack-coins">${p.credits.toLocaleString('en-IN')}</div>
+      <div class="pack-lbl">credits</div>
+      <div class="pack-price">${priceFmt}</div>
+      <div class="pack-searches">${p.note}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('buy-selected').style.display = 'none';
+  document.getElementById('buy-err').style.display = 'none';
+  const payBtn = document.getElementById('pay-btn');
+  payBtn.disabled = true; payBtn.textContent = 'Pay & credit';
+}
+
+function selectPack(idx) {
+  const pack = PACKS[_selectedCurrency][idx];
+  _selectedCredits = pack.credits;
+  _selectedPrice = pack.price;
+  document.querySelectorAll('#pack-grid .pack').forEach(el => el.classList.remove('selected'));
+  document.querySelector('#pack-grid .pack[data-idx="' + idx + '"]').classList.add('selected');
+  const sel = document.getElementById('buy-selected');
+  const priceFmt = _selectedCurrency === 'INR' ? '₹' + _selectedPrice.toLocaleString('en-IN') : '$' + _selectedPrice.toFixed(2).replace(/\.00$/, '');
+  sel.style.display = 'block';
+  sel.textContent = _selectedCredits.toLocaleString('en-IN') + ' credits selected - ' + priceFmt;
+  document.getElementById('pay-btn').disabled = false;
+}
+
+async function initiatePayment() {
+  const token = getToken();
+  if (!token || !_selectedCredits) return;
+  const errBox = document.getElementById('buy-err');
+  errBox.style.display = 'none';
+
+  if (typeof Razorpay === 'undefined') {
+    errBox.textContent = 'Payment gateway is loading - please try again in a moment.';
+    errBox.style.display = 'block';
+    return;
+  }
+  if (!window._rzpKey || window._rzpKey === 'YOUR_RAZORPAY_KEY_ID') {
+    errBox.innerHTML = 'Online payments are being set up. To top up immediately, WhatsApp <strong>+91-85069-76700</strong> - we will credit your account manually within the hour.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  const amountMinor = _selectedCurrency === 'USD'
+    ? Math.round(_selectedPrice * 100)   // cents
+    : Math.round(_selectedPrice * 100);  // paise
+
+  const options = {
+    key: window._rzpKey,
+    amount: amountMinor,
+    currency: _selectedCurrency,
+    name: 'GCCPROs Intelligence Portal',
+    description: _selectedCredits + ' research credits',
+    prefill: { email: token },
+    theme: { color: '#0A1628' },
+    handler: async function(response) {
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'creditPaymentSuccess',
+            email: token,
+            credits: _selectedCredits,
+            amount: _selectedPrice,
+            currency: _selectedCurrency,
+            razorpay_payment_id: response.razorpay_payment_id
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'ok' || typeof data.balance === 'number') {
+          _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
+          renderCredits();
+          closeBuyCredits();
+          showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
+        } else {
+          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact admin@gccpros.com.';
+          errBox.style.display = 'block';
+        }
+      } catch(err) {
+        // Payment went through but response failed - optimistic credit
+        _credits = (_credits || 0) + _selectedCredits;
+        renderCredits();
+        closeBuyCredits();
+        showToast('✓ Credits added (pending reconciliation).', '#2D7A4E');
+      }
+    },
+    modal: { ondismiss: function() { /* user cancelled */ } }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+// ═══════════════════════ TOAST ═══════════════════════
+function showToast(msg, color) {
+  const t = document.createElement('div');
+  t.style.cssText =
+    'position:fixed;top:20px;left:50%;transform:translateX(-50%);' +
+    'background:' + (color || 'var(--ink)') + ';color:#fff;padding:12px 22px;' +
+    'border-radius:2px;font-size:13px;font-weight:500;letter-spacing:0.3px;' +
+    'font-family:' + "'Inter', sans-serif" + ';z-index:9999;' +
+    'box-shadow:0 4px 24px rgba(10,22,40,0.3);max-width:90%;text-align:center;' +
+    'border-left:3px solid var(--gold);';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4500);
+}
+
+// ═══════════════════════ SUBMIT GCC ═══════════════════════
+function openSubmitModal() {
+  ['sub-company','sub-group','sub-country','sub-city','sub-industry','sub-domain','sub-headcount','sub-leader1','sub-leader2'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('sub-err').style.display = 'none';
+  document.getElementById('sub-ok').style.display = 'none';
+  document.getElementById('sub-save-btn').disabled = false;
+  document.getElementById('sub-save-btn').textContent = 'Submit for review';
+  document.getElementById('submit-modal').classList.add('open');
+}
+function closeSubmitModal() { document.getElementById('submit-modal').classList.remove('open'); }
+
+async function submitGCC() {
+  const errBox = document.getElementById('sub-err');
+  const okBox = document.getElementById('sub-ok');
+  const btn = document.getElementById('sub-save-btn');
+  errBox.style.display = 'none'; okBox.style.display = 'none';
+  const company = document.getElementById('sub-company').value.trim();
+  const city = document.getElementById('sub-city').value.trim();
+  const industry = document.getElementById('sub-industry').value.trim();
+  if (!company) { errBox.textContent = 'Please enter the company name.'; errBox.style.display = 'block'; return; }
+  if (!city) { errBox.textContent = 'Please enter the GCC city.'; errBox.style.display = 'block'; return; }
+  if (!industry) { errBox.textContent = 'Please enter the industry.'; errBox.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const token = getToken();
+  const url = SCRIPT_URL + '?action=submitGCC&token=' + encodeURIComponent(token)
+    + '&company=' + encodeURIComponent(company)
+    + '&group='   + encodeURIComponent(document.getElementById('sub-group').value.trim())
+    + '&country=' + encodeURIComponent(document.getElementById('sub-country').value.trim())
+    + '&city='    + encodeURIComponent(city)
+    + '&industry='+ encodeURIComponent(industry)
+    + '&domain='  + encodeURIComponent(document.getElementById('sub-domain').value.trim())
+    + '&headcount='+encodeURIComponent(document.getElementById('sub-headcount').value.trim())
+    + '&leader1=' + encodeURIComponent(document.getElementById('sub-leader1').value.trim())
+    + '&leader2=' + encodeURIComponent(document.getElementById('sub-leader2').value.trim());
+  try {
+    await fetch(url, { mode: 'no-cors' });
+    okBox.style.display = 'block';
+    btn.textContent = 'Submitted';
+    setTimeout(closeSubmitModal, 3000);
+  } catch(e) {
+    okBox.style.display = 'block';
+    btn.textContent = 'Submitted';
+    setTimeout(closeSubmitModal, 3000);
+  }
+}
+
+// ═══════════════════════ CORRECTION ═══════════════════════
+function openCorrectionModal() {
+  const rec = window._currentRecord || {};
+  document.getElementById('corr-company').value   = rec.companyName  || '';
+  document.getElementById('corr-group').value     = rec.groupCompany || '';
+  document.getElementById('corr-country').value   = rec.hqCountry    || '';
+  document.getElementById('corr-city').value      = rec.gccCity      || '';
+  document.getElementById('corr-industry').value  = rec.industry     || '';
+  document.getElementById('corr-domain').value    = rec.gccDomains   || '';
+  document.getElementById('corr-headcount').value = rec.headcount    || '';
+  document.getElementById('corr-leader1').value   = rec.leader1      || '';
+  document.getElementById('corr-leader2').value   = rec.leader2      || '';
+  document.getElementById('corr-note').value      = '';
+  document.getElementById('corr-err').style.display = 'none';
+  document.getElementById('corr-ok').style.display = 'none';
+  document.getElementById('corr-save-btn').disabled = false;
+  document.getElementById('corr-save-btn').textContent = 'Submit correction';
+  document.getElementById('correction-modal').classList.add('open');
+}
+function closeCorrectionModal() { document.getElementById('correction-modal').classList.remove('open'); }
+
+async function submitCorrection() {
+  const errBox = document.getElementById('corr-err');
+  const okBox = document.getElementById('corr-ok');
+  const btn = document.getElementById('corr-save-btn');
+  errBox.style.display = 'none'; okBox.style.display = 'none';
+  const note = document.getElementById('corr-note').value.trim();
+  if (!note) { errBox.textContent = 'Please add a note explaining the change.'; errBox.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  const token = getToken();
+  const url = SCRIPT_URL + '?action=submitCorrection&token=' + encodeURIComponent(token)
+    + '&company=' + encodeURIComponent(document.getElementById('corr-company').value.trim())
+    + '&group='   + encodeURIComponent(document.getElementById('corr-group').value.trim())
+    + '&country=' + encodeURIComponent(document.getElementById('corr-country').value.trim())
+    + '&city='    + encodeURIComponent(document.getElementById('corr-city').value.trim())
+    + '&industry='+ encodeURIComponent(document.getElementById('corr-industry').value.trim())
+    + '&domain='  + encodeURIComponent(document.getEleme
