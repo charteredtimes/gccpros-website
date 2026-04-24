@@ -1995,27 +1995,27 @@ function showSignInState() {
 async function signInWithGoogle() {
   var errBox = document.getElementById('signin-err');
   if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
+  var btn = event && event.currentTarget;
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.querySelector ? null : null; }
   var provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
+  // Redirect-first flow. Popup-based sign-in is silently blocked in many
+  // browsers (Safari, embedded webviews, strict privacy modes), so we go
+  // straight to a full-page redirect. The user lands on Google's account
+  // chooser, picks an account, and comes back here signed in.
+  // handleGoogleRedirectReturn() + onAuthStateChanged complete the flow.
   try {
-    await auth.signInWithPopup(provider);
-    return; // onAuthStateChanged handles the rest
+    localStorage.setItem('gcc_auth_method', 'google_redirect');
+    await auth.signInWithRedirect(provider);
+    // signInWithRedirect navigates away — control rarely returns here.
+    return;
   } catch (e) {
-    // Popup blocked or closed - fall back to full-page redirect which is more
-    // compatible with strict browsers and cross-origin isolation policies.
-    if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request' || e.code === 'auth/operation-not-supported-in-this-environment')) {
-      try {
-        localStorage.setItem('gcc_auth_method', 'google_redirect');
-        await auth.signInWithRedirect(provider);
-        return;
-      } catch (r) { e = r; }
-    }
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
     var msg;
-    if (e && e.code === 'auth/popup-closed-by-user') msg = 'Sign-in was cancelled. Click the button to try again.';
-    else if (e && e.code === 'auth/unauthorized-domain')  msg = 'This domain is not authorised for sign-in. Ask the admin to whitelist it in Firebase.';
+    if (e && e.code === 'auth/unauthorized-domain')   msg = 'This domain is not authorised for sign-in. Ask the admin to whitelist it in Firebase.';
     else if (e && e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is not enabled. Ask the admin to turn it on in Firebase Console.';
     else if (e && e.code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
-    else msg = 'Could not sign in with Google. Please try again, or use the email option below.';
+    else msg = 'Could not start Google sign-in (' + (e && e.code ? e.code : 'unknown') + '). Please try again, or use the email option below.';
     if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
   }
 }
