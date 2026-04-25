@@ -2111,6 +2111,37 @@ function showSignInState(mode) {
     return;
   }
 
+
+  // ── OTP MODE: 6-digit verification code entered after the signup form ──
+  if (m === 'otp') {
+    var pendingEmail = (window._pendingSignup && window._pendingSignup.email) || '';
+    wrap.innerHTML =
+      '<div class="state-box" style="border-top:3px solid var(--gold);padding:32px 26px;text-align:left;max-width:none;">' +
+        '<div style="text-align:center;margin-bottom:18px;">' +
+          '<div class="sb-icon" style="margin:0 auto 12px;">@</div>' +
+          '<h3 style="font-size:19px;">Check your email</h3>' +
+          '<p style="font-size:12px;max-width:440px;margin:6px auto 0;">We sent a 6-digit verification code to <strong>' + escHtml(pendingEmail) + '</strong>. Enter it below to finish creating your account.</p>' +
+        '</div>' +
+        '<div style="max-width:340px;margin:0 auto;">' +
+          '<form onsubmit="submitOTP(event)" style="display:flex;flex-direction:column;gap:10px;">' +
+            '<label class="field-label" for="otp-code">6-digit code</label>' +
+            '<input type="text" id="otp-code" class="search-input" required pattern="[0-9]{6}" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="one-time-code" autofocus style="font-size:22px;letter-spacing:8px;text-align:center;font-weight:700;">' +
+            '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Verify &amp; create account</button>' +
+            '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px;">' +
+              'Didn\'t get it? <a href="#" onclick="resendOTP();return false;" style="color:var(--gold-deep);text-decoration:underline;">Resend code</a>' +
+            '</div>' +
+            '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:2px;">' +
+              '<a href="#" onclick="switchMode(\'signup\');return false;" style="color:var(--gold-deep);text-decoration:underline;">&larr; Use a different email</a>' +
+            '</div>' +
+          '</form>' +
+          '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
+          '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
+        '</div>' +
+      '</div>' +
+      backToChoose;
+    return;
+  }
+
   // ── RESET MODE: send password reset link ──
   if (m === 'reset') {
     wrap.innerHTML =
@@ -2210,40 +2241,142 @@ async function submitPasswordSignUp(ev) {
   if (!/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) return _showSignInErr('Password must include both letters and numbers.');
   if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
 
-  if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
+
+  // 1. Block if email already in V2_Accounts (migrated, pending, suspended, etc.)
   try {
-    await firebase.auth().createUserWithEmailAndPassword(email, pwd);
-    // Send all metadata to Apps Script for the approval queue.
-    // We do this BEFORE onAuthStateChanged fires fetchCreditBalance, so the
-    // server already has the rich profile when the welcome email kicks in.
-    try {
-      await fetch(SCRIPT_URL + '?action=requestApproval'
-        + '&token='     + encodeURIComponent(email)
-        + '&ua='        + encodeURIComponent(navigator.userAgent || '')
-        + '&ref='       + encodeURIComponent(document.referrer || '')
-        + '&fullName='  + encodeURIComponent(fullName)
-        + '&whatsapp='  + encodeURIComponent(whatsapp)
-        + '&linkedin='  + encodeURIComponent(linkedin)
-        + '&gccsWorked='+ encodeURIComponent(gccsWorked)
-        + '&currentCity='+ encodeURIComponent(currentCity)
-        + '&yearsExp='  + encodeURIComponent(yearsExp)
-        + '&domainExpertise=' + encodeURIComponent(domainExp)
-        + '&eligibility='+ encodeURIComponent(eligibility)
-        + '&waConsent=' + encodeURIComponent(waConsent),
-        { mode: 'no-cors' });
-    } catch(_) {}
-    // onAuthStateChanged fires next - it will pick up the user, see Pending status, show Pending screen.
+    var checkRes = await fetch(SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email));
+    var checkData = await checkRes.json();
+    if (checkData.exists) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Apply for access -> 200 credits'; }
+      var msg = 'This email is already registered (' + (checkData.status || 'on file') + ').';
+      if (checkData.migrated) msg += ' Your account was migrated from the old portal - please use Forgot Password to set a new password.';
+      else msg += ' Try signing in, or use Forgot Password to reset.';
+      _showSignInErr(msg);
+      return;
+    }
+  } catch(_) { /* if check fails, proceed - server-side gate will catch dups */ }
+
+  // 2. Stash the form so we can resubmit after OTP verifies
+  window._pendingSignup = {
+    email: email, pwd: pwd,
+    fullName: fullName, whatsapp: whatsapp, linkedin: linkedin,
+    gccsWorked: gccsWorked, currentCity: currentCity, yearsExp: yearsExp,
+    domainExpertise: domainExp, eligibility: eligibility, waConsent: waConsent
+  };
+
+  // 3. Request OTP
+  if (btn) btn.textContent = 'Sending code...';
+  try {
+    var otpRes = await fetch(SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(email));
+    var otpData = await otpRes.json();
+    if (otpData.error) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Apply for access -> 200 credits'; }
+      if (otpData.error === 'email_exists') {
+        _showSignInErr('This email is already registered. Try signing in or use Forgot Password.');
+      } else if (otpData.error === 'rate_limited') {
+        _showSignInErr(otpData.message || 'Please wait before requesting another code.');
+      } else {
+        _showSignInErr('Could not send verification code. Try again.');
+      }
+      return;
+    }
   } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = 'Apply for access'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Apply for access -> 200 credits'; }
+    _showSignInErr('Network issue while sending verification code. Please retry.');
+    return;
+  }
+
+  // 4. Switch to OTP entry screen
+  switchMode('otp');
+}
+
+async function submitOTP(ev) {
+  ev.preventDefault();
+  if (!window._pendingSignup) {
+    _showSignInErr('Session expired. Please start signup again.');
+    switchMode('signup');
+    return;
+  }
+  // Tell fetchCreditBalance that a legitimate signup is in flight, so it
+  // doesn't sign the user out during the brief window between Firebase
+  // user creation and V2_Accounts row creation.
+  window._signupInProgress = true;
+  setTimeout(function(){ window._signupInProgress = false; }, 30000);
+  var code = (document.getElementById('otp-code').value || '').trim();
+  if (!/^\d{6}$/.test(code)) return _showSignInErr('Enter the 6-digit code from your email.');
+  var p = window._pendingSignup;
+  var btn = ev.target.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
+
+  // 1. Verify OTP
+  var signupToken = '';
+  try {
+    var vres = await fetch(SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(p.email) + '&code=' + encodeURIComponent(code));
+    var vdata = await vres.json();
+    if (vdata.error) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
+      if (vdata.error === 'wrong_code')          _showSignInErr('That code is incorrect. Try again or request a new one.');
+      else if (vdata.error === 'expired_or_unknown') _showSignInErr('Code expired. Please request a new one.');
+      else _showSignInErr('Verification failed. Please retry.');
+      return;
+    }
+    signupToken = vdata.signupToken;
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
+    _showSignInErr('Network issue verifying code. Please retry.');
+    return;
+  }
+
+  // 2. Create Firebase user
+  if (btn) btn.textContent = 'Creating account...';
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(p.email, p.pwd);
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
     var msg;
-    if (e.code === 'auth/email-already-in-use')
-      msg = 'An account with that email already exists. Try signing in, or use "Forgot password" to reset.';
+    if (e.code === 'auth/email-already-in-use')      msg = 'An account with that email already exists. Please sign in.';
     else if (e.code === 'auth/invalid-email')          msg = 'That email does not look valid.';
-    else if (e.code === 'auth/weak-password')          msg = 'Password is too weak. Try a longer one with letters and numbers.';
+    else if (e.code === 'auth/weak-password')          msg = 'Password is too weak.';
     else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
     else msg = 'Sign-up failed (' + (e.code || 'unknown') + '). Please try again.';
     _showSignInErr(msg);
+    return;
   }
+
+  // 3. Submit profile + signupToken to Apps Script (this creates V2_Accounts row)
+  try {
+    await fetch(SCRIPT_URL + '?action=requestApproval'
+      + '&token='     + encodeURIComponent(p.email)
+      + '&signupToken=' + encodeURIComponent(signupToken)
+      + '&ua='        + encodeURIComponent(navigator.userAgent || '')
+      + '&ref='       + encodeURIComponent(document.referrer || '')
+      + '&fullName='  + encodeURIComponent(p.fullName)
+      + '&whatsapp='  + encodeURIComponent(p.whatsapp)
+      + '&linkedin='  + encodeURIComponent(p.linkedin)
+      + '&gccsWorked='+ encodeURIComponent(p.gccsWorked)
+      + '&currentCity='+ encodeURIComponent(p.currentCity)
+      + '&yearsExp='  + encodeURIComponent(p.yearsExp)
+      + '&domainExpertise=' + encodeURIComponent(p.domainExpertise)
+      + '&eligibility='+ encodeURIComponent(p.eligibility)
+      + '&waConsent=' + encodeURIComponent(p.waConsent),
+      { mode: 'no-cors' });
+  } catch (_) {}
+
+  window._pendingSignup = null;
+  // onAuthStateChanged will pick up the new user and show the Pending screen.
+}
+
+async function resendOTP() {
+  if (!window._pendingSignup) return;
+  _showSignInErr('');
+  try {
+    var r = await fetch(SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(window._pendingSignup.email));
+    var d = await r.json();
+    if (d.ok) _showSignInOk('A new code has been sent.');
+    else if (d.error === 'rate_limited') _showSignInErr(d.message || 'Please wait 30 seconds before requesting another code.');
+    else _showSignInErr('Could not resend code. Please try again.');
+  } catch (_) { _showSignInErr('Network issue. Please retry.'); }
 }
 
 async function submitPasswordReset(ev) {
@@ -2358,7 +2491,8 @@ function updateCostText() {
 }
 
 // ── CREDIT BALANCE ──────────────────────────────────────
-async function fetchCreditBalance() {
+async function fetchCreditBalance(retryCount) {
+  retryCount = retryCount || 0;
   const token = getToken();
   if (!token) return;
   try {
@@ -2371,12 +2505,38 @@ async function fetchCreditBalance() {
       if (lbl) lbl.textContent = 'Could not load credits. Refresh to retry.';
       return;
     }
-    if (data.newUser || data.error === 'new_user' || data.status === 'New') {
-      await requestApproval();
-      _accountStatus = 'Pending';
-      _credits = 0;
-      renderCredits();
-      showPendingState();
+    if (data.newUser || data.error === 'new_user' || data.status === 'New' || data.status === 'Unregistered') {
+      // Race window during legitimate signup: V2_Accounts row is being
+      // created server-side. Retry briefly before giving up.
+      if (window._signupInProgress && retryCount < 8) {
+        setTimeout(function(){ fetchCreditBalance(retryCount + 1); }, 1500);
+        return;
+      }
+      // Unregistered Firebase user trying to access the portal (e.g. via
+      // Forgot Password on an unknown email, or Google sign-in for a
+      // brand-new email). Sign them out and tell them to use Sign Up.
+      try { await firebase.auth().signOut(); } catch(_) {}
+      try {
+        var t = _cachedEmail || (currentUser && currentUser.email) || localStorage.getItem('gcc_token');
+        if (t) localStorage.removeItem('gcc_credits_' + t);
+        localStorage.removeItem('gcc_token');
+      } catch(_) {}
+      currentUser = null; _cachedEmail = null;
+      _credits = 0; _accountStatus = null;
+      document.body.classList.remove('is-authed');
+      var pill = document.getElementById('user-pill');
+      if (pill) pill.textContent = 'Sign in';
+      showSignInState('choose');
+      // Surface a clear error banner above the chooser
+      setTimeout(function(){
+        var w = document.getElementById('results-wrap');
+        if (w) {
+          var banner = document.createElement('div');
+          banner.style.cssText = 'background:#FEF1F1;border:1px solid #FFB3B3;padding:14px 18px;border-radius:4px;margin-bottom:14px;color:#C62828;font-size:13px;line-height:1.5;';
+          banner.innerHTML = '<strong>This email is not registered.</strong> Please apply for access using <strong>"Sign up & earn 200 credits"</strong>. New members must complete the registration form and pass email verification before they can access the database.';
+          w.insertBefore(banner, w.firstChild);
+        }
+      }, 50);
       return;
     }
     _accountStatus = data.status || 'Approved';
@@ -2390,7 +2550,10 @@ async function fetchCreditBalance() {
     if (_accountStatus === 'Rejected')  { renderCredits(); showRejectedState(); return; }
     if (_accountStatus === 'Pending')   { renderCredits(); showPendingState(); return; }
     renderCredits();
-    // Approved — clear sign-in/Pending state, show ready-to-search hint
+    // Approved — replace any sign-in/sign-up/pending card in results-wrap
+    // with the default "Begin your research" state, so the auth box never
+    // lingers after a successful login.
+    if (_accountStatus === 'Approved') showReadyToSearchState();
     if (typeof onFieldChange === 'function') onFieldChange();
   } catch(err) {
     console.warn('Credit fetch error', err);
@@ -2471,6 +2634,20 @@ function showInsufficientCredits(balance, needed) {
       '<h3>Out of credits</h3>' +
       '<p>You have <strong>' + balance + '</strong> credits - each search requires <strong>' + needed + '</strong>. Top up to continue your research.</p>' +
       '<button class="credit-meter-cta" style="margin-top:16px;" onclick="openBuyCredits()">Top up now</button>' +
+    '</div>';
+}
+
+
+// Reset the results area to the default "Begin your research" tile.
+// Called after a successful Approved login so the sign-in card disappears.
+function showReadyToSearchState() {
+  var wrap = document.getElementById('results-wrap');
+  if (!wrap) return;
+  wrap.innerHTML =
+    '<div class="state-box">' +
+      '<div class="sb-icon">Q</div>' +
+      '<h3>Begin your research</h3>' +
+      '<p>Each search returns a page of 5 companies for 20 credits (~&#8377;20 / $0.25). Revealing a full company profile costs 100 credits. You can reveal up to 50 unique companies per month.</p>' +
     '</div>';
 }
 
