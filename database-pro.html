@@ -1984,26 +1984,70 @@ function showSignInState(mode) {
         '<button type="submit" class="search-btn" style="justify-content:center;">Send reset link</button>' +
         '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Back to sign in</a></div>' +
       '</form>';
-  } else {
-    var pwdHint = isSignUp ? '<div style="font-size:11px;color:var(--muted);margin-top:-4px;">Minimum 8 characters &middot; letters and numbers</div>' : '';
-    var confirm = isSignUp ?
-      '<label class="field-label" for="signin-pwd2" style="margin-top:6px;">Confirm password</label>' +
-      '<input type="password" id="signin-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' : '';
-    var submitText = isSignUp ? 'Create account' : 'Sign in';
-    var toggleText = isSignUp ? 'Already have an account? Sign in' : 'New here? Create an account';
-    var toggleMode = isSignUp ? 'signin' : 'signup';
-    var forgotLink = isSignUp ? '' :
-      '<div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-2px;"><a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Forgot password?</a></div>';
-
+  } else if (isSignUp) {
+    // RICH SIGN-UP FORM - all 10 fields from the old portal registration
     fields =
-      '<form onsubmit="' + (isSignUp ? 'submitPasswordSignUp' : 'submitPasswordSignIn') + '(event)" style="display:flex;flex-direction:column;gap:8px;">' +
+      '<form onsubmit="submitPasswordSignUp(event)" style="display:flex;flex-direction:column;gap:8px;">' +
+        '<label class="field-label" for="f-name">Full name *</label>' +
+        '<input type="text" id="f-name" class="search-input" required maxlength="200" placeholder="e.g. Shammi Prabhakar Singh" autocomplete="name">' +
+        '<label class="field-label" for="signin-email" style="margin-top:6px;">Work email *</label>' +
+        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
+        '<label class="field-label" for="f-wa" style="margin-top:6px;">WhatsApp number *</label>' +
+        '<input type="tel" id="f-wa" class="search-input" required placeholder="+91 98765 43210" autocomplete="tel">' +
+        '<label class="field-label" for="f-li" style="margin-top:6px;">LinkedIn profile *</label>' +
+        '<input type="url" id="f-li" class="search-input" required placeholder="https://linkedin.com/in/yourprofile">' +
+        '<label class="field-label" for="f-gccs" style="margin-top:6px;">Name of GCCs you have worked with *</label>' +
+        '<textarea id="f-gccs" class="search-input" required maxlength="1000" placeholder="e.g. NielsenIQ, Bajaj Finserv, KPIT Technologies..." style="min-height:60px;font-family:Inter,sans-serif;"></textarea>' +
+        '<label class="field-label" for="f-city" style="margin-top:6px;">Current city *</label>' +
+        '<input type="text" id="f-city" class="search-input" required placeholder="e.g. Pune" autocomplete="address-level2">' +
+        '<label class="field-label" for="f-exp" style="margin-top:6px;">Years of experience in GCCs *</label>' +
+        '<select id="f-exp" class="field-select" required>' +
+          '<option value="">Select range</option>' +
+          '<option>Less than 2 years</option>' +
+          '<option>2-5 years</option>' +
+          '<option>5-10 years</option>' +
+          '<option>10-15 years</option>' +
+          '<option>15+ years</option>' +
+        '</select>' +
+        '<label class="field-label" for="f-domain" style="margin-top:6px;">Domain expertise *</label>' +
+        '<select id="f-domain" class="field-select" required>' +
+          '<option value="">Select your domain</option>' +
+          '<option>Analytics & Data Science</option>' +
+          '<option>Technology & Engineering</option>' +
+          '<option>Finance & Accounting</option>' +
+          '<option>Operations & Supply Chain</option>' +
+          '<option>HR & Talent</option>' +
+          '<option>Legal & Compliance</option>' +
+          '<option>Marketing & Strategy</option>' +
+          '<option>Product Management</option>' +
+          '<option>Other</option>' +
+        '</select>' +
+        '<label class="field-label" for="f-exp2" style="margin-top:6px;">Share your GCC experience &amp; network strength *</label>' +
+        '<textarea id="f-exp2" class="search-input" required maxlength="2000" placeholder="Describe your roles, contributions, network reach across the GCC ecosystem..." style="min-height:80px;font-family:Inter,sans-serif;"></textarea>' +
+        '<div style="margin-top:6px;font-size:12px;color:var(--graphite);font-weight:600;">Consent for receiving GCC insights &amp; updates on WhatsApp? *</div>' +
+        '<div style="display:flex;gap:14px;font-size:13px;color:var(--ink);margin-top:2px;">' +
+          '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="Yes"> Yes, I consent</label>' +
+          '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
+        '</div>' +
+        '<label class="field-label" for="signin-pwd" style="margin-top:10px;">Password *</label>' +
+        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="Min 8 characters - letters and numbers" autocomplete="new-password">' +
+        '<label class="field-label" for="signin-pwd2" style="margin-top:6px;">Confirm password *</label>' +
+        '<input type="password" id="signin-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' +
+        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;">Apply for access</button>' +
+        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Already have an account? Sign in</a></div>' +
+      '</form>';
+  } else {
+    // SIMPLE SIGN-IN FORM - email + password
+    var forgotLink = '<div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-2px;"><a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Forgot password?</a></div>';
+    fields =
+      '<form onsubmit="submitPasswordSignIn(event)" style="display:flex;flex-direction:column;gap:8px;">' +
         '<label class="field-label" for="signin-email">Work email</label>' +
         '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
         '<label class="field-label" for="signin-pwd" style="margin-top:6px;">Password</label>' +
-        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="' + (isSignUp ? 'Choose a strong password' : 'Enter your password') + '" autocomplete="' + (isSignUp ? 'new-password' : 'current-password') + '">' +
-        pwdHint + confirm + forgotLink +
-        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;">' + submitText + '</button>' +
-        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'' + toggleMode + '\');return false;" style="color:var(--gold-deep);text-decoration:underline;">' + toggleText + '</a></div>' +
+        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="Enter your password" autocomplete="current-password">' +
+        forgotLink +
+        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;">Sign in</button>' +
+        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'signup\');return false;" style="color:var(--gold-deep);text-decoration:underline;">New here? Create an account</a></div>' +
       '</form>';
   }
 
@@ -2076,25 +2120,66 @@ async function submitPasswordSignIn(ev) {
 
 async function submitPasswordSignUp(ev) {
   ev.preventDefault();
-  var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
+  function val(id){ var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
+  var email = val('signin-email').toLowerCase();
   var pwd   = document.getElementById('signin-pwd').value;
   var pwd2  = document.getElementById('signin-pwd2').value;
-  var btn   = ev.target.querySelector('button[type="submit"]');
-  if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
+  var fullName    = val('f-name');
+  var whatsapp    = val('f-wa');
+  var linkedin    = val('f-li');
+  var gccsWorked  = val('f-gccs');
+  var currentCity = val('f-city');
+  var yearsExp    = val('f-exp');
+  var domainExp   = val('f-domain');
+  var eligibility = val('f-exp2');
+  var consentEl   = document.querySelector('input[name="consent"]:checked');
+  var waConsent   = consentEl ? consentEl.value : '';
+  var btn = ev.target.querySelector('button[type="submit"]');
+
+  if (!fullName)                         return _showSignInErr('Please enter your full name.');
+  if (!email || email.indexOf('@') < 1)  return _showSignInErr('Please enter a valid email.');
+  if (!whatsapp || whatsapp.replace(/\D/g,'').length < 10) return _showSignInErr('Please enter a valid WhatsApp number (at least 10 digits).');
+  if (!linkedin || linkedin.toLowerCase().indexOf('linkedin.com') < 0) return _showSignInErr('Please enter a valid LinkedIn profile URL.');
+  if (!gccsWorked)                       return _showSignInErr('Please list at least one GCC you have worked with.');
+  if (!currentCity)                      return _showSignInErr('Please enter your current city.');
+  if (!yearsExp)                         return _showSignInErr('Please select your years of experience.');
+  if (!domainExp)                        return _showSignInErr('Please select your domain expertise.');
+  if (!eligibility)                      return _showSignInErr('Please describe your GCC experience and network strength.');
+  if (!waConsent)                        return _showSignInErr('Please choose your WhatsApp consent preference.');
   if (!pwd || pwd.length < 8)            return _showSignInErr('Password must be at least 8 characters.');
   if (!/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) return _showSignInErr('Password must include both letters and numbers.');
   if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
+
   if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
   try {
     await firebase.auth().createUserWithEmailAndPassword(email, pwd);
-    // onAuthStateChanged fires with the new user
+    // Send all metadata to Apps Script for the approval queue.
+    // We do this BEFORE onAuthStateChanged fires fetchCreditBalance, so the
+    // server already has the rich profile when the welcome email kicks in.
+    try {
+      await fetch(SCRIPT_URL + '?action=requestApproval'
+        + '&token='     + encodeURIComponent(email)
+        + '&ua='        + encodeURIComponent(navigator.userAgent || '')
+        + '&ref='       + encodeURIComponent(document.referrer || '')
+        + '&fullName='  + encodeURIComponent(fullName)
+        + '&whatsapp='  + encodeURIComponent(whatsapp)
+        + '&linkedin='  + encodeURIComponent(linkedin)
+        + '&gccsWorked='+ encodeURIComponent(gccsWorked)
+        + '&currentCity='+ encodeURIComponent(currentCity)
+        + '&yearsExp='  + encodeURIComponent(yearsExp)
+        + '&domainExpertise=' + encodeURIComponent(domainExp)
+        + '&eligibility='+ encodeURIComponent(eligibility)
+        + '&waConsent=' + encodeURIComponent(waConsent),
+        { mode: 'no-cors' });
+    } catch(_) {}
+    // onAuthStateChanged fires next - it will pick up the user, see Pending status, show Pending screen.
   } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = 'Create account'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Apply for access'; }
     var msg;
     if (e.code === 'auth/email-already-in-use')
       msg = 'An account with that email already exists. Try signing in, or use "Forgot password" to reset.';
-    else if (e.code === 'auth/invalid-email')   msg = 'That email doesn\'t look valid.';
-    else if (e.code === 'auth/weak-password')   msg = 'Password is too weak. Try a longer one with letters and numbers.';
+    else if (e.code === 'auth/invalid-email')          msg = 'That email does not look valid.';
+    else if (e.code === 'auth/weak-password')          msg = 'Password is too weak. Try a longer one with letters and numbers.';
     else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
     else msg = 'Sign-up failed (' + (e.code || 'unknown') + '). Please try again.';
     _showSignInErr(msg);
