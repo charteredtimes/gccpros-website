@@ -1399,7 +1399,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <span><strong id="credit-chip-num">-</strong> credits</span>
     </button>
     <button class="btn-ghost" onclick="openPwdModal()" title="Change password">Password</button>
-    <button class="user-pill" id="user-pill">Loading…</button>
+    <button class="user-pill" id="user-pill" onclick="onUserPillClick()" title="Sign in or sign out">Sign in</button>
   </div>
 </nav>
 
@@ -2145,6 +2145,37 @@ async function handleGoogleRedirectReturn() {
       setTimeout(function(){ _showSignInErr(msg); }, 800);
     }
     return false;
+  }
+}
+
+// ── USER PILL: SIGN-IN / SIGN-OUT TOGGLE ────────────────
+async function onUserPillClick() {
+  var isAuthed = !!(currentUser || _cachedEmail);
+  if (isAuthed) {
+    // SIGN OUT
+    try { await firebase.auth().signOut(); } catch(e) {}
+    try {
+      var t = _cachedEmail || (currentUser && currentUser.email) || localStorage.getItem('gcc_token');
+      if (t) localStorage.removeItem('gcc_credits_' + t);
+      localStorage.removeItem('gcc_token');
+      localStorage.removeItem('gcc_region');
+    } catch(e) {}
+    currentUser = null;
+    _cachedEmail = null;
+    _credits = 0;
+    _accountStatus = null;
+    document.body.classList.remove('is-authed');
+    // Hard reload so every state derived from the previous session is gone.
+    location.reload();
+  } else {
+    // SCROLL TO SIGN-IN CARD
+    showSignInState('signin');
+    var wrap = document.getElementById('results-wrap');
+    if (wrap && wrap.scrollIntoView) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function(){
+      var el = document.getElementById('signin-email');
+      if (el) el.focus();
+    }, 350);
   }
 }
 
@@ -2923,7 +2954,7 @@ async function changePassword() {
     if (e && (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential')) errBox.textContent = 'Current password is incorrect.';
     else if (e && e.code === 'auth/weak-password') errBox.textContent = 'New password is too weak.';
     else if (e && e.code === 'auth/requires-recent-login') errBox.textContent = 'Please sign out and back in, then retry.';
-    else if (e && e.message === 'no_session') errBox.textContent = 'Password change requires a Firebase session. Sign in with Google first.';
+    else if (e && e.message === 'no_session') errBox.textContent = 'Password change requires an active session. Sign in again first.';
     else errBox.textContent = 'Something went wrong. Please try again.';
     errBox.style.display = 'block';
   }
