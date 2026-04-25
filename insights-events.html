@@ -319,7 +319,7 @@ html.menu-open{overflow:hidden;}
     <li><a href="index">Home</a></li>
     <li><a href="insights-events" class="active">Insights & Events</a></li>
     <li><a href="industry-council">Industry Council</a></li>
-    <li><a href="database">GCC Database</a></li>
+    <li><a href="database-pro.html">GCC Database</a></li>
     <li><a href="opportunities">GCC Opportunities</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Menu" type="button">
@@ -330,7 +330,7 @@ html.menu-open{overflow:hidden;}
   <a href="index">Home</a>
   <a href="insights-events">Insights & Events</a>
   <a href="industry-council">Industry Council</a>
-  <a href="database">GCC Database</a>
+  <a href="database-pro.html">GCC Database</a>
   <a href="opportunities">GCC Opportunities</a>
 </div>
 <!-- HERO -->
@@ -460,7 +460,7 @@ html.menu-open{overflow:hidden;}
 
           <label class="rsvp-field" data-field="officeAddress">
             <span>Hyderabad office address <em>*</em></span>
-            <input name="officeAddress" type="text" required minlength="4" maxlength="200" autocomplete="address-line1" placeholder="e.g. HITEC City, Madhapur — building / block / area">
+            <input name="officeAddress" type="text" required minlength="6" maxlength="200" autocomplete="address-line1" placeholder="e.g. HITEC City, Madhapur — building / block / area">
             <div class="rsvp-hint">Locality is enough — e.g. "HITEC City", "Gachibowli Block 4" or full building address.</div>
             <div class="rsvp-err"></div>
           </label>
@@ -1430,7 +1430,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       else clearError(name);
 
     } else if (name === 'officeAddress') {
-      if (v.length < 4) setError(name, 'Address looks too short \u2014 include at least the area name (e.g. HITEC City).');
+      if (v.length < 6) setError(name, 'Address looks too short \u2014 include at least the area name (e.g. HITEC City).');
       else if (!/[a-zA-Z\u0900-\u097F]/.test(v)) setError(name, 'Address must contain letters \u2014 not just digits or symbols.');
       else clearError(name);
 
@@ -1544,7 +1544,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
     // Office address — required, non-trivial, must contain letters (not digits/symbols only)
     if (!val.officeAddress) fail('officeAddress', 'Please enter your Hyderabad office area / locality.');
-    else if (val.officeAddress.length < 4) fail('officeAddress', 'Address looks too short — include at least the area name (e.g. HITEC City).');
+    else if (val.officeAddress.length < 6) fail('officeAddress', 'Address looks too short — include at least the area name (e.g. HITEC City).');
     else if (!/[a-zA-Z\u0900-\u097F]/.test(val.officeAddress)) fail('officeAddress', 'Address must contain letters — not just digits or symbols.');
 
     // Headcounts — numeric, sane range
@@ -1751,7 +1751,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
       <a href="index">Home</a>
       <a href="insights-events">Insights & Events</a>
       <a href="industry-council">Industry Council</a>
-      <a href="database">GCC Database</a>
+      <a href="database-pro.html">GCC Database</a>
       <a href="opportunities">GCC Opportunities</a>
       <a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu">WhatsApp</a>
     </div>
