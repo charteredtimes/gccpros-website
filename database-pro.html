@@ -1905,16 +1905,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   updateCostText();
 
-  // First, handle any auth return flow (magic link or Google redirect).
-  // These are async but we kick them off and let onAuthStateChanged pick up.
-  var returningFromEmailLink = false;
-  try { returningFromEmailLink = auth.isSignInWithEmailLink(window.location.href); } catch(_){}
-  if (returningFromEmailLink) {
-    document.getElementById('user-pill').textContent = 'Signing you in...';
-    handleEmailLinkReturn();
-    return; // onAuthStateChanged handles the rest
-  }
-  // Kick off redirect-result check (no-op if we didn't come from redirect)
+  // Handle any return from a Google-redirect sign-in. No-op otherwise.
+  // onAuthStateChanged picks up the user once getRedirectResult resolves.
   handleGoogleRedirectReturn();
 
   // Hide page if not authed - check early
@@ -1955,195 +1947,227 @@ auth.onAuthStateChanged(u => {
   }
 });
 
-// ── INLINE SIGN-IN CARD ──────────────────────────────────
-function showSignInState() {
+// ── INLINE SIGN-IN CARD (email+password primary) ─────────
+// Two modes: 'signin' and 'signup'. Toggle with switchMode().
+// Forgot password sends a Firebase reset email.
+// Google sign-in is offered as a secondary one-click option.
+var _signInMode = 'signin';
+
+function showSignInState(mode) {
+  if (mode) _signInMode = mode;
   var wrap = document.getElementById('results-wrap');
   if (!wrap) return;
+  var isSignUp = (_signInMode === 'signup');
+  var isReset  = (_signInMode === 'reset');
+
   var googleBtn =
     '<button type="button" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid var(--line-2);border-radius:2px;padding:12px 20px;font-size:13px;font-weight:500;font-family:Inter,sans-serif;cursor:pointer;width:100%;transition:all 0.15s;">' +
       '<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>' +
       'Sign in with Google' +
     '</button>';
+
   var divider =
-    '<div style="display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;">' +
+    '<div style="display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;">' +
       '<span style="flex:1;height:1px;background:var(--line);"></span>' +
-      '<span>or email</span>' +
+      '<span>' + (isReset ? 'reset password' : (isSignUp ? 'or create account' : 'or sign in with email')) + '</span>' +
       '<span style="flex:1;height:1px;background:var(--line);"></span>' +
     '</div>';
-  var emailForm =
-    '<form onsubmit="submitSignIn(event)" style="display:flex;flex-direction:column;gap:8px;">' +
-      '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
-      '<button type="submit" class="btn-secondary" style="justify-content:center;padding:11px;">Continue with email</button>' +
-    '</form>';
+
+  var fields;
+  if (isReset) {
+    fields =
+      '<form onsubmit="submitPasswordReset(event)" style="display:flex;flex-direction:column;gap:10px;">' +
+        '<label class="field-label" for="signin-email">Work email</label>' +
+        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email" autofocus>' +
+        '<button type="submit" class="search-btn" style="justify-content:center;">Send reset link</button>' +
+        '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Back to sign in</a></div>' +
+      '</form>';
+  } else {
+    var pwdHint = isSignUp ? '<div style="font-size:11px;color:var(--muted);margin-top:-4px;">Minimum 8 characters &middot; letters and numbers</div>' : '';
+    var confirm = isSignUp ?
+      '<label class="field-label" for="signin-pwd2" style="margin-top:6px;">Confirm password</label>' +
+      '<input type="password" id="signin-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' : '';
+    var submitText = isSignUp ? 'Create account' : 'Sign in';
+    var toggleText = isSignUp ? 'Already have an account? Sign in' : 'New here? Create an account';
+    var toggleMode = isSignUp ? 'signin' : 'signup';
+    var forgotLink = isSignUp ? '' :
+      '<div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-2px;"><a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Forgot password?</a></div>';
+
+    fields =
+      '<form onsubmit="' + (isSignUp ? 'submitPasswordSignUp' : 'submitPasswordSignIn') + '(event)" style="display:flex;flex-direction:column;gap:8px;">' +
+        '<label class="field-label" for="signin-email">Work email</label>' +
+        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
+        '<label class="field-label" for="signin-pwd" style="margin-top:6px;">Password</label>' +
+        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="' + (isSignUp ? 'Choose a strong password' : 'Enter your password') + '" autocomplete="' + (isSignUp ? 'new-password' : 'current-password') + '">' +
+        pwdHint + confirm + forgotLink +
+        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;">' + submitText + '</button>' +
+        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'' + toggleMode + '\');return false;" style="color:var(--gold-deep);text-decoration:underline;">' + toggleText + '</a></div>' +
+      '</form>';
+  }
+
+  var headline = isReset ? 'Reset your password' : (isSignUp ? 'Create your account' : 'Sign in to Database Pro');
+  var subline = isReset
+    ? 'Enter your email and we will send you a reset link.'
+    : (isSignUp
+        ? 'Email + password. New members land in an approval queue - cleared within one business day.'
+        : 'Sign in with email and password, or use Google.');
+
   wrap.innerHTML =
-    '<div class="state-box" style="border-top:3px solid var(--gold);padding:42px 28px;text-align:left;max-width:none;">' +
-      '<div style="text-align:center;margin-bottom:22px;">' +
-        '<div class="sb-icon" style="margin:0 auto 12px;">\u2192</div>' +
-        '<h3 style="font-size:19px;">Sign in to Database Pro</h3>' +
-        '<p style="max-width:420px;margin:6px auto 0;">Verified Google sign-in preferred. New members land in an approval queue - typically cleared within one business day.</p>' +
+    '<div class="state-box" style="border-top:3px solid var(--gold);padding:34px 28px;text-align:left;max-width:none;">' +
+      '<div style="text-align:center;margin-bottom:18px;">' +
+        '<div class="sb-icon" style="margin:0 auto 12px;">→</div>' +
+        '<h3 style="font-size:19px;">' + headline + '</h3>' +
+        '<p style="max-width:440px;margin:6px auto 0;">' + subline + '</p>' +
       '</div>' +
       '<div style="max-width:360px;margin:0 auto;">' +
-        googleBtn +
+        (isReset ? '' : googleBtn) +
         divider +
-        emailForm +
+        fields +
         '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
+        '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
       '</div>' +
       '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:18px;">By continuing you agree to the <a href="https://www.gccpros.com/terms" target="_blank" style="color:var(--gold-deep);text-decoration:underline;">terms of use</a>. Individual licence - personal research only.</p>' +
     '</div>';
 }
 
+function switchMode(mode) {
+  showSignInState(mode);
+  setTimeout(function(){ var el = document.getElementById('signin-email'); if (el) el.focus(); }, 50);
+}
+
+function _showSignInErr(msg) {
+  var e = document.getElementById('signin-err');
+  var o = document.getElementById('signin-ok');
+  if (o) o.style.display = 'none';
+  if (e) { e.textContent = msg; e.style.display = 'block'; }
+}
+function _showSignInOk(msg) {
+  var e = document.getElementById('signin-err');
+  var o = document.getElementById('signin-ok');
+  if (e) e.style.display = 'none';
+  if (o) { o.textContent = msg; o.style.display = 'block'; }
+}
+
+async function submitPasswordSignIn(ev) {
+  ev.preventDefault();
+  var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
+  var pwd   = document.getElementById('signin-pwd').value;
+  var btn   = ev.target.querySelector('button[type="submit"]');
+  if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
+  if (!pwd || pwd.length < 8)            return _showSignInErr('Password must be at least 8 characters.');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+  try {
+    await firebase.auth().signInWithEmailAndPassword(email, pwd);
+    // onAuthStateChanged fires next - takes it from there
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+    var msg;
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential')
+      msg = 'No account with that email + password. New here? Click "Create an account".';
+    else if (e.code === 'auth/wrong-password') msg = 'Incorrect password. Try again or reset it below.';
+    else if (e.code === 'auth/too-many-requests') msg = 'Too many attempts. Try again in a few minutes or reset your password.';
+    else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
+    else msg = 'Sign-in failed (' + (e.code || 'unknown') + '). Please try again.';
+    _showSignInErr(msg);
+  }
+}
+
+async function submitPasswordSignUp(ev) {
+  ev.preventDefault();
+  var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
+  var pwd   = document.getElementById('signin-pwd').value;
+  var pwd2  = document.getElementById('signin-pwd2').value;
+  var btn   = ev.target.querySelector('button[type="submit"]');
+  if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
+  if (!pwd || pwd.length < 8)            return _showSignInErr('Password must be at least 8 characters.');
+  if (!/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) return _showSignInErr('Password must include both letters and numbers.');
+  if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(email, pwd);
+    // onAuthStateChanged fires with the new user
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Create account'; }
+    var msg;
+    if (e.code === 'auth/email-already-in-use')
+      msg = 'An account with that email already exists. Try signing in, or use "Forgot password" to reset.';
+    else if (e.code === 'auth/invalid-email')   msg = 'That email doesn\'t look valid.';
+    else if (e.code === 'auth/weak-password')   msg = 'Password is too weak. Try a longer one with letters and numbers.';
+    else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
+    else msg = 'Sign-up failed (' + (e.code || 'unknown') + '). Please try again.';
+    _showSignInErr(msg);
+  }
+}
+
+async function submitPasswordReset(ev) {
+  ev.preventDefault();
+  var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
+  var btn   = ev.target.querySelector('button[type="submit"]');
+  if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    _showSignInOk('+ Reset link sent to ' + email + '. Check your inbox (and spam folder).');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sent'; }
+    setTimeout(function(){ switchMode('signin'); }, 2500);
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send reset link'; }
+    var msg;
+    if (e.code === 'auth/user-not-found') msg = 'No account with that email. Sign up instead?';
+    else if (e.code === 'auth/invalid-email') msg = 'That email doesn\'t look valid.';
+    else msg = 'Could not send reset link (' + (e.code || 'unknown') + '). Try again.';
+    _showSignInErr(msg);
+  }
+}
+
 async function signInWithGoogle() {
-  var errBox = document.getElementById('signin-err');
-  if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
-  var btn = event && event.currentTarget;
-  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.querySelector ? null : null; }
+  _showSignInErr('');
   var provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-  // Redirect-first flow. Popup-based sign-in is silently blocked in many
-  // browsers (Safari, embedded webviews, strict privacy modes), so we go
-  // straight to a full-page redirect. The user lands on Google's account
-  // chooser, picks an account, and comes back here signed in.
-  // handleGoogleRedirectReturn() + onAuthStateChanged complete the flow.
   try {
-    localStorage.setItem('gcc_auth_method', 'google_redirect');
-    await auth.signInWithRedirect(provider);
-    // signInWithRedirect navigates away — control rarely returns here.
-    return;
-  } catch (e) {
-    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-    var msg;
-    if (e && e.code === 'auth/unauthorized-domain')   msg = 'This domain is not authorised for sign-in. Ask the admin to whitelist it in Firebase.';
-    else if (e && e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is not enabled. Ask the admin to turn it on in Firebase Console.';
-    else if (e && e.code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
-    else msg = 'Could not start Google sign-in (' + (e && e.code ? e.code : 'unknown') + '). Please try again, or use the email option below.';
-    if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
-  }
-}
-
-// Email magic-link sign-in - Firebase sends a one-time link to the user's
-// inbox. Clicking it brings them back here, verified. No passwords needed.
-async function sendEmailLink(email) {
-  var errBox = document.getElementById('signin-err');
-  var actionCodeSettings = {
-    url: window.location.origin + window.location.pathname,
-    handleCodeInApp: true
-  };
-  try {
-    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
-    localStorage.setItem('gcc_pending_email', email);
-    showCheckYourEmailState(email);
+    await firebase.auth().signInWithRedirect(provider);
   } catch (e) {
     var msg;
-    if (e && e.code === 'auth/invalid-email') msg = 'That email doesn\'t look valid. Please check and try again.';
-    else if (e && e.code === 'auth/unauthorized-continue-uri') msg = 'This domain is not authorised for email sign-in. Ask the admin to whitelist it in Firebase.';
-    else if (e && e.code === 'auth/operation-not-allowed') msg = 'Email-link sign-in is not enabled. Ask the admin to turn on "Email link (passwordless sign-in)" in Firebase Console.';
-    else msg = 'Could not send the sign-in link. Please try again, or use Google sign-in above.';
-    if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
+    if (e.code === 'auth/unauthorized-domain')   msg = 'This domain is not authorised for Google sign-in. Use email + password instead.';
+    else if (e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is disabled. Use email + password instead.';
+    else msg = 'Could not start Google sign-in (' + (e.code || 'unknown') + '). Use email + password instead.';
+    _showSignInErr(msg);
   }
 }
 
-function showCheckYourEmailState(email) {
-  var wrap = document.getElementById('results-wrap');
-  if (!wrap) return;
-  wrap.innerHTML =
-    '<div class="state-box" style="border-top:3px solid var(--success);padding:42px 28px;text-align:center;">' +
-      '<div class="sb-icon" style="color:var(--success);border-color:var(--success);margin:0 auto 14px;">&check;</div>' +
-      '<h3 style="font-size:19px;">Check your inbox</h3>' +
-      '<p style="max-width:440px;margin:8px auto 0;">We just sent a sign-in link to <strong style="color:var(--ink);">' + escHtml(email) + '</strong>. Click the link from the same browser to finish signing in.</p>' +
-      '<p style="font-size:11px;color:var(--muted);margin-top:18px;">Link expires in 1 hour. Check your spam folder if it doesn\'t arrive within a minute. <a href="#" onclick="showSignInState();return false;" style="color:var(--gold-deep);text-decoration:underline;">Try a different email</a></p>' +
-    '</div>';
-}
-
-// Check on page load whether we're arriving from a magic link
-async function handleEmailLinkReturn() {
-  try {
-    if (!auth.isSignInWithEmailLink(window.location.href)) return false;
-    var email = localStorage.getItem('gcc_pending_email') || '';
-    if (!email) {
-      email = prompt('Please confirm your email to complete sign-in:') || '';
-      if (!email) return false;
-    }
-    email = email.toLowerCase().trim();
-    await auth.signInWithEmailLink(email, window.location.href);
-    localStorage.removeItem('gcc_pending_email');
-    // Clean the URL so refresh doesn't retry
-    try { history.replaceState(null, '', location.pathname); } catch (_) {}
-    return true;
-  } catch (e) {
-    console.warn('Email-link return error', e);
-    var errBox = document.getElementById('signin-err');
-    if (errBox) {
-      errBox.textContent = (e && e.code === 'auth/invalid-action-code')
-        ? 'That sign-in link has expired or already been used. Please request a new one.'
-        : 'Could not complete sign-in. Please try again.';
-      errBox.style.display = 'block';
-    }
-    return false;
-  }
-}
-
-// Also finalise any Google redirect-flow sign-in
 async function handleGoogleRedirectReturn() {
   try {
-    var result = await auth.getRedirectResult();
-    // If we have a user, onAuthStateChanged will pick it up
-    return result && result.user ? true : false;
+    var r = await firebase.auth().getRedirectResult();
+    return r && r.user ? true : false;
   } catch (e) {
-    console.warn('Redirect result error', e);
+    if (e && e.code) {
+      var msg = 'Google sign-in failed (' + e.code + '). Please use email + password.';
+      setTimeout(function(){ _showSignInErr(msg); }, 800);
+    }
     return false;
   }
 }
 
-function submitSignIn(ev) {
-  ev.preventDefault();
-  var input = document.getElementById('signin-email');
-  var errBox = document.getElementById('signin-err');
-  var btn = ev.target.querySelector('button[type="submit"]');
-  var email = (input.value || '').trim().toLowerCase();
-  if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
-  if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 3) {
-    if (errBox) { errBox.textContent = 'Please enter a valid email address.'; errBox.style.display = 'block'; }
-    return;
-  }
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
-  sendEmailLink(email).finally(function(){
-    if (btn) { btn.disabled = false; btn.textContent = 'Continue with email'; }
-  });
-}
-
-document.getElementById('user-pill').addEventListener('click', () => {
-  var pill = document.getElementById('user-pill');
-  // If we're currently unauthenticated, clicking the pill brings up
-  // the inline sign-in card instead of asking about sign-out.
-  if (!_cachedEmail || (pill && pill.textContent === 'Sign in')) {
-    showSignInState();
-    setTimeout(function(){
-      var el = document.getElementById('signin-email');
-      if (el) el.focus();
-    }, 100);
-    return;
-  }
-  if (confirm('Sign out of GCCPROs?')) {
-    localStorage.removeItem('gcc_token');
-    _cachedEmail = '';
-    currentUser = null;
-    _credits = null;
-    _accountStatus = null;
-    _monthlyReveals = 0;
-    _revealedThisMonth = new Set();
-    try { auth.signOut(); } catch(_) {}
-    document.body.classList.remove('is-authed');
-    pill.textContent = 'Sign in';
-    showSignInState();
-  }
-});
-
-// ── TOKEN ────────────────────────────────────────────────
+// ── HELPERS ──────────────────────────────────────────────
 function getToken() {
   return (currentUser ? currentUser.email : null) || _cachedEmail || localStorage.getItem('gcc_token') || '';
 }
 
-// ── CREDITS ──────────────────────────────────────────────
+// ── COST TEXT ────────────────────────────────────────────
+function updateCostText() {
+  var sCost = document.getElementById('search-cost-text');
+  var rCost = document.getElementById('reveal-cost-text');
+  if (sCost) {
+    var priceS = (_currency === 'USD') ? '$' + (SEARCH_COST * USD_PER_CREDIT).toFixed(2) : '\u20b9' + (SEARCH_COST * INR_PER_CREDIT);
+    sCost.textContent = SEARCH_COST + ' credits (' + priceS + ')';
+  }
+  if (rCost) {
+    var priceR = (_currency === 'USD') ? '$' + (REVEAL_COST * USD_PER_CREDIT).toFixed(2).replace(/\.00$/,'') : '\u20b9' + (REVEAL_COST * INR_PER_CREDIT);
+    rCost.textContent = REVEAL_COST + ' credits (' + priceR + ')';
+  }
+}
+
+// ── CREDIT BALANCE ──────────────────────────────────────
 async function fetchCreditBalance() {
   const token = getToken();
   if (!token) return;
@@ -2152,20 +2176,19 @@ async function fetchCreditBalance() {
     const data = await res.json();
     if (data.error && data.error !== 'new_user' && !data.newUser) {
       console.warn('Credit fetch failed', data.error);
+      _credits = 0; _accountStatus = data.status || 'Unknown'; renderCredits();
+      var lbl = document.getElementById('cm-label');
+      if (lbl) lbl.textContent = 'Could not load credits. Refresh to retry.';
       return;
     }
-    // Brand new user - request approval (does NOT grant bonus; admin must approve)
-    if (data.newUser || data.error === 'new_user' || data.status === 'Pending') {
-      if (data.newUser || data.error === 'new_user') {
-        await requestApproval();
-      }
+    if (data.newUser || data.error === 'new_user' || data.status === 'New') {
+      await requestApproval();
       _accountStatus = 'Pending';
-      _credits = typeof data.credits === 'number' ? data.credits : 0;
+      _credits = 0;
       renderCredits();
       showPendingState();
       return;
     }
-    // Existing user - parse full account profile
     _accountStatus = data.status || 'Approved';
     _credits = (typeof data.credits === 'number') ? data.credits : 0;
     _monthlyReveals = (typeof data.monthlyReveals === 'number') ? data.monthlyReveals : 0;
@@ -2176,13 +2199,14 @@ async function fetchCreditBalance() {
     if (_accountStatus === 'Suspended') { renderCredits(); showSuspendedState(data.suspendedReason || ''); return; }
     if (_accountStatus === 'Rejected')  { renderCredits(); showRejectedState(); return; }
     if (_accountStatus === 'Pending')   { renderCredits(); showPendingState(); return; }
-
     renderCredits();
+    // Approved — clear sign-in/Pending state, show ready-to-search hint
+    if (typeof onFieldChange === 'function') onFieldChange();
   } catch(err) {
     console.warn('Credit fetch error', err);
-    // Offline fallback - degrade gracefully
-    const mirror = parseInt(localStorage.getItem('gcc_credits_' + getToken()) || '0', 10);
+    var mirror = parseInt(localStorage.getItem('gcc_credits_' + getToken()) || '0', 10);
     if (mirror > 0) { _credits = mirror; _accountStatus = 'Approved'; renderCredits(); }
+    else { var lbl = document.getElementById('cm-label'); if (lbl) lbl.textContent = 'Could not load credits. Refresh to retry.'; }
   }
 }
 
@@ -2193,122 +2217,37 @@ async function requestApproval() {
       + '&token=' + encodeURIComponent(token)
       + '&ua='    + encodeURIComponent(navigator.userAgent || '')
       + '&ref='   + encodeURIComponent(document.referrer || ''), { mode: 'no-cors' });
-  } catch(e) { /* non-fatal - server still captures what it can */ }
+  } catch(e) {}
 }
 
 function renderCredits() {
   const n = (typeof _credits === 'number') ? _credits : 0;
   const reveals = Math.floor(n / REVEAL_COST);
   const searches = Math.floor(n / SEARCH_COST);
-  document.getElementById('credit-chip-num').textContent = n.toLocaleString('en-IN');
-  document.getElementById('cm-num').textContent = n.toLocaleString('en-IN');
+  const chip = document.getElementById('credit-chip-num');
+  const cmNum = document.getElementById('cm-num');
+  if (chip) chip.textContent = n.toLocaleString('en-IN');
+  if (cmNum) cmNum.textContent = n.toLocaleString('en-IN');
 
-  // Balance label - lead with reveals (the scarce, high-value action)
   let label;
-  if (n <= 0) {
-    label = 'No credits - top up to continue';
-  } else {
+  if (n <= 0) label = 'No credits - top up to continue';
+  else {
     const valueStr = (_currency === 'USD')
       ? '$' + (n * USD_PER_CREDIT).toFixed(2)
-      : '₹' + (n * INR_PER_CREDIT).toLocaleString('en-IN');
-    label = reveals + ' reveal' + (reveals === 1 ? '' : 's') + ' or ' + searches + ' search page' + (searches === 1 ? '' : 's') + ' · ' + valueStr;
+      : '\u20b9' + (n * INR_PER_CREDIT).toLocaleString('en-IN');
+    label = reveals + ' reveal' + (reveals === 1 ? '' : 's') + ' or ' + searches + ' search page' + (searches === 1 ? '' : 's') + ' \u00b7 ' + valueStr;
   }
-  document.getElementById('cm-label').textContent = label;
+  const lbl = document.getElementById('cm-label');
+  if (lbl) lbl.textContent = label;
 
   const pct = Math.max(4, Math.min(100, Math.round((n / _totalAllowance) * 100)));
-  document.getElementById('cm-fill').style.width = pct + '%';
+  const fill = document.getElementById('cm-fill');
+  if (fill) fill.style.width = pct + '%';
 
-  // Monthly reveal counter
   const mrEl = document.getElementById('cm-reveals-num');
   if (mrEl) mrEl.textContent = _monthlyReveals;
 
-  // Mirror for offline degradation
   if (getToken()) localStorage.setItem('gcc_credits_' + getToken(), String(n));
-}
-
-function updateCostText() {
-  const sCost = document.getElementById('search-cost-text');
-  const rCost = document.getElementById('reveal-cost-text');
-  if (sCost) {
-    const priceS = (_currency === 'USD') ? '$' + (SEARCH_COST * USD_PER_CREDIT).toFixed(2) : '₹' + (SEARCH_COST * INR_PER_CREDIT);
-    sCost.textContent = SEARCH_COST + ' credits (' + priceS + ')';
-  }
-  if (rCost) {
-    const priceR = (_currency === 'USD') ? '$' + (REVEAL_COST * USD_PER_CREDIT).toFixed(2).replace(/\.00$/,'') : '₹' + (REVEAL_COST * INR_PER_CREDIT);
-    rCost.textContent = REVEAL_COST + ' credits (' + priceR + ')';
-  }
-}
-
-// ── ACCOUNT-STATE SCREENS ────────────────────────────────
-function showPendingState() {
-  document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
-      <div class="sb-icon">⌛</div>
-      <h3>Your account is being verified</h3>
-      <p>We manually approve every individual-access member to keep the database fair and secure. Approvals typically complete within <strong>1 business day</strong>.</p>
-      <p style="margin-top:14px;">You will receive an email at <strong>${escHtml(getToken())}</strong> the moment your account is live. Your <strong>200-credit welcome bonus</strong> will be granted automatically on approval.</p>
-      <p style="margin-top:18px;font-size:11px;color:var(--muted);">Questions? Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> or WhatsApp +91-85069-76700.</p>
-    </div>`;
-}
-
-function showSuspendedState(reason) {
-  document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">
-      <div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">✕</div>
-      <h3>Account suspended</h3>
-      <p>Your account has been paused pending review. ${reason ? 'Reason: <em>' + escHtml(reason) + '</em>.' : ''}</p>
-      <p style="margin-top:14px;">Please contact <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> to resolve this.</p>
-    </div>`;
-}
-
-function showRejectedState() {
-  document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">
-      <div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">✕</div>
-      <h3>Access not approved</h3>
-      <p>We were unable to approve your application for individual access. If you believe this is in error, please email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>
-      <p style="margin-top:14px;">For organisations, the <strong>Enterprise edition</strong> is a better fit - use the waitlist form on the right to request access.</p>
-    </div>`;
-}
-
-function showMonthlyCapReached() {
-  const nextReset = _monthEndText();
-  document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
-      <div class="sb-icon">✓</div>
-      <h3>Monthly reveal cap reached</h3>
-      <p>You have revealed <strong>${_monthlyCap} companies</strong> this calendar month. To protect the database and keep pricing honest, individual access is capped at 50 reveals per user per month.</p>
-      <p style="margin-top:14px;">Your cap resets on <strong>${nextReset}</strong>. You can still re-view any company you revealed this month at no extra cost - just search and click again.</p>
-      <p style="margin-top:14px;font-size:12px;">Need higher volume? The <strong>Enterprise edition</strong> offers unlimited reveals and bulk export. Join the waitlist on the right.</p>
-    </div>`;
-}
-
-function _monthEndText() {
-  const d = new Date();
-  const first = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-  return first.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-// Closed-beta screen - shown when TEST_MODE is on and the signed-in
-// email isn't in TEST_ALLOWED_EMAILS. We keep the Enterprise poster
-// visible on the right so visitors can still request access.
-function showClosedBetaState() {
-  const results = document.getElementById('results-wrap');
-  if (results) results.innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">
-      <div class="sb-icon">β</div>
-      <h3>Closed beta</h3>
-      <p>This next-generation portal is in private testing with a small group of trusted users while pricing, approvals and safeguards are validated.</p>
-      <p style="margin-top:14px;">The current live database remains at <a href="https://www.gccpros.com/database" style="color:var(--gold-deep);font-weight:600;">www.gccpros.com/database</a>. If you would like to be added to the beta, email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);font-weight:600;">admin@gccpros.com</a>.</p>
-    </div>`;
-  // Hide the interactive affordances - credit meter, search panel, nudge
-  ['.credit-meter', '.search-panel', '.personal-use-notice'].forEach(sel => {
-    const el = document.querySelector(sel);
-    if (el) el.style.display = 'none';
-  });
-  // Also grey out the credit chip in the nav so it doesn't look like they have credits
-  const chip = document.getElementById('credit-chip');
-  if (chip) { chip.style.opacity = '0.35'; chip.style.pointerEvents = 'none'; }
 }
 
 async function deductCredits(cost, reason) {
@@ -2319,12 +2258,8 @@ async function deductCredits(cost, reason) {
                 '&amount=' + cost + '&reason=' + encodeURIComponent(reason || 'search');
     const res = await fetch(url);
     const data = await res.json();
-    if (data.error === 'insufficient_credits') {
-      showInsufficientCredits(data.balance || 0, cost);
-      return false;
-    }
+    if (data.error === 'insufficient_credits') { showInsufficientCredits(data.balance || 0, cost); return false; }
     if (data.error) {
-      // Server error - fall through to client-side optimistic deduction
       _credits = Math.max(0, (_credits || 0) - cost);
       renderCredits();
       return true;
@@ -2333,7 +2268,6 @@ async function deductCredits(cost, reason) {
     renderCredits();
     return true;
   } catch(e) {
-    // Network issue - optimistic client deduction, server will reconcile
     _credits = Math.max(0, (_credits || 0) - cost);
     renderCredits();
     return true;
@@ -2341,67 +2275,98 @@ async function deductCredits(cost, reason) {
 }
 
 function showInsufficientCredits(balance, needed) {
-  document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box" style="border-top:3px solid var(--gold);">
-      <div class="sb-icon" style="color:var(--gold-deep);border-color:var(--gold);">!</div>
-      <h3>Out of credits</h3>
-      <p>You have <strong>${balance}</strong> credits - each search requires <strong>${needed}</strong>. Top up to continue your research.</p>
-      <button class="credit-meter-cta" style="margin-top:16px;" onclick="openBuyCredits()">Top up now</button>
-    </div>`;
+  document.getElementById('results-wrap').innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--gold);">' +
+      '<div class="sb-icon" style="color:var(--gold-deep);border-color:var(--gold);">!</div>' +
+      '<h3>Out of credits</h3>' +
+      '<p>You have <strong>' + balance + '</strong> credits - each search requires <strong>' + needed + '</strong>. Top up to continue your research.</p>' +
+      '<button class="credit-meter-cta" style="margin-top:16px;" onclick="openBuyCredits()">Top up now</button>' +
+    '</div>';
 }
 
-// ── FIELD CHANGE ─────────────────────────────────────────
-function onFieldChange() {
-  const field = document.getElementById('field-select').value;
-  lastField = field;
-  const meta = FIELD_META[field];
-  const input = document.getElementById('search-input');
-  input.placeholder = meta.ph;
-  input.value = '';
+// ── ACCOUNT STATE SCREENS ───────────────────────────────
+function showPendingState() {
+  document.getElementById('results-wrap').innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">' +
+      '<div class="sb-icon">\u29d6</div>' +
+      '<h3>Your account is being verified</h3>' +
+      '<p>We manually approve every individual-access member to keep the database fair and secure. Approvals typically complete within <strong>1 business day</strong>.</p>' +
+      '<p style="margin-top:14px;">You will receive an email at <strong>' + escHtml(getToken()) + '</strong> the moment your account is live. Your <strong>200-credit welcome bonus</strong> will be granted automatically on approval.</p>' +
+      '<p style="margin-top:18px;font-size:11px;color:var(--muted);">Questions? Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
+    '</div>';
 }
-function onFieldChange2() {
-  const field = document.getElementById('field-select-2').value;
-  const input = document.getElementById('search-input-2');
-  if (!field) { input.disabled = true; input.value = ''; input.placeholder = 'Optional second filter…'; input.style.opacity = '0.5'; return; }
-  input.disabled = false; input.style.opacity = '1';
-  input.placeholder = FIELD_META[field].ph;
-  input.value = '';
+function showSuspendedState(reason) {
+  document.getElementById('results-wrap').innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">' +
+      '<div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">\u2715</div>' +
+      '<h3>Account suspended</h3>' +
+      '<p>Your account has been paused pending review. ' + (reason ? 'Reason: <em>' + escHtml(reason) + '</em>.' : '') + '</p>' +
+      '<p style="margin-top:14px;">Please contact <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
+    '</div>';
 }
+function showRejectedState() {
+  document.getElementById('results-wrap').innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">' +
+      '<div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">\u2715</div>' +
+      '<h3>Access not approved</h3>' +
+      '<p>We were unable to approve your application for individual access. If you believe this is in error, please email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
+    '</div>';
+}
+function showMonthlyCapReached() {
+  document.getElementById('results-wrap').innerHTML =
+    '<div class="state-box" style="border-top:3px solid var(--gold);padding:48px 24px;">' +
+      '<div class="sb-icon">\u2713</div>' +
+      '<h3>Monthly reveal cap reached</h3>' +
+      '<p>You have revealed <strong>' + _monthlyCap + ' companies</strong> this calendar month. Cap resets on <strong>' + _monthEndText() + '</strong>.</p>' +
+    '</div>';
+}
+function _monthEndText() {
+  const d = new Date();
+  const first = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  return first.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function showClosedBetaState() { showSignInState(); }
 
 // ── SEARCH ───────────────────────────────────────────────
 const CLIENT_PAGE_SIZE = 5;
-const BATCH_SIZE = 1;   // one server page per paid search click
+const BATCH_SIZE = 1;
 let _allFetchedResults = [];
 let _totalServerPages = 1;
 let _lastServerPage = 0;
 let _currentClientPage = 1;
 let _searchParams = {};
 
+function onFieldChange() {
+  const field = document.getElementById('field-select').value;
+  lastField = field;
+  const meta = FIELD_META[field] || FIELD_META.city;
+  const input = document.getElementById('search-input');
+  if (input) { input.placeholder = meta.ph; input.value = ''; }
+}
+function onFieldChange2() {
+  const field = document.getElementById('field-select-2').value;
+  const input = document.getElementById('search-input-2');
+  if (!input) return;
+  if (!field) { input.disabled = true; input.value = ''; input.placeholder = 'Optional second filter...'; input.style.opacity = '0.5'; return; }
+  input.disabled = false; input.style.opacity = '1';
+  input.placeholder = (FIELD_META[field] || FIELD_META.city).ph;
+  input.value = '';
+}
+
 async function doSearch(page) {
   page = page || 1;
   const q = document.getElementById('search-input').value.trim();
   const field = document.getElementById('field-select').value;
   if (!q) { alert('Please type a search term first.'); return; }
-
   const token = getToken();
-  if (!token) { alert('Please log in to search.'); window.location.href = 'index'; return; }
-
-  // Gate on account status - Pending/Suspended/Rejected users can't search
+  if (!token) { alert('Please sign in first.'); return; }
   if (_accountStatus && _accountStatus !== 'Approved') {
     if (_accountStatus === 'Pending')   return showPendingState();
     if (_accountStatus === 'Suspended') return showSuspendedState();
     if (_accountStatus === 'Rejected')  return showRejectedState();
   }
-
-  // Require enough credits
-  if (typeof _credits !== 'number') {
-    alert('Your credit balance is still loading - one moment, then try again.');
-    return;
-  }
-  if (_credits < SEARCH_COST) {
-    showInsufficientCredits(_credits, SEARCH_COST);
-    return;
-  }
+  if (typeof _credits !== 'number') { alert('Balance is loading - please wait a moment and try again.'); return; }
+  if (_credits < SEARCH_COST) return showInsufficientCredits(_credits, SEARCH_COST);
 
   showLoading();
   const ok = await deductCredits(SEARCH_COST, 'search:' + field);
@@ -2425,23 +2390,18 @@ async function _fetchBatch() {
   const { token, field, q, f2Param } = _searchParams;
   const startPage = _lastServerPage + 1;
   const endPage = startPage + BATCH_SIZE - 1;
-
   const fetches = [];
   for (let p = startPage; p <= endPage; p++) {
-    const url = SCRIPT_URL + '?token=' + encodeURIComponent(token) +
-                '&field=' + field + '&q=' + encodeURIComponent(q) +
-                '&page=' + p + f2Param;
+    const url = SCRIPT_URL + '?token=' + encodeURIComponent(token) + '&field=' + field + '&q=' + encodeURIComponent(q) + '&page=' + p + f2Param;
     fetches.push(fetch(url).then(r => r.json()).catch(() => null));
   }
-
   try {
     const responses = await Promise.all(fetches);
     if (_lastServerPage === 0) {
       const first = responses[0];
       if (!first) { showState('Search failed', 'Please check your connection and try again.'); return false; }
-      if (first.error === 'Unauthorized') {
-        alert('Session expired. Please log in again.');
-        auth.signOut(); window.location.href = 'index'; return false;
+      if (first.error === 'Unauthorized' || first.error === 'not_approved') {
+        showPendingState(); return false;
       }
       if (first.error) { showState('No results', first.error); return false; }
       _totalServerPages = first.pages || 1;
@@ -2476,56 +2436,48 @@ function showPage(page) {
   const startIdx = (page - 1) * CLIENT_PAGE_SIZE;
   const endIdx = Math.min(startIdx + CLIENT_PAGE_SIZE, totalResults);
   const pageResults = _allFetchedResults.slice(startIdx, endIdx);
-  lastResults = { page, _clientPaged: true };
-
   const wrap = document.getElementById('results-wrap');
   const startNum = startIdx + 1;
   const fieldLabel = FIELD_META[lastField].label;
-  const rows = pageResults.map((r, i) =>
-    `<div class="result-row" onclick="showCompanyDetail('${escHtml(r.name).replace(/'/g,"\\'")}')" oncontextmenu="return false">
-       <span class="r-num">${String(startNum + i).padStart(2,'0')}</span>
-       <div class="r-body">
-         <span class="r-name">${escHtml(r.name)}</span>
-         ${lastField !== 'company' ? `<span class="r-match">${escHtml(fieldLabel)} - ${escHtml(r.matchedValue || '')}</span>` : ''}
-       </div>
-       <span class="r-arrow">›</span>
-     </div>`
-  ).join('');
+  const rows = pageResults.map(function(r, i) {
+    return '<div class="result-row" onclick="showCompanyDetail(\'' + escHtml(r.name).replace(/'/g, "\\'") + '\')" oncontextmenu="return false">' +
+      '<span class="r-num">' + String(startNum + i).padStart(2,'0') + '</span>' +
+      '<div class="r-body">' +
+        '<span class="r-name">' + escHtml(r.name) + '</span>' +
+        (lastField !== 'company' ? '<span class="r-match">' + escHtml(fieldLabel) + ' - ' + escHtml(r.matchedValue || '') + '</span>' : '') +
+      '</div>' +
+      '<span class="r-arrow">\u203a</span>' +
+    '</div>';
+  }).join('');
 
   let pagination = '';
   if (totalPages > 1 || _hasMoreServerPages()) {
     let btns = '';
-    if (page > 1) btns += `<button class="pg-btn" onclick="showPage(${page - 1})">‹ Prev</button>`;
+    if (page > 1) btns += '<button class="pg-btn" onclick="showPage(' + (page - 1) + ')">\u2039 Prev</button>';
     for (let p = 1; p <= totalPages; p++) {
-      btns += `<button class="pg-btn${p === page ? ' active' : ''}" onclick="showPage(${p})">${p}</button>`;
+      btns += '<button class="pg-btn' + (p === page ? ' active' : '') + '" onclick="showPage(' + p + ')">' + p + '</button>';
     }
-    if (page < totalPages) btns += `<button class="pg-btn" onclick="showPage(${page + 1})">Next ›</button>`;
-    else if (_hasMoreServerPages()) btns += `<button class="pg-btn" style="background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700;" onclick="loadMoreAndShow()" title="Fetches the next page of 5 results - 20 credits">More results · ${SEARCH_COST} credits ›</button>`;
-    pagination = `<div class="pagination">${btns}</div><div class="pg-info">Page ${page} of ${totalPages}${_hasMoreServerPages() ? ' +' : ''} · ${totalResults} results · ${CLIENT_PAGE_SIZE} per page</div>`;
+    if (page < totalPages) btns += '<button class="pg-btn" onclick="showPage(' + (page + 1) + ')">Next \u203a</button>';
+    else if (_hasMoreServerPages()) btns += '<button class="pg-btn" style="background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700;" onclick="loadMoreAndShow()" title="Fetches the next page of 5 results">More results \u00b7 ' + SEARCH_COST + ' credits \u203a</button>';
+    pagination = '<div class="pagination">' + btns + '</div><div class="pg-info">Page ' + page + ' of ' + totalPages + (_hasMoreServerPages() ? ' +' : '') + ' \u00b7 ' + totalResults + ' results \u00b7 ' + CLIENT_PAGE_SIZE + ' per page</div>';
   }
-
-  const betaNote = `<div class="beta-note">⚠︎ <strong>Beta</strong> · Data targets 95% accuracy. Use <em>Suggest a correction</em> on any profile to help us improve it.</div>`;
-  wrap.innerHTML = `
-    <div class="result-meta">
-      <span class="result-count">${totalResults} results for "<strong>${escHtml(lastQuery)}</strong>"${_hasMoreServerPages() ? ' (more available)' : ''}</span>
-      <span class="secure-badge">Watermarked</span>
-    </div>
-    <div class="result-list" oncontextmenu="return false">${rows}</div>
-    ${pagination}
-    ${betaNote}
-    <div class="submit-nudge" onclick="openSubmitModal()">
-      <div class="nudge-icon">+</div>
-      <div class="nudge-text">
-        <strong>Didn't find a GCC? Submit it for review.</strong>
-        <span>Accepted submissions earn <strong>100 credits</strong> - enough for 1 profile reveal or 5 search pages.</span>
-      </div>
-      <div class="nudge-arrow">›</div>
-    </div>`;
+  const betaNote = '<div class="beta-note">\u26a0\ufe0e <strong>Beta</strong> \u00b7 Data targets 95% accuracy. Use <em>Suggest a correction</em> on any profile to help us improve it.</div>';
+  wrap.innerHTML =
+    '<div class="result-meta">' +
+      '<span class="result-count">' + totalResults + ' results for "<strong>' + escHtml(lastQuery) + '</strong>"' + (_hasMoreServerPages() ? ' (more available)' : '') + '</span>' +
+      '<span class="secure-badge">Watermarked</span>' +
+    '</div>' +
+    '<div class="result-list" oncontextmenu="return false">' + rows + '</div>' +
+    pagination + betaNote +
+    '<div class="submit-nudge" onclick="openSubmitModal()">' +
+      '<div class="nudge-icon">+</div>' +
+      '<div class="nudge-text"><strong>Didn\'t find a GCC? Submit it for review.</strong><span>Accepted submissions earn <strong>100 credits</strong>.</span></div>' +
+      '<div class="nudge-arrow">\u203a</div>' +
+    '</div>';
 }
 
 async function loadMoreAndShow() {
-  // Each server-page fetch is a fresh "search" - deduct credits
-  if (_credits < SEARCH_COST) { showInsufficientCredits(_credits, SEARCH_COST); return; }
+  if (_credits < SEARCH_COST) return showInsufficientCredits(_credits, SEARCH_COST);
   showLoading();
   const ok = await deductCredits(SEARCH_COST, 'search:next_page');
   if (!ok) return;
