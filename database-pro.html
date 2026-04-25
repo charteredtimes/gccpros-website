@@ -2384,7 +2384,29 @@ async function submitPasswordReset(ev) {
   var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
   var btn   = ev.target.querySelector('button[type="submit"]');
   if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
+
+  // Block reset emails to unregistered users. We require the email to be
+  // present in V2_Accounts (registered or migrated) before Firebase sends
+  // anything. Otherwise people who only have a Firebase auth account
+  // (e.g. created via Google sign-in or stale test accounts) could use
+  // Forgot Password to gain access without going through the rich form.
+  try {
+    var checkRes = await fetch(SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email));
+    var checkData = await checkRes.json();
+    if (!checkData.exists) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send reset link'; }
+      _showSignInErr('This email is not registered. Please apply for access using "Sign up & earn 200 credits".');
+      return;
+    }
+  } catch (_) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send reset link'; }
+    _showSignInErr('Network issue. Please retry.');
+    return;
+  }
+
+  // Email is in V2_Accounts - proceed with Firebase reset
+  if (btn) btn.textContent = 'Sending link...';
   try {
     await firebase.auth().sendPasswordResetEmail(email);
     _showSignInOk('+ Reset link sent to ' + email + '. Check your inbox (and spam folder).');
@@ -2393,8 +2415,8 @@ async function submitPasswordReset(ev) {
   } catch (e) {
     if (btn) { btn.disabled = false; btn.textContent = 'Send reset link'; }
     var msg;
-    if (e.code === 'auth/user-not-found') msg = 'No account with that email. Sign up instead?';
-    else if (e.code === 'auth/invalid-email') msg = 'That email doesn\'t look valid.';
+    if (e.code === 'auth/user-not-found') msg = 'Your account is registered but a Firebase login was never created. Please contact admin@gccpros.com to claim your account.';
+    else if (e.code === 'auth/invalid-email') msg = 'That email does not look valid.';
     else msg = 'Could not send reset link (' + (e.code || 'unknown') + '). Try again.';
     _showSignInErr(msg);
   }
