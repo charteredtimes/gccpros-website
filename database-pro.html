@@ -3157,7 +3157,7 @@ document.addEventListener('copy', e => e.preventDefault());
 let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
-  setCurrency(_currency);
+  // Contact-only modal - no pack selector / currency toggle to wire up.
   document.getElementById('buy-modal').classList.add('open');
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
