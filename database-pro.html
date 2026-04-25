@@ -2124,12 +2124,28 @@ async function signInWithGoogle() {
   _showSignInErr('');
   var provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
+  // Try popup first - keeps the auth flow in a first-party context, so the
+  // session cookies survive the round-trip back to www.gccpros.com.
+  // Fall back to redirect only if the popup is blocked (e.g. on mobile).
   try {
-    await firebase.auth().signInWithRedirect(provider);
+    var r = await firebase.auth().signInWithPopup(provider);
+    // onAuthStateChanged fires with the user; nothing more to do.
+    return r;
   } catch (e) {
+    if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')) {
+      try {
+        await firebase.auth().signInWithRedirect(provider);
+        return;
+      } catch (e2) {
+        e = e2;
+      }
+    }
+    if (e && e.code === 'auth/popup-closed-by-user') return; // user cancelled - silent
+    if (e && e.code === 'auth/cancelled-popup-request') return;
     var msg;
-    if (e.code === 'auth/unauthorized-domain')   msg = 'This domain is not authorised for Google sign-in. Use email + password instead.';
-    else if (e.code === 'auth/operation-not-allowed') msg = 'Google sign-in is disabled. Use email + password instead.';
+    if (e.code === 'auth/unauthorized-domain')          msg = 'This domain is not authorised for Google sign-in. Use email + password instead.';
+    else if (e.code === 'auth/operation-not-allowed')   msg = 'Google sign-in is disabled. Use email + password instead.';
+    else if (e.code === 'auth/network-request-failed')  msg = 'Network issue. Check your connection and retry.';
     else msg = 'Could not start Google sign-in (' + (e.code || 'unknown') + '). Use email + password instead.';
     _showSignInErr(msg);
   }
