@@ -1745,20 +1745,22 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <input type="text" id="corr-company">
     <label>Group / parent company</label>
     <input type="text" id="corr-group">
-    <label>HQ country</label>
-    <input type="text" id="corr-country">
     <label>GCC city</label>
     <input type="text" id="corr-city">
+    <label>HQ country</label>
+    <input type="text" id="corr-country">
     <label>Industry</label>
     <input type="text" id="corr-industry">
     <label>GCC domains</label>
     <input type="text" id="corr-domain">
-    <label>Headcount</label>
-    <input type="text" id="corr-headcount">
-    <label>Leader 1</label>
-    <input type="text" id="corr-leader1">
-    <label>Leader 2</label>
-    <input type="text" id="corr-leader2">
+    <label>Headcount band</label>
+    <input type="text" id="corr-headcount" placeholder="e.g. 50-500">
+    <label>Year established</label>
+    <input type="text" id="corr-year" placeholder="e.g. 2018">
+    <label>Maturity tier</label>
+    <input type="text" id="corr-maturity" placeholder="e.g. Gen 2 (Established)">
+    <label>Setup model</label>
+    <input type="text" id="corr-setup" placeholder="e.g. Wholly-owned subsidiary (captive)">
     <label>Note to editor *</label>
     <textarea id="corr-note" placeholder="What is incorrect and what should it be? Add sources if possible."></textarea>
     <div class="modal-btns">
@@ -2648,8 +2650,8 @@ function renderDetail(data) {
     ${Array.from({length:6},(_,i)=>`<div style="position:absolute;left:-20%;width:140%;transform:rotate(-28deg);top:${8+i*16}%;white-space:nowrap;font-size:10px;font-weight:600;color:rgba(10,22,40,0.05);letter-spacing:1.5px;user-select:none;-webkit-user-select:none;">${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}</div>`).join('')}
   </div>`;
 
-  // Combined location (city + state) and maturity (year + gen)
-  const locationStr = [data.gccCity, data.gccState].filter(Boolean).join(', ');
+  // City only - state is intentionally hidden from the B2C reveal.
+  const locationStr = data.gccCity || '';
   const maturityStr = [
     data.yearEstablished ? 'Est. ' + data.yearEstablished : null,
     data.maturityGen ? 'Maturity ' + data.maturityGen : null
@@ -2888,15 +2890,16 @@ async function submitGCC() {
 function openCorrectionModal() {
   const rec = window._currentRecord || {};
   var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v || ''; };
-  set('corr-company', rec.companyName);
-  set('corr-group',   rec.groupCompany);
-  set('corr-country', rec.hqCountry);
-  set('corr-city',    rec.gccCity);
-  set('corr-industry',rec.industry);
-  set('corr-domain',  rec.gccDomains);
-  set('corr-headcount', rec.headcount);
-  set('corr-leader1', rec.leader1);
-  set('corr-leader2', rec.leader2);
+  set('corr-company',  rec.companyName);
+  set('corr-group',    rec.groupCompany);
+  set('corr-city',     rec.gccCity);
+  set('corr-country',  rec.hqCountry);
+  set('corr-industry', rec.industry);
+  set('corr-domain',   rec.gccDomains);
+  set('corr-headcount',rec.headcountBucket || rec.headcount);
+  set('corr-year',     rec.yearEstablished);
+  set('corr-maturity', rec.maturityGen);
+  set('corr-setup',    rec.setupModel);
   set('corr-note', '');
   var err = document.getElementById('corr-err'); if (err) err.style.display = 'none';
   var ok = document.getElementById('corr-ok'); if (ok) ok.style.display = 'none';
@@ -2918,13 +2921,14 @@ async function submitCorrection() {
   const url = SCRIPT_URL + '?action=submitCorrection&token=' + encodeURIComponent(token)
     + '&company='  + encodeURIComponent(v('corr-company'))
     + '&group='    + encodeURIComponent(v('corr-group'))
-    + '&country='  + encodeURIComponent(v('corr-country'))
     + '&city='     + encodeURIComponent(v('corr-city'))
+    + '&country='  + encodeURIComponent(v('corr-country'))
     + '&industry=' + encodeURIComponent(v('corr-industry'))
     + '&domain='   + encodeURIComponent(v('corr-domain'))
     + '&headcount='+ encodeURIComponent(v('corr-headcount'))
-    + '&leader1='  + encodeURIComponent(v('corr-leader1'))
-    + '&leader2='  + encodeURIComponent(v('corr-leader2'))
+    + '&year='     + encodeURIComponent(v('corr-year'))
+    + '&maturity=' + encodeURIComponent(v('corr-maturity'))
+    + '&setup='    + encodeURIComponent(v('corr-setup'))
     + '&note='     + encodeURIComponent(note);
   try { await fetch(url, { mode: 'no-cors' }); } catch(e) {}
   okBox.style.display = 'block';
