@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GCCPROs - Database Pro</title>
-<meta name="description" content="GCCPROs Database Pro - Research-grade access to India's Global Capability Center ecosystem. Individual and Enterprise editions.">
+<meta name="description" content="GCCPROs Database Pro - Research-grade access to the global Capability Center ecosystem. Individual and Enterprise editions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -1407,9 +1407,9 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <header class="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-breadcrumb">GCCPROs · Database Pro · India GCC Intelligence</div>
-      <h1 class="hero-title">India's <em>Global Capability Center</em> Database</h1>
-      <p class="hero-sub">Research-grade access to 2,430+ verified GCCs across cities, industries, domains and setup models. Used by researchers, talent leaders and strategy teams across the ecosystem.</p>
+      <div class="hero-breadcrumb">GCCPROs · Database Pro · Global GCC Intelligence</div>
+      <h1 class="hero-title">The <em>Global Capability Center</em> Database</h1>
+      <p class="hero-sub">Research-grade access to 2,430+ verified GCCs across countries, cities, industries, domains and setup models. Used by researchers, talent leaders and strategy teams across the ecosystem.</p>
     </div>
     <div class="hero-stats" aria-hidden="true">
       <div class="stat-block">
@@ -1470,7 +1470,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
               <option value="country">HQ Country</option>
               <option value="industry">Industry</option>
               <option value="domain">GCC Domains</option>
-              <option value="headcount">Headcount</option>
+              <option value="headcount">Headcount band</option>
+              <option value="year">Year established</option>
+              <option value="maturity">Maturity tier</option>
+              <option value="setup">Setup model</option>
+              <option value="glassdoor">Glassdoor rating</option>
+              <option value="gptw">GPTW certified</option>
             </select>
           </div>
           <div class="search-field">
@@ -1483,15 +1488,22 @@ body:not(.is-authed) .ent-pre-auth-teaser {
               <option value="country">HQ Country</option>
               <option value="industry">Industry</option>
               <option value="domain">GCC Domains</option>
-              <option value="headcount">Headcount</option>
+              <option value="headcount">Headcount band</option>
+              <option value="year">Year established</option>
+              <option value="maturity">Maturity tier</option>
+              <option value="setup">Setup model</option>
+              <option value="glassdoor">Glassdoor rating</option>
+              <option value="gptw">GPTW certified</option>
             </select>
           </div>
         </div>
         <div class="search-action-row">
-          <input type="text" id="search-input" class="search-input search-input-main" placeholder="e.g. Pune, Mumbai, Bengaluru" autocomplete="off">
+          <input type="text" id="search-input" class="search-input search-input-main" placeholder="e.g. Pune, Mumbai, Bengaluru" autocomplete="off" list="filter-values-1">
+          <datalist id="filter-values-1"></datalist>
         </div>
         <div class="search-action-row" style="margin-top:10px;">
-          <input type="text" id="search-input-2" class="search-input search-input-main" placeholder="Optional second filter…" autocomplete="off" disabled style="opacity:0.5;">
+          <input type="text" id="search-input-2" class="search-input search-input-main" placeholder="Optional second filter…" autocomplete="off" disabled style="opacity:0.5;" list="filter-values-2">
+          <datalist id="filter-values-2"></datalist>
           <button class="search-btn" onclick="doSearch(1)">Search</button>
         </div>
         <div class="search-cost">
@@ -1679,26 +1691,38 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <!-- Buy Credits Modal -->
 <div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal" style="max-width:460px;">
     <h3>Top up credits</h3>
-    <p class="modal-sub">Credits never expire. Each credit is worth &#8377;1 or USD 0.0125. Secure checkout.</p>
+    <p class="modal-sub">Our automated payment gateway is being set up. In the meantime, please reach out and we will top up your credits manually within one business day.</p>
 
-    <div class="currency-toggle" id="currency-toggle">
-      <button id="cur-inr" class="active" onclick="setCurrency('INR')">₹ INR</button>
-      <button id="cur-usd" onclick="setCurrency('USD')">$ USD</button>
+    <div style="background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:18px 20px;margin:14px 0 4px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);font-weight:700;margin-bottom:10px;">Contact us</div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;flex-shrink:0;">@</span>
+        <div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Email</div>
+          <a href="mailto:admin@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">admin@gccpros.com</a>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#25D366;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;">W</span>
+        <div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">WhatsApp</div>
+          <a href="https://wa.me/918506976700?text=Hi%2C%20I%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits." target="_blank" rel="noopener" style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">+91 85069 76700</a>
+        </div>
+      </div>
     </div>
 
-    <div class="pack-grid" id="pack-grid"><!-- packs injected --></div>
+    <p style="font-size:11px;color:var(--muted);margin:14px 2px 14px;line-height:1.5;">
+      Pricing: &#8377;1 per credit (INR) or $0.0125 per credit (USD). Volume discounts available at 1,000+ credits. Credits never expire.
+    </p>
 
-    <div id="buy-selected" style="display:none;background:var(--ivory);border:1px solid var(--gold-soft);border-radius:2px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--ink);font-weight:600;"></div>
-    <div class="modal-err" id="buy-err"></div>
     <div class="modal-btns">
       <button class="btn-secondary" onclick="closeBuyCredits()">Close</button>
-      <button class="btn-primary" id="pay-btn" disabled onclick="initiatePayment()">Pay &amp; credit</button>
+      <a class="btn-primary" href="mailto:admin@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="text-decoration:none;text-align:center;">Email admin@gccpros.com</a>
     </div>
-    <p style="font-size:10px;color:var(--muted);margin:12px 0 0;text-align:center;line-height:1.5;">
-      Secure payment via Razorpay · UPI / Card / Net-banking accepted · Invoice emailed on success
-    </p>
   </div>
 </div>
 
@@ -1865,13 +1889,18 @@ let _revealedThisMonth = new Set();     // company names already paid for this m
 let _pendingRevealName = null;          // name in the confirm-reveal modal
 
 const FIELD_META = {
-  city    : { label: 'GCC City',      ph: 'e.g. Pune, Mumbai, Bengaluru' },
-  company : { label: 'Company Name',  ph: 'e.g. NielsenIQ India GCC' },
-  group   : { label: 'Group Company', ph: 'e.g. NielsenIQ, Bajaj Finserv' },
-  country : { label: 'HQ Country',    ph: 'e.g. USA, UK, Germany, India' },
-  industry: { label: 'Industry',      ph: 'e.g. Banking, Automotive, Retail' },
-  domain  : { label: 'GCC Domains',   ph: 'e.g. Analytics, Technology, Finance' },
-  headcount: { label: 'Headcount',    ph: 'e.g. 500, 1000' }
+  city     : { label: 'GCC City',         ph: 'e.g. Pune, Mumbai, Bengaluru' },
+  company  : { label: 'Company Name',     ph: 'e.g. NielsenIQ India GCC' },
+  group    : { label: 'Group Company',    ph: 'e.g. NielsenIQ, Bajaj Finserv' },
+  country  : { label: 'HQ Country',       ph: 'e.g. USA, UK, Germany, India' },
+  industry : { label: 'Industry',         ph: 'e.g. Banking, Automotive, Retail' },
+  domain   : { label: 'GCC Domains',      ph: 'e.g. Analytics, Technology, Finance' },
+  headcount: { label: 'Headcount band',   ph: 'e.g. 50-500, 500-5,000' },
+  year     : { label: 'Year established', ph: 'e.g. 2018' },
+  maturity : { label: 'Maturity tier',    ph: 'e.g. Gen 2, Established' },
+  setup    : { label: 'Setup model',      ph: 'e.g. Captive, Wholly-owned subsidiary' },
+  glassdoor: { label: 'Glassdoor rating', ph: 'e.g. 4.2' },
+  gptw     : { label: 'GPTW certified',   ph: 'e.g. Yes' }
   // Leader search is Enterprise-only - not exposed on the B2C portal.
 };
 
@@ -2731,6 +2760,7 @@ function onFieldChange() {
   const meta = FIELD_META[field] || FIELD_META.city;
   const input = document.getElementById('search-input');
   if (input) { input.placeholder = meta.ph; input.value = ''; }
+  loadFieldValues(field, 'filter-values-1');
 }
 function onFieldChange2() {
   const field = document.getElementById('field-select-2').value;
@@ -2740,6 +2770,38 @@ function onFieldChange2() {
   input.disabled = false; input.style.opacity = '1';
   input.placeholder = (FIELD_META[field] || FIELD_META.city).ph;
   input.value = '';
+  loadFieldValues(field, 'filter-values-2');
+}
+
+// Per-field value cache so we don't re-fetch every time the user toggles
+// between fields. Cleared on full page reload.
+const _fieldValueCache = {};
+async function loadFieldValues(field, datalistId) {
+  const dl = document.getElementById(datalistId);
+  if (!dl) return;
+  const token = getToken();
+  if (!token) return;  // anonymous users don't need autocomplete
+  // Use cached values if we have them
+  if (_fieldValueCache[field]) {
+    _renderDatalist(dl, _fieldValueCache[field]);
+    return;
+  }
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getFieldValues&field=' + encodeURIComponent(field) + '&token=' + encodeURIComponent(token));
+    const data = await res.json();
+    if (data && Array.isArray(data.values)) {
+      _fieldValueCache[field] = data.values;
+      _renderDatalist(dl, data.values);
+    }
+  } catch (_) { /* silent - autocomplete is a nice-to-have */ }
+}
+function _renderDatalist(dl, values) {
+  // Build options as a single string for performance (datalists with
+  // thousands of children are slow to attach individually).
+  const html = values.map(function(v){
+    return '<option value="' + String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') + '">';
+  }).join('');
+  dl.innerHTML = html;
 }
 
 async function doSearch(page) {
