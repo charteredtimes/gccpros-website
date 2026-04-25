@@ -2224,9 +2224,11 @@ async function submitPasswordSignIn(ev) {
   if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
   try {
     await firebase.auth().signInWithEmailAndPassword(email, pwd);
+    _recordLogin(email, true);
     // onAuthStateChanged fires next - takes it from there
   } catch (e) {
     if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+    _recordLogin(email, false);
     var msg;
     if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential')
       msg = 'No account with that email + password. New here? Click "Create an account".';
@@ -2451,6 +2453,17 @@ async function submitPasswordReset(ev) {
   }
 }
 
+
+// Fire-and-forget: record a login attempt to the V2_Accounts sheet.
+// Used to power the "last login" / "failed login" tracking. We don't
+// await this - if it fails, the user shouldn't notice or wait.
+function _recordLogin(email, success) {
+  if (!email) return;
+  try {
+    fetch(SCRIPT_URL + '?action=recordLogin&email=' + encodeURIComponent(email) + '&success=' + (success ? '1' : '0'), { mode: 'no-cors' });
+  } catch(_) { /* silent */ }
+}
+
 async function signInWithGoogle() {
   _showSignInErr('');
   var provider = new firebase.auth.GoogleAuthProvider();
@@ -2460,6 +2473,7 @@ async function signInWithGoogle() {
   // Fall back to redirect only if the popup is blocked (e.g. on mobile).
   try {
     var r = await firebase.auth().signInWithPopup(provider);
+    if (r && r.user) _recordLogin(r.user.email, true);
     // onAuthStateChanged fires with the user; nothing more to do.
     return r;
   } catch (e) {
@@ -2776,9 +2790,17 @@ function onFieldChange2() {
 // Per-field value cache so we don't re-fetch every time the user toggles
 // between fields. Cleared on full page reload.
 const _fieldValueCache = {};
+// Fields with too many unique values to be useful as a dropdown
+// (browser stutter + user can't scan thousands of company names).
+const _NO_AUTOCOMPLETE_FIELDS = ['company', 'group'];
 async function loadFieldValues(field, datalistId) {
   const dl = document.getElementById(datalistId);
   if (!dl) return;
+  // Skip noisy fields - clear any leftover suggestions and bail
+  if (_NO_AUTOCOMPLETE_FIELDS.indexOf(field) >= 0) {
+    dl.innerHTML = '';
+    return;
+  }
   const token = getToken();
   if (!token) return;  // anonymous users don't need autocomplete
   // Use cached values if we have them
