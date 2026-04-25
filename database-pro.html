@@ -1959,8 +1959,34 @@ function showSignInState(mode) {
   if (mode) _signInMode = mode;
   var wrap = document.getElementById('results-wrap');
   if (!wrap) return;
-  var isSignUp = (_signInMode === 'signup');
-  var isReset  = (_signInMode === 'reset');
+  var isReset = (_signInMode === 'reset');
+
+  // ── RESET MODE: single centered card ──
+  if (isReset) {
+    wrap.innerHTML =
+      '<div class="state-box" style="border-top:3px solid var(--gold);padding:34px 28px;text-align:left;max-width:480px;margin:0 auto;">' +
+        '<div style="text-align:center;margin-bottom:18px;">' +
+          '<div class="sb-icon" style="margin:0 auto 12px;">->&nbsp;</div>' +
+          '<h3 style="font-size:19px;">Reset your password</h3>' +
+          '<p style="max-width:440px;margin:6px auto 0;">Enter your email and we will send you a reset link.</p>' +
+        '</div>' +
+        '<div style="max-width:360px;margin:0 auto;">' +
+          '<form onsubmit="submitPasswordReset(event)" style="display:flex;flex-direction:column;gap:10px;">' +
+            '<label class="field-label" for="signin-email">Work email</label>' +
+            '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email" autofocus>' +
+            '<button type="submit" class="search-btn" style="justify-content:center;">Send reset link</button>' +
+            '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Back to sign in</a></div>' +
+          '</form>' +
+          '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
+          '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  // ── DEFAULT MODE: two-column layout ──
+  // Left card  -> Sign UP (10-field form, "earn 200 credits today")
+  // Right card -> Sign IN (email + password, plus Google sign-in)
 
   var googleBtn =
     '<button type="button" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid var(--line-2);border-radius:2px;padding:12px 20px;font-size:13px;font-weight:500;font-family:Inter,sans-serif;cursor:pointer;width:100%;transition:all 0.15s;">' +
@@ -1971,109 +1997,101 @@ function showSignInState(mode) {
   var divider =
     '<div style="display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;">' +
       '<span style="flex:1;height:1px;background:var(--line);"></span>' +
-      '<span>' + (isReset ? 'reset password' : (isSignUp ? 'or create account' : 'or sign in with email')) + '</span>' +
+      '<span>or use email</span>' +
       '<span style="flex:1;height:1px;background:var(--line);"></span>' +
     '</div>';
 
-  var fields;
-  if (isReset) {
-    fields =
-      '<form onsubmit="submitPasswordReset(event)" style="display:flex;flex-direction:column;gap:10px;">' +
-        '<label class="field-label" for="signin-email">Work email</label>' +
-        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email" autofocus>' +
-        '<button type="submit" class="search-btn" style="justify-content:center;">Send reset link</button>' +
-        '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Back to sign in</a></div>' +
-      '</form>';
-  } else if (isSignUp) {
-    // RICH SIGN-UP FORM - all 10 fields from the old portal registration
-    fields =
-      '<form onsubmit="submitPasswordSignUp(event)" style="display:flex;flex-direction:column;gap:8px;">' +
-        '<label class="field-label" for="f-name">Full name *</label>' +
-        '<input type="text" id="f-name" class="search-input" required maxlength="200" placeholder="e.g. Shammi Prabhakar Singh" autocomplete="name">' +
-        '<label class="field-label" for="signin-email" style="margin-top:6px;">Work email *</label>' +
-        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
-        '<label class="field-label" for="f-wa" style="margin-top:6px;">WhatsApp number *</label>' +
-        '<input type="tel" id="f-wa" class="search-input" required placeholder="+91 98765 43210" autocomplete="tel">' +
-        '<label class="field-label" for="f-li" style="margin-top:6px;">LinkedIn profile *</label>' +
-        '<input type="url" id="f-li" class="search-input" required placeholder="https://linkedin.com/in/yourprofile">' +
-        '<label class="field-label" for="f-gccs" style="margin-top:6px;">Name of GCCs you have worked with *</label>' +
-        '<textarea id="f-gccs" class="search-input" required maxlength="1000" placeholder="e.g. NielsenIQ, Bajaj Finserv, KPIT Technologies..." style="min-height:60px;font-family:Inter,sans-serif;"></textarea>' +
-        '<label class="field-label" for="f-city" style="margin-top:6px;">Current city *</label>' +
-        '<input type="text" id="f-city" class="search-input" required placeholder="e.g. Pune" autocomplete="address-level2">' +
-        '<label class="field-label" for="f-exp" style="margin-top:6px;">Years of experience in GCCs *</label>' +
-        '<select id="f-exp" class="field-select" required>' +
-          '<option value="">Select range</option>' +
-          '<option>Less than 2 years</option>' +
-          '<option>2-5 years</option>' +
-          '<option>5-10 years</option>' +
-          '<option>10-15 years</option>' +
-          '<option>15+ years</option>' +
-        '</select>' +
-        '<label class="field-label" for="f-domain" style="margin-top:6px;">Domain expertise *</label>' +
-        '<select id="f-domain" class="field-select" required>' +
-          '<option value="">Select your domain</option>' +
-          '<option>Analytics & Data Science</option>' +
-          '<option>Technology & Engineering</option>' +
-          '<option>Finance & Accounting</option>' +
-          '<option>Operations & Supply Chain</option>' +
-          '<option>HR & Talent</option>' +
-          '<option>Legal & Compliance</option>' +
-          '<option>Marketing & Strategy</option>' +
-          '<option>Product Management</option>' +
-          '<option>Other</option>' +
-        '</select>' +
-        '<label class="field-label" for="f-exp2" style="margin-top:6px;">Share your GCC experience &amp; network strength *</label>' +
-        '<textarea id="f-exp2" class="search-input" required maxlength="2000" placeholder="Describe your roles, contributions, network reach across the GCC ecosystem..." style="min-height:80px;font-family:Inter,sans-serif;"></textarea>' +
-        '<div style="margin-top:6px;font-size:12px;color:var(--graphite);font-weight:600;">Consent for receiving GCC insights &amp; updates on WhatsApp? *</div>' +
-        '<div style="display:flex;gap:14px;font-size:13px;color:var(--ink);margin-top:2px;">' +
-          '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="Yes"> Yes, I consent</label>' +
-          '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
-        '</div>' +
-        '<label class="field-label" for="signin-pwd" style="margin-top:10px;">Password *</label>' +
-        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="Min 8 characters - letters and numbers" autocomplete="new-password">' +
-        '<label class="field-label" for="signin-pwd2" style="margin-top:6px;">Confirm password *</label>' +
-        '<input type="password" id="signin-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' +
-        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;">Apply for access</button>' +
-        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'signin\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Already have an account? Sign in</a></div>' +
-      '</form>';
-  } else {
-    // SIMPLE SIGN-IN FORM - email + password
-    var forgotLink = '<div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-2px;"><a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Forgot password?</a></div>';
-    fields =
-      '<form onsubmit="submitPasswordSignIn(event)" style="display:flex;flex-direction:column;gap:8px;">' +
-        '<label class="field-label" for="signin-email">Work email</label>' +
-        '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
-        '<label class="field-label" for="signin-pwd" style="margin-top:6px;">Password</label>' +
-        '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="Enter your password" autocomplete="current-password">' +
-        forgotLink +
-        '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;">Sign in</button>' +
-        '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;"><a href="#" onclick="switchMode(\'signup\');return false;" style="color:var(--gold-deep);text-decoration:underline;">New here? Create an account</a></div>' +
-      '</form>';
-  }
+  // Sign-IN form (right card)
+  var signinForm =
+    '<form onsubmit="submitPasswordSignIn(event)" style="display:flex;flex-direction:column;gap:8px;">' +
+      '<label class="field-label" for="signin-email">Work email</label>' +
+      '<input type="email" id="signin-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
+      '<label class="field-label" for="signin-pwd" style="margin-top:6px;">Password</label>' +
+      '<input type="password" id="signin-pwd" class="search-input" required minlength="8" placeholder="Enter your password" autocomplete="current-password">' +
+      '<div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-2px;"><a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);text-decoration:underline;">Forgot password?</a></div>' +
+      '<button type="submit" class="search-btn" style="justify-content:center;margin-top:6px;">Sign in</button>' +
+    '</form>';
 
-  var headline = isReset ? 'Reset your password' : (isSignUp ? 'Create your account' : 'Sign in to Database Pro');
-  var subline = isReset
-    ? 'Enter your email and we will send you a reset link.'
-    : (isSignUp
-        ? 'Email + password. New members land in an approval queue - cleared within one business day.'
-        : 'Sign in with email and password, or use Google.');
+  // Sign-UP form (left card) - the rich 10-field application
+  var signupForm =
+    '<form onsubmit="submitPasswordSignUp(event)" style="display:flex;flex-direction:column;gap:8px;">' +
+      '<label class="field-label" for="f-name">Full name *</label>' +
+      '<input type="text" id="f-name" class="search-input" required maxlength="200" placeholder="e.g. Shammi Prabhakar Singh" autocomplete="name">' +
+      '<label class="field-label" for="su-email" style="margin-top:6px;">Work email *</label>' +
+      '<input type="email" id="su-email" class="search-input" required placeholder="you@company.com" autocomplete="email">' +
+      '<label class="field-label" for="f-wa" style="margin-top:6px;">WhatsApp number *</label>' +
+      '<input type="tel" id="f-wa" class="search-input" required placeholder="+91 98765 43210" autocomplete="tel">' +
+      '<label class="field-label" for="f-li" style="margin-top:6px;">LinkedIn profile *</label>' +
+      '<input type="url" id="f-li" class="search-input" required placeholder="https://linkedin.com/in/yourprofile">' +
+      '<label class="field-label" for="f-gccs" style="margin-top:6px;">Name of GCCs you have worked with *</label>' +
+      '<textarea id="f-gccs" class="search-input" required maxlength="1000" placeholder="e.g. NielsenIQ, Bajaj Finserv, KPIT Technologies..." style="min-height:60px;font-family:Inter,sans-serif;"></textarea>' +
+      '<label class="field-label" for="f-city" style="margin-top:6px;">Current city *</label>' +
+      '<input type="text" id="f-city" class="search-input" required placeholder="e.g. Pune" autocomplete="address-level2">' +
+      '<label class="field-label" for="f-exp" style="margin-top:6px;">Years of experience in GCCs *</label>' +
+      '<select id="f-exp" class="field-select" required>' +
+        '<option value="">Select range</option>' +
+        '<option>Less than 2 years</option>' +
+        '<option>2-5 years</option>' +
+        '<option>5-10 years</option>' +
+        '<option>10-15 years</option>' +
+        '<option>15+ years</option>' +
+      '</select>' +
+      '<label class="field-label" for="f-domain" style="margin-top:6px;">Domain expertise *</label>' +
+      '<select id="f-domain" class="field-select" required>' +
+        '<option value="">Select your domain</option>' +
+        '<option>Analytics &amp; Data Science</option>' +
+        '<option>Technology &amp; Engineering</option>' +
+        '<option>Finance &amp; Accounting</option>' +
+        '<option>Operations &amp; Supply Chain</option>' +
+        '<option>HR &amp; Talent</option>' +
+        '<option>Legal &amp; Compliance</option>' +
+        '<option>Marketing &amp; Strategy</option>' +
+        '<option>Product Management</option>' +
+        '<option>Other</option>' +
+      '</select>' +
+      '<label class="field-label" for="f-exp2" style="margin-top:6px;">Share your GCC experience &amp; network strength *</label>' +
+      '<textarea id="f-exp2" class="search-input" required maxlength="2000" placeholder="Describe your roles, contributions, network reach across the GCC ecosystem..." style="min-height:80px;font-family:Inter,sans-serif;"></textarea>' +
+      '<div style="margin-top:6px;font-size:12px;color:var(--graphite);font-weight:600;">Consent for receiving GCC insights &amp; updates on WhatsApp? *</div>' +
+      '<div style="display:flex;gap:14px;font-size:13px;color:var(--ink);margin-top:2px;">' +
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="Yes"> Yes, I consent</label>' +
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
+      '</div>' +
+      '<label class="field-label" for="su-pwd" style="margin-top:10px;">Password *</label>' +
+      '<input type="password" id="su-pwd" class="search-input" required minlength="8" placeholder="Min 8 characters - letters and numbers" autocomplete="new-password">' +
+      '<label class="field-label" for="su-pwd2" style="margin-top:6px;">Confirm password *</label>' +
+      '<input type="password" id="su-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' +
+      '<button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Apply for access -> 200 credits</button>' +
+    '</form>';
 
+  // Two-column container - stacks on mobile via flex-wrap
   wrap.innerHTML =
-    '<div class="state-box" style="border-top:3px solid var(--gold);padding:34px 28px;text-align:left;max-width:none;">' +
-      '<div style="text-align:center;margin-bottom:18px;">' +
-        '<div class="sb-icon" style="margin:0 auto 12px;">→</div>' +
-        '<h3 style="font-size:19px;">' + headline + '</h3>' +
-        '<p style="max-width:440px;margin:6px auto 0;">' + subline + '</p>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;">' +
+      // LEFT: Sign UP
+      '<div class="state-box auth-half" style="flex:1 1 360px;border-top:3px solid var(--gold);padding:32px 26px;text-align:left;max-width:none;">' +
+        '<div style="text-align:center;margin-bottom:18px;">' +
+          '<div style="display:inline-block;background:var(--gold);color:var(--ink);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:2px;margin-bottom:10px;">New here</div>' +
+          '<h3 style="font-size:19px;">Sign up &amp; earn 200 credits today</h3>' +
+          '<p style="font-size:12px;max-width:340px;margin:6px auto 0;">Apply for individual access. New members are manually approved within one business day. <strong>200 credits</strong> are granted automatically on approval.</p>' +
+        '</div>' +
+        signupForm +
       '</div>' +
-      '<div style="max-width:360px;margin:0 auto;">' +
-        (isReset ? '' : googleBtn) +
-        divider +
-        fields +
-        '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
-        '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
+      // RIGHT: Sign IN
+      '<div class="state-box auth-half" style="flex:1 1 320px;border-top:3px solid var(--ink);padding:32px 26px;text-align:left;max-width:none;">' +
+        '<div style="text-align:center;margin-bottom:18px;">' +
+          '<div style="display:inline-block;background:var(--ink);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:2px;margin-bottom:10px;">Returning member</div>' +
+          '<h3 style="font-size:19px;">Welcome back</h3>' +
+          '<p style="font-size:12px;max-width:340px;margin:6px auto 0;">Sign in with email and password, or with Google.</p>' +
+        '</div>' +
+        '<div style="max-width:360px;margin:0 auto;">' +
+          googleBtn +
+          divider +
+          signinForm +
+        '</div>' +
       '</div>' +
-      '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:18px;">By continuing you agree to the <a href="https://www.gccpros.com/terms" target="_blank" style="color:var(--gold-deep);text-decoration:underline;">terms of use</a>. Individual licence - personal research only.</p>' +
-    '</div>';
+    '</div>' +
+    '<div id="signin-err" class="modal-err" style="margin-top:10px;max-width:720px;margin-left:auto;margin-right:auto;"></div>' +
+    '<div id="signin-ok" class="modal-ok" style="margin-top:10px;max-width:720px;margin-left:auto;margin-right:auto;"></div>' +
+    '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;">By continuing you agree to the <a href="https://www.gccpros.com/terms" target="_blank" style="color:var(--gold-deep);text-decoration:underline;">terms of use</a>. Individual licence - personal research only.</p>';
 }
 
 function switchMode(mode) {
@@ -2121,9 +2139,9 @@ async function submitPasswordSignIn(ev) {
 async function submitPasswordSignUp(ev) {
   ev.preventDefault();
   function val(id){ var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
-  var email = val('signin-email').toLowerCase();
-  var pwd   = document.getElementById('signin-pwd').value;
-  var pwd2  = document.getElementById('signin-pwd2').value;
+  var email = val('su-email').toLowerCase();
+  var pwd   = document.getElementById('su-pwd').value;
+  var pwd2  = document.getElementById('su-pwd2').value;
   var fullName    = val('f-name');
   var whatsapp    = val('f-wa');
   var linkedin    = val('f-li');
@@ -3065,15 +3083,41 @@ async function changePassword() {
   }
 }
 
-// ENTERPRISE WAITLIST
+// ENTERPRISE WAITLIST - corporate emails only
+const _PERSONAL_EMAIL_DOMAINS = [
+  'gmail.com','googlemail.com','yahoo.com','yahoo.co.in','yahoo.co.uk','ymail.com',
+  'hotmail.com','hotmail.co.uk','outlook.com','outlook.in','live.com','msn.com',
+  'icloud.com','me.com','aol.com','aim.com','proton.me','protonmail.com',
+  'rediffmail.com','rediff.com','zoho.com','gmx.com','gmx.net','mail.com',
+  'fastmail.com','tutanota.com','yandex.com','yandex.ru','mailinator.com',
+  '10minutemail.com','tempmail.com','guerrillamail.com','yopmail.com'
+];
+function _isPersonalEmail(addr) {
+  var domain = (addr.split('@')[1] || '').toLowerCase().trim();
+  return _PERSONAL_EMAIL_DOMAINS.indexOf(domain) !== -1;
+}
+
 async function joinWaitlist(ev) {
   ev.preventDefault();
-  const email = document.getElementById('wl-email').value.trim();
+  const email = document.getElementById('wl-email').value.trim().toLowerCase();
   const company = document.getElementById('wl-company').value.trim();
   const msg = document.getElementById('wl-msg');
   if (!email || !company) return;
   msg.style.display = 'block';
+
+  if (email.indexOf('@') < 1) {
+    msg.textContent = 'Please enter a valid work email.';
+    msg.style.color = '#FF6B6B';
+    return;
+  }
+  if (_isPersonalEmail(email)) {
+    msg.textContent = 'Enterprise access requires a corporate email. Please use your work email instead of ' + email.split('@')[1] + '.';
+    msg.style.color = '#FF6B6B';
+    return;
+  }
+
   msg.textContent = 'Submitting...';
+  msg.style.color = 'inherit';
   try {
     const url = SCRIPT_URL + '?action=enterpriseWaitlist&email=' + encodeURIComponent(email) + '&company=' + encodeURIComponent(company);
     await fetch(url, { mode: 'no-cors' });
