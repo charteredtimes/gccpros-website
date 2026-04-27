@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs - Admin · User Health</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0A1628; --ink-soft: #152338;
+  --gold: #B8893A; --gold-soft: #EAD4A8; --gold-deep: #8B6420;
+  --cream: #FAF7F2; --ivory: #F5F1E8; --paper: #FFFFFF;
+  --graphite: #4A5568; --muted: #6B7A99; --muted-2: #98A2B8;
+  --line: rgba(10,22,40,0.08); --line-2: rgba(10,22,40,0.18);
+  --success: #2D7A4E; --warn: #C17B2B; --danger: #B23B3B;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--cream); color: var(--ink); font-size: 14px; }
+.topbar {
+  background: var(--ink); color: #fff;
+  padding: 14px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 3px solid var(--gold);
+}
+.brand { font-family: var(--serif); font-weight: 600; font-size: 20px; letter-spacing: 0.5px; }
+.brand em { color: var(--gold-soft); font-style: normal; }
+.admin-tag {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold-soft); padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.2);
+  margin-left: 10px;
+}
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: transparent; color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 2px;
+  padding: 7px 14px; font-size: 12px; cursor: pointer;
+  font-family: var(--sans); font-weight: 500; transition: all 0.15s;
+}
+.btn:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+.btn-primary {
+  background: var(--gold); color: var(--ink); border: none;
+  padding: 8px 18px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; font-size: 11px;
+}
+.btn-primary:hover { background: var(--gold-soft); }
+
+.main { max-width: 1440px; margin: 0 auto; padding: 24px 28px 48px; }
+
+/* gate */
+.gate {
+  max-width: 400px; margin: 80px auto; background: var(--paper);
+  border-top: 3px solid var(--gold); border: 1px solid var(--line);
+  padding: 32px; box-shadow: 0 8px 40px rgba(10,22,40,0.08);
+}
+.gate h2 { font-family: var(--serif); font-size: 24px; margin-bottom: 6px; }
+.gate p { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+.gate input {
+  width: 100%; border: 1px solid var(--line-2); border-radius: 2px;
+  padding: 12px 14px; font-family: var(--sans); font-size: 14px;
+  outline: none; margin-bottom: 12px; background: var(--paper);
+}
+.gate input:focus { border-color: var(--ink); }
+.gate button {
+  width: 100%; background: var(--ink); color: #fff;
+  border: none; border-radius: 2px; padding: 12px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; cursor: pointer;
+}
+.gate-err {
+  background: #FEF0F0; border-left: 3px solid var(--danger); color: var(--danger);
+  padding: 10px 14px; font-size: 12px; margin-bottom: 12px; display: none; border-radius: 2px;
+}
+
+/* add-tester panel */
+.add-tester {
+  background: var(--paper); border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px; border-radius: 2px; margin-bottom: 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 20px; flex-wrap: wrap;
+}
+.at-label { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 4px; }
+.at-pill {
+  display: inline-block; align-self: flex-start;
+  font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gold-deep);
+  background: var(--ivory); border: 1px solid var(--gold-soft);
+  padding: 3px 10px; border-radius: 2px;
+}
+.at-hint { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.at-form { display: flex; gap: 8px; flex: 1; max-width: 460px; min-width: 260px; }
+.at-form input {
+  flex: 1;
+  border: 1px solid var(--line-2); border-radius: 2px;
+  padding: 10px 14px; font-family: var(--sans); font-size: 13px;
+  background: var(--paper); outline: none; color: var(--ink);
+}
+.at-form input:focus { border-color: var(--ink); }
+.at-btn {
+  background: var(--ink); color: #fff; border: none; border-radius: 2px;
+  padding: 10px 20px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
+  font-family: var(--sans); white-space: nowrap;
+}
+.at-btn:hover { background: var(--navy, #1A3A6B); }
+.at-btn:disabled { background: var(--muted-2); cursor: not-allowed; }
+
+/* stat row */
+.stats {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+  margin-bottom: 22px;
+}
+.stat-card {
+  background: var(--paper); border: 1px solid var(--line);
+  border-top: 2px solid var(--gold);
+  padding: 16px 18px; border-radius: 2px;
+}
+.stat-num {
+  font-family: var(--serif); font-size: 28px; font-weight: 600;
+  color: var(--ink); line-height: 1;
+}
+.stat-lbl {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--graphite); margin-top: 6px; font-weight: 600;
+}
+.stat-card.critical { border-top-color: var(--danger); }
+.stat-card.critical .stat-num { color: var(--danger); }
+.stat-card.pending  { border-top-color: var(--warn); }
+
+/* filters */
+.toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 12px 16px; border-radius: 2px; margin-bottom: 16px;
+  align-items: center;
+}
+.toolbar input, .toolbar select {
+  border: 1px solid var(--line-2); border-radius: 2px;
+  padding: 8px 12px; font-family: var(--sans); font-size: 13px;
+  background: var(--paper); outline: none;
+}
+.toolbar input:focus, .toolbar select:focus { border-color: var(--ink); }
+.toolbar .spacer { flex: 1; }
+.toolbar .count { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+/* table */
+.table-wrap {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 2px;
+  overflow: auto; max-height: 70vh;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead {
+  background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 1;
+}
+thead th {
+  padding: 10px 12px; text-align: left; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+  cursor: pointer; user-select: none;
+}
+thead th:hover { background: var(--ink-soft); }
+thead th .sort-arrow { opacity: 0.4; margin-left: 4px; }
+thead th.sorted .sort-arrow { opacity: 1; color: var(--gold-soft); }
+tbody tr { border-bottom: 1px solid var(--line); }
+tbody tr:hover { background: var(--ivory); }
+tbody td { padding: 10px 12px; vertical-align: middle; }
+.col-email { font-family: var(--mono); font-size: 12px; }
+.col-mono  { font-family: var(--mono); font-size: 12px; text-align: right; }
+.col-flags { font-size: 11px; color: var(--graphite); max-width: 240px; }
+
+.badge {
+  display: inline-block; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase; font-weight: 700;
+  padding: 3px 8px; border-radius: 2px;
+}
+.b-Pending   { background: #E3F2FD; color: #1565C0; }
+.b-Approved  { background: #E8F5E9; color: #2E7D32; }
+.b-Suspended { background: #263238; color: #fff; }
+.b-Rejected  { background: #FFEBEE; color: #C62828; }
+.b-Healthy   { background: #E8F5E9; color: #2E7D32; }
+.b-Watch     { background: #FFF8E1; color: #795548; }
+.b-At\\ Risk { background: #FFEBEE; color: #C62828; }
+.h-Healthy  { color: var(--success); font-weight: 700; }
+.h-Watch    { color: var(--warn); font-weight: 700; }
+.h-AtRisk   { color: var(--danger); font-weight: 700; }
+.h-Pending  { color: #1565C0; font-weight: 700; }
+.h-Suspended{ color: #263238; font-weight: 700; }
+.h-Rejected { color: var(--danger); font-weight: 700; }
+
+.score-bar {
+  width: 52px; height: 6px; background: #eee;
+  display: inline-block; border-radius: 2px; overflow: hidden;
+  vertical-align: middle;
+}
+.score-fill { height: 100%; background: var(--success); }
+
+.action-btn {
+  background: var(--ivory); border: 1px solid var(--line-2);
+  color: var(--ink); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 2px; cursor: pointer;
+  margin-right: 4px;
+}
+.action-btn:hover { background: var(--gold-soft); border-color: var(--gold); }
+.action-btn.approve { background: var(--ink); color: #fff; border-color: var(--ink); }
+.action-btn.approve:hover { background: var(--success); border-color: var(--success); }
+.action-btn.reject { background: #fff; color: var(--danger); border-color: var(--danger); }
+.action-btn.reject:hover { background: var(--danger); color: #fff; }
+.action-btn.suspend { color: #263238; }
+
+.empty {
+  text-align: center; padding: 64px 24px; color: var(--muted);
+  font-family: var(--serif); font-size: 16px;
+}
+
+.loader {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 12px 22px;
+  border-radius: 2px; font-size: 13px; font-weight: 500;
+  z-index: 9999; box-shadow: 0 4px 24px rgba(10,22,40,0.3);
+  border-left: 3px solid var(--gold);
+}
+</style>
+</head>
+<body>
+
+<!-- Gate -->
+<div id="gate-view">
+  <nav class="topbar">
+    <div>
+      <span class="brand">GCC<em>PROs</em></span>
+      <span class="admin-tag">Admin · User Health</span>
+    </div>
+  </nav>
+  <div class="gate">
+    <h2>Admin access</h2>
+    <p>Enter the admin key to load the user health dashboard. This page is gated - the key never leaves your browser except to sign each request.</p>
+    <div class="gate-err" id="gate-err"></div>
+    <input type="password" id="gate-key" placeholder="Admin key" autocomplete="off">
+    <button onclick="unlock()">Unlock dashboard</button>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dash-view" style="display:none;">
+  <nav class="topbar">
+    <div>
+      <span class="brand">GCC<em>PROs</em></span>
+      <span class="admin-tag">Admin · User Health</span>
+    </div>
+    <div class="topbar-actions">
+      <span style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;" id="last-refresh">-</span>
+      <button class="btn" onclick="refresh()" id="refresh-btn">Refresh</button>
+      <button class="btn-primary" onclick="lock()">Lock</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <!-- Add tester panel - one-click beta access -->
+    <div class="add-tester" id="add-tester-panel">
+      <div class="at-label">
+        <span class="at-pill">Add tester</span>
+        <span class="at-hint">Instantly approves the email + grants the 200-credit welcome bonus + emails them a link. No code editing needed.</span>
+      </div>
+      <form class="at-form" onsubmit="addTester(event)">
+        <input type="email" id="new-tester-email" placeholder="person@company.com" autocomplete="off" required>
+        <button type="submit" class="at-btn" id="add-tester-btn">Add &amp; Approve</button>
+      </form>
+    </div>
+
+    <div class="stats" id="stats-row"></div>
+
+    <div class="toolbar">
+      <input type="text" id="search-input" placeholder="Filter by email…" oninput="applyFilters()" style="width:260px;">
+      <select id="status-filter" onchange="applyFilters()">
+        <option value="">All statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Suspended">Suspended</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+      <select id="health-filter" onchange="applyFilters()">
+        <option value="">All health</option>
+        <option value="Pending">Pending</option>
+        <option value="At Risk">At Risk</option>
+        <option value="Watch">Watch</option>
+        <option value="Healthy">Healthy</option>
+        <option value="Suspended">Suspended</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+      <select id="domain-filter" onchange="applyFilters()">
+        <option value="">All domains</option>
+        <option value="corporate">Corporate</option>
+        <option value="free">Free email</option>
+        <option value="disposable">Disposable</option>
+      </select>
+      <div class="spacer"></div>
+      <span class="count" id="row-count">0 users</span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th onclick="sortBy('email')">Email <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('status')">Status <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('health')">Health <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('score')">Score <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('domainClass')">Domain <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('daysActive')">Days <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('monthlyReveals')" style="text-align:right;">Reveals/m <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('balance')" style="text-align:right;">Balance <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('lifetimeSpent')" style="text-align:right;">Spent <span class="sort-arrow">↕</span></th>
+            <th onclick="sortBy('lifetimePurchased')" style="text-align:right;">Paid <span class="sort-arrow">↕</span></th>
+            <th>Flags</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-body"></tbody>
+      </table>
+      <div class="empty" id="empty-state" style="display:none;">No users match your filters.</div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Paste the V2 Apps Script Web App URL below (the new standalone
+// script - NOT the live production one). Must match the value in
+// database-v2.html so both pages talk to the same backend.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
+
+let adminKey = sessionStorage.getItem('gcc_admin_key') || '';
+let allUsers = [];
+let filtered = [];
+let sortKey = 'health';
+let sortDir = 'asc';
+
+// Gate
+function unlock() {
+  const key = document.getElementById('gate-key').value.trim();
+  if (!key) return;
+  adminKey = key;
+  sessionStorage.setItem('gcc_admin_key', key);
+  refresh();
+}
+function lock() {
+  adminKey = '';
+  sessionStorage.removeItem('gcc_admin_key');
+  document.getElementById('dash-view').style.display = 'none';
+  document.getElementById('gate-view').style.display = 'block';
+  document.getElementById('gate-key').value = '';
+}
+
+async function refresh() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) { btn.innerHTML = '<span class="loader"></span>'; btn.disabled = true; }
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=adminHealth&adminKey=' + encodeURIComponent(adminKey));
+    const data = await res.json();
+    if (data.error === 'unauthorized') {
+      document.getElementById('gate-err').textContent = 'Invalid admin key.';
+      document.getElementById('gate-err').style.display = 'block';
+      sessionStorage.removeItem('gcc_admin_key');
+      return;
+    }
+    if (data.error) throw new Error(data.error);
+    document.getElementById('gate-view').style.display = 'none';
+    document.getElementById('dash-view').style.display = 'block';
+    allUsers = Array.isArray(data.users) ? data.users : [];
+    renderStats();
+    applyFilters();
+    document.getElementById('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  } catch(err) {
+    toast('Could not load health report: ' + (err.message || err));
+  } finally {
+    if (btn) { btn.innerHTML = 'Refresh'; btn.disabled = false; }
+  }
+}
+
+function renderStats() {
+  const by = { Pending:0, Healthy:0, Watch:0, 'At Risk':0, Suspended:0, Rejected:0 };
+  let totalBalance = 0, totalPurchased = 0;
+  allUsers.forEach(u => {
+    by[u.health] = (by[u.health]||0) + 1;
+    totalBalance += Number(u.balance) || 0;
+    totalPurchased += Number(u.lifetimePurchased) || 0;
+  });
+  document.getElementById('stats-row').innerHTML = [
+    '<div class="stat-card pending"><div class="stat-num">'+by.Pending+'</div><div class="stat-lbl">Pending approval</div></div>',
+    '<div class="stat-card critical"><div class="stat-num">'+by['At Risk']+'</div><div class="stat-lbl">At risk</div></div>',
+    '<div class="stat-card"><div class="stat-num">'+by.Watch+'</div><div class="stat-lbl">On watch</div></div>',
+    '<div class="stat-card"><div class="stat-num">'+by.Healthy+'</div><div class="stat-lbl">Healthy</div></div>',
+    '<div class="stat-card"><div class="stat-num">₹'+totalBalance.toLocaleString("en-IN")+'</div><div class="stat-lbl">Outstanding liability</div></div>'
+  ].join('');
+}
+
+function applyFilters() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const status = document.getElementById('status-filter').value;
+  const health = document.getElementById('health-filter').value;
+  const dom = document.getElementById('domain-filter').value;
+  filtered = allUsers.filter(u => {
+    if (q && !String(u.email||'').toLowerCase().includes(q)) return false;
+    if (status && u.status !== status) return false;
+    if (health && u.health !== health) return false;
+    if (dom && u.domainClass !== dom) return false;
+    return true;
+  });
+  sortRows();
+  renderTable();
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortDir = (sortDir === 'asc') ? 'desc' : 'asc';
+  else { sortKey = key; sortDir = 'asc'; }
+  // Refresh header arrows
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
+  sortRows();
+  renderTable();
+}
+function sortRows() {
+  const dir = (sortDir === 'asc') ? 1 : -1;
+  filtered.sort((a,b) => {
+    const av = a[sortKey]; const bv = b[sortKey];
+    if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+    return String(av||'').localeCompare(String(bv||'')) * dir;
+  });
+}
+
+function renderTable() {
+  const body = document.getElementById('users-body');
+  const empty = document.getElementById('empty-state');
+  document.getElementById('row-count').textContent = filtered.length + ' user' + (filtered.length === 1 ? '' : 's');
+  if (!filtered.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  body.innerHTML = filtered.map(u => {
+    const scoreColor = u.score >= 75 ? 'var(--success)' : u.score >= 50 ? 'var(--warn)' : 'var(--danger)';
+    const hClass = 'h-' + String(u.health||'').replace(/\s+/g,'');
+    const actions = [];
+    if (u.status === 'Pending')   actions.push('<button class="action-btn approve" onclick="approve(\''+escAttr(u.email)+'\')">Approve</button>');
+    if (u.status === 'Pending')   actions.push('<button class="action-btn reject" onclick="reject(\''+escAttr(u.email)+'\')">Reject</button>');
+    if (u.status === 'Approved')  actions.push('<button class="action-btn suspend" onclick="suspend(\''+escAttr(u.email)+'\')">Suspend</button>');
+    if (u.status === 'Suspended') actions.push('<button class="action-btn approve" onclick="approve(\''+escAttr(u.email)+'\')">Un-suspend</button>');
+    return '<tr>' +
+      '<td class="col-email">' + escHtml(u.email) + '</td>' +
+      '<td><span class="badge b-' + escHtml(u.status||'') + '">' + escHtml(u.status||'') + '</span></td>' +
+      '<td class="' + hClass + '">' + escHtml(u.health||'') + '</td>' +
+      '<td><span class="score-bar"><span class="score-fill" style="width:'+u.score+'%;background:'+scoreColor+';"></span></span> <b style="font-family:var(--mono);">'+u.score+'</b></td>' +
+      '<td style="font-size:11px;color:var(--graphite);">' + escHtml(u.domainClass||'') + '</td>' +
+      '<td class="col-mono">' + (u.daysActive||0) + 'd</td>' +
+      '<td class="col-mono"><b>' + (u.monthlyReveals||0) + '</b> / 50</td>' +
+      '<td class="col-mono">' + Number(u.balance||0).toLocaleString('en-IN') + '</td>' +
+      '<td class="col-mono">' + Number(u.lifetimeSpent||0).toLocaleString('en-IN') + '</td>' +
+      '<td class="col-mono">' + Number(u.lifetimePurchased||0).toLocaleString('en-IN') + '</td>' +
+      '<td class="col-flags">' + escHtml(u.flags||'-') + '</td>' +
+      '<td style="white-space:nowrap;">' + actions.join('') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function addTester(ev) {
+  ev.preventDefault();
+  const input = document.getElementById('new-tester-email');
+  const btn = document.getElementById('add-tester-btn');
+  const email = (input.value || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') < 1) { toast('Enter a valid email'); return; }
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Adding…';
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=adminApprove&adminKey=' + encodeURIComponent(adminKey) + '&email=' + encodeURIComponent(email));
+    const data = await res.json();
+    if (data.error) { toast('Error: ' + data.error); }
+    else { toast('✓ ' + email + ' approved · 200 credits credited · welcome email sent'); input.value = ''; refresh(); }
+  } catch(err) { toast('Network error, please retry'); }
+  finally { btn.disabled = false; btn.textContent = original; }
+}
+
+async function approve(email) {
+  if (!confirm('Approve ' + email + ' and grant the 200-credit welcome bonus?')) return;
+  await adminCall('adminApprove', { email: email });
+}
+async function reject(email) {
+  const reason = prompt('Reject ' + email + '. Optional reason (visible to user as context):', '');
+  if (reason === null) return;
+  await adminCall('adminReject', { email: email, reason: reason });
+}
+async function suspend(email) {
+  const reason = prompt('Suspend ' + email + '. Reason (visible to user):', '');
+  if (reason === null) return;
+  await adminCall('adminSuspend', { email: email, reason: reason });
+}
+async function adminCall(action, params) {
+  try {
+    const q = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
+    const res = await fetch(SCRIPT_URL + '?action=' + action + '&adminKey=' + encodeURIComponent(adminKey) + '&' + q);
+    const data = await res.json();
+    if (data.error) { toast('Error: ' + data.error); return; }
+    toast(data.message || 'Done');
+    refresh();
+  } catch(err) { toast('Network error'); }
+}
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) { return escHtml(s).replace(/'/g,"\\'"); }
+
+// Auto-attempt unlock from cached key
+if (adminKey) {
+  document.getElementById('gate-key').value = adminKey;
+  refresh();
+}
+// Enter key submits
+document.getElementById('gate-key').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+</script>
+</body>
+</html>

@@ -1410,7 +1410,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <div>
       <div class="hero-breadcrumb">GCCPROs · Database Pro · Global GCC Intelligence</div>
       <h1 class="hero-title">The <em>Global Capability Center</em> Database</h1>
-      <p class="hero-sub">Research-grade access to 3,200+ verified GCCs globally — including 2,400+ across India — spanning countries, cities, industries, domains and setup models. Used by researchers, talent leaders and strategy teams across the ecosystem.</p>
+      <p class="hero-sub">Research-grade access to 3,200+ verified GCCs globally, including 2,400+ across India. Every profile covers parent company, GCC city and state, HQ country, industry, domains, headcount, setup model, leadership contacts, establishment year, maturity generation, Glassdoor ratings, certifications and financials. Used by researchers, talent leaders and strategy teams worldwide.</p>
     </div>
     <div class="hero-stats" aria-hidden="true">
       <div class="stat-block">
@@ -1863,7 +1863,7 @@ firebase.initializeApp({
   appId:"1:764592723192:web:002a03f217b57d47f0570d"
 });
 
-// ── App Check (reCAPTCHA v3) — proves requests come from our site ──
+// ── App Check (reCAPTCHA v3), proves requests come from our site ──
 // Token auto-refresh enabled so long sessions don't break.
 // Site key is public by design (locked to gccpros.com domain server-side).
 try {
@@ -2036,7 +2036,7 @@ function showSignInState(mode) {
             '<div class="sb-icon" style="flex-shrink:0;background:var(--ink);color:#fff;border-color:var(--ink);">&rarr;</div>' +
             '<div style="flex:1;">' +
               '<div style="display:inline-block;background:var(--ink);color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:6px;">Returning member</div>' +
-              '<h3 style="font-size:18px;margin:0 0 4px;">Welcome back &mdash; sign in</h3>' +
+              '<h3 style="font-size:18px;margin:0 0 4px;">Welcome back , sign in</h3>' +
               '<p style="font-size:12px;color:var(--muted);margin:0;line-height:1.5;">Sign in with email and password, or with Google to continue your research.</p>' +
             '</div>' +
             '<div style="flex-shrink:0;color:var(--gold-deep);font-size:20px;font-weight:600;">&rsaquo;</div>' +
@@ -2630,7 +2630,7 @@ async function fetchCreditBalance(retryCount) {
     if (_accountStatus === 'Rejected')  { renderCredits(); showRejectedState(); return; }
     if (_accountStatus === 'Pending')   { renderCredits(); showPendingState(); return; }
     renderCredits();
-    // Approved — replace any sign-in/sign-up/pending card in results-wrap
+    // Approved, replace any sign-in/sign-up/pending card in results-wrap
     // with the default "Begin your research" state, so the auth box never
     // lingers after a successful login.
     if (_accountStatus === 'Approved') showReadyToSearchState();
@@ -3470,7 +3470,3 @@ async function joinWaitlist(ev) {
   document.getElementById('wl-email').value = '';
   document.getElementById('wl-company').value = '';
 }
-</script>
-
-</body>
-</html>
