@@ -32,15 +32,15 @@ html, body { overflow-x: hidden; max-width: 100%; }
   .slide-inner { grid-template-columns: 1fr !important; }
 }
 :root {
-  --ink: #0A1628;
-  --gold: #C9973A;
+  --ink: #141D22;
+  --gold: #5BA3D6;
   --gold-light: #F0C87A;
-  --blue: #1A3A6B;
+  --blue: #283339;
   --blue-mid: #2356A4;
   --blue-light: #EBF1FB;
   --cream: #FAF7F2;
   --white: #FFFFFF;
-  --muted: #6B7A99;
+  --muted: #B0B7BF;
   --border: rgba(26,58,107,0.1);
   --text: #1E2D4A;
 }
@@ -49,7 +49,7 @@ html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(201,151,58,0.2);}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid rgba(112,181,249,0.15);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;text-decoration:none;}
 .nav-logo span{color:var(--gold);}
 .nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
@@ -83,9 +83,9 @@ section{padding:80px 80px;}
 
 /* FEATURED ARTICLE */
 .featured{background:var(--white);}
-.featured-card{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(10,22,40,0.08);}
+.featured-card{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(29,34,38,0.08);}
 .featured-img{background:linear-gradient(135deg,var(--ink) 0%,var(--blue) 100%);padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;}
-.featured-badge{display:inline-block;background:rgba(201,151,58,0.2);border:1px solid rgba(201,151,58,0.4);padding:5px 12px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:auto;}
+.featured-badge{display:inline-block;background:rgba(112,181,249,0.15);border:1px solid rgba(201,151,58,0.4);padding:5px 12px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:auto;}
 .featured-title-img{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:#fff;line-height:1.2;margin-top:48px;letter-spacing:-0.5px;}
 .featured-title-img em{color:var(--gold);font-style:italic;}
 .featured-body{padding:48px;}
@@ -106,12 +106,12 @@ section{padding:80px 80px;}
 .article-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all 0.25s;text-decoration:none;color:inherit;display:block;}
 .article-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(10,22,40,0.1);}
 .article-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;overflow:hidden;}
-.article-thumb-1{background:linear-gradient(135deg,#0A1628,#2356A4);}
-.article-thumb-2{background:linear-gradient(135deg,#1A3A6B,#0A1628);}
-.article-thumb-3{background:linear-gradient(135deg,#C9973A,#A07828);}
-.article-thumb-4{background:linear-gradient(135deg,#2356A4,#1A3A6B);}
-.article-thumb-5{background:linear-gradient(135deg,#0A1628,#C9973A);}
-.article-thumb-6{background:linear-gradient(135deg,#1A3A6B,#2356A4);}
+.article-thumb-1{background:linear-gradient(135deg,#141D22,#2356A4);}
+.article-thumb-2{background:linear-gradient(135deg,#283339,#141D22);}
+.article-thumb-3{background:linear-gradient(135deg,#5BA3D6,#A07828);}
+.article-thumb-4{background:linear-gradient(135deg,#2356A4,#283339);}
+.article-thumb-5{background:linear-gradient(135deg,#141D22,#5BA3D6);}
+.article-thumb-6{background:linear-gradient(135deg,#283339,#2356A4);}
 .article-body{padding:24px;}
 .article-type{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
 .article-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:10px;}
@@ -184,9 +184,9 @@ section{padding:80px 80px;}
 #substack-articles .blog-post:first-child .post-body-wrap{
   border-top:3px solid var(--gold);
 }
-.pt-grad-1{background:linear-gradient(135deg,#0A1628 0%,#2356A4 60%,#C9973A 100%);}
-.pt-grad-2{background:linear-gradient(135deg,#1A3A6B 0%,#0A1628 100%);}
-.pt-grad-3{background:linear-gradient(135deg,#C9973A 0%,#A07828 50%,#0A1628 100%);}
+.pt-grad-1{background:linear-gradient(135deg,#141D22 0%,#2356A4 60%,#5BA3D6 100%);}
+.pt-grad-2{background:linear-gradient(135deg,#283339 0%,#141D22 100%);}
+.pt-grad-3{background:linear-gradient(135deg,#5BA3D6 0%,#A07828 50%,#141D22 100%);}
 .post-type{
   font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
   color:var(--gold);margin-bottom:6px;
@@ -235,7 +235,7 @@ section{padding:80px 80px;}
 .linkedin-section{background:var(--cream);}
 .li-posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .li-post-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all 0.2s;}
-.li-post-card:hover{box-shadow:0 8px 24px rgba(10,22,40,0.08);transform:translateY(-2px);}
+.li-post-card:hover{box-shadow:0 8px 24px rgba(29,34,38,0.08);transform:translateY(-2px);}
 .li-post-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
 .li-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue-mid),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;}
 .li-author-name{font-size:13px;font-weight:600;color:var(--ink);}
@@ -245,11 +245,11 @@ section{padding:80px 80px;}
 .li-post-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);}
 .li-post-link{color:var(--blue-mid);text-decoration:none;font-weight:600;font-size:12px;}
 .li-post-link:hover{text-decoration:underline;}
-.li-note{background:rgba(201,151,58,0.08);border:1px solid rgba(201,151,58,0.2);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:32px;}
+.li-note{background:rgba(201,151,58,0.08);border:1px solid rgba(112,181,249,0.15);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:32px;}
 .li-note strong{color:var(--gold);}
 
 /* FOOTER */
-footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(201,151,58,0.2);}
+footer{background:var(--ink);padding:56px 80px 36px;border-top:1px solid rgba(112,181,249,0.15);}
 .footer-inner{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;gap:32px;flex-wrap:wrap;}
 .footer-brand-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;}
 .footer-brand-name span{color:var(--gold);}
@@ -289,7 +289,7 @@ html.menu-open{overflow:hidden;}
 .mobile-menu a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;transition:color 0.2s;}
 .mobile-menu a:hover{color:#fff;}
 .mobile-menu a::after{content:"›";color:rgba(255,255,255,0.3);}
-.mobile-menu a.nav-cta{background:var(--gold, #C9973A);color:var(--ink, #0A1628)!important;border-radius:8px;padding:16px 20px;margin-top:16px;font-weight:700;justify-content:center;}
+.mobile-menu a.nav-cta{background:var(--gold, #5BA3D6);color:var(--ink, #141D22)!important;border-radius:8px;padding:16px 20px;margin-top:16px;font-weight:700;justify-content:center;}
 .mobile-menu a.nav-cta::after{display:none;}
 @media(max-width:900px){
   .hamburger{display:flex;}
@@ -372,7 +372,7 @@ html.menu-open{overflow:hidden;}
 
     <!-- HEADER -->
     <div style="text-align:center;margin-bottom:26px;">
-      <div class="eyebrow" style="color:var(--gold);background:rgba(201,151,58,0.12);border-color:rgba(201,151,58,0.3);display:inline-block;">By invitation &middot; Hyderabad</div>
+      <div class="eyebrow" style="color:var(--gold);background:rgba(201,151,58,0.12);border-color:rgba(112,181,249,0.20);display:inline-block;">By invitation &middot; Hyderabad</div>
       <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);font-weight:900;line-height:1.15;letter-spacing:-0.8px;color:var(--ink);margin:14px 0 14px;">
         Hyderabad GCC Leaders <em style="color:var(--gold);font-style:italic;">Coffee Roundtable</em>
       </h2>
@@ -407,7 +407,7 @@ html.menu-open{overflow:hidden;}
     </div>
 
     <!-- FORM CARD (preserved verbatim) -->
-      <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(10,22,40,0.06);">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(29,34,38,0.06);">
         <form id="rsvpHydForm" novalidate autocomplete="on">
           <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);margin-bottom:4px;">Request your seat</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Hyderabad · 12 May 2026 · By invitation</div>
@@ -568,7 +568,7 @@ html.menu-open{overflow:hidden;}
     <!-- WHAT HAPPENS NEXT - compact 4-step strip (4-col desktop, 2-col tablet/mobile) -->
     <div style="margin-top:28px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 24px 24px;box-shadow:0 2px 16px rgba(10,22,40,0.04);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;justify-content:center;">
-        <div style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0B1120;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">&#10142;</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#1D2226;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">&#10142;</div>
         <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;">What happens next</div>
       </div>
       <div class="rsvp-steps-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;">
@@ -1208,7 +1208,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
     <div class="sidebar">
 
       <!-- LinkedIn Follow -->
-      <div class="sidebar-widget" style="background:var(--ink);border-color:rgba(201,151,58,0.2);">
+      <div class="sidebar-widget" style="background:var(--ink);border-color:rgba(112,181,249,0.15);">
         <div class="widget-title" style="color:var(--gold);">Follow on LinkedIn</div>
         <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:16px;">Get independent GCC insights, research, and industry perspectives directly in your LinkedIn feed, no vendor content, no sponsored posts.</p>
         <a href="https://www.linkedin.com/company/gccpros/" target="_blank" class="li-btn">
