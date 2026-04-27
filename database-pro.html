@@ -2093,9 +2093,9 @@ function showSignInState(mode) {
           '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
         '</div>' +
         '<label class="field-label" for="su-pwd" style="margin-top:10px;">Password *</label>' +
-        '<input type="password" id="su-pwd" class="search-input" required minlength="8" placeholder="Min 8 characters - letters and numbers" autocomplete="new-password">' +
+        '<input type="password" id="su-pwd" class="search-input" required minlength="12" placeholder="Min 12 chars: upper, lower, number, special" autocomplete="new-password">' +
         '<label class="field-label" for="su-pwd2" style="margin-top:6px;">Confirm password *</label>' +
-        '<input type="password" id="su-pwd2" class="search-input" required minlength="8" placeholder="Repeat password" autocomplete="new-password">' +
+        '<input type="password" id="su-pwd2" class="search-input" required minlength="12" placeholder="Repeat password" autocomplete="new-password">' +
         '<button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Apply for access -> 200 credits</button>' +
       '</form>';
     wrap.innerHTML =
@@ -2280,8 +2280,11 @@ async function submitPasswordSignUp(ev) {
   if (!domainExp)                        return _showSignInErr('Please select your domain expertise.');
   if (!eligibility)                      return _showSignInErr('Please describe your GCC experience and network strength.');
   if (!waConsent)                        return _showSignInErr('Please choose your WhatsApp consent preference.');
-  if (!pwd || pwd.length < 8)            return _showSignInErr('Password must be at least 8 characters.');
-  if (!/[a-zA-Z]/.test(pwd) || !/[0-9]/.test(pwd)) return _showSignInErr('Password must include both letters and numbers.');
+  if (!pwd || pwd.length < 12)           return _showSignInErr('Password must be at least 12 characters.');
+  if (!/[a-z]/.test(pwd))                return _showSignInErr('Password must include a lowercase letter.');
+  if (!/[A-Z]/.test(pwd))                return _showSignInErr('Password must include an uppercase letter.');
+  if (!/[0-9]/.test(pwd))                return _showSignInErr('Password must include a number.');
+  if (!/[^a-zA-Z0-9]/.test(pwd))         return _showSignInErr('Password must include a special character (e.g. ! @ # $ %).');
   if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
 
   if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
@@ -3392,7 +3395,11 @@ async function changePassword() {
   errBox.style.display = 'none'; okBox.style.display = 'none';
   if (!current)              { errBox.textContent = 'Enter your current password.'; errBox.style.display = 'block'; return; }
   if (!newPwd)               { errBox.textContent = 'Enter a new password.';        errBox.style.display = 'block'; return; }
-  if (newPwd.length < 6)     { errBox.textContent = 'New password must be at least 6 characters.'; errBox.style.display = 'block'; return; }
+  if (newPwd.length < 12)    { errBox.textContent = 'New password must be at least 12 characters.'; errBox.style.display = 'block'; return; }
+  if (!/[a-z]/.test(newPwd)) { errBox.textContent = 'New password must include a lowercase letter.'; errBox.style.display = 'block'; return; }
+  if (!/[A-Z]/.test(newPwd)) { errBox.textContent = 'New password must include an uppercase letter.'; errBox.style.display = 'block'; return; }
+  if (!/[0-9]/.test(newPwd)) { errBox.textContent = 'New password must include a number.'; errBox.style.display = 'block'; return; }
+  if (!/[^a-zA-Z0-9]/.test(newPwd)) { errBox.textContent = 'New password must include a special character.'; errBox.style.display = 'block'; return; }
   if (newPwd !== confirmVal) { errBox.textContent = 'New passwords do not match.'; errBox.style.display = 'block'; return; }
   if (newPwd === current)    { errBox.textContent = 'New password must be different.'; errBox.style.display = 'block'; return; }
   btn.disabled = true; btn.textContent = 'Saving...';
