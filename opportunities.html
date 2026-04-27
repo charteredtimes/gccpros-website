@@ -2003,6 +2003,7 @@
         /* User Console / Dashboard */
         .user-console {
             display: flex;
+            flex-direction: column;
             position: fixed;
             top: 0;
             left: 0;
@@ -2676,7 +2677,9 @@
                 font-size: 1.3rem !important;
             }
         }
-    </style>
+    
+.sph-link{color:rgba(255,255,255,0.65);font-size:13px;text-decoration:none;padding:6px 11px;border-radius:6px;transition:all 0.15s;}.sph-link:hover{background:rgba(255,255,255,0.08);color:#fff;}.sph-active{color:#D4A843 !important;background:rgba(212,168,67,0.1);font-weight:600;}
+</style>
 </head>
 <body>
     <!-- Navigation -->
@@ -4162,6 +4165,8 @@
 
     <!-- User Console -->
     <div class="user-console" id="userConsole">
+<div id="sitePortalHeader" style="background:#0B1120;border-bottom:1px solid #1a2741;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0;z-index:10;"><a href="index.html" style="color:#D4A843;font-weight:700;font-size:15px;text-decoration:none;letter-spacing:-0.2px;">GCCPROs</a><nav style="display:flex;gap:2px;align-items:center;"><a href="index.html" class="sph-link">Home</a><a href="database-pro.html" class="sph-link">Database</a><a href="opportunities.html" class="sph-link sph-active">Opportunities</a><a href="insights-events.html" class="sph-link">Insights &amp; Events</a><a href="industry-council.html" class="sph-link">Industry Council</a><a href="community-leaders.html" class="sph-link">Community Leaders</a><a href="community-insider.html" class="sph-link">Community Insider</a></nav></div>
+
         <!-- Pending Approval Overlay -->
         <div class="pending-approval-overlay" id="pendingApprovalOverlay">
             <div class="pending-icon">&#9203;</div>
@@ -4186,7 +4191,8 @@
         <!-- Mobile sidebar overlay -->
         <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay" onclick="closeMobileSidebar()"></div>
 
-        <div class="console-sidebar" id="consoleSidebar">
+        <div style="flex:1;display:flex;overflow:hidden;">
+<div class="console-sidebar" id="consoleSidebar">
             <div style="padding: 1.5rem 0.5rem; text-align: center; border-bottom: 1px solid #1a2741; margin-bottom: 1rem;">
                 <div style="font-size: 0.7rem; color: #AAA;">Menu</div>
             </div>
@@ -4619,7 +4625,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    
+</div></div>
 
     <script>
         console.log('[GCCPROs] Page version: ' + document.querySelector('meta[name="version"]').content + ' | Jobs loaded');
