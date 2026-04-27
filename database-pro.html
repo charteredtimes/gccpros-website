@@ -1373,6 +1373,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
 </head>
 <body>
 
@@ -1861,6 +1862,17 @@ firebase.initializeApp({
   messagingSenderId:"764592723192",
   appId:"1:764592723192:web:002a03f217b57d47f0570d"
 });
+
+// ── App Check (reCAPTCHA v3) — proves requests come from our site ──
+// Token auto-refresh enabled so long sessions don't break.
+// Site key is public by design (locked to gccpros.com domain server-side).
+try {
+  firebase.appCheck().activate(
+    new firebase.appCheck.ReCaptchaV3Provider('6LcLscwsAAAAAKGRZxEDhqqJDhA9YiCtUr99Ws3V'),
+    true
+  );
+} catch (e) { console.warn('App Check init failed:', e); }
+
 const auth = firebase.auth();
 
 // ── STATE ────────────────────────────────────────────────
