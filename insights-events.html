@@ -309,6 +309,30 @@ html.menu-open{overflow:hidden;}
 /* Substack embed panel */
 .substack-embed-wrap{background:var(--cream);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:8px;}
 </style>
+
+<style>
+/* ── Mobile overflow & alignment fixes ── */
+@media(max-width:900px){
+  /* Fix inline padding:0 80px on .container */
+  .container{padding-left:24px!important;padding-right:24px!important;}
+  /* Fix the quotes-carousel header div (inline padding:0 80px 48px) */
+  .carousel-wrap + * , section > div[style*="padding:0 80px"]{
+    padding-left:24px!important;padding-right:24px!important;
+  }
+  /* Collapse the GCC Insider Convergence 2-col grid */
+  div[style*="grid-template-columns:1fr 1fr"][style*="gap:32px"]{
+    grid-template-columns:1fr!important;
+  }
+  /* Collapse media/press 3-col grid inside dark ink section */
+  div[style*="grid-template-columns:repeat(3,1fr)"][style*="gap:20px"]{
+    grid-template-columns:1fr!important;
+  }
+  /* Ensure no section overflows horizontally */
+  section[style], div[style*="padding:0 80px"]{
+    box-sizing:border-box;max-width:100%;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -601,7 +625,7 @@ html.menu-open{overflow:hidden;}
 
 <!-- QUOTES CAROUSEL -->
 <section style="background:var(--white);padding:80px 0 0;">
-  <div style="padding:0 80px 48px;">
+  <div class="carousel-header-inner" style="padding:0 80px 48px;">
     <div class="section-label">GCC Insider Convergence · March 2026</div>
     <h2 class="section-title">8 Harsh Truths for the<br>Future of GCCs</h2>
     <p class="section-sub">Unfiltered insights from GCC leaders worldwide, straight from the GCC Insider Convergence. Real voices, real accountability.</p>
@@ -1767,5 +1791,40 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
      </a>
    </div>
   <div class="footer-bottom">© 2026 GCCPROs · Founded by Shammi Prabhakar Singh · +91-85069-76700</div>
+
+<script>
+/* ── Mobile hamburger toggle ── */
+(function(){
+  var btn  = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var isOpen = menu.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    document.documentElement.classList.toggle('menu-open', isOpen);
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+      document.documentElement.classList.remove('menu-open');
+    });
+  });
+  document.addEventListener('click', function(e){
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)){
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+      document.documentElement.classList.remove('menu-open');
+    }
+  });
+})();
+</script>
+
+<style>
+@media(max-width:900px){
+  .carousel-header-inner{padding:0 24px 48px!important;}
+}
+</style>
 </footer>
 </
