@@ -73,7 +73,7 @@
             background: rgba(11, 17, 32, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(226, 232, 240, 0.1);
-            z-index: 1000;
+            z-index: 3001;
             padding: 0.6rem 0;
         }
 
@@ -2000,16 +2000,17 @@
             box-shadow: 0 8px 24px rgba(184, 134, 11, 0.3);
         }
 
-        /* User Console / Dashboard */
+        /* User Console / Dashboard - sits BELOW the top nav so users
+           always have a way back to Home/Database/Insights/etc. */
         .user-console {
             display: flex;
             position: fixed;
-            top: 0;
+            top: 56px;                      /* leave room for the top nav */
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 56px);
             background: var(--white);
-            z-index: 3000;
+            z-index: 2900;                  /* below nav (3001) so it stays clickable */
             overflow: hidden;
             opacity: 0;
             pointer-events: none;

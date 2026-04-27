@@ -3125,6 +3125,9 @@ function renderDetail(data) {
           ${f('Setup model', data.setupModel)}
         </div>
         ${sentimentRow}
+        ${(data.allFields && data.allFields.length) ? '<div class="detail-grid" style="margin-top:14px;border-top:1px solid var(--gold-soft);padding-top:14px;">' + data.allFields.map(function(f){
+          return '<div class="detail-field"><label>' + escHtml(f.label) + '</label><p>' + escHtml(f.value) + '</p></div>';
+        }).join('') + '</div>' : ''}
       </div>
     </div>
     <div class="confidential-strip">
