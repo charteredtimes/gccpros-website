@@ -16,23 +16,23 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --ink:        #0A1628;
+  --ink:        #141D22;
   --ink-soft:   #152338;
-  --navy:       #1A3A6B;
+  --navy:       #283339;
   --navy-soft:  #264B7D;
-  --gold:       #B8893A;
+  --gold:       #5BA3D6;
   --gold-deep:  #8B6420;
   --gold-soft:  #EAD4A8;
   --cream:      #FAF7F2;
   --ivory:      #F5F1E8;
   --paper:      #FFFFFF;
   --graphite:   #4A5568;
-  --muted:      #6B7A99;
+  --muted:      #B0B7BF;
   --muted-2:    #98A2B8;
-  --line:       rgba(10,22,40,0.08);
+  --line:       rgba(29,34,38,0.08);
   --line-2:     rgba(10,22,40,0.15);
   --success:    #2D7A4E;
-  --warn:       #C17B2B;
+  --warn:       #0A66C2;
   --danger:     #B23B3B;
   --serif:      'Playfair Display', Georgia, serif;
   --sans:       'Inter', -apple-system, system-ui, sans-serif;
@@ -389,7 +389,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 .credit-meter-bar {
   height: 4px;
-  background: rgba(10,22,40,0.08);
+  background: rgba(29,34,38,0.08);
   border-radius: 2px;
   overflow: hidden;
   margin-top: 10px;
@@ -451,7 +451,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 .field-select:focus, .search-input:focus {
   border-color: var(--ink);
-  box-shadow: 0 0 0 2px rgba(10,22,40,0.06);
+  box-shadow: 0 0 0 2px rgba(29,34,38,0.06);
 }
 .field-select {
   appearance: none;
@@ -832,7 +832,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   counter-increment: b2c-field;
   display: flex; align-items: flex-start; gap: 10px;
   padding: 7px 0;
-  border-top: 1px solid rgba(10,22,40,0.06);
+  border-top: 1px solid rgba(29,34,38,0.06);
 }
 .b2c-fields-list li:first-child, .b2c-fields-list li:nth-child(2) {
   border-top: none; padding-top: 0;
@@ -1210,7 +1210,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 .modal input:focus, .modal textarea:focus {
   border-color: var(--ink);
-  box-shadow: 0 0 0 2px rgba(10,22,40,0.06);
+  box-shadow: 0 0 0 2px rgba(29,34,38,0.06);
 }
 .modal textarea { resize: vertical; min-height: 70px; font-family: var(--sans); }
 .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
@@ -2015,7 +2015,7 @@ function showSignInState(mode) {
         // Sign UP card
         '<div class="state-box" style="border-top:3px solid var(--gold);padding:34px 28px;text-align:left;cursor:pointer;transition:transform 0.1s,box-shadow 0.1s;" ' +
               'onclick="switchMode(\'signup\')" ' +
-              'onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 24px rgba(10,22,40,0.08)\';" ' +
+              'onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 24px rgba(29,34,38,0.08)\';" ' +
               'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\';">' +
           '<div style="display:flex;align-items:center;gap:14px;">' +
             '<div class="sb-icon" style="flex-shrink:0;background:var(--gold);color:var(--ink);border-color:var(--gold);">+</div>' +
@@ -2030,7 +2030,7 @@ function showSignInState(mode) {
         // Sign IN card
         '<div class="state-box" style="border-top:3px solid var(--ink);padding:34px 28px;text-align:left;cursor:pointer;transition:transform 0.1s,box-shadow 0.1s;" ' +
               'onclick="switchMode(\'signin\')" ' +
-              'onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 24px rgba(10,22,40,0.08)\';" ' +
+              'onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 24px rgba(29,34,38,0.08)\';" ' +
               'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\';">' +
           '<div style="display:flex;align-items:center;gap:14px;">' +
             '<div class="sb-icon" style="flex-shrink:0;background:var(--ink);color:#fff;border-color:var(--ink);">&rarr;</div>' +
@@ -3237,7 +3237,7 @@ async function initiatePayment() {
     name: 'GCCPROs Intelligence Portal',
     description: _selectedCredits + ' research credits',
     prefill: { email: token },
-    theme: { color: '#0A1628' },
+    theme: { color: '#141D22' },
     handler: async function(response) {
       try {
         const res = await fetch(SCRIPT_URL, {
@@ -3277,7 +3277,7 @@ async function initiatePayment() {
 // TOAST
 function showToast(msg, color) {
   const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + (color || '#0A1628') + ';color:#fff;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;letter-spacing:0.3px;font-family:Inter,sans-serif;z-index:9999;box-shadow:0 4px 24px rgba(10,22,40,0.3);max-width:90%;text-align:center;border-left:3px solid #B8893A;';
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + (color || '#141D22') + ';color:#fff;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;letter-spacing:0.3px;font-family:Inter,sans-serif;z-index:9999;box-shadow:0 4px 24px rgba(10,22,40,0.3);max-width:90%;text-align:center;border-left:3px solid #5BA3D6;';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function(){ t.remove(); }, 4500);
