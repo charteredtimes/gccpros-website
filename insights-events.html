@@ -547,7 +547,7 @@ html.menu-open{overflow:hidden;}
               </li>
               <li style="display:flex;gap:10px;padding:5px 0;">
                 <span style="color:var(--gold);font-weight:700;flex:0 0 auto;">&rsaquo;</span>
-                <span>Need anything in the meantime? Write to <a href="mailto:admin@gccpros.com?subject=Hyderabad%20Roundtable%20%2812%20May%202026%29" style="color:var(--gold);font-weight:600;text-decoration:none;">admin@gccpros.com</a> or WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a>.</span>
+                <span>Need anything in the meantime? Write to <a href="mailto:support@gccpros.com?subject=Hyderabad%20Roundtable%20%2812%20May%202026%29" style="color:var(--gold);font-weight:600;text-decoration:none;">support@gccpros.com</a> or WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a>.</span>
               </li>
             </ul>
           </div>
@@ -1645,12 +1645,12 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         }
       } else {
         msg.className = 'rsvp-msg-err';
-        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to admin@gccpros.com.';
+        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to support@gccpros.com.';
       }
     })
     .catch(function(err){
       msg.className = 'rsvp-msg-err';
-      msg.textContent = 'Network error. Please check your connection and try again, or email admin@gccpros.com.';
+      msg.textContent = 'Network error. Please check your connection and try again, or email support@gccpros.com.';
       console.error('RSVP submit error:', err);
     })
     .then(function(){
