@@ -1845,12 +1845,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
 
 // ─────────────────────────────────────────────────────────────────
-// RAZORPAY KEY — paste your live Key ID here once KYC is approved.
+// RAZORPAY KEY — rzp_test_SnAn2yGYscONea
 // Dashboard → Settings → API Keys → Generate Key → copy "Key ID"
 // Live key starts with  rzp_live_...
 // Test key starts with  rzp_test_  (use this for testing first)
 // ─────────────────────────────────────────────────────────────────
-window._rzpKey = 'YOUR_RAZORPAY_KEY_ID';
+window._rzpKey = 'rzp_test_SnAn2yGYscONea';
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -3297,7 +3297,7 @@ async function initiatePayment() {
     errBox.style.display = 'block';
     return;
   }
-  if (!window._rzpKey || window._rzpKey === 'YOUR_RAZORPAY_KEY_ID') {
+  if (!window._rzpKey || window._rzpKey === 'rzp_test_SnAn2yGYscONea') {
     errBox.innerHTML = 'Online payments are being set up. To top up immediately, WhatsApp <strong>+91-85069-76700</strong> - we will credit your account manually within the hour.';
     errBox.style.display = 'block';
     return;
@@ -3333,7 +3333,7 @@ async function initiatePayment() {
           _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
           renderCredits();
           closeBuyCredits();
-          showToast('+ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
+          showToast('Payment successful · Ref: ' + response.razorpay_payment_id + ' · ' + _selectedCredits.toLocaleString('en-IN') + ' credits added to your account', '#2D7A4E');
         } else {
           errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact support@gccpros.com.';
           errBox.style.display = 'block';
