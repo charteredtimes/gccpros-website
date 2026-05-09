@@ -3311,16 +3311,14 @@ async function initiatePayment() {
 
   let orderId;
   try {
-    const amountPaise = Math.round(_selectedPrice * 100);  // paise (INR) or cents (USD)
-    const res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action:   'createRazorpayOrder',
-        email:    token,
-        amount:   amountPaise,
-        currency: _selectedCurrency
-      })
+    const amountPaise = Math.round(_selectedPrice * 100);
+    const params = new URLSearchParams({
+      action:   'createRazorpayOrder',
+      token:    token,
+      amount:   amountPaise,
+      currency: _selectedCurrency
     });
+    const res  = await fetch(SCRIPT_URL + '?' + params.toString());
     const data = await res.json();
     if (data.error) throw new Error(data.message || data.error);
     orderId = data.order_id;
@@ -3347,19 +3345,17 @@ async function initiatePayment() {
     handler: async function(response) {
       payBtn.textContent = 'Verifying payment…';
       try {
-        const vRes = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action:               'verifyRazorpayPayment',
-            email:                token,
-            credits:              _selectedCredits,
-            amount:               _selectedPrice,
-            currency:             _selectedCurrency,
-            razorpay_payment_id:  response.razorpay_payment_id,
-            razorpay_order_id:    response.razorpay_order_id,
-            razorpay_signature:   response.razorpay_signature
-          })
+        const vParams = new URLSearchParams({
+          action:               'verifyRazorpayPayment',
+          token:                token,
+          credits:              _selectedCredits,
+          amount:               _selectedPrice,
+          currency:             _selectedCurrency,
+          razorpay_payment_id:  response.razorpay_payment_id,
+          razorpay_order_id:    response.razorpay_order_id,
+          razorpay_signature:   response.razorpay_signature
         });
+        const vRes = await fetch(SCRIPT_URL + '?' + vParams.toString());
         const vData = await vRes.json();
         if (vData.error) throw new Error(vData.error);
 
