@@ -1726,6 +1726,14 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
+<!-- Sign-in Modal -->
+<div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
+  <div class="modal" style="max-width:520px;padding-bottom:8px;">
+    <button onclick="closeSignInModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
+    <div id="signin-modal-body"></div>
+  </div>
+</div>
+
 <!-- Submit GCC Modal -->
 <div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
   <div class="modal" style="max-width:520px;">
@@ -2003,9 +2011,23 @@ auth.onAuthStateChanged(u => {
 // Google sign-in is offered as a secondary one-click option.
 var _signInMode = 'choose';
 
+function openSignInModal()  {
+  var m = document.getElementById('signin-modal');
+  if (m) m.classList.add('open');
+  showSignInState('choose');
+}
+function closeSignInModal() {
+  var m = document.getElementById('signin-modal');
+  if (m) m.classList.remove('open');
+}
+
 function showSignInState(mode) {
   if (mode) _signInMode = mode;
-  var wrap = document.getElementById('results-wrap');
+  // Render into the modal body if the modal is open, otherwise into the inline results area
+  var modal = document.getElementById('signin-modal');
+  var wrap  = (modal && modal.classList.contains('open'))
+    ? document.getElementById('signin-modal-body')
+    : document.getElementById('results-wrap');
   if (!wrap) return;
   var m = _signInMode;
 
@@ -2614,10 +2636,7 @@ async function onUserPillClick() {
     // Hard reload so every state derived from the previous session is gone.
     location.reload();
   } else {
-    // SCROLL TO SIGN-IN CARD
-    showSignInState('choose');
-    var wrap = document.getElementById('results-wrap');
-    if (wrap && wrap.scrollIntoView) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    openSignInModal();
   }
 }
 
