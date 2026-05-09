@@ -1993,6 +1993,7 @@ auth.onAuthStateChanged(u => {
     document.body.classList.add('is-authed');
     document.getElementById('user-pill').textContent =
       (u.displayName || u.email.split('@')[0]) + ' - Sign out';
+    closeSignInModal();
     fetchCreditBalance();
   } else {
     // Firebase has no session. If we also have no cached email, show
