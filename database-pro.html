@@ -1850,7 +1850,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi
 // Live key starts with  rzp_live_...
 // Test key starts with  rzp_test_  (use this for testing first)
 // ─────────────────────────────────────────────────────────────────
-window._rzpKey = 'rzp_test_SnAn2yGYscONea';
+window._rzpKey = 'rzp_test_SnHP9llTNAeCag';
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -3289,65 +3289,121 @@ function selectPack(idx) {
 async function initiatePayment() {
   const token = getToken();
   if (!token || !_selectedCredits) return;
-  const errBox = document.getElementById('buy-err');
+
+  const errBox  = document.getElementById('buy-err');
+  const payBtn  = document.getElementById('pay-btn');
   errBox.style.display = 'none';
 
   if (typeof Razorpay === 'undefined') {
-    errBox.textContent = 'Payment gateway is loading - please try again in a moment.';
+    errBox.textContent = 'Payment gateway is loading — please try again in a moment.';
     errBox.style.display = 'block';
     return;
   }
-  if (!window._rzpKey || window._rzpKey === 'rzp_test_SnAn2yGYscONea') {
-    errBox.innerHTML = 'Online payments are being set up. To top up immediately, WhatsApp <strong>+91-85069-76700</strong> - we will credit your account manually within the hour.';
+  if (!window._rzpKey) {
+    errBox.textContent = 'Payment gateway is not configured. Please contact support.';
     errBox.style.display = 'block';
     return;
   }
 
-  const amountMinor = _selectedCurrency === 'USD'
-    ? Math.round(_selectedPrice * 100)   // cents
-    : Math.round(_selectedPrice * 100);  // paise
+  // ── STEP 1: Create Razorpay order on the backend ──────────────
+  payBtn.disabled = true;
+  payBtn.textContent = 'Creating order…';
 
+  let orderId;
+  try {
+    const amountPaise = Math.round(_selectedPrice * 100);  // paise (INR) or cents (USD)
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action:   'createRazorpayOrder',
+        email:    token,
+        amount:   amountPaise,
+        currency: _selectedCurrency
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message || data.error);
+    orderId = data.order_id;
+  } catch (err) {
+    errBox.textContent = 'Could not create order: ' + err.message + '. Please try again.';
+    errBox.style.display = 'block';
+    payBtn.disabled = false;
+    payBtn.textContent = 'Pay & credit instantly';
+    return;
+  }
+
+  // ── STEP 2: Open Razorpay checkout modal with order_id ────────
   const options = {
-    key: window._rzpKey,
-    amount: amountMinor,
-    currency: _selectedCurrency,
-    name: 'GCCPROs Intelligence Portal',
-    description: _selectedCredits + ' research credits',
-    prefill: { email: token },
-    theme: { color: '#0A1628' },
+    key:         window._rzpKey,
+    order_id:    orderId,
+    amount:      Math.round(_selectedPrice * 100),
+    currency:    _selectedCurrency,
+    name:        'GCCPROs Intelligence Portal',
+    description: _selectedCredits.toLocaleString('en-IN') + ' research credits',
+    prefill:     { email: token },
+    theme:       { color: '#0A1628' },
+
+    // ── STEP 3: Verify signature on the backend, then credit ──
     handler: async function(response) {
+      payBtn.textContent = 'Verifying payment…';
       try {
-        const res = await fetch(SCRIPT_URL, {
+        const vRes = await fetch(SCRIPT_URL, {
           method: 'POST',
           body: JSON.stringify({
-            action: 'creditPaymentSuccess',
-            email: token,
-            credits: _selectedCredits,
-            amount: _selectedPrice,
-            currency: _selectedCurrency,
-            razorpay_payment_id: response.razorpay_payment_id
+            action:               'verifyRazorpayPayment',
+            email:                token,
+            credits:              _selectedCredits,
+            amount:               _selectedPrice,
+            currency:             _selectedCurrency,
+            razorpay_payment_id:  response.razorpay_payment_id,
+            razorpay_order_id:    response.razorpay_order_id,
+            razorpay_signature:   response.razorpay_signature
           })
         });
-        const data = await res.json();
-        if (data.status === 'ok' || typeof data.balance === 'number') {
-          _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
-          renderCredits();
-          closeBuyCredits();
-          showToast('Payment successful · Ref: ' + response.razorpay_payment_id + ' · ' + _selectedCredits.toLocaleString('en-IN') + ' credits added to your account', '#2D7A4E');
-        } else {
-          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact support@gccpros.com.';
-          errBox.style.display = 'block';
-        }
-      } catch(err) {
-        _credits = (_credits || 0) + _selectedCredits;
+        const vData = await vRes.json();
+        if (vData.error) throw new Error(vData.error);
+
+        // Success — update UI
+        _credits = typeof vData.balance === 'number'
+          ? vData.balance
+          : ((_credits || 0) + _selectedCredits);
         renderCredits();
         closeBuyCredits();
-        showToast('+ Credits added (pending reconciliation).', '#2D7A4E');
+        showToast(
+          'Payment successful · Ref: ' + response.razorpay_payment_id +
+          ' · ' + _selectedCredits.toLocaleString('en-IN') + ' credits added to your account',
+          '#2D7A4E'
+        );
+      } catch (err) {
+        // Payment captured by Razorpay but backend verification had an issue.
+        // Show the payment ref so support can manually reconcile if needed.
+        errBox.innerHTML =
+          'Payment received (Ref: <strong>' + response.razorpay_payment_id + '</strong>). ' +
+          'Credits will appear shortly. If not, email ' +
+          '<a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a> ' +
+          'with your reference number.';
+        errBox.style.display = 'block';
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay & credit instantly';
       }
     },
-    modal: { ondismiss: function() {} }
+
+    modal: {
+      ondismiss: function() {
+        payBtn.disabled   = (_selectedCredits === 0);
+        payBtn.textContent = 'Pay & credit instantly';
+      }
+    }
   };
+
   const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function(resp) {
+    errBox.textContent = 'Payment failed: ' +
+      (resp.error.description || 'Please try a different payment method.');
+    errBox.style.display = 'block';
+    payBtn.disabled   = false;
+    payBtn.textContent = 'Pay & credit instantly';
+  });
   rzp.open();
 }
 
