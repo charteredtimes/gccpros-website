@@ -3290,78 +3290,53 @@ async function initiatePayment() {
   const token = getToken();
   if (!token || !_selectedCredits) return;
 
-  const errBox  = document.getElementById('buy-err');
-  const payBtn  = document.getElementById('pay-btn');
+  const errBox = document.getElementById('buy-err');
+  const payBtn = document.getElementById('pay-btn');
   errBox.style.display = 'none';
 
   if (typeof Razorpay === 'undefined') {
-    errBox.textContent = 'Payment gateway is loading — please try again in a moment.';
+    errBox.textContent = 'Payment gateway is loading - please try again in a moment.';
     errBox.style.display = 'block';
     return;
   }
   if (!window._rzpKey) {
-    errBox.textContent = 'Payment gateway is not configured. Please contact support.';
+    errBox.textContent = 'Payment gateway not configured. Please contact support.';
     errBox.style.display = 'block';
     return;
   }
 
-  // ── STEP 1: Create Razorpay order on the backend ──────────────
-  payBtn.disabled = true;
-  payBtn.textContent = 'Creating order…';
-
-  let orderId;
-  try {
-    const amountPaise = Math.round(_selectedPrice * 100);
-    const params = new URLSearchParams({
-      action:   'createRazorpayOrder',
-      token:    token,
-      amount:   amountPaise,
-      currency: _selectedCurrency
-    });
-    const res  = await fetch(SCRIPT_URL + '?' + params.toString());
-    const data = await res.json();
-    if (data.error) throw new Error(data.message || data.error);
-    orderId = data.order_id;
-  } catch (err) {
-    errBox.textContent = 'Could not create order: ' + err.message + '. Please try again.';
-    errBox.style.display = 'block';
-    payBtn.disabled = false;
-    payBtn.textContent = 'Pay & credit instantly';
-    return;
-  }
-
-  // ── STEP 2: Open Razorpay checkout modal with order_id ────────
+  // Open Razorpay checkout directly (no pre-created order needed).
+  // Payment is verified server-side via Razorpay's fetch-payment API
+  // inside creditPaymentSuccess — amount/currency/status are all checked.
   const options = {
     key:         window._rzpKey,
-    order_id:    orderId,
-    amount:      Math.round(_selectedPrice * 100),
+    amount:      Math.round(_selectedPrice * 100),  // paise
     currency:    _selectedCurrency,
     name:        'GCCPROs Intelligence Portal',
     description: _selectedCredits.toLocaleString('en-IN') + ' research credits',
     prefill:     { email: token },
     theme:       { color: '#0A1628' },
 
-    // ── STEP 3: Verify signature on the backend, then credit ──
     handler: async function(response) {
-      payBtn.textContent = 'Verifying payment…';
+      payBtn.disabled = true;
+      payBtn.textContent = 'Confirming payment...';
       try {
-        const vParams = new URLSearchParams({
-          action:               'verifyRazorpayPayment',
-          token:                token,
-          credits:              _selectedCredits,
-          amount:               _selectedPrice,
-          currency:             _selectedCurrency,
-          razorpay_payment_id:  response.razorpay_payment_id,
-          razorpay_order_id:    response.razorpay_order_id,
-          razorpay_signature:   response.razorpay_signature
+        const res  = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action:              'creditPaymentSuccess',
+            email:               token,
+            credits:             _selectedCredits,
+            amount:              _selectedPrice,
+            currency:            _selectedCurrency,
+            razorpay_payment_id: response.razorpay_payment_id
+          })
         });
-        const vRes = await fetch(SCRIPT_URL + '?' + vParams.toString());
-        const vData = await vRes.json();
-        if (vData.error) throw new Error(vData.error);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
 
-        // Success — update UI
-        _credits = typeof vData.balance === 'number'
-          ? vData.balance
+        _credits = typeof data.balance === 'number'
+          ? data.balance
           : ((_credits || 0) + _selectedCredits);
         renderCredits();
         closeBuyCredits();
@@ -3370,14 +3345,11 @@ async function initiatePayment() {
           ' · ' + _selectedCredits.toLocaleString('en-IN') + ' credits added to your account',
           '#2D7A4E'
         );
-      } catch (err) {
-        // Payment captured by Razorpay but backend verification had an issue.
-        // Show the payment ref so support can manually reconcile if needed.
+      } catch(err) {
         errBox.innerHTML =
           'Payment received (Ref: <strong>' + response.razorpay_payment_id + '</strong>). ' +
-          'Credits will appear shortly. If not, email ' +
-          '<a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a> ' +
-          'with your reference number.';
+          'Credits will appear shortly — if not, email ' +
+          '<a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a>.';
         errBox.style.display = 'block';
         payBtn.disabled = false;
         payBtn.textContent = 'Pay & credit instantly';
@@ -3386,7 +3358,7 @@ async function initiatePayment() {
 
     modal: {
       ondismiss: function() {
-        payBtn.disabled   = (_selectedCredits === 0);
+        payBtn.disabled    = (_selectedCredits === 0);
         payBtn.textContent = 'Pay & credit instantly';
       }
     }
@@ -3397,7 +3369,7 @@ async function initiatePayment() {
     errBox.textContent = 'Payment failed: ' +
       (resp.error.description || 'Please try a different payment method.');
     errBox.style.display = 'block';
-    payBtn.disabled   = false;
+    payBtn.disabled    = false;
     payBtn.textContent = 'Pay & credit instantly';
   });
   rzp.open();
