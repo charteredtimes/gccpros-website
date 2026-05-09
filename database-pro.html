@@ -12,19 +12,19 @@
 /* ═══════════════════════════════════════════════════════════════════
    GCCPROs Intelligence Portal - v2
    Aesthetic reference: BCG / Big 4 / Gartner
-   Palette: Deep navy · Ivory · Muted gold · Graphite
+   Palette: Deep navy · LinkedIn Blue · Graphite
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
   --ink:        #0A1628;
   --ink-soft:   #152338;
-  --navy:       #1A3A6B;
-  --navy-soft:  #264B7D;
-  --gold:       #B8893A;
-  --gold-deep:  #8B6420;
-  --gold-soft:  #EAD4A8;
-  --cream:      #FAF7F2;
-  --ivory:      #F5F1E8;
+  --navy:       #0A66C2;
+  --navy-soft:  #0077B5;
+  --gold:       #0A66C2;
+  --gold-deep:  #004182;
+  --gold-soft:  #CBE4FE;
+  --cream:      #F3F2EF;
+  --ivory:      #EAF4FF;
   --paper:      #FFFFFF;
   --graphite:   #4A5568;
   --muted:      #6B7A99;
@@ -1692,38 +1692,37 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <!-- Buy Credits Modal -->
 <div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
-  <div class="modal" style="max-width:460px;">
+  <div class="modal" style="max-width:480px;">
     <h3>Top up credits</h3>
-    <p class="modal-sub">Our automated payment gateway is being set up. In the meantime, please reach out and we will top up your credits manually within one business day.</p>
+    <p class="modal-sub">Select a pack below and pay securely via Razorpay. Credits are added to your account instantly.</p>
 
-    <div style="background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:18px 20px;margin:14px 0 4px;">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);font-weight:700;margin-bottom:10px;">Contact us</div>
-
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;flex-shrink:0;">@</span>
-        <div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Email</div>
-          <a href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">support@gccpros.com</a>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#25D366;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;">W</span>
-        <div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">WhatsApp</div>
-          <a href="https://wa.me/918506976700?text=Hi%2C%20I%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits." target="_blank" rel="noopener" style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">+91 85069 76700</a>
-        </div>
-      </div>
+    <!-- Currency toggle -->
+    <div style="display:flex;gap:8px;margin:14px 0 12px;">
+      <button id="cur-inr" class="pg-btn active" onclick="setCurrency('INR')" style="flex:1;height:36px;font-size:12px;font-weight:600;">&#8377; INR</button>
+      <button id="cur-usd" class="pg-btn" onclick="setCurrency('USD')" style="flex:1;height:36px;font-size:12px;font-weight:600;">$ USD</button>
     </div>
 
-    <p style="font-size:11px;color:var(--muted);margin:14px 2px 14px;line-height:1.5;">
-      Pricing: &#8377;1 per credit (INR) or $0.0125 per credit (USD). Volume discounts available at 1,000+ credits. Credits never expire.
+    <!-- Pack grid -->
+    <div class="pack-grid" id="pack-grid"></div>
+
+    <!-- Selected summary -->
+    <div id="buy-selected" style="display:none;background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--ink);margin:12px 0 4px;"></div>
+
+    <!-- Error box -->
+    <div class="modal-err" id="buy-err" style="display:none;margin-top:8px;"></div>
+
+    <p style="font-size:11px;color:var(--muted);margin:10px 2px 4px;line-height:1.5;">
+      &#8377;1 per credit (INR) &middot; $0.0125 per credit (USD) &middot; Credits never expire &middot; Volume discounts applied automatically.
     </p>
 
-    <div class="modal-btns">
-      <button class="btn-secondary" onclick="closeBuyCredits()">Close</button>
-      <a class="btn-primary" href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="text-decoration:none;text-align:center;">Email support@gccpros.com</a>
+    <div class="modal-btns" style="margin-top:14px;">
+      <button class="btn-secondary" onclick="closeBuyCredits()">Cancel</button>
+      <button class="btn-primary" id="pay-btn" onclick="initiatePayment()" disabled>Pay &amp; credit instantly</button>
     </div>
+
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5;">
+      Need help? <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:none;font-weight:600;">WhatsApp +91 85069 76700</a>
+    </p>
   </div>
 </div>
 
@@ -1844,6 +1843,14 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 // the production Opportunities/Database script into this page.
 // ─────────────────────────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
+
+// ─────────────────────────────────────────────────────────────────
+// RAZORPAY KEY — paste your live Key ID here once KYC is approved.
+// Dashboard → Settings → API Keys → Generate Key → copy "Key ID"
+// Live key starts with  rzp_live_...
+// Test key starts with  rzp_test_  (use this for testing first)
+// ─────────────────────────────────────────────────────────────────
+window._rzpKey = 'YOUR_RAZORPAY_KEY_ID';
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -3238,8 +3245,9 @@ document.addEventListener('copy', e => e.preventDefault());
 let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
-  // Contact-only modal - no pack selector / currency toggle to wire up.
   document.getElementById('buy-modal').classList.add('open');
+  // Initialise the pack grid with the user's current currency
+  setCurrency(_currency || 'INR');
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
 
@@ -3346,7 +3354,7 @@ async function initiatePayment() {
 // TOAST
 function showToast(msg, color) {
   const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + (color || '#0A1628') + ';color:#fff;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;letter-spacing:0.3px;font-family:Inter,sans-serif;z-index:9999;box-shadow:0 4px 24px rgba(10,22,40,0.3);max-width:90%;text-align:center;border-left:3px solid #B8893A;';
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + (color || '#0A1628') + ';color:#fff;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;letter-spacing:0.3px;font-family:Inter,sans-serif;z-index:9999;box-shadow:0 4px 24px rgba(10,22,40,0.3);max-width:90%;text-align:center;border-left:3px solid #0A66C2;';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function(){ t.remove(); }, 4500);
@@ -3529,7 +3537,7 @@ async function joinWaitlist(ev) {
     await fetch(url, { mode: 'no-cors' });
   } catch(e) {}
   msg.textContent = '+ Added to the waitlist. Our team will be in touch within 3 working days.';
-  msg.style.color = '#EAD4A8';
+  msg.style.color = '#CBE4FE';
   document.getElementById('wl-email').value = '';
   document.getElementById('wl-company').value = '';
 }
