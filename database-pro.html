@@ -3314,6 +3314,10 @@ async function initiatePayment() {
     prefill: { email: token },
     theme: { color: '#0A1628' },
     handler: async function(response) {
+      // Close and clear the modal immediately — don't make the user wait
+      // for the backend round-trip before the overlay disappears.
+      closeBuyCredits();
+      showToast('Payment received — adding ' + _selectedCredits + ' credits…', '#1e40af');
       try {
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
@@ -3336,8 +3340,7 @@ async function initiatePayment() {
         if (data.status === 'ok' || typeof data.balance === 'number') {
           _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
           renderCredits();
-          closeBuyCredits();
-          showToast('+ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
+          showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
         } else {
           errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact support@gccpros.com.';
           errBox.style.display = 'block';
@@ -3345,8 +3348,7 @@ async function initiatePayment() {
       } catch(err) {
         _credits = (_credits || 0) + _selectedCredits;
         renderCredits();
-        closeBuyCredits();
-        showToast('+ Credits added (pending reconciliation).', '#2D7A4E');
+        showToast('✓ Credits added (pending reconciliation).', '#2D7A4E');
       }
     },
     modal: { ondismiss: function() {} }
