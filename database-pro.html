@@ -1368,6 +1368,10 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   .credit-meter { margin-left: 18px; margin-right: 18px; }
   .ent-feat-list { grid-template-columns: 1fr; }
 }
+
+/* ── Buy modal currency buttons ─────────────────────────── */
+.cur-btn { flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s; }
+.cur-btn.active { border-color:var(--accent);background:var(--accent);color:#fff; }
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -1377,7 +1381,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </head>
 <body>
 
-<!-- ═══════════════════════ TOP BAR ═══════════════════════ -->
 <nav class="topbar" role="navigation" aria-label="Primary">
   <div class="brand">
     <span class="brand-mark">GCC<span class="brand-accent">PROs</span></span>
@@ -1404,7 +1407,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </nav>
 
-<!-- ═══════════════════════ HERO STRIP ═══════════════════════ -->
 <header class="hero">
   <div class="hero-inner">
     <div>
@@ -1429,11 +1431,10 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </header>
 
-<!-- ═══════════════════════ MAIN GRID ═══════════════════════ -->
 <main class="main">
   <div class="grid">
 
-    <!-- ─── LEFT: INDIVIDUAL PORTAL ─── -->
+    
     <section class="panel individual-portal" aria-label="Individual search portal">
       <div class="panel-header">
         <span class="personal-badge">Individual Access · Personal Use Only</span>
@@ -1443,7 +1444,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         <p class="panel-sub panel-sub-public">Sign in to access the Individual tier. Invite-only beta &middot; manual approval &middot; credits issued on approval.</p>
       </div>
 
-      <!-- credit meter -->
+      
       <div class="credit-meter">
         <div class="credit-meter-left">
           <div class="credit-meter-num"><span id="cm-num">-</span><span> credits</span></div>
@@ -1459,7 +1460,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         </div>
       </div>
 
-      <!-- search panel -->
+      
       <div class="search-panel">
         <div class="search-row-top">
           <div class="search-field">
@@ -1516,7 +1517,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         </div>
       </div>
 
-      <!-- results -->
+      
       <div id="results-wrap" class="results-area">
         <div class="state-box">
           <div class="sb-icon">Q</div>
@@ -1553,7 +1554,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       </div>
     </section>
 
-    <!-- ─── RIGHT: ENTERPRISE POSTER ─── -->
+    
     <aside class="enterprise-poster" aria-label="Enterprise edition">
       <div class="ent-top">
         <div class="ent-kicker">Edition Two · Corporate</div>
@@ -1568,7 +1569,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         <strong>Ethical usage only.</strong> Licensed for internal research and decision-support. Not for resale, list-building, cold outreach, or automated harvesting. Every seat is named; every query is logged.
       </div>
 
-      <!-- Shown only pre-login, replaces the features/data-depth grid -->
+      
       <div class="ent-pre-auth-teaser">
         <p>Enterprise licensing is a bespoke annual engagement with controlled access, custom data depth and audit-grade governance. Full spec and pricing shared under NDA with qualified prospects. Join the waitlist below and our team will reach out.</p>
       </div>
@@ -1658,9 +1659,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </main>
 
-<!-- ═══════════════════════ MODALS ═══════════════════════ -->
-
-<!-- Reveal Confirmation Modal -->
 <div class="modal-overlay" id="reveal-modal" onclick="if(event.target===this)closeRevealModal()">
   <div class="modal" style="max-width:420px;">
     <h3>Reveal company profile?</h3>
@@ -1690,37 +1688,30 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<!-- Buy Credits Modal -->
 <div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
   <div class="modal" style="max-width:480px;">
     <h3 style="margin:0 0 4px;">Top up credits</h3>
     <p class="modal-sub" style="margin:0 0 18px;">Select a pack and pay instantly. Credits are added to your account within seconds.</p>
 
-    <!-- Currency toggle -->
+    
     <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button id="cur-inr" onclick="setCurrency('INR')"
-        style="flex:1;padding:8px;border-radius:4px;border:2px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;">
-        ₹ INR
-      </button>
-      <button id="cur-usd" onclick="setCurrency('USD')"
-        style="flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;">
-        $ USD
-      </button>
+      <button id="cur-inr" class="cur-btn active" onclick="setCurrency('INR')">₹ INR</button>
+      <button id="cur-usd" class="cur-btn" onclick="setCurrency('USD')">$ USD</button>
     </div>
 
-    <!-- Pack grid -->
+    
     <div id="pack-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;"></div>
 
-    <!-- Selection summary -->
+    
     <div id="buy-selected" style="display:none;font-size:13px;font-weight:600;color:var(--ink);text-align:center;margin-bottom:8px;padding:8px;background:var(--ivory);border-radius:4px;border:1px solid var(--line-2);"></div>
 
-    <!-- Pay button -->
+    
     <button id="pay-btn" onclick="initiatePayment()" disabled
       style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;opacity:0.5;">
       Select a pack to continue
     </button>
 
-    <!-- Error box -->
+    
     <div class="modal-err" id="buy-err" style="display:none;margin-top:10px;padding:12px 14px;background:#fee2e2;color:#991b1b;border-left:3px solid #ef4444;border-radius:4px;font-size:13px;line-height:1.5;"></div>
 
     <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;">
@@ -1734,7 +1725,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<!-- Submit GCC Modal -->
 <div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
   <div class="modal" style="max-width:520px;">
     <h3>Submit a GCC for review</h3>
@@ -1766,7 +1756,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<!-- Correction Modal -->
 <div class="modal-overlay" id="correction-modal" onclick="if(event.target===this)closeCorrectionModal()">
   <div class="modal" style="max-width:520px;">
     <h3>Suggest a correction</h3>
@@ -1802,7 +1791,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<!-- Password Modal -->
 <div class="modal-overlay" id="pwd-modal" onclick="if(event.target===this)closePwdModal()">
   <div class="modal">
     <h3>Change password</h3>
@@ -1822,14 +1810,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
 <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
   · <a href="https://www.gccpros.com/faq-loyalty" target="_blank">Credits FAQ</a>
   · <a href="mailto:support@gccpros.com">support@gccpros.com</a>
 </footer>
 
-<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
 <script>
 /* ════════════════════════════════════════════════════════════════
    GCCPROs Intelligence Portal - v2 client
@@ -2163,7 +2149,6 @@ function showSignInState(mode) {
       backToChoose;
     return;
   }
-
 
   // ── OTP MODE: 6-digit verification code entered after the signup form ──
   if (m === 'otp') {
@@ -2543,7 +2528,6 @@ async function submitPasswordReset(ev) {
   setTimeout(function(){ switchMode('signin'); }, 4500);
 }
 
-
 // Fire-and-forget: record a login attempt to the V2_Accounts sheet.
 // Used to power the "last login" / "failed login" tracking. We don't
 // await this - if it fails, the user shouldn't notice or wait.
@@ -2788,7 +2772,6 @@ function showInsufficientCredits(balance, needed) {
       '<button class="credit-meter-cta" style="margin-top:16px;" onclick="openBuyCredits()">Top up now</button>' +
     '</div>';
 }
-
 
 // Reset the results area to the default "Begin your research" tile.
 // Called after a successful Approved login so the sign-in card disappears.
@@ -3247,24 +3230,16 @@ document.addEventListener('copy', e => e.preventDefault());
 let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
-  // Contact-only modal - no pack selector / currency toggle to wire up.
   document.getElementById('buy-modal').classList.add('open');
+  setTimeout(function() { setCurrency(_currency || 'INR'); }, 10);
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
 
 function setCurrency(cur) {
   _selectedCurrency = cur;
   _selectedCredits = 0; _selectedPrice = 0;
-  var btnINR = document.getElementById('cur-inr');
-  var btnUSD = document.getElementById('cur-usd');
-  var accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0A1628';
-  if (cur === 'INR') {
-    btnINR.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid ' + accentColor + ';background:' + accentColor + ';color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
-    btnUSD.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
-  } else {
-    btnUSD.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid ' + accentColor + ';background:' + accentColor + ';color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
-    btnINR.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
-  }
+  document.getElementById('cur-inr').classList.toggle('active', cur === 'INR');
+  document.getElementById('cur-usd').classList.toggle('active', cur === 'USD');
   const grid = document.getElementById('pack-grid');
   grid.innerHTML = PACKS[cur].map((p, i) => {
     const priceFmt = cur === 'INR' ? '₹' + p.price.toLocaleString('en-IN') : '$' + p.price.toFixed(2).replace(/\.00$/, '');
@@ -3363,7 +3338,6 @@ async function initiatePayment() {
   const rzp = new Razorpay(options);
   rzp.open();
 }
-
 
 // ── SIGN-IN MODAL ────────────────────────────────────────────────────────────
 function openSignInModal() {
@@ -3568,8 +3542,6 @@ async function joinWaitlist(ev) {
 }
 </script>
 
-
-<!-- ── SIGN-IN MODAL ─────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
   <div class="modal" style="max-width:520px;padding-bottom:8px;position:relative;">
     <button onclick="closeSignInModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
