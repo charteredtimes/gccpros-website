@@ -1371,7 +1371,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 /* ── Buy modal currency buttons ─────────────────────────── */
 .cur-btn { flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s; }
-.cur-btn.active { border-color:var(--accent);background:var(--accent);color:#fff; }
+.cur-btn.active { border-color:#0A1628;background:#0A1628;color:#fff; }
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -1707,7 +1707,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
     
     <button id="pay-btn" onclick="initiatePayment()" disabled
-      style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;opacity:0.5;">
+      style="width:100%;padding:14px;background:#0A1628;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;opacity:0.4;transition:opacity 0.15s;">
       Select a pack to continue
     </button>
 
@@ -1717,6 +1717,9 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;">
       ₹1 per credit (INR) · $0.0125 per credit (USD)<br>
       Volume discounts at 1,000+ credits · Credits never expire
+    </p>
+    <p id="rzp-test-hint" style="font-size:11px;color:#92400E;background:#FEF3C7;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:center;line-height:1.5;display:none;">
+      🔑 Test mode · Use card <strong>4111 1111 1111 1111</strong> · any future expiry · any CVV · OTP <strong>1234</strong>
     </p>
 
     <button onclick="closeBuyCredits()"
@@ -3231,7 +3234,13 @@ let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
   document.getElementById('buy-modal').classList.add('open');
-  setTimeout(function() { setCurrency(_currency || 'INR'); }, 10);
+  setTimeout(function() {
+    setCurrency(_currency || 'INR');
+    var hint = document.getElementById('rzp-test-hint');
+    if (hint && window._rzpKey && window._rzpKey.indexOf('rzp_test_') === 0) {
+      hint.style.display = 'block';
+    }
+  }, 10);
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
 
