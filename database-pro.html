@@ -3392,7 +3392,7 @@ function openStatement() {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       document.getElementById('stmt-loading').style.display = 'none';
-      if (data.error) throw new Error(data.error);
+      if (data.error) throw new Error((data.message || data.error) + ' [' + data.error + ']');
       if (!data.rows || data.rows.length === 0) {
         document.getElementById('stmt-empty').style.display = 'block';
         return;
@@ -3417,7 +3417,8 @@ function openStatement() {
     })
     .catch(function(err) {
       document.getElementById('stmt-loading').style.display = 'none';
-      document.getElementById('stmt-err').textContent = 'Could not load statement. Please try again.';
+      var msg = (err && err.message) ? err.message : String(err);
+      document.getElementById('stmt-err').textContent = 'Error: ' + msg;
       document.getElementById('stmt-err').style.display = 'block';
     });
 }
