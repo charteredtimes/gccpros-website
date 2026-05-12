@@ -1692,38 +1692,45 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <!-- Buy Credits Modal -->
 <div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
-  <div class="modal" style="max-width:460px;">
-    <h3>Top up credits</h3>
-    <p class="modal-sub">Our automated payment gateway is being set up. In the meantime, please reach out and we will top up your credits manually within one business day.</p>
+  <div class="modal" style="max-width:480px;">
+    <h3 style="margin:0 0 4px;">Top up credits</h3>
+    <p class="modal-sub" style="margin:0 0 18px;">Select a pack and pay instantly. Credits are added to your account within seconds.</p>
 
-    <div style="background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:18px 20px;margin:14px 0 4px;">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);font-weight:700;margin-bottom:10px;">Contact us</div>
-
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;flex-shrink:0;">@</span>
-        <div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Email</div>
-          <a href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">support@gccpros.com</a>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#25D366;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;">W</span>
-        <div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">WhatsApp</div>
-          <a href="https://wa.me/918506976700?text=Hi%2C%20I%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits." target="_blank" rel="noopener" style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">+91 85069 76700</a>
-        </div>
-      </div>
+    <!-- Currency toggle -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button id="cur-inr" onclick="setCurrency('INR')"
+        style="flex:1;padding:8px;border-radius:4px;border:2px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;">
+        ₹ INR
+      </button>
+      <button id="cur-usd" onclick="setCurrency('USD')"
+        style="flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;">
+        $ USD
+      </button>
     </div>
 
-    <p style="font-size:11px;color:var(--muted);margin:14px 2px 14px;line-height:1.5;">
-      Pricing: &#8377;1 per credit (INR) or $0.0125 per credit (USD). Volume discounts available at 1,000+ credits. Credits never expire.
+    <!-- Pack grid -->
+    <div id="pack-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;"></div>
+
+    <!-- Selection summary -->
+    <div id="buy-selected" style="display:none;font-size:13px;font-weight:600;color:var(--ink);text-align:center;margin-bottom:8px;padding:8px;background:var(--ivory);border-radius:4px;border:1px solid var(--line-2);"></div>
+
+    <!-- Pay button -->
+    <button id="pay-btn" onclick="initiatePayment()" disabled
+      style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;opacity:0.5;">
+      Select a pack to continue
+    </button>
+
+    <!-- Error box -->
+    <div class="modal-err" id="buy-err" style="display:none;margin-top:10px;padding:12px 14px;background:#fee2e2;color:#991b1b;border-left:3px solid #ef4444;border-radius:4px;font-size:13px;line-height:1.5;"></div>
+
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;">
+      ₹1 per credit (INR) · $0.0125 per credit (USD)<br>
+      Volume discounts at 1,000+ credits · Credits never expire
     </p>
 
-    <div class="modal-btns">
-      <button class="btn-secondary" onclick="closeBuyCredits()">Close</button>
-      <a class="btn-primary" href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="text-decoration:none;text-align:center;">Email support@gccpros.com</a>
-    </div>
+    <button onclick="closeBuyCredits()"
+      style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;"
+      title="Close">&times;</button>
   </div>
 </div>
 
@@ -3248,8 +3255,16 @@ function closeBuyCredits() { document.getElementById('buy-modal').classList.remo
 function setCurrency(cur) {
   _selectedCurrency = cur;
   _selectedCredits = 0; _selectedPrice = 0;
-  document.getElementById('cur-inr').classList.toggle('active', cur === 'INR');
-  document.getElementById('cur-usd').classList.toggle('active', cur === 'USD');
+  var btnINR = document.getElementById('cur-inr');
+  var btnUSD = document.getElementById('cur-usd');
+  var accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0A1628';
+  if (cur === 'INR') {
+    btnINR.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid ' + accentColor + ';background:' + accentColor + ';color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
+    btnUSD.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
+  } else {
+    btnUSD.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid ' + accentColor + ';background:' + accentColor + ';color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
+    btnINR.style.cssText = 'flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;';
+  }
   const grid = document.getElementById('pack-grid');
   grid.innerHTML = PACKS[cur].map((p, i) => {
     const priceFmt = cur === 'INR' ? '₹' + p.price.toLocaleString('en-IN') : '$' + p.price.toFixed(2).replace(/\.00$/, '');
@@ -3277,7 +3292,11 @@ function selectPack(idx) {
   const priceFmt = _selectedCurrency === 'INR' ? '₹' + _selectedPrice.toLocaleString('en-IN') : '$' + _selectedPrice.toFixed(2).replace(/\.00$/, '');
   sel.style.display = 'block';
   sel.textContent = _selectedCredits.toLocaleString('en-IN') + ' credits selected - ' + priceFmt;
-  document.getElementById('pay-btn').disabled = false;
+  var btn = document.getElementById('pay-btn');
+  btn.disabled = false;
+  var priceFmt2 = _selectedCurrency === 'INR' ? '₹' + _selectedPrice.toLocaleString('en-IN') : '$' + _selectedPrice.toFixed(2);
+  btn.textContent = 'Pay ' + priceFmt2 + ' → ' + _selectedCredits.toLocaleString('en-IN') + ' credits';
+  btn.style.opacity = '1';
 }
 
 async function initiatePayment() {
