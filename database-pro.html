@@ -3231,6 +3231,15 @@ document.addEventListener('copy', e => e.preventDefault());
 let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
+  if (_accountStatus && _accountStatus !== 'Approved') {
+    showToast(
+      _accountStatus === 'Pending'
+        ? 'Your account is pending approval. Top-up will be available once approved.'
+        : 'Top-up is not available for your account. Contact support@gccpros.com.',
+      '#92400E'
+    );
+    return;
+  }
   document.getElementById('buy-modal').classList.add('open');
   setTimeout(function() { setCurrency(_currency || 'INR'); }, 10);
 }
@@ -3318,6 +3327,12 @@ async function initiatePayment() {
           })
         });
         const data = await res.json();
+        if (data.error === 'not_approved') {
+          errBox.textContent = 'Payment could not be applied — your account is not yet approved. Please contact support@gccpros.com with your payment reference: ' + response.razorpay_payment_id;
+          errBox.style.display = 'block';
+          payBtn.disabled = false; payBtn.textContent = 'Contact support';
+          return;
+        }
         if (data.status === 'ok' || typeof data.balance === 'number') {
           _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
           renderCredits();
