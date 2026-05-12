@@ -1718,9 +1718,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       ₹1 per credit (INR) · $0.0125 per credit (USD)<br>
       Volume discounts at 1,000+ credits · Credits never expire
     </p>
-    <p id="rzp-test-hint" style="font-size:11px;color:#92400E;background:#FEF3C7;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:center;line-height:1.5;display:none;">
-      🔑 Test mode · Use card <strong>4111 1111 1111 1111</strong> · any future expiry · any CVV · OTP <strong>1234</strong>
-    </p>
 
     <button onclick="closeBuyCredits()"
       style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;"
@@ -1840,7 +1837,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 // the production Opportunities/Database script into this page.
 // ─────────────────────────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
-window._rzpKey = 'rzp_test_SnxXnuIgvuHJsd'; // Razorpay Key ID (test)
+window._rzpKey = 'rzp_live_SoRqo3siqL38Yf'; // Razorpay Key ID (test)
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -3234,13 +3231,7 @@ let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
   document.getElementById('buy-modal').classList.add('open');
-  setTimeout(function() {
-    setCurrency(_currency || 'INR');
-    var hint = document.getElementById('rzp-test-hint');
-    if (hint && window._rzpKey && window._rzpKey.indexOf('rzp_test_') === 0) {
-      hint.style.display = 'block';
-    }
-  }, 10);
+  setTimeout(function() { setCurrency(_currency || 'INR'); }, 10);
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
 
@@ -3345,6 +3336,20 @@ async function initiatePayment() {
     modal: { ondismiss: function() {} }
   };
   const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function(resp) {
+    var code = (resp.error && resp.error.code) || '';
+    var desc = (resp.error && resp.error.description) || 'Payment could not be completed.';
+    var reason = (resp.error && resp.error.reason) || '';
+    var msg = desc;
+    if (reason === 'payment_failed')   msg = 'Your payment was declined. Please try a different card or payment method.';
+    if (reason === 'payment_cancelled') msg = 'Payment was cancelled.';
+    if (code === 'BAD_REQUEST_ERROR')   msg = 'Payment failed. Please check your card details and try again.';
+    errBox.textContent = msg;
+    errBox.style.display = 'block';
+    payBtn.disabled = false;
+    payBtn.textContent = 'Try again';
+    payBtn.style.opacity = '1';
+  });
   rzp.open();
 }
 
