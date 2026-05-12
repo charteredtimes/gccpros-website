@@ -2677,7 +2677,12 @@ async function fetchCreditBalance(retryCount) {
       return;
     }
     _accountStatus = data.status || 'Approved';
+    var _prevCredits = _credits;
     _credits = (typeof data.credits === 'number') ? data.credits : 0;
+    // Seed ledger on very first load so user sees at least a balance snapshot
+    if (_ledgerRead().length === 0 && _credits > 0) {
+      _ledgerPush('credit', _credits, _credits, 'Account balance (on sign-in)');
+    }
     _monthlyReveals = (typeof data.monthlyReveals === 'number') ? data.monthlyReveals : 0;
     _monthlyCap = (typeof data.monthlyCap === 'number') ? data.monthlyCap : MONTHLY_REVEAL_CAP;
     _revealedThisMonth = new Set(Array.isArray(data.revealedThisMonth) ? data.revealedThisMonth : []);
@@ -2708,6 +2713,27 @@ async function requestApproval() {
       + '&ua='    + encodeURIComponent(navigator.userAgent || '')
       + '&ref='   + encodeURIComponent(document.referrer || ''), { mode: 'no-cors' });
   } catch(e) {}
+}
+
+
+// ── LOCAL CREDIT LEDGER (localStorage) ──────────────────────────────────────
+// Stores the last 100 transactions in the browser so the statement modal
+// works without needing a deployed Apps Script endpoint.
+var _LEDGER_KEY_PREFIX = 'gcc_ledger_';
+function _ledgerKey() { return _LEDGER_KEY_PREFIX + (getToken() || 'anon'); }
+
+function _ledgerPush(type, amount, balanceAfter, reason) {
+  try {
+    var key = _ledgerKey();
+    var rows = JSON.parse(localStorage.getItem(key) || '[]');
+    rows.unshift({ ts: new Date().toISOString(), type: type, amount: amount, balance: balanceAfter, reason: reason || '' });
+    if (rows.length > 100) rows = rows.slice(0, 100);
+    localStorage.setItem(key, JSON.stringify(rows));
+  } catch(_) {}
+}
+
+function _ledgerRead() {
+  try { return JSON.parse(localStorage.getItem(_ledgerKey()) || '[]'); } catch(_) { return []; }
 }
 
 function renderCredits() {
@@ -2755,10 +2781,12 @@ async function deductCredits(cost, reason) {
       return true;
     }
     _credits = data.balance;
+    _ledgerPush('debit', -cost, _credits, reason || 'search');
     renderCredits();
     return true;
   } catch(e) {
     _credits = Math.max(0, (_credits || 0) - cost);
+    _ledgerPush('debit', -cost, _credits, reason || 'search');
     renderCredits();
     return true;
   }
@@ -3102,7 +3130,7 @@ async function fetchAndRenderReveal(name, shouldCharge) {
     if (data.error) { showState('Reveal failed', data.error); return; }
 
     // Server returns the canonical balance and counter - trust it.
-    if (typeof data.balance === 'number') _credits = data.balance;
+    if (typeof data.balance === 'number') { _credits = data.balance; _ledgerPush('debit', -REVEAL_COST, _credits, 'reveal'); }
     if (typeof data.monthlyReveals === 'number') _monthlyReveals = data.monthlyReveals;
     if (data.charged) _revealedThisMonth.add(name);
     renderCredits();
@@ -3339,6 +3367,7 @@ async function initiatePayment() {
         }
         if (data.status === 'ok' || typeof data.balance === 'number') {
           _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
+          _ledgerPush('credit', _selectedCredits, _credits, 'Top up · ' + _selectedCredits + ' credits (' + (_selectedCurrency === 'USD' ? '$' : '₹') + _selectedPrice + ')');
           renderCredits();
           showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
         } else {
@@ -3388,54 +3417,44 @@ function openStatement() {
     return;
   }
 
-  fetch(SCRIPT_URL + '?action=getCreditStatement&token=' + encodeURIComponent(token))
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      document.getElementById('stmt-loading').style.display = 'none';
-      if (data.error) throw new Error((data.message || data.error) + ' [' + data.error + ']');
-      if (!data.rows || data.rows.length === 0) {
-        document.getElementById('stmt-empty').style.display = 'block';
-        return;
-      }
-      var tbody = document.getElementById('stmt-tbody');
-      tbody.innerHTML = data.rows.map(function(row, i) {
-        var d    = new Date(row.ts);
-        var date = isNaN(d) ? row.ts : d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-        var time = isNaN(d) ? '' : d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
-        var desc = _stmtDesc(row);
-        var amt  = row.amount > 0 ? '+' + row.amount : String(row.amount);
-        var amtColor = row.amount > 0 ? '#065f46' : '#991b1b';
-        var bg   = i % 2 === 0 ? '#fff' : '#f9fafb';
-        return '<tr style="background:' + bg + ';border-bottom:1px solid #f0f0f0;">' +
-          '<td style="padding:9px 12px;white-space:nowrap;color:var(--muted);">' + date + '<br><span style="font-size:11px;">' + time + '</span></td>' +
-          '<td style="padding:9px 12px;">' + desc + '</td>' +
-          '<td style="padding:9px 12px;text-align:right;font-weight:700;color:' + amtColor + ';font-family:var(--mono);">' + amt + '</td>' +
-          '<td style="padding:9px 12px;text-align:right;font-family:var(--mono);color:var(--ink);">' + Number(row.balance).toLocaleString('en-IN') + '</td>' +
-          '</tr>';
-      }).join('');
-      document.getElementById('stmt-table-wrap').style.display = 'block';
-    })
-    .catch(function(err) {
-      document.getElementById('stmt-loading').style.display = 'none';
-      var msg = (err && err.message) ? err.message : String(err);
-      document.getElementById('stmt-err').textContent = 'Error: ' + msg;
-      document.getElementById('stmt-err').style.display = 'block';
-    });
+  // Read transactions from localStorage — works instantly, no server call needed.
+  var rows = _ledgerRead();
+  document.getElementById('stmt-loading').style.display = 'none';
+  if (!rows || rows.length === 0) {
+    document.getElementById('stmt-empty').style.display = 'block';
+    return;
+  }
+  var tbody = document.getElementById('stmt-tbody');
+  tbody.innerHTML = rows.map(function(row, i) {
+    var d    = new Date(row.ts);
+    var date = isNaN(d.getTime()) ? row.ts : d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    var time = isNaN(d.getTime()) ? '' : d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+    var desc = _stmtDesc(row);
+    var amt  = row.amount > 0 ? '+' + row.amount : String(row.amount);
+    var amtColor = row.amount > 0 ? '#065f46' : '#991b1b';
+    var bg   = i % 2 === 0 ? '#fff' : '#f9fafb';
+    return '<tr style="background:' + bg + ';border-bottom:1px solid #f0f0f0;">' +
+      '<td style="padding:9px 12px;white-space:nowrap;color:var(--muted);">' + date + '<br><span style="font-size:11px;">' + time + '</span></td>' +
+      '<td style="padding:9px 12px;">' + desc + '</td>' +
+      '<td style="padding:9px 12px;text-align:right;font-weight:700;color:' + amtColor + ';font-family:var(--mono);">' + amt + '</td>' +
+      '<td style="padding:9px 12px;text-align:right;font-family:var(--mono);color:var(--ink);">' + Number(row.balance).toLocaleString('en-IN') + '</td>' +
+      '</tr>';
+  }).join('');
+  document.getElementById('stmt-table-wrap').style.display = 'block';
 }
 
 function _stmtDesc(row) {
   var type   = String(row.type || '').toLowerCase();
-  var reason = String(row.reason || '').toLowerCase();
-  if (type === 'credit' && reason.indexOf('signup') !== -1) return '🎁 Signup bonus';
-  if (type === 'credit' && reason.indexOf('payment') !== -1) {
-    var paid = row.paid ? ' (₹' + row.paid + ')' : '';
-    return '💳 Top up' + paid + (row.paymentId ? '<br><span style="font-size:11px;color:var(--muted);">Ref: ' + row.paymentId + '</span>' : '');
-  }
-  if (type === 'credit' && reason.indexOf('admin') !== -1) return '🔧 Admin credit';
-  if (type === 'credit') return '➕ Credit';
-  if (reason.indexOf('reveal') !== -1) return '🔍 Company reveal';
-  if (reason.indexOf('search') !== -1) return '🔎 Search';
-  return '➖ ' + (row.reason || 'Debit');
+  var reason = String(row.reason || '');
+  var rl     = reason.toLowerCase();
+  if (type === 'credit' && rl.indexOf('top up') !== -1) return '💳 ' + reason;
+  if (type === 'credit' && rl.indexOf('signup') !== -1) return '🎁 Signup bonus';
+  if (type === 'credit' && rl.indexOf('balance') !== -1) return '📊 ' + reason;
+  if (type === 'credit' && rl.indexOf('admin') !== -1) return '🔧 Admin credit';
+  if (type === 'credit') return '➕ ' + (reason || 'Credit');
+  if (type === 'debit' && rl.indexOf('reveal') !== -1) return '🔍 Company reveal';
+  if (type === 'debit' && rl.indexOf('search') !== -1) return '🔎 Search';
+  return (type === 'credit' ? '➕ ' : '➖ ') + (reason || type);
 }
 
 function closeStatement() {
