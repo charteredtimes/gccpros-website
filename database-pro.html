@@ -1412,11 +1412,11 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <div>
       <div class="hero-breadcrumb">GCCPROs · Database Pro · Global GCC Intelligence</div>
       <h1 class="hero-title">The <em>Global Capability Center</em> Database</h1>
-      <p class="hero-sub">Research-grade access to 3,200+ verified GCCs globally, including 2,400+ across India. Every profile covers parent company, GCC city and state, HQ country, industry, domains, headcount, setup model, leadership contacts, establishment year, maturity generation, Glassdoor ratings, certifications and financials. Used by researchers, talent leaders and strategy teams worldwide.</p>
+      <p class="hero-sub">Research-grade access to 3,600+ verified GCCs globally, including 2,400+ across India. Every profile covers parent company, GCC city and state, HQ country, industry, domains, headcount, setup model, leadership contacts, establishment year, maturity generation, Glassdoor ratings, certifications and financials. Used by researchers, talent leaders and strategy teams worldwide.</p>
     </div>
     <div class="hero-stats" aria-hidden="true">
       <div class="stat-block">
-        <div class="stat-num">3,200+</div>
+        <div class="stat-num">3,600+</div>
         <div class="stat-label">GCCs Worldwide</div>
       </div>
       <div class="stat-block">
@@ -1425,7 +1425,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       </div>
       <div class="stat-block">
         <div class="stat-num">95%</div>
-        <div class="stat-label">Target Accuracy</div>
+        <div class="stat-label">Committed Accuracy</div>
       </div>
     </div>
   </div>
@@ -1457,6 +1457,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
             <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--graphite);margin-top:3px;font-weight:600;">Reveals this month</div>
           </div>
           <button class="credit-meter-cta" onclick="openBuyCredits()">Top up</button>
+          <button onclick="openStatement()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;letter-spacing:0.5px;">View statement</button>
         </div>
       </div>
 
@@ -3353,6 +3354,76 @@ async function initiatePayment() {
   rzp.open();
 }
 
+
+// ── CREDIT STATEMENT ─────────────────────────────────────────────────────────
+function openStatement() {
+  document.getElementById('stmt-modal').classList.add('open');
+  document.getElementById('stmt-loading').style.display = 'block';
+  document.getElementById('stmt-table-wrap').style.display = 'none';
+  document.getElementById('stmt-empty').style.display = 'none';
+  document.getElementById('stmt-err').style.display = 'none';
+
+  var token = getToken();
+  if (!token) {
+    document.getElementById('stmt-loading').style.display = 'none';
+    document.getElementById('stmt-err').textContent = 'Please sign in to view your statement.';
+    document.getElementById('stmt-err').style.display = 'block';
+    return;
+  }
+
+  fetch(SCRIPT_URL + '?action=getCreditStatement&token=' + encodeURIComponent(token))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      document.getElementById('stmt-loading').style.display = 'none';
+      if (data.error) throw new Error(data.error);
+      if (!data.rows || data.rows.length === 0) {
+        document.getElementById('stmt-empty').style.display = 'block';
+        return;
+      }
+      var tbody = document.getElementById('stmt-tbody');
+      tbody.innerHTML = data.rows.map(function(row, i) {
+        var d    = new Date(row.ts);
+        var date = isNaN(d) ? row.ts : d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+        var time = isNaN(d) ? '' : d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+        var desc = _stmtDesc(row);
+        var amt  = row.amount > 0 ? '+' + row.amount : String(row.amount);
+        var amtColor = row.amount > 0 ? '#065f46' : '#991b1b';
+        var bg   = i % 2 === 0 ? '#fff' : '#f9fafb';
+        return '<tr style="background:' + bg + ';border-bottom:1px solid #f0f0f0;">' +
+          '<td style="padding:9px 12px;white-space:nowrap;color:var(--muted);">' + date + '<br><span style="font-size:11px;">' + time + '</span></td>' +
+          '<td style="padding:9px 12px;">' + desc + '</td>' +
+          '<td style="padding:9px 12px;text-align:right;font-weight:700;color:' + amtColor + ';font-family:var(--mono);">' + amt + '</td>' +
+          '<td style="padding:9px 12px;text-align:right;font-family:var(--mono);color:var(--ink);">' + Number(row.balance).toLocaleString('en-IN') + '</td>' +
+          '</tr>';
+      }).join('');
+      document.getElementById('stmt-table-wrap').style.display = 'block';
+    })
+    .catch(function(err) {
+      document.getElementById('stmt-loading').style.display = 'none';
+      document.getElementById('stmt-err').textContent = 'Could not load statement. Please try again.';
+      document.getElementById('stmt-err').style.display = 'block';
+    });
+}
+
+function _stmtDesc(row) {
+  var type   = String(row.type || '').toLowerCase();
+  var reason = String(row.reason || '').toLowerCase();
+  if (type === 'credit' && reason.indexOf('signup') !== -1) return '🎁 Signup bonus';
+  if (type === 'credit' && reason.indexOf('payment') !== -1) {
+    var paid = row.paid ? ' (₹' + row.paid + ')' : '';
+    return '💳 Top up' + paid + (row.paymentId ? '<br><span style="font-size:11px;color:var(--muted);">Ref: ' + row.paymentId + '</span>' : '');
+  }
+  if (type === 'credit' && reason.indexOf('admin') !== -1) return '🔧 Admin credit';
+  if (type === 'credit') return '➕ Credit';
+  if (reason.indexOf('reveal') !== -1) return '🔍 Company reveal';
+  if (reason.indexOf('search') !== -1) return '🔎 Search';
+  return '➖ ' + (row.reason || 'Debit');
+}
+
+function closeStatement() {
+  document.getElementById('stmt-modal').classList.remove('open');
+}
+
 // ── SIGN-IN MODAL ────────────────────────────────────────────────────────────
 function openSignInModal() {
   var m = document.getElementById('signin-modal');
@@ -3555,6 +3626,32 @@ async function joinWaitlist(ev) {
   document.getElementById('wl-company').value = '';
 }
 </script>
+
+
+<!-- ── CREDIT STATEMENT MODAL ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="stmt-modal" onclick="if(event.target===this)closeStatement()">
+  <div class="modal" style="max-width:640px;padding-bottom:12px;">
+    <button onclick="closeStatement()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;">Credits Statement</h3>
+    <p class="modal-sub" style="margin:0 0 16px;">Your last 60 transactions, newest first.</p>
+    <div id="stmt-loading" style="text-align:center;padding:32px 0;color:var(--muted);font-size:13px;">Loading…</div>
+    <div id="stmt-table-wrap" style="display:none;overflow-x:auto;max-height:420px;overflow-y:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:var(--ink);color:#fff;position:sticky;top:0;">
+            <th style="padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap;">Date</th>
+            <th style="padding:10px 12px;text-align:left;font-weight:600;">Description</th>
+            <th style="padding:10px 12px;text-align:right;font-weight:600;">Credits</th>
+            <th style="padding:10px 12px;text-align:right;font-weight:600;">Balance</th>
+          </tr>
+        </thead>
+        <tbody id="stmt-tbody"></tbody>
+      </table>
+    </div>
+    <div id="stmt-empty" style="display:none;text-align:center;padding:32px 0;color:var(--muted);font-size:13px;">No transactions found.</div>
+    <div id="stmt-err" style="display:none;padding:12px;background:#fee2e2;color:#991b1b;border-radius:4px;font-size:13px;margin-top:8px;"></div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
   <div class="modal" style="max-width:520px;padding-bottom:8px;position:relative;">
