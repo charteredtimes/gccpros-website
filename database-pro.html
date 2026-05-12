@@ -1370,7 +1370,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 </style>
 
-<!-- Razorpay script removed until live key is activated -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
@@ -1692,45 +1692,38 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <!-- Buy Credits Modal -->
 <div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyCredits()">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal" style="max-width:460px;">
     <h3>Top up credits</h3>
-    <p class="modal-sub">Select a pack below and pay securely via Razorpay. Credits are added to your account instantly.</p>
+    <p class="modal-sub">Our automated payment gateway is being set up. In the meantime, please reach out and we will top up your credits manually within one business day.</p>
 
-    <!-- Currency toggle -->
-    <div style="display:flex;gap:8px;margin:14px 0 12px;">
-      <button id="cur-inr" class="pg-btn active" onclick="setCurrency('INR')" style="flex:1;height:36px;font-size:12px;font-weight:600;">&#8377; INR</button>
-      <button id="cur-usd" class="pg-btn" onclick="setCurrency('USD')" style="flex:1;height:36px;font-size:12px;font-weight:600;">$ USD</button>
+    <div style="background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:18px 20px;margin:14px 0 4px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);font-weight:700;margin-bottom:10px;">Contact us</div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;flex-shrink:0;">@</span>
+        <div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Email</div>
+          <a href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">support@gccpros.com</a>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#25D366;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;">W</span>
+        <div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">WhatsApp</div>
+          <a href="https://wa.me/918506976700?text=Hi%2C%20I%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits." target="_blank" rel="noopener" style="font-size:14px;color:var(--ink);font-weight:600;text-decoration:none;">+91 85069 76700</a>
+        </div>
+      </div>
     </div>
 
-    <!-- Pack grid -->
-    <div class="pack-grid" id="pack-grid"></div>
-
-    <!-- Selected summary -->
-    <div id="buy-selected" style="display:none;background:var(--ivory);border:1px solid var(--gold-soft);border-left:3px solid var(--gold);border-radius:2px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--ink);margin:12px 0 4px;"></div>
-
-    <!-- Error box -->
-    <div class="modal-err" id="buy-err" style="display:none;margin-top:8px;"></div>
-
-    <p style="font-size:11px;color:var(--muted);margin:10px 2px 4px;line-height:1.5;">
-      &#8377;1 per credit (INR) &middot; $0.0125 per credit (USD) &middot; Credits never expire &middot; Volume discounts applied automatically.
+    <p style="font-size:11px;color:var(--muted);margin:14px 2px 14px;line-height:1.5;">
+      Pricing: &#8377;1 per credit (INR) or $0.0125 per credit (USD). Volume discounts available at 1,000+ credits. Credits never expire.
     </p>
 
-    <div class="modal-btns" style="margin-top:14px;">
-      <button class="btn-secondary" onclick="closeBuyCredits()">Cancel</button>
-      <button class="btn-primary" id="pay-btn" onclick="initiatePayment()" disabled>Pay &amp; credit instantly</button>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeBuyCredits()">Close</button>
+      <a class="btn-primary" href="mailto:support@gccpros.com?subject=Top%20up%20credits%20%E2%80%93%20Database%20Pro&amp;body=Hello%2C%0A%0AI%20would%20like%20to%20top%20up%20my%20Database%20Pro%20credits.%0A%0AAccount%20email%3A%20%0ANumber%20of%20credits%20requested%3A%20%0APreferred%20payment%20method%3A%20%0A%0AThanks." style="text-decoration:none;text-align:center;">Email support@gccpros.com</a>
     </div>
-
-    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5;">
-      Need help? <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:none;font-weight:600;">WhatsApp +91 85069 76700</a>
-    </p>
-  </div>
-</div>
-
-<!-- Sign-in Modal -->
-<div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
-  <div class="modal" style="max-width:520px;padding-bottom:8px;">
-    <button onclick="closeSignInModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
-    <div id="signin-modal-body"></div>
   </div>
 </div>
 
@@ -1851,14 +1844,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 // the production Opportunities/Database script into this page.
 // ─────────────────────────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
-
-// ─────────────────────────────────────────────────────────────────
-// RAZORPAY KEY — rzp_test_SnAn2yGYscONea
-// Dashboard → Settings → API Keys → Generate Key → copy "Key ID"
-// Live key starts with  rzp_live_...
-// Test key starts with  rzp_test_  (use this for testing first)
-// ─────────────────────────────────────────────────────────────────
-window._rzpKey = 'rzp_test_SnHP9llTNAeCag';
+window._rzpKey = 'rzp_test_SnxXnuIgvuHJsd'; // Razorpay Key ID (test)
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -2012,21 +1998,10 @@ auth.onAuthStateChanged(u => {
 // Google sign-in is offered as a secondary one-click option.
 var _signInMode = 'choose';
 
-function openSignInModal()  {
-  var m = document.getElementById('signin-modal');
-  if (m) m.classList.add('open');
-  showSignInState('choose');
-}
-function closeSignInModal() {
-  var m = document.getElementById('signin-modal');
-  if (m) m.classList.remove('open');
-}
-
 function showSignInState(mode) {
   if (mode) _signInMode = mode;
-  // Render into the modal body if the modal is open, otherwise into the inline results area
   var modal = document.getElementById('signin-modal');
-  var wrap  = (modal && modal.classList.contains('open'))
+  var wrap = (modal && modal.classList.contains('open'))
     ? document.getElementById('signin-modal-body')
     : document.getElementById('results-wrap');
   if (!wrap) return;
@@ -3265,9 +3240,8 @@ document.addEventListener('copy', e => e.preventDefault());
 let _selectedCredits = 0, _selectedPrice = 0, _selectedCurrency = 'INR';
 
 function openBuyCredits() {
+  // Contact-only modal - no pack selector / currency toggle to wire up.
   document.getElementById('buy-modal').classList.add('open');
-  // Initialise the pack grid with the user's current currency
-  setCurrency(_currency || 'INR');
 }
 function closeBuyCredits() { document.getElementById('buy-modal').classList.remove('open'); }
 
@@ -3307,10 +3281,80 @@ function selectPack(idx) {
 }
 
 async function initiatePayment() {
-  // ── PAYMENT GATEWAY DISABLED (pending Razorpay live activation) ──
+  const token = getToken();
+  if (!token || !_selectedCredits) return;
   const errBox = document.getElementById('buy-err');
-  errBox.innerHTML = '&#128274;&nbsp; Online top-up is coming soon. Please contact <a href="mailto:admin@charteredtimes.com" style="color:var(--accent);">admin@charteredtimes.com</a> to add credits manually.';
-  errBox.style.display = 'block';
+  errBox.style.display = 'none';
+
+  if (typeof Razorpay === 'undefined') {
+    errBox.textContent = 'Payment gateway is loading - please try again in a moment.';
+    errBox.style.display = 'block';
+    return;
+  }
+  if (!window._rzpKey || window._rzpKey === 'YOUR_RAZORPAY_KEY_ID') {
+    errBox.innerHTML = 'Online payments are being set up. To top up immediately, WhatsApp <strong>+91-85069-76700</strong> - we will credit your account manually within the hour.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  const amountMinor = _selectedCurrency === 'USD'
+    ? Math.round(_selectedPrice * 100)   // cents
+    : Math.round(_selectedPrice * 100);  // paise
+
+  const options = {
+    key: window._rzpKey,
+    amount: amountMinor,
+    currency: _selectedCurrency,
+    name: 'GCCPROs Intelligence Portal',
+    description: _selectedCredits + ' research credits',
+    prefill: { email: token },
+    theme: { color: '#0A1628' },
+    handler: async function(response) {
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'creditPaymentSuccess',
+            email: token,
+            credits: _selectedCredits,
+            amount: _selectedPrice,
+            currency: _selectedCurrency,
+            razorpay_payment_id: response.razorpay_payment_id
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'ok' || typeof data.balance === 'number') {
+          _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
+          renderCredits();
+          closeBuyCredits();
+          showToast('+ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
+        } else {
+          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact support@gccpros.com.';
+          errBox.style.display = 'block';
+        }
+      } catch(err) {
+        _credits = (_credits || 0) + _selectedCredits;
+        renderCredits();
+        closeBuyCredits();
+        showToast('+ Credits added (pending reconciliation).', '#2D7A4E');
+      }
+    },
+    modal: { ondismiss: function() {} }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+
+// ── SIGN-IN MODAL ────────────────────────────────────────────────────────────
+function openSignInModal() {
+  var m = document.getElementById('signin-modal');
+  if (m) m.classList.add('open');
+  showSignInState('choose');
+}
+function closeSignInModal() {
+  var m = document.getElementById('signin-modal');
+  if (m) m.classList.remove('open');
 }
 
 // TOAST
@@ -3504,6 +3548,15 @@ async function joinWaitlist(ev) {
   document.getElementById('wl-company').value = '';
 }
 </script>
+
+
+<!-- ── SIGN-IN MODAL ─────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
+  <div class="modal" style="max-width:520px;padding-bottom:8px;position:relative;">
+    <button onclick="closeSignInModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
+    <div id="signin-modal-body"></div>
+  </div>
+</div>
 
 </body>
 </html>
