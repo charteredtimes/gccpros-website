@@ -1158,6 +1158,8 @@ footer.site-footer {
 }
 
 /* ═══ RESPONSIVE ═══ */
+
+/* ─ Tablet & smaller (≤1024px) ─ */
 @media (max-width: 1024px) {
   .nav-links { display: none; }
   .hamburger { display: block; }
@@ -1166,23 +1168,173 @@ footer.site-footer {
   .charter-principles { grid-template-columns: 1fr; }
   .presence-grid { grid-template-columns: 1fr; gap: 48px; }
   .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+  /* Benefits: collapse 5-col layout to 2-col (lead spans 2, featured spans 2) */
+  .benefits-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; gap: 14px; }
+  .benefit-card.benefit-card--lead { grid-column: span 2; grid-row: auto; }
+  .benefit-card.benefit-card--featured { grid-column: span 2; }
+  /* Country chip grid: 3 cols */
+  .country-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ─ Phone (≤720px) ─ */
 @media (max-width: 720px) {
-  nav.site-nav { padding: 0 20px; height: 60px; }
-  .mobile-menu { top: 60px; }
-  .hero { padding: 110px 20px 70px; min-height: auto; }
-  .hero h1 { font-size: clamp(36px, 10vw, 56px); }
-  .hero-stats { grid-template-columns: 1fr; gap: 20px; padding-top: 24px; }
-  .hero-stat { padding: 0; border-right: none; border-bottom: 1px solid rgba(91,163,214,0.10); padding-bottom: 16px; }
+  html { scroll-padding-top: 60px; }
+  nav.site-nav { padding: 0 16px; height: 60px; }
+  .nav-logo { font-size: 18px; }
+  .nav-logo img { height: 24px; }
+  .mobile-menu { top: 60px; padding: 18px 20px; }
+
+  /* HERO */
+  .hero { padding: 100px 18px 64px; min-height: auto; }
+  .hero-inner { gap: 36px; }
+  .hero-eyebrow {
+    font-size: 9.5px; letter-spacing: 1.8px;
+    padding: 7px 14px; gap: 8px;
+    margin-bottom: 20px;
+    max-width: 100%; text-align: left; line-height: 1.4;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 9.5vw, 52px);
+    letter-spacing: -1.2px;
+    line-height: 1.06;
+    margin-bottom: 22px;
+  }
+  .hero-sub { font-size: 15.5px; line-height: 1.7; margin-bottom: 30px; }
+  .hero-actions { flex-direction: column; gap: 12px; width: 100%; margin-bottom: 44px; }
+  .btn-primary, .btn-ghost {
+    width: 100%; justify-content: center;
+    padding: 15px 24px; font-size: 13.5px;
+  }
+  .hero-stats { grid-template-columns: 1fr; gap: 0; padding-top: 22px; }
+  .hero-stat {
+    padding: 14px 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(91,163,214,0.10);
+  }
   .hero-stat:last-child { border-bottom: none; }
-  .section, .presence-section, .council-section, .charter-section, .final-cta { padding: 72px 20px; }
-  .pillar-card { padding: 32px 24px 28px; }
-  .pillar-name { font-size: 22px; }
-  .charter-card { padding: 36px 24px; }
-  .charter-quote { font-size: 16px; padding-left: 18px; }
-  .footer-top { grid-template-columns: 1fr; gap: 36px; padding: 0; }
-  .marquee-item { font-size: 16px; padding: 0 20px; }
-  .marquee-item::after { margin-left: 20px; }
+  .hero-stat-num { font-size: 40px; letter-spacing: -1px; }
+  .hero-stat-label { font-size: 11px; letter-spacing: 1.2px; }
+
+  /* MARQUEE */
+  .marquee-section { padding: 20px 0; }
+  .marquee-item { font-size: 15px; padding: 0 16px; }
+  .marquee-item::after { margin-left: 16px; }
+
+  /* SECTION COMMON */
+  .section,
+  .presence-section,
+  .council-section,
+  .charter-section,
+  .benefits-section,
+  .final-cta { padding: 64px 18px; }
+  .shell { padding: 0; }
+  .section-title { font-size: clamp(28px, 8vw, 38px); letter-spacing: -1px; line-height: 1.1; }
+  .section-sub { font-size: 14.5px; line-height: 1.7; margin-bottom: 36px; }
+  .section-head--centered { margin-bottom: 40px; }
+  .section-eyebrow {
+    font-size: 10px; letter-spacing: 1.8px; gap: 10px;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .section-eyebrow::before, .section-eyebrow::after { width: 24px; }
+
+  /* PILLARS */
+  .pillar-card { padding: 28px 22px 26px; border-radius: 16px; }
+  .pillar-number { margin-bottom: 16px; }
+  .pillar-icon { width: 46px; height: 46px; margin-bottom: 16px; }
+  .pillar-name { font-size: 20px; line-height: 1.2; margin-bottom: 12px; }
+  .pillar-desc { font-size: 14px; margin-bottom: 20px; }
+
+  /* PRESENCE / WORLD MAP */
+  .map-block { padding: 22px 18px 22px; border-radius: 16px; }
+  .map-tabs { gap: 12px; flex-direction: column; align-items: flex-start; margin-bottom: 18px; }
+  .map-tab { font-size: 10.5px; letter-spacing: 1.2px; padding: 7px 14px; }
+  .map-counter { font-size: 11.5px; }
+  .map-counter-num { font-size: 14px; }
+  /* SVG labels become unreadable below ~1100px wide map. Hide them on mobile and rely on the chip grid below. */
+  .world-map .wm-label,
+  .india-map .india-label { display: none; }
+  .country-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 22px; }
+  .country-chip { padding: 10px 12px; gap: 10px; }
+  .country-chip .cc-name { font-size: 12px; }
+  .country-chip .cc-num { font-size: 11px; }
+
+  /* COUNCIL TICKER */
+  .council-chip { padding: 10px 16px 10px 10px; gap: 10px; }
+  .council-chip .initial { width: 32px; height: 32px; font-size: 12px; }
+  .council-chip .name { font-size: 12.5px; }
+  .council-chip .org { font-size: 10px; }
+  .council-cta { flex-direction: column; }
+  .council-cta .btn-primary, .council-cta .btn-ghost { width: 100%; }
+
+  /* BENEFITS GRID — single column */
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 12px;
+  }
+  .benefit-card,
+  .benefit-card.benefit-card--lead,
+  .benefit-card.benefit-card--featured {
+    grid-column: span 1; grid-row: auto;
+    padding: 28px 22px 26px;
+    border-radius: 16px;
+  }
+  .benefit-card.benefit-card--lead { padding: 32px 24px 28px; }
+  .benefit-card.benefit-card--lead .benefit-title { font-size: 22px; }
+  .benefit-card.benefit-card--lead .benefit-desc { font-size: 14px; }
+  .benefit-card.benefit-card--lead .benefit-icon { width: 52px; height: 52px; }
+  .benefit-title { font-size: 18px; }
+  .benefit-desc { font-size: 13px; }
+  .benefit-icon { width: 44px; height: 44px; }
+  .benefits-section .section-head--centered ~ div + div { margin-top: 36px !important; }
+
+  /* INSIGHTS */
+  .insight-cover { height: 160px; }
+  .insight-cover-icon { width: 54px; height: 54px; }
+  .insight-body { padding: 22px 22px 26px; }
+  .insight-title { font-size: 19px; }
+
+  /* CHARTER */
+  .charter-card { padding: 34px 22px; border-radius: 16px; margin-bottom: 24px; }
+  .charter-card::before { font-size: 70px; top: 14px; left: 18px; }
+  .charter-quote { font-size: 15.5px; padding-left: 18px; line-height: 1.75; }
+  .charter-principle { padding: 22px 20px; }
+
+  /* FINAL CTA */
+  .final-cta h2 { font-size: clamp(30px, 8vw, 42px); letter-spacing: -1.1px; }
+  .final-cta p { font-size: 15px; margin-bottom: 30px; }
+  .final-cta-actions { flex-direction: column; }
+  .final-cta-actions .btn-primary, .final-cta-actions .btn-ghost { width: 100%; }
+
+  /* FOOTER */
+  footer.site-footer { padding: 56px 18px 24px; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-brand p { max-width: 100%; }
+  .footer-mid { margin: 22px auto; padding: 14px 0; gap: 12px; }
+  .footer-mid a { font-size: 12px; }
+  .footer-bottom { font-size: 11px; }
+}
+
+/* ─ Small phone (≤420px) — tighten further ─ */
+@media (max-width: 420px) {
+  .hero { padding: 90px 14px 56px; }
+  .hero h1 { font-size: clamp(30px, 10vw, 44px); letter-spacing: -0.8px; }
+  .hero-sub { font-size: 14.5px; }
+  .section,
+  .presence-section,
+  .council-section,
+  .charter-section,
+  .benefits-section,
+  .final-cta { padding: 56px 14px; }
+  .map-block { padding: 18px 14px 18px; }
+  .country-grid { gap: 6px; }
+  .country-chip { padding: 9px 11px; gap: 8px; }
+  .country-chip .cc-name { font-size: 11.5px; }
+  .country-chip .cc-num { font-size: 10.5px; }
+  .pillar-card,
+  .benefit-card,
+  .charter-card { padding-left: 18px; padding-right: 18px; }
+  footer.site-footer { padding-left: 14px; padding-right: 14px; }
 }
 </style>
 
