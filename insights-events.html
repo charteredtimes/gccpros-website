@@ -372,7 +372,7 @@ html.menu-open{overflow:hidden;}
       </div>
       <div class="hero-meta-div"></div>
       <div class="hero-meta-item">
-        <div class="hero-meta-num">3,600+</div>
+        <div class="hero-meta-num">5,000+</div>
         <div class="hero-meta-label">GCCs covered worldwide</div>
       </div>
       <div class="hero-meta-div"></div>
@@ -386,60 +386,347 @@ html.menu-open{overflow:hidden;}
 
 
 <!-- ════════════════════════════════════════════════════════════
-     HYDERABAD COFFEE ROUNDTABLE - POST-EVENT PLACEHOLDER (12 May 2026)
-     Anchor: #rsvp-hyderabad  (shareable link target preserved)
-     The original RSVP form was removed after the event concluded.
-     This card invites visitors to come back for the photo recap.
+     GCC SUMMIT SERIES 2026 — RSVP FORM (reimagined 2026-05-15)
+     Two full-width sections, leadership-grade design:
+       1. Dark hero with centered event chooser + premium RSVP form
+       2. Cream magazine-style Hyderabad recap with asymmetric photo + text layout
+     Anchors: #rsvp-summit (upcoming) · #rsvp-hyderabad (recap)
+     Both forms still post to existing Apps Script (action=submitEventRSVP).
 ══════════════════════════════════════════════════════════════ -->
-<section id="rsvp-hyderabad" style="padding:80px 0;background:linear-gradient(180deg,var(--cream) 0%,#FFF7E9 100%);scroll-margin-top:80px;">
-  <div class="container" style="padding:0 24px;max-width:860px;margin:0 auto;">
 
-    <!-- HEADER -->
-    <div style="text-align:center;margin-bottom:26px;">
-      <div class="eyebrow" style="color:var(--gold);background:rgba(201,151,58,0.12);border-color:rgba(112,181,249,0.20);display:inline-block;">Event recap &middot; Hyderabad</div>
-      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);font-weight:900;line-height:1.15;letter-spacing:-0.8px;color:var(--ink);margin:14px 0 14px;">
-        Hyderabad GCC Leaders <em style="color:var(--gold);font-style:italic;">Coffee Roundtable</em>
-      </h2>
-      <p style="font-size:15px;color:var(--muted);line-height:1.75;margin:0 auto;max-width:720px;">
-        A small, in-person coffee chat with GCC leaders operating from Hyderabad. Hosted by <strong style="color:var(--ink);">Shammi Prabhakar Singh</strong>, Founder, GCCPROs.
-      </p>
+<!-- ─────────────────────────────────────────────────
+     SECTION A · GCC SUMMIT SERIES 2026 · UPCOMING
+     ───────────────────────────────────────────────── -->
+<section id="rsvp-summit" class="evt-section evt-section--dark" style="scroll-margin-top:80px;">
+  <div class="evt-shell">
+
+    <!-- Premium centered header -->
+    <header class="evt-header">
+      <div class="evt-eyebrow"><span class="evt-eyebrow-line"></span>GCC Events · 2026<span class="evt-eyebrow-line"></span></div>
+      <h2 class="evt-title">Roundtables that <em>move the needle</em></h2>
+      <p class="evt-sub">One closed-room peer conversation per quarter, across India. No vendors, no panels — just GCC leaders, honestly. Hosted by <strong>Shammi Prabhakar Singh</strong>, Founder, GCCPROs.</p>
+      <div class="evt-themes">
+        <span class="evt-pill">★ Innovation</span>
+        <span class="evt-pill">★ Talent</span>
+        <span class="evt-pill">★ GCC Ecosystem</span>
+      </div>
+    </header>
+
+    <!-- Event chooser -->
+    <div class="summit-events-grid" role="radiogroup" aria-label="Choose a summit city">
+      <label class="summit-event-card" data-event="pune">
+        <input type="radio" name="summitEvent" value="pune" required style="position:absolute;opacity:0;pointer-events:none;">
+        <div class="sec-inner">
+          <div class="sec-edition">Edition 01</div>
+          <div class="sec-date">Fri · 19 June 2026</div>
+          <div class="sec-city">Pune</div>
+          <div class="sec-meta">Closed-room roundtable</div>
+          <div class="sec-cta">Select →</div>
+        </div>
+      </label>
+      <label class="summit-event-card" data-event="bengaluru">
+        <input type="radio" name="summitEvent" value="bengaluru" style="position:absolute;opacity:0;pointer-events:none;">
+        <div class="sec-inner">
+          <div class="sec-edition">Edition 02</div>
+          <div class="sec-date">Fri · 24 July 2026</div>
+          <div class="sec-city">Bengaluru</div>
+          <div class="sec-meta">Closed-room roundtable</div>
+          <div class="sec-cta">Select →</div>
+        </div>
+      </label>
+      <label class="summit-event-card" data-event="delhi">
+        <input type="radio" name="summitEvent" value="delhi" style="position:absolute;opacity:0;pointer-events:none;">
+        <div class="sec-inner">
+          <div class="sec-edition">Edition 03</div>
+          <div class="sec-date">Fri · 18 September 2026</div>
+          <div class="sec-city">Noida / Delhi NCR</div>
+          <div class="sec-meta">Closed-room roundtable</div>
+          <div class="sec-cta">Select →</div>
+        </div>
+      </label>
     </div>
 
-    <!-- PHOTOS COMING SOON CARD -->
-    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:56px 32px;box-shadow:0 4px 24px rgba(29,34,38,0.06);text-align:center;">
+    <!-- Form card -->
+    <div class="evt-form-card">
+      <form id="rsvpSummitForm" novalidate autocomplete="on">
+        <div class="evt-form-head">
+          <div class="evt-form-eyebrow">Request a seat</div>
+          <div class="evt-form-title">Tell us about you</div>
+          <div class="evt-form-sub" id="summitFormSubtitle">Select a city above to begin</div>
+        </div>
 
-      <!-- Camera icon -->
-      <div style="width:72px;height:72px;border-radius:50%;background:rgba(201,151,58,0.12);color:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-          <circle cx="12" cy="13" r="4"></circle>
-        </svg>
+        <!-- Honeypot -->
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+          <label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <!-- Fieldset 1 — YOU -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">01 · Your details</legend>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="fullName">
+              <span>Full name <em>*</em></span>
+              <input name="fullName" type="text" required maxlength="80" autocomplete="name">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="designation">
+              <span>Designation / Title <em>*</em></span>
+              <input name="designation" type="text" required maxlength="120" autocomplete="organization-title" placeholder="MD &amp; Site Leader">
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="email">
+              <span>Work email <em>*</em></span>
+              <input name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@yourcompany.com">
+              <div class="rsvp-hint">Corporate email only.</div>
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="phone">
+              <span>Phone / WhatsApp <em>*</em></span>
+              <input name="phone" type="tel" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="9876543210">
+              <div class="rsvp-hint">10-digit Indian mobile.</div>
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <label class="rsvp-field" data-field="linkedin">
+            <span>LinkedIn profile <em>*</em></span>
+            <input name="linkedin" type="url" required maxlength="200" autocomplete="url" spellcheck="false" placeholder="https://www.linkedin.com/in/your-handle">
+            <div class="rsvp-hint">Personal profile only — must contain <code>/in/</code>.</div>
+            <div class="rsvp-err"></div>
+          </label>
+        </fieldset>
+
+        <!-- Fieldset 2 — YOUR GCC -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">02 · Your GCC</legend>
+          <label class="rsvp-field" data-field="company">
+            <span>Company (GCC) <em>*</em></span>
+            <input name="company" type="text" required maxlength="120" autocomplete="organization" placeholder="Parent / group company name">
+            <div class="rsvp-err"></div>
+          </label>
+          <label class="rsvp-field" data-field="officeAddress">
+            <span>Your GCC office locality <em>*</em></span>
+            <input name="officeAddress" type="text" required minlength="6" maxlength="200" autocomplete="address-line1" placeholder="e.g. Hinjewadi Phase 2, Pune">
+            <div class="rsvp-err"></div>
+          </label>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="headcountHyderabad">
+              <span>Headcount in your city</span>
+              <input name="headcountHyderabad" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 850">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="headcountIndia">
+              <span>Headcount in India (total)</span>
+              <input name="headcountIndia" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 3500">
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <div class="rsvp-field" data-field="domains">
+            <span>Domains run from your GCC <em>*</em></span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Technology"> Technology</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Engineering"> Engineering</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Finance"> Finance</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Operations"> Operations</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="HR / People"> HR / People</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Analytics / Data"> Analytics / Data</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Procurement / SCM"> Procurement / SCM</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Other"> Other</label>
+            </div>
+            <div class="rsvp-err"></div>
+          </div>
+        </fieldset>
+
+        <!-- Fieldset 3 — YOUR INTEREST -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">03 · Your interests</legend>
+          <div class="rsvp-field" data-field="themes">
+            <span>Which theme(s) interest you most? <em>*</em></span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Innovation"> ★ Innovation</label>
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Talent"> ★ Talent</label>
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="GCC Ecosystem"> ★ GCC Ecosystem</label>
+            </div>
+            <div class="rsvp-err"></div>
+          </div>
+          <label class="rsvp-field" data-field="topics">
+            <span>What would you like discussed at the table?</span>
+            <textarea name="topics" rows="3" maxlength="600" placeholder="One or two themes you want the room to dig into."></textarea>
+            <div class="rsvp-err"></div>
+          </label>
+          <div class="rsvp-field evt-confirm" data-field="confirmAttendance">
+            <label class="rsvp-chk-line">
+              <input type="checkbox" name="confirmAttendance" required>
+              <span>I confirm I can be physically present at the selected GCC Summit if my seat is confirmed. <em style="color:#c0392b;font-style:normal;">*</em></span>
+            </label>
+            <div class="rsvp-err"></div>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="rsvpSummitSubmitBtn" class="evt-submit">Request my seat &rarr;</button>
+        <div id="rsvpSummitMsg" role="status" aria-live="polite" class="evt-msg"></div>
+      </form>
+
+      <!-- Thank-you panel -->
+      <div id="rsvpSummitThankYou" role="status" aria-live="polite" hidden style="text-align:center;padding:32px 8px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:rgba(31,164,99,0.12);color:#1F7A48;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-0.6px;margin-bottom:10px;">Thank you<span id="rsvpSummitThankYouName"></span>.</div>
+        <p style="font-size:15px;color:var(--muted);line-height:1.7;margin:0 auto 22px;max-width:520px;">Your RSVP for the <strong style="color:var(--ink);" id="rsvpSummitThankYouEvent">GCC Summit</strong> has landed with <strong style="color:var(--ink);">Shammi Prabhakar Singh</strong> directly.</p>
+        <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:left;margin:0 auto 22px;max-width:560px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">What happens next</div>
+          <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--ink);line-height:1.7;">
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>We close the room <strong>~3 weeks before</strong> the event and curate ~12 leaders.</span></li>
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>If confirmed, you&rsquo;ll get a <strong>personal note from Shammi</strong> with venue, time and attendees.</span></li>
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>Questions? <a href="mailto:admin@gccpros.com?subject=GCC%20Summit%20Series%202026" style="color:var(--gold);font-weight:600;text-decoration:none;">admin@gccpros.com</a> · WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a></span></li>
+          </ul>
+        </div>
+        <a href="#" id="rsvpSummitAnotherBtn" style="font-size:12.5px;color:var(--gold);font-weight:700;text-decoration:none;">Submit another RSVP &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────
+     SECTION B · HYDERABAD ROUNDTABLE · MAY 2026 RECAP
+     ───────────────────────────────────────────────── -->
+<section id="rsvp-hyderabad" class="evt-section evt-section--light" style="scroll-margin-top:80px;">
+  <div class="evt-shell evt-shell--magazine">
+
+    <!-- LEFT — Photo slideshow -->
+    <div class="evt-mag-media">
+      <div id="hydSlideshow" class="hyd-slideshow" aria-roledescription="carousel" aria-label="Hyderabad GCC Leaders Roundtable photo gallery">
+        <div class="hyd-slides" id="hydSlides">
+          <div class="hyd-slide is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/DSC08532.JPG" alt="GCC India 2026 — Hyderabad Roundtable, opening discussion" loading="eager"></div>
+          <div class="hyd-slide" data-idx="1"><img src="HYD%20Round%20table%2012%20May/DSC08651.JPG" alt="Group photo of GCC leaders at the Hyderabad roundtable" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="2"><img src="HYD%20Round%20table%2012%20May/DSC08615.JPG" alt="Attendee reading the GCCPROs roundtable handbook" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="3"><img src="HYD%20Round%20table%2012%20May/DSC08682.JPG" alt="One-on-one conversation between GCC leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="4"><img src="HYD%20Round%20table%2012%20May/DSC09167.JPG" alt="Side conversation in front of GCC India 2026 screen" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="5"><img src="HYD%20Round%20table%2012%20May/DSC09336.JPG" alt="Smaller breakout discussion between two leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="6"><img src="HYD%20Round%20table%2012%20May/DSC09346.JPG" alt="GCC leaders in conversation by the stage" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="7"><img src="HYD%20Round%20table%2012%20May/20260512_092247.jpg" alt="Roundtable setup, full room view" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="8"><img src="HYD%20Round%20table%2012%20May/20260512_110543.jpg" alt="Closing group photo of all roundtable attendees" loading="lazy"></div>
+        </div>
+        <button type="button" class="hyd-arrow hyd-prev" id="hydPrev" aria-label="Previous photo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button type="button" class="hyd-arrow hyd-next" id="hydNext" aria-label="Next photo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <div class="hyd-counter" id="hydCounter" aria-live="polite">1 / 9</div>
+        <div class="hyd-dots" id="hydDots" role="tablist" aria-label="Photo navigation">
+          <button type="button" class="hyd-dot is-active" data-idx="0" role="tab" aria-label="Show photo 1" aria-selected="true"></button>
+          <button type="button" class="hyd-dot" data-idx="1" role="tab" aria-label="Show photo 2" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="2" role="tab" aria-label="Show photo 3" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="3" role="tab" aria-label="Show photo 4" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="4" role="tab" aria-label="Show photo 5" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="5" role="tab" aria-label="Show photo 6" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="6" role="tab" aria-label="Show photo 7" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="7" role="tab" aria-label="Show photo 8" aria-selected="false"></button>
+          <button type="button" class="hyd-dot" data-idx="8" role="tab" aria-label="Show photo 9" aria-selected="false"></button>
+        </div>
+      </div>
+      <div class="hyd-thumbs" id="hydThumbs" aria-hidden="true">
+        <button type="button" class="hyd-thumb is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/DSC08532.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="1"><img src="HYD%20Round%20table%2012%20May/DSC08651.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="2"><img src="HYD%20Round%20table%2012%20May/DSC08615.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="3"><img src="HYD%20Round%20table%2012%20May/DSC08682.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="4"><img src="HYD%20Round%20table%2012%20May/DSC09167.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="5"><img src="HYD%20Round%20table%2012%20May/DSC09336.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="6"><img src="HYD%20Round%20table%2012%20May/DSC09346.JPG" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="7"><img src="HYD%20Round%20table%2012%20May/20260512_092247.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="8"><img src="HYD%20Round%20table%2012%20May/20260512_110543.jpg" alt="" loading="lazy"></button>
+      </div>
+    </div>
+
+    <!-- RIGHT — Text recap -->
+    <div class="evt-mag-text">
+      <div class="evt-eyebrow evt-eyebrow--gold"><span class="evt-eyebrow-line"></span>Just concluded · 12 May 2026<span class="evt-eyebrow-line"></span></div>
+      <h2 class="evt-title evt-title--light">Hyderabad <em>Roundtable</em></h2>
+      <p class="evt-sub evt-sub--ink">A closed-room peer conversation with Hyderabad GCC leaders — fresh numbers, honest conversations on what is actually working (and breaking) inside GCCs in 2026.</p>
+
+      <div class="evt-mag-meta">
+        <div class="evt-mag-meta-item">
+          <div class="evt-mag-meta-k">Date</div>
+          <div class="evt-mag-meta-v">12 May 2026</div>
+        </div>
+        <div class="evt-mag-meta-item">
+          <div class="evt-mag-meta-k">Venue</div>
+          <div class="evt-mag-meta-v">Lemon Tree Hotel, Hitec City</div>
+        </div>
+        <div class="evt-mag-meta-item">
+          <div class="evt-mag-meta-k">Format</div>
+          <div class="evt-mag-meta-v">Closed-room · ~12 leaders</div>
+        </div>
+        <div class="evt-mag-meta-item">
+          <div class="evt-mag-meta-k">Hosted by</div>
+          <div class="evt-mag-meta-v">Shammi Prabhakar Singh</div>
+        </div>
       </div>
 
-      <div style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.6vw,28px);font-weight:900;color:var(--ink);letter-spacing:-0.4px;line-height:1.3;margin-bottom:12px;">
-        Photos from our very successful Hyderabad event &mdash; coming soon.
-      </div>
-
-      <p style="font-size:14.5px;color:var(--muted);line-height:1.75;margin:0 auto 22px;max-width:540px;">
-        Thank you to every GCC leader who joined us at the table. We're putting together the photo recap and key takeaways from the room &mdash; check back here shortly.
-      </p>
-
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(26,58,107,0.06);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:12.5px;font-weight:600;color:var(--ink);">
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
-        Hyderabad &middot; 12 May 2026
-      </div>
-
-      <div style="margin-top:28px;font-size:12.5px;color:var(--muted);">
-        Want to be invited to the next city roundtable? Write to
-        <a href="mailto:support@gccpros.com?subject=GCC%20Leaders%20Roundtable%20%E2%80%94%20Next%20city" style="color:var(--gold);font-weight:600;text-decoration:none;">support@gccpros.com</a>
-        or follow
-        <a href="https://www.linkedin.com/company/gccpros/" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">GCCPROs on LinkedIn</a>.
+      <div class="evt-mag-footer">
+        Next city? Pick from the <a href="#rsvp-summit">2026 calendar</a> above, or write to <a href="mailto:admin@gccpros.com?subject=GCC%20Leaders%20Roundtable%20%E2%80%94%20Next%20city">admin@gccpros.com</a>.
       </div>
     </div>
 
   </div>
 </section>
 
+
+<!-- ─────────────────────────────────────────────────
+     SECTION C · WORK WITH GCCPROs · CTA STRIP
+     Two premium cards: Consulting + Event Partnership
+     ───────────────────────────────────────────────── -->
+<section class="evt-cta-section">
+  <div class="evt-shell evt-cta-shell">
+
+    <header class="evt-cta-header">
+      <div class="evt-eyebrow"><span class="evt-eyebrow-line"></span>Work with GCCPROs<span class="evt-eyebrow-line"></span></div>
+      <h2 class="evt-title evt-title--light">Two ways to <em>partner with us</em></h2>
+      <p class="evt-sub evt-sub--ink">From data-driven GCC benchmarking to co-hosting industry events — independent, vendor-free, and built on verified peer insight.</p>
+    </header>
+
+    <div class="evt-cta-grid">
+
+      <!-- CTA 1: Consulting -->
+      <a class="evt-cta-card evt-cta-card--navy" href="mailto:admin@gccpros.com?subject=GCC%20Benchmarking%20%26%20Global%20Strategy%20Consulting%20Enquiry">
+        <div class="evt-cta-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/><circle cx="7" cy="14" r="1.5"/><circle cx="11" cy="10" r="1.5"/><circle cx="15" cy="14" r="1.5"/><circle cx="21" cy="8" r="1.5"/></svg>
+        </div>
+        <div class="evt-cta-eyebrow">Consulting · Advisory</div>
+        <h3 class="evt-cta-title">GCC Benchmarking &amp; <em>Global Strategy</em></h3>
+        <p class="evt-cta-desc">Peer-benchmark your GCC against 5,000+ verified centres worldwide. Leadership maturity, talent depth, domain spread, generation models — calibrated against the right cohort, not anecdotes.</p>
+        <ul class="evt-cta-list">
+          <li>Setup &amp; scale-up roadmaps</li>
+          <li>Headcount, location &amp; domain benchmarks</li>
+          <li>Leadership &amp; org-design diagnostics</li>
+          <li>Global expansion strategy &amp; M&amp;A scans</li>
+        </ul>
+        <span class="evt-cta-btn">Request a discovery call <span aria-hidden="true">→</span></span>
+      </a>
+
+      <!-- CTA 2: Event Partnership -->
+      <a class="evt-cta-card evt-cta-card--gold" href="mailto:admin@gccpros.com?subject=GCC%20Event%20Partnership%20Enquiry">
+        <div class="evt-cta-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11v5a5 5 0 0 1-5 5h0a5 5 0 0 1-5-5v-5"/><path d="M12 2v9"/><circle cx="12" cy="2" r="1.5"/><path d="M5 11h14"/><path d="M9 16h6"/></svg>
+        </div>
+        <div class="evt-cta-eyebrow">Partner with us</div>
+        <h3 class="evt-cta-title">Event <em>Partnership</em></h3>
+        <p class="evt-cta-desc">Co-host or sponsor a GCC Summit, roundtable or convergence. Reach 5,000+ verified GCC leaders across India and globally — peer-curated audiences, not vendor mailing lists.</p>
+        <ul class="evt-cta-list">
+          <li>City roundtables &amp; closed-room dinners</li>
+          <li>Virtual convergences (650+ attendees)</li>
+          <li>Industry council co-hosted sessions</li>
+          <li>Custom GCC research &amp; whitepaper partnerships</li>
+        </ul>
+        <span class="evt-cta-btn">Partner with GCCPROs <span aria-hidden="true">→</span></span>
+      </a>
+
+    </div>
+  </div>
+</section>
 
 <!-- QUOTES CAROUSEL -->
 <section style="background:var(--white);padding:80px 0 0;">
@@ -1099,17 +1386,396 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 .rsvp-msg-err{background:rgba(208,74,74,0.08);border:1px solid rgba(208,74,74,0.3);color:#A53030;padding:12px 14px;border-radius:8px;}
 .rsvp-msg-ok{color:#1f7a3a;background:rgba(31,122,58,0.08);border:1px solid rgba(31,122,58,0.25);padding:10px 14px;border-radius:8px;}
 .rsvp-msg-err{color:#a82a2a;background:rgba(168,42,42,0.06);border:1px solid rgba(168,42,42,0.25);padding:10px 14px;border-radius:8px;}
-/* ── RSVP single-stack layout responsive rules ── */
-@media(max-width:900px){
-  #rsvp-hyderabad .rsvp-stack{padding:0 20px !important;}
-  #rsvp-hyderabad .rsvp-meta-grid{grid-template-columns:1fr 1fr !important;}
-  #rsvp-hyderabad .rsvp-steps-grid{grid-template-columns:1fr 1fr !important;gap:22px !important;}
-  #rsvp-hyderabad .rsvp-row{grid-template-columns:1fr !important;}
+
+/* ═══════════════════════════════════════════════════════════════
+   GCC EVENTS · LEADERSHIP-GRADE DESIGN (reimagined 2026-05-15)
+   Two stacked full-width sections, refined typography, tight grid
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Section frame ── */
+.evt-section { padding: 100px 0; position: relative; overflow: hidden; }
+.evt-section--dark { background: radial-gradient(120% 80% at 50% 0%, #152338 0%, #0A1628 60%, #0A1628 100%); color: #fff; }
+.evt-section--dark::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(91,163,214,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,163,214,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
 }
-@media(max-width:520px){
-  #rsvp-hyderabad .rsvp-stack{padding:0 16px !important;}
-  #rsvp-hyderabad .rsvp-meta-grid{grid-template-columns:1fr 1fr !important;gap:10px !important;}
-  #rsvp-hyderabad .rsvp-steps-grid{grid-template-columns:1fr !important;gap:18px !important;}
+.evt-section--light { background: linear-gradient(180deg, var(--cream) 0%, #FFF7E9 100%); }
+.evt-section--light::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 80% 20%, rgba(201,151,58,0.07) 0%, transparent 50%);
+  pointer-events: none;
+}
+.evt-shell { position: relative; z-index: 2; max-width: 1140px; margin: 0 auto; padding: 0 32px; }
+
+/* ── Premium centered header ── */
+.evt-header { text-align: center; max-width: 760px; margin: 0 auto 56px; }
+.evt-eyebrow {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2.4px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 18px;
+}
+.evt-eyebrow-line { width: 36px; height: 1px; background: var(--gold); opacity: 0.5; display: inline-block; }
+.evt-eyebrow--gold { color: var(--gold); }
+.evt-eyebrow--gold .evt-eyebrow-line { background: var(--gold); }
+.evt-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 4.4vw, 56px);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -1.4px;
+  color: #fff;
+  margin: 0 0 18px;
+}
+.evt-title em { font-style: italic; color: var(--gold); }
+.evt-title--light { color: var(--ink); }
+.evt-sub {
+  font-size: 16px; line-height: 1.75; font-weight: 300;
+  color: rgba(255,255,255,0.62);
+  max-width: 640px; margin: 0 auto;
+}
+.evt-sub--ink { color: var(--muted); max-width: 100%; }
+.evt-sub strong { color: #fff; font-weight: 600; }
+.evt-sub--ink strong { color: var(--ink); }
+.evt-themes {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 10px; margin-top: 24px;
+}
+.evt-pill {
+  background: rgba(91,163,214,0.10);
+  border: 1px solid rgba(91,163,214,0.30);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-size: 12px; font-weight: 600;
+  color: #CBE4FE; letter-spacing: 0.3px;
+}
+
+/* ── Event chooser cards (3 across) ── */
+.summit-events-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; max-width: 940px; margin: 0 auto 48px;
+}
+.summit-event-card {
+  position: relative; display: block; cursor: pointer;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  transition: all 0.22s ease;
+}
+.summit-event-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(91,163,214,0.55);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.summit-event-card .sec-inner { padding: 22px 20px 20px; }
+.summit-event-card .sec-edition {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.6px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+}
+.summit-event-card .sec-date {
+  font-size: 12.5px; font-weight: 600;
+  color: rgba(255,255,255,0.78); margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.summit-event-card .sec-city {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 900; color: #fff;
+  line-height: 1.15; margin-bottom: 10px;
+  letter-spacing: -0.6px;
+}
+.summit-event-card .sec-meta {
+  font-size: 12px; color: rgba(255,255,255,0.40);
+  line-height: 1.5; margin-bottom: 14px;
+}
+.summit-event-card .sec-cta {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.4px;
+  color: rgba(91,163,214,0.85); text-transform: uppercase;
+}
+.summit-event-card.is-selected {
+  background: rgba(91,163,214,0.13);
+  border-color: var(--gold);
+  box-shadow: 0 8px 24px rgba(91,163,214,0.22);
+}
+.summit-event-card.is-selected .sec-edition::after { content: ' ✓'; color: var(--gold); }
+.summit-event-card.is-selected .sec-cta { color: var(--gold); }
+
+/* ── Form card ── */
+.evt-form-card {
+  max-width: 820px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 22px;
+  padding: 48px 48px 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.40);
+  color: var(--ink);
+  position: relative;
+}
+.evt-form-head { text-align: center; margin-bottom: 36px; padding-bottom: 26px; border-bottom: 1px solid var(--border); }
+.evt-form-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+.evt-form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 900;
+  color: var(--ink); letter-spacing: -0.6px;
+}
+.evt-form-sub {
+  margin-top: 8px;
+  font-size: 13px; color: var(--muted);
+}
+.evt-fieldset {
+  border: none; padding: 0; margin: 0 0 28px;
+}
+.evt-fieldset:last-of-type { margin-bottom: 0; }
+.evt-legend {
+  display: block; width: 100%;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--gold);
+  padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px dashed var(--border);
+}
+.evt-confirm { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 10px; }
+.evt-submit {
+  display: block; width: 100%; margin-top: 30px;
+  background: var(--ink); color: #fff;
+  padding: 16px 24px; border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.4px; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.evt-submit:hover { background: var(--gold); color: var(--ink); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,151,58,0.30); }
+.evt-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+.evt-msg { margin-top: 16px; font-size: 13px; line-height: 1.6; }
+
+/* ── Magazine layout (Hyderabad recap) ── */
+.evt-shell--magazine {
+  max-width: 1240px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: center;
+}
+.evt-mag-media { min-width: 0; }
+.evt-mag-media .hyd-slideshow { max-width: 100%; box-shadow: 0 20px 50px rgba(10,22,40,0.18); }
+.evt-mag-text .evt-eyebrow { justify-content: flex-start; }
+.evt-mag-text .evt-title { text-align: left; font-size: clamp(30px, 3.6vw, 48px); margin-bottom: 16px; }
+.evt-mag-text .evt-sub { text-align: left; max-width: 100%; font-weight: 400; font-size: 15.5px; line-height: 1.75; }
+.evt-mag-meta {
+  margin-top: 32px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px;
+  padding-top: 28px; border-top: 1px solid rgba(201,151,58,0.30);
+}
+.evt-mag-meta-item {}
+.evt-mag-meta-k {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.6px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 4px;
+}
+.evt-mag-meta-v {
+  font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.45;
+}
+.evt-mag-footer {
+  margin-top: 32px; padding-top: 22px; border-top: 1px solid rgba(201,151,58,0.20);
+  font-size: 13px; color: var(--muted); line-height: 1.7;
+}
+.evt-mag-footer a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.evt-mag-footer a:hover { text-decoration: underline; }
+
+
+/* ── CTA STRIP — Consulting + Event Partnership ────────────── */
+.evt-cta-section {
+  background: linear-gradient(180deg, #FBF9F6 0%, #F3EFE7 100%);
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+.evt-cta-section::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 20% 80%, rgba(91,163,214,0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(201,151,58,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.evt-cta-shell { position: relative; z-index: 2; }
+.evt-cta-header { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+.evt-cta-header .evt-eyebrow { color: var(--gold); }
+.evt-cta-header .evt-eyebrow-line { background: var(--gold); }
+.evt-cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1140px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+.evt-cta-card {
+  display: flex; flex-direction: column;
+  padding: 38px 36px 34px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid transparent;
+}
+.evt-cta-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.evt-cta-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(10,22,40,0.18); }
+.evt-cta-card:hover::before { transform: scaleX(1); }
+.evt-cta-card--navy {
+  background: linear-gradient(180deg, var(--ink) 0%, #0F1B2E 100%);
+  color: #fff;
+  border-color: rgba(91,163,214,0.20);
+}
+.evt-cta-card--navy::before { background: var(--gold); }
+.evt-cta-card--gold {
+  background: linear-gradient(180deg, #FFFCF5 0%, #FAF3E2 100%);
+  color: var(--ink);
+  border-color: rgba(201,151,58,0.28);
+}
+.evt-cta-card--gold::before { background: var(--ink); }
+
+.evt-cta-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 22px;
+}
+.evt-cta-card--navy .evt-cta-icon {
+  background: rgba(91,163,214,0.12);
+  color: var(--gold);
+  border: 1px solid rgba(91,163,214,0.25);
+}
+.evt-cta-card--gold .evt-cta-icon {
+  background: rgba(201,151,58,0.14);
+  color: var(--gold);
+  border: 1px solid rgba(201,151,58,0.30);
+}
+
+.evt-cta-eyebrow {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.evt-cta-card--navy .evt-cta-eyebrow { color: var(--gold); }
+.evt-cta-card--gold .evt-cta-eyebrow { color: var(--gold); }
+
+.evt-cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -0.7px; line-height: 1.15;
+  margin: 0 0 14px;
+}
+.evt-cta-title em { font-style: italic; color: var(--gold); }
+.evt-cta-card--navy .evt-cta-title { color: #fff; }
+.evt-cta-card--gold .evt-cta-title { color: var(--ink); }
+
+.evt-cta-desc {
+  font-size: 14.5px; line-height: 1.75;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+.evt-cta-card--navy .evt-cta-desc { color: rgba(255,255,255,0.65); }
+.evt-cta-card--gold .evt-cta-desc { color: var(--muted); }
+
+.evt-cta-list {
+  list-style: none; padding: 0; margin: 0 0 30px;
+  display: grid; gap: 8px;
+  flex: 1 1 auto;
+}
+.evt-cta-list li {
+  position: relative; padding-left: 22px;
+  font-size: 13px; line-height: 1.55;
+}
+.evt-cta-list li::before {
+  content: '✓'; position: absolute; left: 0; top: 0;
+  color: var(--gold); font-weight: 800; font-size: 13px;
+}
+.evt-cta-card--navy .evt-cta-list li { color: rgba(255,255,255,0.78); }
+.evt-cta-card--gold .evt-cta-list li { color: var(--ink); }
+
+.evt-cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  align-self: flex-start;
+  padding: 14px 22px;
+  border-radius: 100px;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.4px;
+  transition: all 0.2s ease;
+  margin-top: auto;
+}
+.evt-cta-card--navy .evt-cta-btn {
+  background: var(--gold); color: var(--ink);
+}
+.evt-cta-card--navy:hover .evt-cta-btn { background: #fff; transform: translateX(4px); }
+.evt-cta-card--gold .evt-cta-btn {
+  background: var(--ink); color: #fff;
+}
+.evt-cta-card--gold:hover .evt-cta-btn { background: var(--gold); color: var(--ink); transform: translateX(4px); }
+
+@media (max-width: 980px) {
+  .evt-cta-section { padding: 72px 0; }
+  .evt-cta-grid { grid-template-columns: 1fr; gap: 20px; max-width: 560px; }
+  .evt-cta-card { padding: 32px 26px 30px; }
+  .evt-cta-title { font-size: 24px; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 980px) {
+  .evt-section { padding: 72px 0; }
+  .evt-shell { padding: 0 24px; }
+  .evt-form-card { padding: 36px 28px 30px; }
+  .summit-events-grid { gap: 12px; }
+  .evt-shell--magazine { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 720px) {
+  .evt-section { padding: 60px 0; }
+  .evt-header { margin-bottom: 40px; }
+  .summit-events-grid { grid-template-columns: 1fr; gap: 12px; max-width: 480px; }
+  .evt-form-card { padding: 28px 22px 26px; border-radius: 18px; }
+  .evt-form-title { font-size: 22px; }
+  .evt-mag-meta { grid-template-columns: 1fr; gap: 14px; }
+  #rsvp-summit .rsvp-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── RSVP single-stack layout responsive rules ── */
+/* Hyderabad recap responsive — handled in unified .evt-section media queries */
+
+/* ── HYDERABAD EVENT SLIDESHOW ─────────────────────────────── */
+.hyd-slideshow { position: relative; width: 100%; max-width: 760px; margin: 0 auto; background: #0A1628; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 0 10px 36px rgba(10,22,40,0.18); }
+.hyd-slides { position: relative; width: 100%; height: 100%; }
+.hyd-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.55s ease-in-out; pointer-events: none; }
+.hyd-slide.is-active { opacity: 1; pointer-events: auto; }
+.hyd-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hyd-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(10,22,40,0.55); color: #fff; border: 1px solid rgba(255,255,255,0.22); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.2s; z-index: 3; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.hyd-arrow:hover { background: rgba(10,22,40,0.85); }
+.hyd-arrow:active { transform: translateY(-50%) scale(0.94); }
+.hyd-prev { left: 14px; }
+.hyd-next { right: 14px; }
+.hyd-counter { position: absolute; top: 14px; right: 14px; background: rgba(10,22,40,0.65); color: #fff; font-size: 11.5px; font-weight: 600; letter-spacing: 0.4px; padding: 5px 11px; border-radius: 100px; z-index: 3; font-variant-numeric: tabular-nums; }
+.hyd-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 3; background: rgba(10,22,40,0.45); padding: 6px 10px; border-radius: 100px; }
+.hyd-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.38); border: none; padding: 0; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+.hyd-dot.is-active { background: var(--gold); transform: scale(1.25); }
+.hyd-dot:hover { background: rgba(255,255,255,0.7); }
+.hyd-thumbs { display: flex; gap: 8px; margin: 16px auto 0; max-width: 760px; overflow-x: auto; padding: 4px 2px; scrollbar-width: thin; }
+.hyd-thumb { flex: 0 0 auto; width: 78px; height: 52px; border-radius: 6px; overflow: hidden; border: 2px solid transparent; padding: 0; background: #0A1628; cursor: pointer; opacity: 0.55; transition: opacity 0.2s, border-color 0.2s, transform 0.15s; }
+.hyd-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hyd-thumb:hover { opacity: 0.85; }
+.hyd-thumb.is-active { opacity: 1; border-color: var(--gold); transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .hyd-arrow { width: 34px; height: 34px; }
+  .hyd-prev { left: 8px; }
+  .hyd-next { right: 8px; }
+  .hyd-thumb { width: 64px; height: 42px; }
+  .hyd-counter { font-size: 10.5px; padding: 4px 9px; top: 10px; right: 10px; }
+  .hyd-dots { padding: 5px 8px; }
 }
 </style>
 
@@ -1487,12 +2153,12 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         }
       } else {
         msg.className = 'rsvp-msg-err';
-        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to support@gccpros.com.';
+        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to admin@gccpros.com.';
       }
     })
     .catch(function(err){
       msg.className = 'rsvp-msg-err';
-      msg.textContent = 'Network error. Please check your connection and try again, or email support@gccpros.com.';
+      msg.textContent = 'Network error. Please check your connection and try again, or email admin@gccpros.com.';
       console.error('RSVP submit error:', err);
     })
     .then(function(){
@@ -1532,7 +2198,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
           <div style="background:var(--blue-light);border-radius:12px;padding:28px;border-left:4px solid var(--gold);">
             <div style="font-size:12px;color:var(--blue-mid);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">What's Next</div>
             <p style="font-size:13px;color:var(--ink);line-height:1.7;">Monthly city roundtables across Bengaluru, Pune, Hyderabad and Delhi NCR. GCC Leaders Podcast. Industry advocacy meetings with policy makers. Small, curated, peer-only, always.</p>
-            <a href="#rsvp-hyderabad" style="display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:0.4px;color:var(--ink);background:var(--gold);padding:9px 16px;border-radius:8px;text-decoration:none;">Hyderabad · 12 May 2026, Photos coming soon →</a>
+            <a href="#rsvp-summit" style="display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:0.4px;color:var(--ink);background:var(--gold);padding:9px 16px;border-radius:8px;text-decoration:none;">GCC Summit Series 2026 · Pune · Bengaluru · Delhi NCR →</a>
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
@@ -1581,6 +2247,425 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
 
   </div>
 </section>
+
+<!-- ── HYDERABAD EVENT SLIDESHOW · CONTROLLER ────────────────── -->
+<script>
+(function initHydSlideshow(){
+  var root = document.getElementById('hydSlideshow');
+  if (!root) return;
+  var slides = root.querySelectorAll('.hyd-slide');
+  var dots   = root.querySelectorAll('.hyd-dot');
+  var counter = document.getElementById('hydCounter');
+  var prev = document.getElementById('hydPrev');
+  var next = document.getElementById('hydNext');
+  var thumbs = document.querySelectorAll('#hydThumbs .hyd-thumb');
+  var total = slides.length;
+  if (total === 0) return;
+  var current = 0;
+  var auto = null;
+  var AUTO_MS = 5000;
+
+  function setActive(idx){
+    if (idx < 0) idx = total - 1;
+    if (idx >= total) idx = 0;
+    slides[current].classList.remove('is-active');
+    dots[current].classList.remove('is-active');
+    dots[current].setAttribute('aria-selected','false');
+    if (thumbs[current]) thumbs[current].classList.remove('is-active');
+    current = idx;
+    slides[current].classList.add('is-active');
+    dots[current].classList.add('is-active');
+    dots[current].setAttribute('aria-selected','true');
+    if (thumbs[current]) {
+      thumbs[current].classList.add('is-active');
+      try { thumbs[current].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'}); } catch(e){}
+    }
+    if (counter) counter.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function nextSlide(){ setActive(current + 1); }
+  function prevSlide(){ setActive(current - 1); }
+  function startAuto(){ stopAuto(); auto = setInterval(nextSlide, AUTO_MS); }
+  function stopAuto(){ if (auto) { clearInterval(auto); auto = null; } }
+  function restartAuto(){ stopAuto(); startAuto(); }
+
+  if (next) next.addEventListener('click', function(){ nextSlide(); restartAuto(); });
+  if (prev) prev.addEventListener('click', function(){ prevSlide(); restartAuto(); });
+
+  for (var i=0; i<dots.length; i++){
+    (function(idx){ dots[idx].addEventListener('click', function(){ setActive(idx); restartAuto(); }); })(i);
+  }
+  for (var j=0; j<thumbs.length; j++){
+    (function(idx){ thumbs[idx].addEventListener('click', function(){ setActive(idx); restartAuto(); }); })(j);
+  }
+
+  root.addEventListener('mouseenter', stopAuto);
+  root.addEventListener('mouseleave', startAuto);
+
+  root.setAttribute('tabindex','0');
+  root.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight') { nextSlide(); restartAuto(); }
+    else if (e.key === 'ArrowLeft') { prevSlide(); restartAuto(); }
+  });
+
+  var startX = null;
+  root.addEventListener('touchstart', function(e){
+    if (e.touches && e.touches.length === 1) { startX = e.touches[0].clientX; stopAuto(); }
+  }, {passive: true});
+  root.addEventListener('touchend', function(e){
+    if (startX === null) return;
+    var endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
+    var dx = endX - startX;
+    if (Math.abs(dx) > 40) { if (dx < 0) nextSlide(); else prevSlide(); }
+    startX = null;
+    startAuto();
+  });
+
+  startAuto();
+})();
+</script>
+
+<!-- ── GCC SUMMIT RSVP FORM · CONTROLLER ────────────────── -->
+<script>
+(function(){
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX307EtV6k2t1-sFuutjZrCIhIPZg5p73GDobn034LKJttOinjwuZaWjiNoVZSvoGoxQ/exec';
+  var form = document.getElementById('rsvpSummitForm');
+  if (!form) return;
+  var btn = document.getElementById('rsvpSummitSubmitBtn');
+  var msg = document.getElementById('rsvpSummitMsg');
+  var subtitle = document.getElementById('summitFormSubtitle');
+
+  /* ──── Event catalogue ──── */
+  var EVENTS = {
+    pune:      { name: 'GCC Summit · Pune',         city: 'Pune',             date: '2026-06-19', label: 'Pune · 19 June 2026' },
+    bengaluru: { name: 'GCC Summit · Bengaluru',    city: 'Bengaluru',        date: '2026-07-24', label: 'Bengaluru · 24 July 2026' },
+    delhi:     { name: 'GCC Summit · Delhi NCR',    city: 'Noida / Delhi NCR', date: '2026-09-18', label: 'Delhi NCR · 18 September 2026' }
+  };
+
+  /* ──── Card selection UI ──── */
+  var cards = document.querySelectorAll('#rsvp-summit .summit-event-card');
+  function selectCard(key){
+    cards.forEach(function(card){
+      var isMatch = card.getAttribute('data-event') === key;
+      card.classList.toggle('is-selected', isMatch);
+      var radio = card.querySelector('input[type="radio"]');
+      if (radio) radio.checked = isMatch;
+    });
+    if (EVENTS[key] && subtitle) subtitle.textContent = EVENTS[key].label + ' · By invitation';
+    var summitErr = form.querySelector('[data-field="summitEvent"]');
+    if (summitErr) summitErr.classList.remove('invalid');
+  }
+  cards.forEach(function(card){
+    card.addEventListener('click', function(e){
+      var key = card.getAttribute('data-event');
+      if (key) selectCard(key);
+    });
+    card.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        var key = card.getAttribute('data-event');
+        if (key) selectCard(key);
+      }
+    });
+    card.setAttribute('tabindex','0');
+  });
+
+  /* ──── Validation rules (mirror Hyderabad form) ──── */
+  var PERSONAL_EMAIL_DOMAINS = {
+    'gmail.com':1,'googlemail.com':1,
+    'yahoo.com':1,'yahoo.in':1,'yahoo.co.in':1,'yahoo.co.uk':1,'ymail.com':1,'rocketmail.com':1,
+    'hotmail.com':1,'hotmail.co.uk':1,'hotmail.co.in':1,'outlook.com':1,'outlook.in':1,'live.com':1,'live.in':1,'msn.com':1,'passport.com':1,
+    'icloud.com':1,'me.com':1,'mac.com':1,
+    'aol.com':1,'aim.com':1,
+    'rediffmail.com':1,'rediff.com':1,
+    'protonmail.com':1,'proton.me':1,'pm.me':1,
+    'mail.com':1,'gmx.com':1,'gmx.net':1,'gmx.us':1,
+    'yandex.com':1,'yandex.ru':1,
+    'qq.com':1,'163.com':1,'126.com':1,'sina.com':1,'foxmail.com':1,
+    'tutanota.com':1,'tutamail.com':1,'tuta.io':1,
+    'fastmail.com':1,'hushmail.com':1,
+    'zohomail.com':1,
+    'inbox.com':1,'email.com':1,'post.com':1,'iname.com':1,
+    'myself.com':1,'usa.com':1,'consultant.com':1,
+    'hey.com':1
+  };
+  function isCorporateEmail(addr){
+    if (!addr) return false;
+    var at = addr.lastIndexOf('@'); if (at < 1) return false;
+    var domain = addr.slice(at+1).trim().toLowerCase();
+    if (!domain || domain.indexOf('.') === -1) return false;
+    return !PERSONAL_EMAIL_DOMAINS[domain];
+  }
+  function normalizeIndianPhone(raw){
+    if (!raw) return '';
+    var digits = String(raw).replace(/\D+/g,'');
+    if (digits.length === 12 && digits.indexOf('91') === 0) digits = digits.slice(2);
+    else if (digits.length === 11 && digits.charAt(0) === '0') digits = digits.slice(1);
+    return digits;
+  }
+  function isValidIndianMobile(raw){ var d = normalizeIndianPhone(raw); return /^[6-9]\d{9}$/.test(d); }
+  var LINKEDIN_PROFILE_RE = /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%\.]{2,100}\/?(\?.*)?$/i;
+  function isLinkedInProfile(url){ if (!url) return false; return LINKEDIN_PROFILE_RE.test(url.trim()); }
+  function isValidName(s){
+    if (!s) return false;
+    var v = s.trim();
+    if (v.length < 3 || v.length > 80) return false;
+    if (/\d/.test(v)) return false;
+    if (!/\s/.test(v)) return false;
+    if (!/^[\p{L}\p{M}\s.'\-]+$/u.test(v)) return false;
+    return true;
+  }
+
+  function fieldEl(name){ return form.querySelector('[data-field="'+name+'"]'); }
+  function setError(name, message){
+    var el = fieldEl(name); if (!el) return;
+    el.classList.add('invalid');
+    var errEl = el.querySelector('.rsvp-err');
+    if (errEl) errEl.textContent = message;
+  }
+  function clearError(name){
+    var el = fieldEl(name); if (!el) return;
+    el.classList.remove('invalid');
+    var errEl = el.querySelector('.rsvp-err');
+    if (errEl) errEl.textContent = '';
+  }
+  function clearAllErrors(){
+    form.querySelectorAll('.rsvp-field.invalid').forEach(function(el){ el.classList.remove('invalid'); });
+    form.querySelectorAll('.rsvp-err').forEach(function(el){ el.textContent = ''; });
+    msg.className = ''; msg.textContent = '';
+  }
+  form.querySelectorAll('input, textarea').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var parent = inp.closest('.rsvp-field');
+      if (parent && parent.classList.contains('invalid')) {
+        var n = parent.getAttribute('data-field'); if (n) clearError(n);
+      }
+    });
+  });
+
+  function validateOne(name){
+    var el = form[name]; if (!el) return;
+    var v = (el.value || '').trim();
+    if (!v) { clearError(name); return; }
+    if (name === 'fullName') { if (!isValidName(v)) setError(name, 'Enter first and last name (letters only, 3\u201380 chars).'); else clearError(name); }
+    else if (name === 'designation') { if (v.length < 2) setError(name, 'Designation looks too short.'); else clearError(name); }
+    else if (name === 'company') { if (v.length < 2) setError(name, 'Company name looks too short.'); else clearError(name); }
+    else if (name === 'email') {
+      var lc = v.toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lc)) setError(name, 'That email doesn\u2019t look valid.');
+      else if (!isCorporateEmail(lc)) setError(name, 'Corporate email only \u2014 personal providers (Gmail, Yahoo, Hotmail, Outlook, iCloud, Rediffmail, etc.) are not accepted.');
+      else clearError(name);
+    }
+    else if (name === 'phone') {
+      if (!/^\+?[\d\s\-\(\)]+$/.test(v)) setError(name, 'Only digits, spaces, +, -, ( and ) allowed.');
+      else if (!isValidIndianMobile(v)) {
+        var d = normalizeIndianPhone(v);
+        if (d.length !== 10) setError(name, 'Must be exactly 10 digits (country code +91 is optional).');
+        else setError(name, 'Not a valid Indian mobile \u2014 must start with 6, 7, 8 or 9.');
+      } else clearError(name);
+    }
+    else if (name === 'linkedin') {
+      if (!/^https?:\/\//i.test(v)) setError(name, 'Must start with https://');
+      else if (!/linkedin\.com/i.test(v)) setError(name, 'That doesn\u2019t look like a LinkedIn URL.');
+      else if (!isLinkedInProfile(v)) setError(name, 'Personal profile only \u2014 the URL must contain /in/ (company, pulse, feed and jobs URLs aren\u2019t accepted).');
+      else clearError(name);
+    }
+    else if (name === 'officeAddress') {
+      if (v.length < 6) setError(name, 'Address looks too short \u2014 include at least the area name.');
+      else if (!/[a-zA-Z\u0900-\u097F]/.test(v)) setError(name, 'Address must contain letters \u2014 not just digits or symbols.');
+      else clearError(name);
+    }
+    else if (name === 'headcountHyderabad' || name === 'headcountIndia') {
+      if (!/^\d{1,7}$/.test(v)) setError(name, 'Digits only \u2014 no commas, spaces or text.');
+      else {
+        var n = parseInt(v, 10);
+        var cap = (name === 'headcountHyderabad') ? 200000 : 500000;
+        if (n < 1 || n > cap) setError(name, 'Enter a realistic headcount (1 \u2013 ' + cap.toLocaleString() + ').');
+        else clearError(name);
+      }
+    }
+  }
+  ['fullName','designation','company','email','phone','linkedin','officeAddress','headcountHyderabad','headcountIndia']
+    .forEach(function(n){ var inp = form[n]; if (inp && inp.addEventListener) inp.addEventListener('blur', function(){ validateOne(n); }); });
+
+  /* "Submit another RSVP" */
+  var anotherBtn = document.getElementById('rsvpSummitAnotherBtn');
+  if (anotherBtn) {
+    anotherBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var ty = document.getElementById('rsvpSummitThankYou');
+      if (ty) ty.hidden = true;
+      form.style.display = '';
+      try { form.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(_){}
+      var first = form.querySelector('input[name="fullName"]');
+      if (first) try { first.focus({ preventScroll:true }); } catch(_){ first.focus(); }
+    });
+  }
+
+  /* ──── Submit handler ──── */
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    clearAllErrors();
+    if (form._website && form._website.value) { msg.className = 'rsvp-msg-err'; msg.textContent = 'Submission blocked.'; return; }
+
+    var selectedKey = (form.querySelector('input[name="summitEvent"]:checked') || {}).value || '';
+    var chosen = EVENTS[selectedKey];
+
+    var val = {
+      fullName:        (form.fullName.value || '').trim(),
+      designation:     (form.designation.value || '').trim(),
+      company:         (form.company.value || '').trim(),
+      email:           (form.email.value || '').trim().toLowerCase(),
+      phoneRaw:        (form.phone.value || '').trim(),
+      linkedin:        (form.linkedin.value || '').trim(),
+      officeAddress:   (form.officeAddress.value || '').trim(),
+      headcountHyderabad: (form.headcountHyderabad.value || '').trim(),
+      headcountIndia:  (form.headcountIndia.value || '').trim(),
+      topics:          (form.topics.value || '').trim(),
+      confirmAttendance: !!form.confirmAttendance.checked
+    };
+    var domains = Array.prototype.map.call(form.querySelectorAll('input[name="domains"]:checked'), function(el){ return el.value; });
+    var themes  = Array.prototype.map.call(form.querySelectorAll('input[name="themes"]:checked'),  function(el){ return el.value; });
+
+    var firstErrorField = null;
+    function fail(name, message){ setError(name, message); if (!firstErrorField) firstErrorField = name; }
+
+    if (!chosen) {
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Please pick one of the three cities (Pune / Bengaluru / Delhi NCR) above.';
+      var grid = document.querySelector('.summit-events-grid');
+      if (grid) try { grid.scrollIntoView({ behavior:'smooth', block:'center' }); } catch(_){}
+      return;
+    }
+
+    if (!val.fullName) fail('fullName', 'Please enter your full name.');
+    else if (!isValidName(val.fullName)) fail('fullName', 'Enter first and last name (letters only, 3\u201380 chars).');
+
+    if (!val.designation) fail('designation', 'Please enter your designation.');
+    else if (val.designation.length < 2) fail('designation', 'Designation looks too short.');
+
+    if (!val.company) fail('company', 'Please enter your GCC / parent company name.');
+    else if (val.company.length < 2) fail('company', 'Company name looks too short.');
+
+    if (!val.email) fail('email', 'Please enter your work email.');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.email)) fail('email', 'That email doesn\u2019t look valid.');
+    else if (!isCorporateEmail(val.email)) fail('email', 'Corporate email only \u2014 personal providers are not accepted.');
+
+    var phoneNormalized = normalizeIndianPhone(val.phoneRaw);
+    if (!val.phoneRaw) fail('phone', 'Please enter your mobile number.');
+    else if (!/^\+?[\d\s\-\(\)]+$/.test(val.phoneRaw)) fail('phone', 'Phone number format invalid.');
+    else if (!isValidIndianMobile(val.phoneRaw)) {
+      if (phoneNormalized.length !== 10) fail('phone', 'Must be exactly 10 digits (country code +91 is optional).');
+      else fail('phone', 'Not a valid Indian mobile \u2014 must start with 6, 7, 8 or 9.');
+    }
+
+    if (!val.linkedin) fail('linkedin', 'Please paste your LinkedIn profile URL.');
+    else if (!/^https?:\/\//i.test(val.linkedin)) fail('linkedin', 'Must start with https://');
+    else if (!/linkedin\.com/i.test(val.linkedin)) fail('linkedin', 'That doesn\u2019t look like a LinkedIn URL.');
+    else if (!isLinkedInProfile(val.linkedin)) fail('linkedin', 'Personal profile only \u2014 the URL must contain /in/');
+
+    if (!val.officeAddress) fail('officeAddress', 'Please enter your office area / locality.');
+    else if (val.officeAddress.length < 6) fail('officeAddress', 'Address looks too short \u2014 include at least the area name.');
+    else if (!/[a-zA-Z\u0900-\u097F]/.test(val.officeAddress)) fail('officeAddress', 'Address must contain letters \u2014 not just digits or symbols.');
+
+    if (val.headcountHyderabad) {
+      if (!/^\d{1,7}$/.test(val.headcountHyderabad)) fail('headcountHyderabad', 'Digits only, no commas, spaces or text.');
+      else { var hC = parseInt(val.headcountHyderabad, 10); if (hC < 1 || hC > 200000) fail('headcountHyderabad', 'Enter a realistic headcount (1 – 200,000).'); }
+    }
+    if (val.headcountIndia) {
+      if (!/^\d{1,7}$/.test(val.headcountIndia)) fail('headcountIndia', 'Digits only, no commas, spaces or text.');
+      else { var hI = parseInt(val.headcountIndia, 10); if (hI < 1 || hI > 500000) fail('headcountIndia', 'Enter a realistic headcount (1 – 500,000).'); }
+    }
+    if (val.headcountHyderabad && val.headcountIndia && /^\d+$/.test(val.headcountHyderabad) && /^\d+$/.test(val.headcountIndia)) {
+      if (parseInt(val.headcountHyderabad, 10) > parseInt(val.headcountIndia, 10)) fail('headcountIndia', 'India total must be at least as large as city headcount.');
+    }
+
+    if (domains.length === 0) fail('domains', 'Please tick at least one domain.');
+    if (themes.length === 0)  fail('themes',  'Please tick at least one theme of interest.');
+    if (!val.confirmAttendance) fail('confirmAttendance', 'Please confirm you can attend the selected summit.');
+
+    if (firstErrorField) {
+      var el = fieldEl(firstErrorField);
+      if (el) {
+        var input = el.querySelector('input, textarea');
+        try { (input || el).scrollIntoView({ behavior:'smooth', block:'center' }); } catch(_) {}
+        if (input) setTimeout(function(){ try { input.focus({ preventScroll:true }); } catch(_){ input.focus(); } }, 200);
+      }
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Please fix the highlighted field(s) above and try again.';
+      return;
+    }
+
+    var payload = {
+      action:             'submitEventRSVP',
+      eventName:          chosen.name,
+      eventCity:          chosen.city,
+      eventDate:          chosen.date,
+      eventSeries:        'GCC Summit Series 2026',
+      fullName:           val.fullName,
+      designation:        val.designation,
+      company:            val.company,
+      email:              val.email,
+      phone:              phoneNormalized,
+      phoneRaw:           val.phoneRaw,
+      linkedin:           val.linkedin,
+      officeAddress:      val.officeAddress,
+      headcountHyderabad: val.headcountHyderabad,
+      headcountIndia:     val.headcountIndia,
+      domains:            domains,
+      themes:             themes,
+      topics:             val.topics,
+      confirmAttendance:  val.confirmAttendance,
+      timeSlot:           ['Either works'],
+      source:             'insights-events.html#rsvp-summit'
+    };
+
+    btn.disabled = true;
+    var originalLabel = btn.textContent;
+    btn.textContent = 'Sending...';
+
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    })
+    .then(function(r){ return r.json().catch(function(){ return { success:false, error:'Bad server response' }; }); })
+    .then(function(res){
+      if (res && res.success) {
+        var firstName = (val.fullName || '').split(/\s+/)[0] || '';
+        var nameSpan = document.getElementById('rsvpSummitThankYouName');
+        if (nameSpan) nameSpan.textContent = firstName ? (', ' + firstName) : '';
+        var evtSpan = document.getElementById('rsvpSummitThankYouEvent');
+        if (evtSpan) evtSpan.textContent = chosen.name;
+        form.style.display = 'none';
+        msg.className = ''; msg.textContent = '';
+        var ty = document.getElementById('rsvpSummitThankYou');
+        if (ty) ty.hidden = false;
+        form.reset();
+        cards.forEach(function(card){ card.classList.remove('is-selected'); });
+        if (subtitle) subtitle.textContent = 'Select a city above to begin';
+        clearAllErrors();
+        try { (ty || form).scrollIntoView({ behavior:'smooth', block:'center' }); } catch(_){ }
+        if (typeof gtag === 'function') {
+          gtag('event', 'rsvp_submit', { event_category: 'GCC Summit ' + chosen.city, event_label: payload.company });
+        }
+      } else {
+        msg.className = 'rsvp-msg-err';
+        msg.textContent = (res && res.error) ? res.error : 'Something went wrong. Please try again or write to admin@gccpros.com.';
+      }
+    })
+    .catch(function(err){
+      msg.className = 'rsvp-msg-err';
+      msg.textContent = 'Network error. Please check your connection and try again, or email admin@gccpros.com.';
+      console.error('Summit RSVP submit error:', err);
+    })
+    .then(function(){
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
+  });
+})();
+</script>
 
 <!-- FOOTER -->
 <footer>

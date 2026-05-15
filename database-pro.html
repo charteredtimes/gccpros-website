@@ -1372,6 +1372,257 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 /* ── Buy modal currency buttons ─────────────────────────── */
 .cur-btn { flex:1;padding:8px;border-radius:4px;border:2px solid #dde3ec;background:#fff;color:#6B7A99;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s; }
 .cur-btn.active { border-color:#0A1628;background:#0A1628;color:#fff; }
+
+/* ─────────────────────────────────────────────────────────────
+   ENTERPRISE LAUNCH COUNTDOWN BANNER · target = 1 June 2026 IST
+   ───────────────────────────────────────────────────────────── */
+.enterprise-countdown-banner {
+  position: relative;
+  z-index: 50;
+  background: linear-gradient(135deg, #0A1628 0%, #0A66C2 55%, #004182 100%);
+  color: #fff;
+  padding: 14px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--sans);
+  overflow: hidden;
+}
+.enterprise-countdown-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(203,228,254,0.12) 0%, transparent 40%);
+  pointer-events: none;
+}
+.ecb-inner {
+  position: relative; z-index: 2;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.ecb-headline { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ecb-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.6px;
+  text-transform: uppercase; color: #CBE4FE;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.ecb-eyebrow::before {
+  content: ''; width: 6px; height: 6px; background: #CBE4FE;
+  border-radius: 50%; box-shadow: 0 0 8px rgba(203,228,254,0.8);
+  animation: ecbPulse 2s ease-in-out infinite;
+}
+@keyframes ecbPulse { 0%,100%{opacity:1;}50%{opacity:0.35;} }
+.ecb-title { font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.85); }
+.ecb-title strong { font-weight: 700; color: #fff; }
+.ecb-timer { display: flex; align-items: flex-start; gap: 6px; }
+.ecb-unit {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px;
+  padding: 7px 11px 6px;
+  min-width: 56px;
+}
+.ecb-num {
+  font-family: var(--mono);
+  font-size: 22px; font-weight: 600;
+  line-height: 1; color: #fff;
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+}
+.ecb-lbl {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 1.1px; text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-top: 5px;
+}
+.ecb-colon {
+  font-family: var(--mono); font-size: 22px;
+  font-weight: 600; opacity: 0.45; color: #CBE4FE;
+  align-self: center; padding-bottom: 14px;
+}
+.ecb-cta {
+  background: #fff; color: #004182;
+  padding: 9px 18px; border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.2s;
+  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.ecb-cta:hover {
+  background: #CBE4FE; transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+}
+.ecb-close {
+  background: transparent; border: none; color: rgba(255,255,255,0.55);
+  font-size: 22px; line-height: 1; cursor: pointer;
+  padding: 0 6px; transition: color 0.2s;
+  font-family: var(--sans);
+}
+.ecb-close:hover { color: #fff; }
+.enterprise-countdown-banner.is-hidden { display: none; }
+.enterprise-countdown-banner.is-launched .ecb-timer,
+.enterprise-countdown-banner.is-launched .ecb-cta { display: none; }
+@media (max-width: 900px) {
+  .enterprise-countdown-banner { padding: 12px 16px; }
+  .ecb-inner { flex-direction: column; gap: 12px; }
+  .ecb-headline { text-align: center; align-items: center; }
+  .ecb-unit { min-width: 48px; padding: 6px 8px 5px; }
+  .ecb-num { font-size: 19px; }
+  .ecb-cta { width: 100%; text-align: center; }
+  .ecb-close { position: absolute; top: 6px; right: 8px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONSULTING / ADVISORY CTA · Database Pro
+   ═══════════════════════════════════════════════════════════ */
+.dp-cta-section {
+  background: radial-gradient(120% 80% at 50% 0%, #152338 0%, #0A1628 60%, #0A1628 100%);
+  padding: 96px 32px;
+  position: relative; overflow: hidden;
+  margin-top: 80px;
+  border-top: 1px solid rgba(91,163,214,0.10);
+  border-bottom: 1px solid rgba(91,163,214,0.10);
+}
+.dp-cta-section::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(91,163,214,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,163,214,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events: none;
+}
+.dp-cta-grid {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 64px;
+  align-items: center;
+}
+
+.dp-cta-text { color: #fff; }
+.dp-cta-eyebrow {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2.4px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 22px;
+}
+.dp-cta-eyebrow-line { width: 36px; height: 1px; background: var(--gold); opacity: 0.5; display: inline-block; }
+
+.dp-cta-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 50px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -1.4px;
+  color: #fff;
+  margin: 0 0 22px;
+}
+.dp-cta-title em { font-style: italic; color: var(--gold); font-weight: 700; }
+
+.dp-cta-desc {
+  font-size: 15.5px; line-height: 1.8;
+  color: rgba(255,255,255,0.65);
+  font-weight: 300;
+  margin: 0 0 32px;
+  max-width: 640px;
+}
+.dp-cta-desc em { font-style: italic; color: rgba(255,255,255,0.88); }
+
+.dp-cta-actions {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  margin-bottom: 36px;
+}
+.dp-cta-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 28px;
+  border-radius: 100px;
+  font-size: 13.5px; font-weight: 700;
+  letter-spacing: 0.4px;
+  text-decoration: none;
+  transition: all 0.22s ease;
+  font-family: var(--sans);
+}
+.dp-cta-btn--primary {
+  background: var(--gold); color: var(--ink);
+  box-shadow: 0 6px 24px rgba(91,163,214,0.30);
+}
+.dp-cta-btn--primary:hover {
+  background: #fff; transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(91,163,214,0.45);
+}
+.dp-cta-btn--ghost {
+  background: transparent; color: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.20);
+}
+.dp-cta-btn--ghost:hover {
+  background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.40);
+  transform: translateY(-2px);
+}
+
+.dp-cta-trust {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 16px;
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.2px;
+}
+.dp-cta-trust-item strong { color: var(--gold); font-weight: 700; }
+.dp-cta-trust-divider {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.20);
+}
+
+.dp-cta-services {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.dp-cta-service {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 22px 20px;
+  transition: all 0.22s ease;
+}
+.dp-cta-service:hover {
+  background: rgba(91,163,214,0.08);
+  border-color: rgba(91,163,214,0.35);
+  transform: translateY(-2px);
+}
+.dp-cta-service-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(91,163,214,0.14);
+  color: var(--gold);
+  border: 1px solid rgba(91,163,214,0.28);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.dp-cta-service-title {
+  font-size: 14px; font-weight: 700;
+  color: #fff; letter-spacing: -0.2px;
+  margin-bottom: 6px;
+  font-family: var(--sans);
+}
+.dp-cta-service-desc {
+  font-size: 12.5px; line-height: 1.55;
+  color: rgba(255,255,255,0.55);
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  .dp-cta-section { padding: 64px 24px; margin-top: 56px; }
+  .dp-cta-grid { grid-template-columns: 1fr; gap: 40px; }
+  .dp-cta-services { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .dp-cta-services { grid-template-columns: 1fr; }
+  .dp-cta-actions { flex-direction: column; align-items: stretch; }
+  .dp-cta-btn { justify-content: center; }
+}
+
+
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -1407,16 +1658,37 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </nav>
 
+<!-- ENTERPRISE LAUNCH COUNTDOWN · 1 June 2026 -->
+<div id="enterpriseCountdownBanner" class="enterprise-countdown-banner" role="region" aria-label="Enterprise Edition launch countdown">
+  <div class="ecb-inner">
+    <div class="ecb-headline">
+      <span class="ecb-eyebrow">Launching Soon</span>
+      <span class="ecb-title"><strong>Enterprise Edition</strong> goes live on <strong>1 June 2026</strong> · Full dataset access · Verified leader contacts</span>
+    </div>
+    <div class="ecb-timer" aria-live="polite" aria-atomic="true">
+      <div class="ecb-unit"><span class="ecb-num" id="ecb-days">--</span><span class="ecb-lbl">Days</span></div>
+      <div class="ecb-colon">:</div>
+      <div class="ecb-unit"><span class="ecb-num" id="ecb-hours">--</span><span class="ecb-lbl">Hours</span></div>
+      <div class="ecb-colon">:</div>
+      <div class="ecb-unit"><span class="ecb-num" id="ecb-mins">--</span><span class="ecb-lbl">Mins</span></div>
+      <div class="ecb-colon">:</div>
+      <div class="ecb-unit"><span class="ecb-num" id="ecb-secs">--</span><span class="ecb-lbl">Secs</span></div>
+    </div>
+    <a href="#enterprise-tier" class="ecb-cta">Preview Enterprise →</a>
+    <button type="button" class="ecb-close" id="ecb-close" aria-label="Dismiss banner" title="Dismiss">&times;</button>
+  </div>
+</div>
+
 <header class="hero">
   <div class="hero-inner">
     <div>
       <div class="hero-breadcrumb">GCCPROs · Database Pro · Global GCC Intelligence</div>
       <h1 class="hero-title">The <em>Global Capability Center</em> Database</h1>
-      <p class="hero-sub">Research-grade access to 3,600+ verified GCCs globally, including 2,400+ across India. Every profile covers parent company, GCC city and state, HQ country, industry, domains, headcount, setup model, leadership contacts, establishment year, maturity generation, Glassdoor ratings, certifications and financials. Used by researchers, talent leaders and strategy teams worldwide.</p>
+      <p class="hero-sub">Research-grade access to 5,000+ verified GCCs globally, including 2,400+ across India. Every profile covers parent company, GCC city and state, HQ country, industry, domains, headcount, setup model, leadership contacts, establishment year, maturity generation, Glassdoor ratings, certifications and financials. Used by researchers, talent leaders and strategy teams worldwide.</p>
     </div>
     <div class="hero-stats" aria-hidden="true">
       <div class="stat-block">
-        <div class="stat-num">3,600+</div>
+        <div class="stat-num">5,000+</div>
         <div class="stat-label">GCCs Worldwide</div>
       </div>
       <div class="stat-block">
@@ -1660,6 +1932,76 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </main>
 
+<!-- ─────────────────────────────────────────────────
+     CONSULTING / ADVISORY CTA · BEYOND THE DATABASE
+     Premium full-width section, navy hero treatment.
+     ───────────────────────────────────────────────── -->
+<section class="dp-cta-section" aria-labelledby="dp-cta-title">
+  <div class="dp-cta-grid">
+
+    <!-- LEFT: text + CTA -->
+    <div class="dp-cta-text">
+      <div class="dp-cta-eyebrow"><span class="dp-cta-eyebrow-line"></span>Consulting · Advisory</div>
+      <h2 id="dp-cta-title" class="dp-cta-title">Data is the foundation.<br><em>Strategy</em> is the conversation.</h2>
+      <p class="dp-cta-desc">
+        The GCCPROs database tells you <em>what</em> the global GCC ecosystem looks like. Our advisory practice tells you <em>what to do about it</em>.
+        Peer-benchmarked setup roadmaps, headcount &amp; location strategies, leadership maturity diagnostics, and global expansion plans — calibrated against 5,000+ verified centres worldwide.
+      </p>
+
+      <div class="dp-cta-actions">
+        <a class="dp-cta-btn dp-cta-btn--primary" href="mailto:admin@gccpros.com?subject=GCC%20Benchmarking%20%26%20Global%20Strategy%20Consulting%20Enquiry">
+          Request a discovery call <span aria-hidden="true">→</span>
+        </a>
+        <a class="dp-cta-btn dp-cta-btn--ghost" href="https://www.linkedin.com/in/shammiprabhakar/" target="_blank" rel="noopener">
+          Connect on LinkedIn
+        </a>
+      </div>
+
+      <div class="dp-cta-trust">
+        <span class="dp-cta-trust-item"><strong>50+</strong> GCC engagements</span>
+        <span class="dp-cta-trust-divider"></span>
+        <span class="dp-cta-trust-item"><strong>5,000+</strong> centres benchmarked</span>
+        <span class="dp-cta-trust-divider"></span>
+        <span class="dp-cta-trust-item"><strong>Independent</strong> · vendor-free</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: 4 service cards -->
+    <div class="dp-cta-services">
+      <div class="dp-cta-service">
+        <div class="dp-cta-service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+        </div>
+        <div class="dp-cta-service-title">GCC Benchmarking</div>
+        <div class="dp-cta-service-desc">Headcount, location, domain, leadership maturity calibrated against peer GCCs.</div>
+      </div>
+      <div class="dp-cta-service">
+        <div class="dp-cta-service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V8M5 12l7-4 7 4"/><path d="M5 12v6l7 4 7-4v-6"/></svg>
+        </div>
+        <div class="dp-cta-service-title">Setup &amp; Scale-up</div>
+        <div class="dp-cta-service-desc">Greenfield GCC setup, captive build-outs, scale-up roadmaps for established centres.</div>
+      </div>
+      <div class="dp-cta-service">
+        <div class="dp-cta-service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/></svg>
+        </div>
+        <div class="dp-cta-service-title">Global Strategy</div>
+        <div class="dp-cta-service-desc">Geo-diversification, multi-country build (Philippines, Poland, Mexico) and risk hedging.</div>
+      </div>
+      <div class="dp-cta-service">
+        <div class="dp-cta-service-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        </div>
+        <div class="dp-cta-service-title">M&amp;A &amp; Due Diligence</div>
+        <div class="dp-cta-service-desc">GCC carve-outs, acquisitions, and global capability centre due diligence.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
 <div class="modal-overlay" id="reveal-modal" onclick="if(event.target===this)closeRevealModal()">
   <div class="modal" style="max-width:420px;">
     <h3>Reveal company profile?</h3>
@@ -1814,7 +2156,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
   · <a href="https://www.gccpros.com/faq-loyalty" target="_blank">Credits FAQ</a>
-  · <a href="mailto:support@gccpros.com">support@gccpros.com</a>
+  · <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>
 </footer>
 
 <script>
@@ -2364,7 +2706,7 @@ async function submitPasswordSignUp(ev) {
       if (checkData.migrated) {
         msg = 'This email was migrated from the old portal. Please click "Welcome back" -> "Forgot password" to set a new password.';
       } else if (checkData.source === 'firebase') {
-        msg = 'This email already has a login on file. Try "Welcome back" with your password, or "Forgot password" to reset. If you do not remember signing up, contact support@gccpros.com.';
+        msg = 'This email already has a login on file. Try "Welcome back" with your password, or "Forgot password" to reset. If you do not remember signing up, contact admin@gccpros.com.';
       } else {
         msg = 'This email is already registered (' + (checkData.status || 'on file') + '). Try "Welcome back" to sign in, or "Forgot password" to reset.';
       }
@@ -2823,7 +3165,7 @@ function showPendingState() {
       '<h3>Your account is being verified</h3>' +
       '<p>We manually approve every individual-access member to keep the database fair and secure. Approvals typically complete within <strong>1 business day</strong>.</p>' +
       '<p style="margin-top:14px;">You will receive an email at <strong>' + escHtml(getToken()) + '</strong> the moment your account is live. Your <strong>200-credit welcome bonus</strong> will be granted automatically on approval.</p>' +
-      '<p style="margin-top:18px;font-size:11px;color:var(--muted);">Questions? Email <a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a>.</p>' +
+      '<p style="margin-top:18px;font-size:11px;color:var(--muted);">Questions? Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
     '</div>';
 }
 function showSuspendedState(reason) {
@@ -2832,7 +3174,7 @@ function showSuspendedState(reason) {
       '<div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">\u2715</div>' +
       '<h3>Account suspended</h3>' +
       '<p>Your account has been paused pending review. ' + (reason ? 'Reason: <em>' + escHtml(reason) + '</em>.' : '') + '</p>' +
-      '<p style="margin-top:14px;">Please contact <a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a>.</p>' +
+      '<p style="margin-top:14px;">Please contact <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
     '</div>';
 }
 function showRejectedState() {
@@ -2840,7 +3182,7 @@ function showRejectedState() {
     '<div class="state-box" style="border-top:3px solid var(--danger);padding:48px 24px;">' +
       '<div class="sb-icon" style="color:var(--danger);border-color:var(--danger);">\u2715</div>' +
       '<h3>Access not approved</h3>' +
-      '<p>We were unable to approve your application for individual access. If you believe this is in error, please email <a href="mailto:support@gccpros.com" style="color:var(--gold-deep);">support@gccpros.com</a>.</p>' +
+      '<p>We were unable to approve your application for individual access. If you believe this is in error, please email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p>' +
     '</div>';
 }
 function showMonthlyCapReached() {
@@ -3263,7 +3605,7 @@ function openBuyCredits() {
     showToast(
       _accountStatus === 'Pending'
         ? 'Your account is pending approval. Top-up will be available once approved.'
-        : 'Top-up is not available for your account. Contact support@gccpros.com.',
+        : 'Top-up is not available for your account. Contact admin@gccpros.com.',
       '#92400E'
     );
     return;
@@ -3360,7 +3702,7 @@ async function initiatePayment() {
         });
         const data = await res.json();
         if (data.error === 'not_approved') {
-          errBox.textContent = 'Payment could not be applied — your account is not yet approved. Please contact support@gccpros.com with your payment reference: ' + response.razorpay_payment_id;
+          errBox.textContent = 'Payment could not be applied — your account is not yet approved. Please contact admin@gccpros.com with your payment reference: ' + response.razorpay_payment_id;
           errBox.style.display = 'block';
           payBtn.disabled = false; payBtn.textContent = 'Contact support';
           return;
@@ -3371,7 +3713,7 @@ async function initiatePayment() {
           renderCredits();
           showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
         } else {
-          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact support@gccpros.com.';
+          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact admin@gccpros.com.';
           errBox.style.display = 'block';
         }
       } catch(err) {
@@ -3662,6 +4004,55 @@ async function joinWaitlist(ev) {
   document.getElementById('wl-email').value = '';
   document.getElementById('wl-company').value = '';
 }
+
+/* ─────────────────────────────────────────────────────────────
+   ENTERPRISE LAUNCH COUNTDOWN · target = 1 June 2026, 00:00 IST
+   ───────────────────────────────────────────────────────────── */
+(function initEnterpriseCountdown(){
+  var banner = document.getElementById('enterpriseCountdownBanner');
+  if (!banner) return;
+  var TARGET = new Date('2026-06-01T00:00:00+05:30').getTime();
+  var $d = document.getElementById('ecb-days');
+  var $h = document.getElementById('ecb-hours');
+  var $m = document.getElementById('ecb-mins');
+  var $s = document.getElementById('ecb-secs');
+  var $close = document.getElementById('ecb-close');
+  var timer = null;
+  function pad(n){ n=String(n); return n.length<2 ? '0'+n : n; }
+  function tick(){
+    var diff = TARGET - Date.now();
+    if (diff <= 0) {
+      banner.classList.add('is-launched');
+      var titleEl = banner.querySelector('.ecb-title');
+      if (titleEl) titleEl.innerHTML = '<strong>Enterprise Edition is LIVE</strong> &middot; Verified leader contacts &amp; full dataset access available now';
+      var eb = banner.querySelector('.ecb-eyebrow');
+      if (eb) eb.textContent = 'Now Available';
+      if (timer) { clearInterval(timer); timer = null; }
+      return;
+    }
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+    var secs = Math.floor((diff % 60000) / 1000);
+    if ($d) $d.textContent = pad(days);
+    if ($h) $h.textContent = pad(hours);
+    if ($m) $m.textContent = pad(mins);
+    if ($s) $s.textContent = pad(secs);
+  }
+  if ($close) {
+    $close.addEventListener('click', function(){
+      banner.classList.add('is-hidden');
+      try { sessionStorage.setItem('gccpros_ecb_dismissed','1'); } catch(e){}
+    });
+    try {
+      if (sessionStorage.getItem('gccpros_ecb_dismissed') === '1') {
+        banner.classList.add('is-hidden');
+      }
+    } catch(e){}
+  }
+  tick();
+  timer = setInterval(tick, 1000);
+})();
 </script>
 
 
