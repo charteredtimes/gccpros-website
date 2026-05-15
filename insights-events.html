@@ -416,7 +416,7 @@ html.menu-open{overflow:hidden;}
           <div class="sec-date">Fri · 19 June 2026</div>
           <div class="sec-city">Pune</div>
           <div class="sec-meta">Closed-room roundtable</div>
-          <div class="sec-cta">Select →</div>
+          <div class="sec-cta">Request a seat →</div>
         </div>
       </label>
       <label class="summit-event-card" data-event="bengaluru">
@@ -426,7 +426,7 @@ html.menu-open{overflow:hidden;}
           <div class="sec-date">Fri · 24 July 2026</div>
           <div class="sec-city">Bengaluru</div>
           <div class="sec-meta">Closed-room roundtable</div>
-          <div class="sec-cta">Select →</div>
+          <div class="sec-cta">Request a seat →</div>
         </div>
       </label>
       <label class="summit-event-card" data-event="delhi">
@@ -436,151 +436,22 @@ html.menu-open{overflow:hidden;}
           <div class="sec-date">Fri · 18 September 2026</div>
           <div class="sec-city">Noida / Delhi NCR</div>
           <div class="sec-meta">Closed-room roundtable</div>
-          <div class="sec-cta">Select →</div>
+          <div class="sec-cta">Request a seat →</div>
         </div>
       </label>
     </div>
 
-    <!-- Form card -->
-    <div class="evt-form-card">
-      <form id="rsvpSummitForm" novalidate autocomplete="on">
-        <div class="evt-form-head">
-          <div class="evt-form-eyebrow">Request a seat</div>
-          <div class="evt-form-title">Tell us about you</div>
-          <div class="evt-form-sub" id="summitFormSubtitle">Select a city above to begin</div>
-        </div>
-
-        <!-- Honeypot — truly offscreen so it doesn't affect scroll/layout -->
-        <input type="text" name="_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:fixed!important;top:-10000px!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;">
-
-        <!-- Fieldset 1 — YOU -->
-        <fieldset class="evt-fieldset">
-          <legend class="evt-legend">01 · Your details</legend>
-          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field" data-field="fullName">
-              <span>Full name <em>*</em></span>
-              <input name="fullName" type="text" required maxlength="80" autocomplete="name">
-              <div class="rsvp-err"></div>
-            </label>
-            <label class="rsvp-field" data-field="designation">
-              <span>Designation / Title <em>*</em></span>
-              <input name="designation" type="text" required maxlength="120" autocomplete="organization-title" placeholder="MD &amp; Site Leader">
-              <div class="rsvp-err"></div>
-            </label>
-          </div>
-          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field" data-field="email">
-              <span>Work email <em>*</em></span>
-              <input name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@yourcompany.com">
-              <div class="rsvp-hint">Corporate email only.</div>
-              <div class="rsvp-err"></div>
-            </label>
-            <label class="rsvp-field" data-field="phone">
-              <span>Phone / WhatsApp <em>*</em></span>
-              <input name="phone" type="tel" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="9876543210">
-              <div class="rsvp-hint">10-digit Indian mobile.</div>
-              <div class="rsvp-err"></div>
-            </label>
-          </div>
-          <label class="rsvp-field" data-field="linkedin">
-            <span>LinkedIn profile <em>*</em></span>
-            <input name="linkedin" type="url" required maxlength="200" autocomplete="url" spellcheck="false" placeholder="https://www.linkedin.com/in/your-handle">
-            <div class="rsvp-hint">Personal profile only — must contain <code>/in/</code>.</div>
-            <div class="rsvp-err"></div>
-          </label>
-        </fieldset>
-
-        <!-- Fieldset 2 — YOUR GCC -->
-        <fieldset class="evt-fieldset">
-          <legend class="evt-legend">02 · Your GCC</legend>
-          <label class="rsvp-field" data-field="company">
-            <span>Company (GCC) <em>*</em></span>
-            <input name="company" type="text" required maxlength="120" autocomplete="organization" placeholder="Parent / group company name">
-            <div class="rsvp-err"></div>
-          </label>
-          <label class="rsvp-field" data-field="officeAddress">
-            <span>Your GCC office locality <em>*</em></span>
-            <input name="officeAddress" type="text" required minlength="6" maxlength="200" autocomplete="address-line1" placeholder="e.g. Hinjewadi Phase 2, Pune">
-            <div class="rsvp-err"></div>
-          </label>
-          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <label class="rsvp-field" data-field="headcountHyderabad">
-              <span>Headcount in your city</span>
-              <input name="headcountHyderabad" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 850">
-              <div class="rsvp-err"></div>
-            </label>
-            <label class="rsvp-field" data-field="headcountIndia">
-              <span>Headcount in India (total)</span>
-              <input name="headcountIndia" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 3500">
-              <div class="rsvp-err"></div>
-            </label>
-          </div>
-          <div class="rsvp-field" data-field="domains">
-            <span>Domains run from your GCC <em>*</em></span>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Technology"> Technology</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Engineering"> Engineering</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Finance"> Finance</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Operations"> Operations</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="HR / People"> HR / People</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Analytics / Data"> Analytics / Data</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Procurement / SCM"> Procurement / SCM</label>
-              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Other"> Other</label>
-            </div>
-            <div class="rsvp-err"></div>
-          </div>
-        </fieldset>
-
-        <!-- Fieldset 3 — YOUR INTEREST -->
-        <fieldset class="evt-fieldset">
-          <legend class="evt-legend">03 · Your interests</legend>
-          <div class="rsvp-field" data-field="themes">
-            <span>Which theme(s) interest you most? <em>*</em></span>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Innovation"> ★ Innovation</label>
-              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Talent"> ★ Talent</label>
-              <label class="rsvp-chk"><input type="checkbox" name="themes" value="GCC Ecosystem"> ★ GCC Ecosystem</label>
-            </div>
-            <div class="rsvp-err"></div>
-          </div>
-          <label class="rsvp-field" data-field="topics">
-            <span>What would you like discussed at the table?</span>
-            <textarea name="topics" rows="3" maxlength="600" placeholder="One or two themes you want the room to dig into."></textarea>
-            <div class="rsvp-err"></div>
-          </label>
-          <div class="rsvp-field evt-confirm" data-field="confirmAttendance">
-            <label class="rsvp-chk-line">
-              <input type="checkbox" name="confirmAttendance" required>
-              <span>I confirm I can be physically present at the selected GCC Summit if my seat is confirmed. <em style="color:#c0392b;font-style:normal;">*</em></span>
-            </label>
-            <div class="rsvp-err"></div>
-          </div>
-        </fieldset>
-
-        <button type="submit" id="rsvpSummitSubmitBtn" class="evt-submit">Request my seat &rarr;</button>
-        <div id="rsvpSummitMsg" role="status" aria-live="polite" class="evt-msg"></div>
-      </form>
-
-      <!-- Thank-you panel -->
-      <div id="rsvpSummitThankYou" role="status" aria-live="polite" hidden style="text-align:center;padding:32px 8px;">
-        <div style="width:72px;height:72px;border-radius:50%;background:rgba(31,164,99,0.12);color:#1F7A48;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        </div>
-        <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-0.6px;margin-bottom:10px;">Thank you<span id="rsvpSummitThankYouName"></span>.</div>
-        <p style="font-size:15px;color:var(--muted);line-height:1.7;margin:0 auto 22px;max-width:520px;">Your RSVP for the <strong style="color:var(--ink);" id="rsvpSummitThankYouEvent">GCC Summit</strong> has landed with <strong style="color:var(--ink);">Shammi Prabhakar Singh</strong> directly.</p>
-        <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:left;margin:0 auto 22px;max-width:560px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">What happens next</div>
-          <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--ink);line-height:1.7;">
-            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>We close the room <strong>~3 weeks before</strong> the event and curate ~12 leaders.</span></li>
-            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>If confirmed, you&rsquo;ll get a <strong>personal note from Shammi</strong> with venue, time and attendees.</span></li>
-            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>Questions? <a href="mailto:admin@gccpros.com?subject=GCC%20Summit%20Series%202026" style="color:var(--gold);font-weight:600;text-decoration:none;">admin@gccpros.com</a> · WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a></span></li>
-          </ul>
-        </div>
-        <a href="#" id="rsvpSummitAnotherBtn" style="font-size:12.5px;color:var(--gold);font-weight:700;text-decoration:none;">Submit another RSVP &rarr;</a>
-      </div>
+    <!-- Form card replaced by modal launcher hint -->
+    <div class="evt-form-launcher">
+      <p class="evt-form-launcher-text">Pick a city above to request your seat &mdash; the RSVP form will open in a focused dialog.</p>
+      <button type="button" class="evt-form-launcher-btn" id="openSummitFormBtn">
+        Open RSVP form
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
     </div>
   </div>
 </section>
+
 
 <!-- ─────────────────────────────────────────────────
      SECTION B · HYDERABAD ROUNDTABLE · MAY 2026 RECAP
@@ -592,15 +463,15 @@ html.menu-open{overflow:hidden;}
     <div class="evt-mag-media">
       <div id="hydSlideshow" class="hyd-slideshow" aria-roledescription="carousel" aria-label="Hyderabad GCC Leaders Roundtable photo gallery">
         <div class="hyd-slides" id="hydSlides">
-          <div class="hyd-slide is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/web/1-opening-discussion.jpg" alt="GCC India 2026 — Hyderabad Roundtable, opening discussion" loading="eager"></div>
-          <div class="hyd-slide" data-idx="1"><img src="HYD%20Round%20table%2012%20May/web/2-group-photo.jpg" alt="Group photo of GCC leaders at the Hyderabad roundtable" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="2"><img src="HYD%20Round%20table%2012%20May/web/3-handbook.jpg" alt="Attendee reading the GCCPROs roundtable handbook" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="3"><img src="HYD%20Round%20table%2012%20May/web/4-conversation.jpg" alt="One-on-one conversation between GCC leaders" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="4"><img src="HYD%20Round%20table%2012%20May/web/5-side-conversation.jpg" alt="Side conversation in front of GCC India 2026 screen" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="5"><img src="HYD%20Round%20table%2012%20May/web/6-breakout.jpg" alt="Smaller breakout discussion between two leaders" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="6"><img src="HYD%20Round%20table%2012%20May/web/7-by-stage.jpg" alt="GCC leaders in conversation by the stage" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="7"><img src="HYD%20Round%20table%2012%20May/web/8-room-setup.jpg" alt="Roundtable setup, full room view" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="8"><img src="HYD%20Round%20table%2012%20May/web/9-closing-group.jpg" alt="Closing group photo of all roundtable attendees" loading="lazy"></div>
+          <div class="hyd-slide is-active" data-idx="0"><img src="event-photos/hyd-2026/1-opening-discussion.jpg" alt="GCC India 2026 — Hyderabad Roundtable, opening discussion" loading="eager"></div>
+          <div class="hyd-slide" data-idx="1"><img src="event-photos/hyd-2026/2-group-photo.jpg" alt="Group photo of GCC leaders at the Hyderabad roundtable" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="2"><img src="event-photos/hyd-2026/3-handbook.jpg" alt="Attendee reading the GCCPROs roundtable handbook" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="3"><img src="event-photos/hyd-2026/4-conversation.jpg" alt="One-on-one conversation between GCC leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="4"><img src="event-photos/hyd-2026/5-side-conversation.jpg" alt="Side conversation in front of GCC India 2026 screen" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="5"><img src="event-photos/hyd-2026/6-breakout.jpg" alt="Smaller breakout discussion between two leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="6"><img src="event-photos/hyd-2026/7-by-stage.jpg" alt="GCC leaders in conversation by the stage" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="7"><img src="event-photos/hyd-2026/8-room-setup.jpg" alt="Roundtable setup, full room view" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="8"><img src="event-photos/hyd-2026/9-closing-group.jpg" alt="Closing group photo of all roundtable attendees" loading="lazy"></div>
         </div>
         <button type="button" class="hyd-arrow hyd-prev" id="hydPrev" aria-label="Previous photo">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -622,15 +493,15 @@ html.menu-open{overflow:hidden;}
         </div>
       </div>
       <div class="hyd-thumbs" id="hydThumbs" aria-hidden="true">
-        <button type="button" class="hyd-thumb is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/web/thumbs/1-opening-discussion.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="1"><img src="HYD%20Round%20table%2012%20May/web/thumbs/2-group-photo.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="2"><img src="HYD%20Round%20table%2012%20May/web/thumbs/3-handbook.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="3"><img src="HYD%20Round%20table%2012%20May/web/thumbs/4-conversation.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="4"><img src="HYD%20Round%20table%2012%20May/web/thumbs/5-side-conversation.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="5"><img src="HYD%20Round%20table%2012%20May/web/thumbs/6-breakout.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="6"><img src="HYD%20Round%20table%2012%20May/web/thumbs/7-by-stage.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="7"><img src="HYD%20Round%20table%2012%20May/web/thumbs/8-room-setup.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="8"><img src="HYD%20Round%20table%2012%20May/web/thumbs/9-closing-group.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb is-active" data-idx="0"><img src="event-photos/hyd-2026/thumbs/1-opening-discussion.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="1"><img src="event-photos/hyd-2026/thumbs/2-group-photo.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="2"><img src="event-photos/hyd-2026/thumbs/3-handbook.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="3"><img src="event-photos/hyd-2026/thumbs/4-conversation.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="4"><img src="event-photos/hyd-2026/thumbs/5-side-conversation.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="5"><img src="event-photos/hyd-2026/thumbs/6-breakout.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="6"><img src="event-photos/hyd-2026/thumbs/7-by-stage.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="7"><img src="event-photos/hyd-2026/thumbs/8-room-setup.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="8"><img src="event-photos/hyd-2026/thumbs/9-closing-group.jpg" alt="" loading="lazy"></button>
       </div>
     </div>
 
@@ -1744,6 +1615,122 @@ html { scroll-padding-top: 100px; }
   .evt-cta-title { font-size: 24px; }
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   RSVP MODAL — fixes form scroll-jump by giving form its own
+   scroll context completely independent of page scroll.
+   ═══════════════════════════════════════════════════════════ */
+.evt-form-launcher {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 28px 24px;
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 14px;
+}
+.evt-form-launcher-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.60);
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+.evt-form-launcher-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold); color: var(--ink);
+  border: none; border-radius: 100px;
+  padding: 14px 26px;
+  font-size: 13.5px; font-weight: 700; letter-spacing: 0.4px;
+  font-family: inherit; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.evt-form-launcher-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(91,163,214,0.30);
+  background: #fff;
+}
+
+.rsvp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+}
+.rsvp-modal.is-open {
+  display: flex;
+  animation: rsvpModalFade 0.25s ease-out;
+}
+@keyframes rsvpModalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.rsvp-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(10,22,40,0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.rsvp-modal-frame {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 820px;
+  max-height: calc(100vh - 80px);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  animation: rsvpModalSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rsvpModalSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rsvp-modal-close {
+  position: absolute;
+  top: -52px; right: 0;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: #fff;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.rsvp-modal-close:hover {
+  background: rgba(255,255,255,0.20);
+  transform: rotate(90deg);
+}
+.rsvp-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 22px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10,22,40,0.3) transparent;
+}
+.rsvp-modal-body::-webkit-scrollbar { width: 8px; }
+.rsvp-modal-body::-webkit-scrollbar-thumb { background: rgba(10,22,40,0.25); border-radius: 8px; }
+.rsvp-modal-body .evt-form-card {
+  margin: 0;
+  max-width: 100%;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.50);
+}
+/* Body scroll lock when modal open */
+body.rsvp-modal-locked {
+  overflow: hidden;
+}
+@media (max-width: 720px) {
+  .rsvp-modal { padding: 20px 12px; }
+  .rsvp-modal-frame { max-height: calc(100vh - 40px); }
+  .rsvp-modal-close { top: -48px; right: 4px; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 980px) {
   .evt-section { padding: 72px 0; }
@@ -2683,6 +2670,221 @@ html { scroll-padding-top: 100px; }
   });
 })();
 </script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   RSVP MODAL CONTROLLER — open via event cards or launcher,
+   close via X / backdrop / Escape key.
+   ═══════════════════════════════════════════════════════════ */
+(function initRsvpModal(){
+  var modal = document.getElementById('rsvpModal');
+  if (!modal) return;
+  var backdrop = document.getElementById('rsvpModalBackdrop');
+  var closeBtn = document.getElementById('rsvpModalClose');
+  var body = document.body;
+  var lastFocus = null;
+
+  function openModal(){
+    if (modal.classList.contains('is-open')) return;
+    lastFocus = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    body.classList.add('rsvp-modal-locked');
+    // Focus the first input after a short delay (allow modal to render)
+    setTimeout(function(){
+      var first = modal.querySelector('input[name="fullName"]');
+      if (first) try { first.focus({preventScroll:true}); } catch(_){ first.focus(); }
+    }, 250);
+  }
+  function closeModal(){
+    if (!modal.classList.contains('is-open')) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    body.classList.remove('rsvp-modal-locked');
+    if (lastFocus && lastFocus.focus) try { lastFocus.focus({preventScroll:true}); } catch(_){ lastFocus.focus(); }
+  }
+
+  // Wire close button + backdrop
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (backdrop) backdrop.addEventListener('click', closeModal);
+  // ESC key
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+
+  // Wire event cards to open modal AND select the right city
+  var cards = document.querySelectorAll('#rsvp-summit .summit-event-card');
+  cards.forEach(function(card){
+    card.addEventListener('click', function(e){
+      // The card-click handler in the form JS already selects the radio.
+      // We just need to also open the modal.
+      openModal();
+    });
+  });
+
+  // Wire the "Open RSVP form" launcher button
+  var launcher = document.getElementById('openSummitFormBtn');
+  if (launcher) launcher.addEventListener('click', openModal);
+
+  // Expose for other callers
+  window.openRsvpModal = openModal;
+  window.closeRsvpModal = closeModal;
+})();
+</script>
+
+
+
+<!-- ── RSVP MODAL ─────────────────────────────────────────────
+     The form lives here in a fixed-position overlay so the page
+     never auto-scrolls while users type. Triggered by event-card
+     clicks or the "Open RSVP form" button. ───────────────────── -->
+<div class="rsvp-modal" id="rsvpModal" role="dialog" aria-modal="true" aria-labelledby="rsvpModalTitle" aria-hidden="true">
+  <div class="rsvp-modal-backdrop" id="rsvpModalBackdrop" aria-hidden="true"></div>
+  <div class="rsvp-modal-frame" role="document">
+    <button type="button" class="rsvp-modal-close" id="rsvpModalClose" aria-label="Close RSVP form">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="rsvp-modal-body" id="rsvpModalBody">
+      <div class="evt-form-card" id="rsvpModalFormCard">
+      <form id="rsvpSummitForm" novalidate autocomplete="on">
+        <div class="evt-form-head">
+          <div class="evt-form-eyebrow">Request a seat</div>
+          <div class="evt-form-title" id="rsvpModalTitle">Tell us about you</div>
+          <div class="evt-form-sub" id="summitFormSubtitle">Select a city above to begin</div>
+        </div>
+
+        <!-- Honeypot — truly offscreen so it doesn't affect scroll/layout -->
+        <input type="text" name="_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:fixed!important;top:-10000px!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;">
+
+        <!-- Fieldset 1 — YOU -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">01 · Your details</legend>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="fullName">
+              <span>Full name <em>*</em></span>
+              <input name="fullName" type="text" required maxlength="80" autocomplete="name">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="designation">
+              <span>Designation / Title <em>*</em></span>
+              <input name="designation" type="text" required maxlength="120" autocomplete="organization-title" placeholder="MD &amp; Site Leader">
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="email">
+              <span>Work email <em>*</em></span>
+              <input name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email" spellcheck="false" placeholder="you@yourcompany.com">
+              <div class="rsvp-hint">Corporate email only.</div>
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="phone">
+              <span>Phone / WhatsApp <em>*</em></span>
+              <input name="phone" type="tel" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="9876543210">
+              <div class="rsvp-hint">10-digit Indian mobile.</div>
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <label class="rsvp-field" data-field="linkedin">
+            <span>LinkedIn profile <em>*</em></span>
+            <input name="linkedin" type="url" required maxlength="200" autocomplete="url" spellcheck="false" placeholder="https://www.linkedin.com/in/your-handle">
+            <div class="rsvp-hint">Personal profile only — must contain <code>/in/</code>.</div>
+            <div class="rsvp-err"></div>
+          </label>
+        </fieldset>
+
+        <!-- Fieldset 2 — YOUR GCC -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">02 · Your GCC</legend>
+          <label class="rsvp-field" data-field="company">
+            <span>Company (GCC) <em>*</em></span>
+            <input name="company" type="text" required maxlength="120" autocomplete="organization" placeholder="Parent / group company name">
+            <div class="rsvp-err"></div>
+          </label>
+          <label class="rsvp-field" data-field="officeAddress">
+            <span>Your GCC office locality <em>*</em></span>
+            <input name="officeAddress" type="text" required minlength="6" maxlength="200" autocomplete="address-line1" placeholder="e.g. Hinjewadi Phase 2, Pune">
+            <div class="rsvp-err"></div>
+          </label>
+          <div class="rsvp-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <label class="rsvp-field" data-field="headcountHyderabad">
+              <span>Headcount in your city</span>
+              <input name="headcountHyderabad" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 850">
+              <div class="rsvp-err"></div>
+            </label>
+            <label class="rsvp-field" data-field="headcountIndia">
+              <span>Headcount in India (total)</span>
+              <input name="headcountIndia" type="text" inputmode="numeric" pattern="\d*" maxlength="7" placeholder="e.g. 3500">
+              <div class="rsvp-err"></div>
+            </label>
+          </div>
+          <div class="rsvp-field" data-field="domains">
+            <span>Domains run from your GCC <em>*</em></span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Technology"> Technology</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Engineering"> Engineering</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Finance"> Finance</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Operations"> Operations</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="HR / People"> HR / People</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Analytics / Data"> Analytics / Data</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Procurement / SCM"> Procurement / SCM</label>
+              <label class="rsvp-chk"><input type="checkbox" name="domains" value="Other"> Other</label>
+            </div>
+            <div class="rsvp-err"></div>
+          </div>
+        </fieldset>
+
+        <!-- Fieldset 3 — YOUR INTEREST -->
+        <fieldset class="evt-fieldset">
+          <legend class="evt-legend">03 · Your interests</legend>
+          <div class="rsvp-field" data-field="themes">
+            <span>Which theme(s) interest you most? <em>*</em></span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Innovation"> ★ Innovation</label>
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="Talent"> ★ Talent</label>
+              <label class="rsvp-chk"><input type="checkbox" name="themes" value="GCC Ecosystem"> ★ GCC Ecosystem</label>
+            </div>
+            <div class="rsvp-err"></div>
+          </div>
+          <label class="rsvp-field" data-field="topics">
+            <span>What would you like discussed at the table?</span>
+            <textarea name="topics" rows="3" maxlength="600" placeholder="One or two themes you want the room to dig into."></textarea>
+            <div class="rsvp-err"></div>
+          </label>
+          <div class="rsvp-field evt-confirm" data-field="confirmAttendance">
+            <label class="rsvp-chk-line">
+              <input type="checkbox" name="confirmAttendance" required>
+              <span>I confirm I can be physically present at the selected GCC Summit if my seat is confirmed. <em style="color:#c0392b;font-style:normal;">*</em></span>
+            </label>
+            <div class="rsvp-err"></div>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="rsvpSummitSubmitBtn" class="evt-submit">Request my seat &rarr;</button>
+        <div id="rsvpSummitMsg" role="status" aria-live="polite" class="evt-msg"></div>
+      </form>
+
+      <!-- Thank-you panel -->
+      <div id="rsvpSummitThankYou" role="status" aria-live="polite" hidden style="text-align:center;padding:32px 8px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:rgba(31,164,99,0.12);color:#1F7A48;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-0.6px;margin-bottom:10px;">Thank you<span id="rsvpSummitThankYouName"></span>.</div>
+        <p style="font-size:15px;color:var(--muted);line-height:1.7;margin:0 auto 22px;max-width:520px;">Your RSVP for the <strong style="color:var(--ink);" id="rsvpSummitThankYouEvent">GCC Summit</strong> has landed with <strong style="color:var(--ink);">Shammi Prabhakar Singh</strong> directly.</p>
+        <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:left;margin:0 auto 22px;max-width:560px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">What happens next</div>
+          <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--ink);line-height:1.7;">
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>We close the room <strong>~3 weeks before</strong> the event and curate ~12 leaders.</span></li>
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>If confirmed, you&rsquo;ll get a <strong>personal note from Shammi</strong> with venue, time and attendees.</span></li>
+            <li style="display:flex;gap:10px;padding:5px 0;"><span style="color:var(--gold);font-weight:700;">&rsaquo;</span><span>Questions? <a href="mailto:admin@gccpros.com?subject=GCC%20Summit%20Series%202026" style="color:var(--gold);font-weight:600;text-decoration:none;">admin@gccpros.com</a> · WhatsApp <a href="https://wa.me/918506976700" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:none;">+91 85069 76700</a></span></li>
+          </ul>
+        </div>
+        <a href="#" id="rsvpSummitAnotherBtn" style="font-size:12.5px;color:var(--gold);font-weight:700;text-decoration:none;">Submit another RSVP &rarr;</a>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
