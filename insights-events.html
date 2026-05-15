@@ -410,7 +410,7 @@ html.menu-open{overflow:hidden;}
     <!-- Event chooser -->
     <div class="summit-events-grid" role="radiogroup" aria-label="Choose a summit city">
       <label class="summit-event-card" data-event="pune">
-        <input type="radio" name="summitEvent" value="pune" required style="position:absolute;opacity:0;pointer-events:none;">
+        <input type="radio" name="summitEvent" value="pune" required style="position:absolute;top:-10000px;left:-10000px;opacity:0;pointer-events:none;">
         <div class="sec-inner">
           <div class="sec-edition">Edition 01</div>
           <div class="sec-date">Fri · 19 June 2026</div>
@@ -420,7 +420,7 @@ html.menu-open{overflow:hidden;}
         </div>
       </label>
       <label class="summit-event-card" data-event="bengaluru">
-        <input type="radio" name="summitEvent" value="bengaluru" style="position:absolute;opacity:0;pointer-events:none;">
+        <input type="radio" name="summitEvent" value="bengaluru" style="position:absolute;top:-10000px;left:-10000px;opacity:0;pointer-events:none;">
         <div class="sec-inner">
           <div class="sec-edition">Edition 02</div>
           <div class="sec-date">Fri · 24 July 2026</div>
@@ -430,7 +430,7 @@ html.menu-open{overflow:hidden;}
         </div>
       </label>
       <label class="summit-event-card" data-event="delhi">
-        <input type="radio" name="summitEvent" value="delhi" style="position:absolute;opacity:0;pointer-events:none;">
+        <input type="radio" name="summitEvent" value="delhi" style="position:absolute;top:-10000px;left:-10000px;opacity:0;pointer-events:none;">
         <div class="sec-inner">
           <div class="sec-edition">Edition 03</div>
           <div class="sec-date">Fri · 18 September 2026</div>
@@ -450,10 +450,8 @@ html.menu-open{overflow:hidden;}
           <div class="evt-form-sub" id="summitFormSubtitle">Select a city above to begin</div>
         </div>
 
-        <!-- Honeypot -->
-        <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
-          <label>Website <input type="text" name="_website" tabindex="-1" autocomplete="off"></label>
-        </div>
+        <!-- Honeypot — truly offscreen so it doesn't affect scroll/layout -->
+        <input type="text" name="_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:fixed!important;top:-10000px!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;">
 
         <!-- Fieldset 1 — YOU -->
         <fieldset class="evt-fieldset">
@@ -594,15 +592,15 @@ html.menu-open{overflow:hidden;}
     <div class="evt-mag-media">
       <div id="hydSlideshow" class="hyd-slideshow" aria-roledescription="carousel" aria-label="Hyderabad GCC Leaders Roundtable photo gallery">
         <div class="hyd-slides" id="hydSlides">
-          <div class="hyd-slide is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/DSC08532.JPG" alt="GCC India 2026 — Hyderabad Roundtable, opening discussion" loading="eager"></div>
-          <div class="hyd-slide" data-idx="1"><img src="HYD%20Round%20table%2012%20May/DSC08651.JPG" alt="Group photo of GCC leaders at the Hyderabad roundtable" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="2"><img src="HYD%20Round%20table%2012%20May/DSC08615.JPG" alt="Attendee reading the GCCPROs roundtable handbook" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="3"><img src="HYD%20Round%20table%2012%20May/DSC08682.JPG" alt="One-on-one conversation between GCC leaders" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="4"><img src="HYD%20Round%20table%2012%20May/DSC09167.JPG" alt="Side conversation in front of GCC India 2026 screen" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="5"><img src="HYD%20Round%20table%2012%20May/DSC09336.JPG" alt="Smaller breakout discussion between two leaders" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="6"><img src="HYD%20Round%20table%2012%20May/DSC09346.JPG" alt="GCC leaders in conversation by the stage" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="7"><img src="HYD%20Round%20table%2012%20May/20260512_092247_opt.jpg" alt="Roundtable setup, full room view" loading="lazy"></div>
-          <div class="hyd-slide" data-idx="8"><img src="HYD%20Round%20table%2012%20May/20260512_110543_opt.jpg" alt="Closing group photo of all roundtable attendees" loading="lazy"></div>
+          <div class="hyd-slide is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/web/1-opening-discussion.jpg" alt="GCC India 2026 — Hyderabad Roundtable, opening discussion" loading="eager"></div>
+          <div class="hyd-slide" data-idx="1"><img src="HYD%20Round%20table%2012%20May/web/2-group-photo.jpg" alt="Group photo of GCC leaders at the Hyderabad roundtable" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="2"><img src="HYD%20Round%20table%2012%20May/web/3-handbook.jpg" alt="Attendee reading the GCCPROs roundtable handbook" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="3"><img src="HYD%20Round%20table%2012%20May/web/4-conversation.jpg" alt="One-on-one conversation between GCC leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="4"><img src="HYD%20Round%20table%2012%20May/web/5-side-conversation.jpg" alt="Side conversation in front of GCC India 2026 screen" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="5"><img src="HYD%20Round%20table%2012%20May/web/6-breakout.jpg" alt="Smaller breakout discussion between two leaders" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="6"><img src="HYD%20Round%20table%2012%20May/web/7-by-stage.jpg" alt="GCC leaders in conversation by the stage" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="7"><img src="HYD%20Round%20table%2012%20May/web/8-room-setup.jpg" alt="Roundtable setup, full room view" loading="lazy"></div>
+          <div class="hyd-slide" data-idx="8"><img src="HYD%20Round%20table%2012%20May/web/9-closing-group.jpg" alt="Closing group photo of all roundtable attendees" loading="lazy"></div>
         </div>
         <button type="button" class="hyd-arrow hyd-prev" id="hydPrev" aria-label="Previous photo">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -624,15 +622,15 @@ html.menu-open{overflow:hidden;}
         </div>
       </div>
       <div class="hyd-thumbs" id="hydThumbs" aria-hidden="true">
-        <button type="button" class="hyd-thumb is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC08532.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="1"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC08651.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="2"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC08615.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="3"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC08682.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="4"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC09167.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="5"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC09336.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="6"><img src="HYD%20Round%20table%2012%20May/thumbs/DSC09346.JPG" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="7"><img src="HYD%20Round%20table%2012%20May/thumbs/20260512_092247_opt.jpg" alt="" loading="lazy"></button>
-        <button type="button" class="hyd-thumb" data-idx="8"><img src="HYD%20Round%20table%2012%20May/thumbs/20260512_110543_opt.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb is-active" data-idx="0"><img src="HYD%20Round%20table%2012%20May/web/thumbs/1-opening-discussion.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="1"><img src="HYD%20Round%20table%2012%20May/web/thumbs/2-group-photo.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="2"><img src="HYD%20Round%20table%2012%20May/web/thumbs/3-handbook.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="3"><img src="HYD%20Round%20table%2012%20May/web/thumbs/4-conversation.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="4"><img src="HYD%20Round%20table%2012%20May/web/thumbs/5-side-conversation.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="5"><img src="HYD%20Round%20table%2012%20May/web/thumbs/6-breakout.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="6"><img src="HYD%20Round%20table%2012%20May/web/thumbs/7-by-stage.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="7"><img src="HYD%20Round%20table%2012%20May/web/thumbs/8-room-setup.jpg" alt="" loading="lazy"></button>
+        <button type="button" class="hyd-thumb" data-idx="8"><img src="HYD%20Round%20table%2012%20May/web/thumbs/9-closing-group.jpg" alt="" loading="lazy"></button>
       </div>
     </div>
 
@@ -1388,22 +1386,39 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
    ═══════════════════════════════════════════════════════════════ */
 
 
-/* Prevent form fields from being auto-scrolled into next section on focus */
+/* Section anchor offset for nav scroll. */
+#rsvp-summit { scroll-margin-top: 100px; }
+
+/* ─ FORM FOCUS-SCROLL DEFENSIVE FIXES ─
+   Ensure focusing a form field never lands the field at the bottom of the viewport
+   (which made it look like the page was "dragged" toward the next section).
+   Browser auto-scroll-into-view respects scroll-margin-top on the focused element. */
 #rsvpSummitForm input,
 #rsvpSummitForm textarea,
-#rsvpSummitForm select { scroll-margin: 100px 0 240px 0; }
-#rsvp-summit { scroll-margin-top: 80px; }
+#rsvpSummitForm select {
+  scroll-margin-top: 140px;
+  scroll-margin-bottom: 0;
+}
+/* Disable smooth-scroll for any scroll triggered while a form field is focused.
+   Prevents the visible "drag" animation when the browser quietly snaps focus. */
+#rsvpSummitForm:focus-within ~ *,
+#rsvpSummitForm:focus-within { scroll-behavior: auto; }
+/* Add page-level scroll-padding so anchor jumps and auto-scrolls leave room for the
+   fixed nav (~80px) plus a comfortable buffer. */
+html { scroll-padding-top: 100px; }
 
 /* ── Section frame ── */
-.evt-section { padding: 100px 0; position: relative; overflow-x: clip; overflow-y: visible; }
+.evt-section { padding: 100px 0; position: relative; }
 .evt-section--dark { background: radial-gradient(120% 80% at 50% 0%, #152338 0%, #0A1628 60%, #0A1628 100%); color: #fff; }
+.evt-section--dark { isolation: isolate; }
 .evt-section--dark::before {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; z-index: 0;
   background-image:
     linear-gradient(rgba(91,163,214,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(91,163,214,0.04) 1px, transparent 1px);
   background-size: 64px 64px;
   pointer-events: none;
+  clip-path: inset(0);
 }
 .evt-section--light { background: linear-gradient(180deg, var(--cream) 0%, #FFF7E9 100%); }
 .evt-section--light::before {
@@ -2369,7 +2384,7 @@ document.querySelector('.carousel-wrap').addEventListener('touchend',e=>{const d
         if (key) selectCard(key);
       }
     });
-    card.setAttribute('tabindex','0');
+    /* No tabindex on the card — radio input is invisible but keyboard-accessible via labels */
   });
 
   /* ──── Validation rules (mirror Hyderabad form) ──── */
