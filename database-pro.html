@@ -3511,24 +3511,21 @@ function renderDetail(data) {
   const now = new Date();
   const ts = now.toLocaleDateString('en-IN') + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   const wmText = escHtml(memberEmail) + ' · ' + ts + ' · GCCPROs Confidential';
-  const watermark = `<div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:2px;z-index:0;">
-    ${Array.from({length:6},(_,i)=>`<div style="position:absolute;left:-20%;width:140%;transform:rotate(-28deg);top:${8+i*16}%;white-space:nowrap;font-size:10px;font-weight:600;color:rgba(10,22,40,0.05);letter-spacing:1.5px;user-select:none;-webkit-user-select:none;">${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}</div>`).join('')}
+  // Watermark on TOP layer (z-index:99), click-through (pointer-events:none),
+  // subtle but visible (opacity 0.10) so it overlays content without obscuring reading.
+  const watermark = `<div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:2px;z-index:99;">
+    ${Array.from({length:7},(_,i)=>`<div style="position:absolute;left:-20%;width:140%;transform:rotate(-28deg);top:${6+i*14}%;white-space:nowrap;font-size:11px;font-weight:700;color:rgba(10,22,40,0.10);letter-spacing:1.6px;user-select:none;-webkit-user-select:none;">${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}</div>`).join('')}
   </div>`;
 
-  // City only - state is intentionally hidden from the B2C reveal.
+  // B2C locked spec 2026-05-16: 12 fields = Country, Company Name, Group Company,
+  // HQ Country, GCC City, Industry, GCC Domains, Headcount, Office Addresses,
+  // State, Glassdoor, GPTW. Year Established / Maturity / Setup Model intentionally dropped.
   const locationStr = data.gccCity || '';
-  const maturityStr = [
-    data.yearEstablished ? 'Est. ' + data.yearEstablished : null,
-    data.maturityGen ? 'Maturity ' + data.maturityGen : null
-  ].filter(Boolean).join(' · ');
 
-  // Glassdoor + GPTW rendered as badges
+  // Glassdoor rating shown as a badge (GPTW now rendered as a field card below).
   const sentimentBits = [];
   if (data.glassdoorRating) {
     sentimentBits.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--ivory);border:1px solid var(--gold-soft);color:var(--ink);padding:4px 10px;border-radius:2px;font-size:12px;font-weight:600;">★ ${escHtml(String(data.glassdoorRating))} <small style="font-size:9px;color:var(--muted);letter-spacing:1px;">GLASSDOOR</small></span>`);
-  }
-  if (data.gptwCertified && String(data.gptwCertified).toLowerCase() !== 'no' && String(data.gptwCertified).toLowerCase() !== 'n') {
-    sentimentBits.push(`<span style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:4px 10px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.5px;">✓ GREAT PLACE TO WORK</span>`);
   }
   const sentimentRow = sentimentBits.length
     ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;">${sentimentBits.join('')}</div>`
@@ -3543,12 +3540,14 @@ function renderDetail(data) {
         ${data.groupCompany ? `<div style="font-size:12px;color:var(--muted);letter-spacing:0.3px;margin-bottom:10px;">Part of <strong style="color:var(--graphite);">${escHtml(data.groupCompany)}</strong></div>` : ''}
         <div class="detail-city-tag">${escHtml(locationStr || data.gccCity || '')}</div>
         <div class="detail-grid">
+          ${f('Country', data.country)}
           ${f('HQ country', data.hqCountry)}
+          ${f('State / Province', data.gccState)}
           ${f('Industry', data.industry)}
           ${f('GCC domains', data.gccDomains)}
           ${f('Headcount band', bucketedHeadcount)}
-          ${f('Maturity', maturityStr)}
-          ${f('Setup model', data.setupModel)}
+          ${f('Office addresses', data.officeAddresses)}
+          ${f('GPTW Certified', data.gptwCertified)}
         </div>
         ${sentimentRow}
         ${(data.allFields && data.allFields.length) ? '<div class="detail-grid" style="margin-top:14px;border-top:1px solid var(--gold-soft);padding-top:14px;">' + data.allFields.map(function(f){
