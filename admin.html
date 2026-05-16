@@ -612,9 +612,140 @@ function renderSubmissions() {
       { k: 'gcc_city',     l: 'City' },
       { k: 'hq_country',   l: 'HQ Country' },
       { k: 'industry',     l: 'Industry' },
-      { k: 'status',       l: 'Status', isStatus: true },
+      { k: 'status',       l: 'Status', isStatus: true }
     ];
   } else if (SUBMISSIONS_KIND === 'corrections') {
     cols = [
       { k: 'created_at',   l: 'Submitted',  fmt: fmtDate },
-      { k: 'subm
+      { k: 'submitted_by', l: 'By' },
+      { k: 'company_name', l: 'Company' },
+      { k: 'field_name',   l: 'Fields changed' },
+      { k: 'notes',        l: 'Note' },
+      { k: 'status',       l: 'Status', isStatus: true }
+    ];
+  } else {
+    cols = [
+      { k: 'created_at',   l: 'Submitted',  fmt: fmtDate },
+      { k: 'email',        l: 'Email' },
+      { k: 'company',      l: 'Company' },
+      { k: 'use_case',     l: 'Use case' }
+    ];
+  }
+
+  const exportBtn = '<button class="primary" onclick="exportSubmissionsCsv()" style="margin-bottom:12px;">Export ' + rows.length + ' ' + SUBMISSIONS_KIND + ' (CSV)</button>';
+  const head = '<thead><tr>' + cols.map(c => '<th>' + esc(c.l) + '</th>').join('') + '<th>Actions</th></tr></thead>';
+  const tbody = rows.map((r, idx) => {
+    const tds = cols.map(c => {
+      let v = r[c.k];
+      if (c.fmt && v) v = c.fmt(v);
+      if (c.isStatus) return '<td><span class="badge badge-' + String(v || 'pending').toLowerCase() + '">' + esc(v || 'pending') + '</span></td>';
+      return '<td>' + esc(String(v == null ? '' : v).substring(0, 120)) + '</td>';
+    }).join('');
+    return '<tr style="cursor:pointer;" onclick="if(event.target.tagName!==\'BUTTON\')showSubmissionDetails(' + idx + ')">' + tds +
+           '<td><button class="small" onclick="event.stopPropagation();showSubmissionDetails(' + idx + ')">View</button></td></tr>';
+  }).join('');
+  box.innerHTML = exportBtn + '<table>' + head + '<tbody>' + tbody + '</tbody></table>';
+}
+
+function showSubmissionDetails(idx) {
+  const s = SUBMISSIONS[idx];
+  if (!s) return;
+  const meta = s.metadata || {};
+  const rows = [];
+  rows.push(['Submitted at',  s.created_at ? fmtDate(s.created_at) : '']);
+  rows.push(['Submitted by',  s.submitted_by || s.email]);
+  rows.push(['Status',        s.status || '']);
+
+  if (SUBMISSIONS_KIND === 'gcc') {
+    rows.push(['Company',        s.company_name]);
+    rows.push(['HQ country',     s.hq_country]);
+    rows.push(['GCC city',       s.gcc_city]);
+    rows.push(['Industry',       s.industry]);
+    rows.push(['Notes from user',s.notes]);
+    rows.push(['---', '---']);
+    rows.push(['Group company',  meta.group]);
+    rows.push(['GCC domains',    meta.domain]);
+    rows.push(['Headcount',      meta.headcount]);
+    rows.push(['Leader 1',       meta.leader1]);
+    rows.push(['Leader 2',       meta.leader2]);
+  } else if (SUBMISSIONS_KIND === 'corrections') {
+    rows.push(['Company',          s.company_name]);
+    rows.push(['Existing in DB?',  s.company_id ? 'Yes (linked)' : 'No (new entry)']);
+    rows.push(["User's note",      s.notes]);
+    rows.push(['---', '---']);
+    const diff = meta.diff || {};
+    const diffKeys = Object.keys(diff);
+    if (diffKeys.length) {
+      rows.push(['CHANGES (' + diffKeys.length + ')', '']);
+      diffKeys.forEach(k => {
+        rows.push([k, (diff[k].from || '<empty>') + '  -->  ' + diff[k].to]);
+      });
+    } else {
+      rows.push(['Changes detected', 'No field-value changes - only the note was submitted']);
+    }
+    rows.push(['---', '---']);
+    rows.push(['Full submitted form values:', '']);
+    Object.keys(meta.proposed || {}).forEach(k => {
+      rows.push([k, meta.proposed[k]]);
+    });
+  } else {
+    rows.push(['Email',    s.email]);
+    rows.push(['Company',  s.company]);
+    rows.push(['Use case', s.use_case]);
+    rows.push(['Notes',    s.notes]);
+  }
+
+  const rowsHtml = rows.map(pair => {
+    const k = pair[0]; const v = pair[1];
+    if (k === '---') return '<tr><td colspan="2" style="border-bottom:1px solid #2D3A5C;"></td></tr>';
+    const valCell = v ? esc(String(v)) : '<span class="muted">--</span>';
+    return '<tr><td style="color:#9CA3AF;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:200px;padding:8px 14px;vertical-align:top;">' +
+      esc(String(k)) + '</td><td style="font-size:13px;padding:8px 14px;word-break:break-word;">' + valCell + '</td></tr>';
+  }).join('');
+
+  const titleText = s.company_name || s.email || 'Submission';
+  const html =
+    '<div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9998;" onclick="this.remove()">' +
+      '<div onclick="event.stopPropagation()" style="background:#14213D;border:1px solid #2D3A5C;border-radius:6px;max-width:780px;width:92%;max-height:88vh;overflow-y:auto;">' +
+        '<div style="padding:18px 24px;border-bottom:1px solid #1F2A44;display:flex;justify-content:space-between;align-items:center;">' +
+          '<h2 style="margin:0;color:#C9973A;font-size:16px;">' + esc(titleText) + '</h2>' +
+          '<button onclick="this.closest(\'[onclick]\').remove()" style="background:none;border:none;color:#9CA3AF;font-size:24px;cursor:pointer;line-height:1;">x</button>' +
+        '</div>' +
+        '<table style="width:100%;border-collapse:collapse;">' + rowsHtml + '</table>' +
+      '</div>' +
+    '</div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function exportSubmissionsCsv() {
+  const rows = SUBMISSIONS;
+  if (!rows.length) { toast('Nothing to export', true); return; }
+  const allKeys = new Set();
+  rows.forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  const cols = Array.from(allKeys);
+  const csv = [cols.map(csvEsc).join(',')];
+  rows.forEach(r => {
+    csv.push(cols.map(c => {
+      let v = r[c];
+      if (v && typeof v === 'object') v = JSON.stringify(v);
+      return csvEsc(v);
+    }).join(','));
+  });
+  const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gccpros_' + SUBMISSIONS_KIND + '_submissions_' + Date.now() + '.csv';
+  a.click();
+  toast('Exported ' + rows.length + ' rows');
+}
+
+function csvEsc(v) { v = String(v == null ? '' : v); return '"' + v.replace(/"/g, '""') + '"'; }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(s) {
+  try { return new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  catch (_) { return String(s).substring(0, 10); }
+}
+</script>
+
+</body>
+</html>
