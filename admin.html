@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin Console · build: supabase-2026-05-17-admin-v2 · rich profile + export -->
+<!-- GCCPROs Admin Console · build: supabase-2026-05-17-admin-v3 · submissions detail + diff view -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -445,4 +445,176 @@ function exportAllUsersCsv() {
       u.email, u.fullName, u.whatsapp, u.linkedin, u.currentCity,
       u.yearsExperience, u.domainExpertise, u.referrer, u.emailDomain, u.domainClass, u.source,
       u.status, u.signupDate, u.approvedAt, u.approvedBy, u.suspendedReason,
-      u.lastActive, u.loginCoun
+      u.lastActive, u.loginCount, u.balance, u.monthlyReveals, u.lifetimeSpent, u.lifetimePurchased,
+      extra.signup_ip || '', extra.signup_ua || '',
+    ].map(csvEsc).join(','));
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gccpros_users_' + (filter || 'all') + '_' + Date.now() + '.csv';
+  a.click();
+  toast('Exported ' + rows.length + ' users');
+}
+
+// ---- Status change (approve / reject / suspend) ----
+async function setStatus(email, action) {
+  const ep = { approve: 'adminApprove', reject: 'adminReject', suspend: 'adminSuspend' }[action];
+  let reason = '';
+  if (action !== 'approve') {
+    reason = prompt('Reason for ' + action + '? (visible to other admins)');
+    if (reason === null) return;
+  }
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=' + ep + '&key=' + encodeURIComponent(ADMIN_KEY) +
+                         '&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason) +
+                         '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.status === 'ok') { toast(j.message || (action + ' OK')); loadUsers(); }
+    else toast(j.message || j.error || 'Failed', true);
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+  }
+}
+
+function quickGrant(email) {
+  document.getElementById('grant-email').value = email;
+  document.querySelectorAll('.tab')[1].click();
+  document.getElementById('grant-credits').focus();
+}
+
+function quickHistory(email) {
+  document.getElementById('history-email').value = email;
+  document.querySelectorAll('.tab')[2].click();
+  previewHistory();
+}
+
+function fillGrant(credits, note) {
+  document.getElementById('grant-credits').value = credits;
+  document.getElementById('grant-note').value = note;
+}
+
+async function grantCredits() {
+  const email = document.getElementById('grant-email').value.trim().toLowerCase();
+  const credits = parseInt(document.getElementById('grant-credits').value, 10);
+  const note = document.getElementById('grant-note').value.trim() || 'Admin grant';
+  if (!email || !credits) { toast('Email and credits required', true); return; }
+  if (credits > 5000 && !confirm('Grant ' + credits + ' credits? That is a large amount.')) return;
+
+  const box = document.getElementById('grant-result');
+  box.innerHTML = '<div id="result-box">Granting…</div>';
+
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=adminGrant&key=' + encodeURIComponent(ADMIN_KEY) +
+                         '&email=' + encodeURIComponent(email) + '&credits=' + credits +
+                         '&note=' + encodeURIComponent(note) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.status === 'ok') {
+      toast(j.message);
+      box.innerHTML = '<div id="result-box">' + esc(j.message) + '\nNew balance: ' + (j.balance || '?') + '</div>';
+    } else {
+      box.innerHTML = '<div id="result-box" class="err">' + esc(j.message || j.error || 'Failed') + '</div>';
+      toast(j.message || j.error || 'Failed', true);
+    }
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+  }
+}
+
+async function fetchHistory(email) {
+  const r = await fetch(SCRIPT_URL + '?action=adminUserHistory&key=' + encodeURIComponent(ADMIN_KEY) +
+                       '&email=' + encodeURIComponent(email) + '&_t=' + Date.now(), { cache: 'no-store' });
+  return await r.json();
+}
+
+async function previewHistory() {
+  const email = document.getElementById('history-email').value.trim().toLowerCase();
+  if (!email) { toast('Email required', true); return; }
+  const box = document.getElementById('history-result');
+  box.innerHTML = '<div id="result-box">Fetching…</div>';
+  try {
+    const j = await fetchHistory(email);
+    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
+    const lines = [];
+    lines.push('Email:        ' + email);
+    lines.push('Transactions: ' + (j.transactions || []).length);
+    lines.push('Reveals:      ' + (j.reveals || []).length);
+    lines.push('Searches:     ' + (j.searches || []).length);
+    lines.push('');
+    lines.push('--- Last 10 transactions ---');
+    (j.transactions || []).slice(0, 10).forEach(t => {
+      lines.push((t.ts || '').substring(0, 19) + '  ' + (t.amount > 0 ? '+' : '') + t.amount + '  ' + t.reason);
+    });
+    box.innerHTML = '<div id="result-box">' + esc(lines.join('\n')) + '</div>';
+  } catch (err) {
+    box.innerHTML = '<div id="result-box" class="err">Network error: ' + esc(err.message) + '</div>';
+  }
+}
+
+async function downloadHistory() {
+  const email = document.getElementById('history-email').value.trim().toLowerCase();
+  if (!email) { toast('Email required', true); return; }
+  try {
+    const j = await fetchHistory(email);
+    if (j.error) { toast(j.error, true); return; }
+    const csv = [];
+    csv.push('Timestamp,Type,Amount,Reason,Details');
+    (j.transactions || []).forEach(t => {
+      csv.push([t.ts || '', 'transaction', t.amount || 0, t.reason || '', JSON.stringify(t.metadata || {})].map(csvEsc).join(','));
+    });
+    (j.reveals || []).forEach(r => {
+      csv.push([r.revealed_at || '', 'reveal', -(r.credits_charged || 0), 'reveal', 'company_id=' + (r.company_id || '') + ' ym=' + (r.year_month || '')].map(csvEsc).join(','));
+    });
+    (j.searches || []).forEach(s => {
+      csv.push([s.ts || '', 'search', 0, s.query_text || '', JSON.stringify(s.filters || {})].map(csvEsc).join(','));
+    });
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gccpros_' + email.replace(/[^a-z0-9]/g, '_') + '_history.csv';
+    a.click();
+    toast('Downloaded ' + (csv.length - 1) + ' rows');
+  } catch (err) {
+    toast('Failed: ' + err.message, true);
+  }
+}
+
+let SUBMISSIONS = [];
+let SUBMISSIONS_KIND = '';
+
+async function loadSubmissions(kind) {
+  SUBMISSIONS_KIND = kind;
+  const box = document.getElementById('submissions-box');
+  box.innerHTML = '<div id="result-box">Loading ' + kind + '…</div>';
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) +
+                         '&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
+    SUBMISSIONS = j.rows || [];
+    renderSubmissions();
+  } catch (err) {
+    box.innerHTML = '<div id="result-box" class="err">' + esc(err.message) + '</div>';
+  }
+}
+
+function renderSubmissions() {
+  const box = document.getElementById('submissions-box');
+  const rows = SUBMISSIONS;
+  if (!rows.length) { box.innerHTML = '<div id="result-box">No ' + SUBMISSIONS_KIND + ' submissions yet.</div>'; return; }
+
+  let cols;
+  if (SUBMISSIONS_KIND === 'gcc') {
+    cols = [
+      { k: 'created_at',   l: 'Submitted',  fmt: fmtDate },
+      { k: 'submitted_by', l: 'By' },
+      { k: 'company_name', l: 'Company' },
+      { k: 'gcc_city',     l: 'City' },
+      { k: 'hq_country',   l: 'HQ Country' },
+      { k: 'industry',     l: 'Industry' },
+      { k: 'status',       l: 'Status', isStatus: true },
+    ];
+  } else if (SUBMISSIONS_KIND === 'corrections') {
+    cols = [
+      { k: 'created_at',   l: 'Submitted',  fmt: fmtDate },
+      { k: 'subm
