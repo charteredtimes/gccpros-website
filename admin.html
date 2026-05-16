@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<!-- GCCPROs Admin Console · build: supabase-2026-05-16-admin-v1 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs Admin Console</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; background: #0A1628; color: #E5E7EB; margin: 0; min-height: 100vh; }
+  header { background: #14213D; padding: 14px 24px; border-bottom: 1px solid #1F2A44; display: flex; align-items: center; justify-content: space-between; }
+  h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; }
+  h2 { margin: 0 0 12px; font-size: 15px; color: #C9973A; }
+  main { padding: 20px 24px; max-width: 1300px; margin: 0 auto; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid #1F2A44; }
+  .tab { padding: 10px 18px; background: none; border: none; color: #9CA3AF; cursor: pointer; font-size: 13px; font-weight: 500; }
+  .tab:hover { color: #FFF; }
+  .tab.active { color: #FFF; border-bottom: 2px solid #C9973A; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card { background: #14213D; padding: 20px 22px; border-radius: 6px; margin-bottom: 16px; border: 1px solid #1F2A44; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #1F2A44; }
+  th { color: #9CA3AF; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.7px; background: #0F1A33; }
+  tr:hover td { background: #0F1A33; }
+  input, select, button { padding: 7px 11px; border-radius: 3px; border: 1px solid #2D3A5C; background: #0A1628; color: #E5E7EB; font-size: 13px; font-family: inherit; }
+  input:focus, select:focus { outline: none; border-color: #C9973A; }
+  button { cursor: pointer; transition: 0.15s; }
+  button:hover { border-color: #C9973A; }
+  button.primary { background: #C9973A; border-color: #C9973A; color: #0A1628; font-weight: 600; }
+  button.primary:hover { background: #D4A75A; }
+  button.danger { background: #DC2626; border-color: #DC2626; color: #FFF; }
+  button.danger:hover { background: #EF4444; }
+  button.small { padding: 4px 8px; font-size: 11px; margin-right: 3px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-pending { background: rgba(251,191,36,0.15); color: #FBBF24; }
+  .badge-approved { background: rgba(16,185,129,0.15); color: #34D399; }
+  .badge-suspended { background: rgba(248,113,113,0.15); color: #F87171; }
+  .badge-rejected { background: rgba(107,114,128,0.15); color: #9CA3AF; }
+  .filter-row { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  #login-screen { padding: 80px 24px; text-align: center; max-width: 460px; margin: 0 auto; }
+  #login-screen h1 { font-size: 22px; margin-bottom: 8px; color: #C9973A; }
+  #login-screen p { color: #9CA3AF; margin: 8px 0 24px; }
+  #login-screen input { width: 100%; padding: 12px 14px; font-size: 14px; margin-bottom: 12px; }
+  #login-screen button { width: 100%; padding: 12px; font-size: 14px; }
+  .toast { position: fixed; top: 16px; right: 16px; padding: 12px 18px; border-radius: 4px; z-index: 9999; max-width: 380px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+  .toast.ok { background: #10B981; color: #FFF; }
+  .toast.err { background: #DC2626; color: #FFF; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat { background: #0F1A33; padding: 12px 14px; border-radius: 4px; border-left: 3px solid #C9973A; }
+  .stat-num { font-size: 22px; font-weight: 700; color: #FFF; }
+  .stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: #9CA3AF; margin-top: 2px; }
+  ul.security { line-height: 1.7; padding-left: 18px; }
+  ul.security li { margin-bottom: 8px; }
+  ul.security strong { color: #C9973A; }
+  code { background: #0F1A33; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #FBBF24; }
+  .field-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 14px; }
+  .field-row label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field-row input { min-width: 200px; }
+  #result-box { padding: 12px 16px; background: #0F1A33; border-left: 3px solid #10B981; border-radius: 3px; font-size: 13px; margin-top: 12px; white-space: pre-wrap; font-family: ui-monospace, monospace; max-height: 240px; overflow-y: auto; }
+  #result-box.err { border-left-color: #DC2626; }
+  .muted { color: #6B7280; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h1>GCCPROs Admin Console</h1>
+  <p>Enter your <code>GCP_ADMIN_KEY</code> from Script Properties to continue. The key is cached in this tab's session storage so refresh won't kick you out.</p>
+  <input id="admin-key" type="password" placeholder="Admin key" autofocus />
+  <button class="primary" onclick="login()">Unlock</button>
+  <p class="muted" style="margin-top: 20px;">For your eyes only. Do not share this URL with users — only admins.</p>
+</div>
+
+<div id="app" style="display:none;">
+  <header>
+    <h1>GCCPROs Admin Console</h1>
+    <div>
+      <span id="admin-info" class="muted"></span>
+      <button class="small" onclick="signOut()">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(event,'users')">Users</button>
+      <button class="tab" onclick="showTab(event,'credits')">Grant credits</button>
+      <button class="tab" onclick="showTab(event,'history')">User history</button>
+      <button class="tab" onclick="showTab(event,'submissions')">Submissions</button>
+      <button class="tab" onclick="showTab(event,'security')">Security</button>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="tab-users" class="panel active">
+      <div class="stat-grid" id="stats-grid"></div>
+
+      <div class="card">
+        <h2>All users</h2>
+        <div class="filter-row">
+          <select id="status-filter" onchange="renderUsers()">
+            <option value="">All statuses</option>
+            <option value="Pending" selected>Pending only</option>
+            <option value="Approved">Approved</option>
+            <option value="Suspended">Suspended</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <input id="search-input" placeholder="Search by email or name…" oninput="renderUsers()" />
+          <button onclick="loadUsers()">↻ Refresh</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Email</th><th>Name</th><th>Status</th><th>Signup</th><th>Last login</th><th>Balance</th><th>Spent</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="users-tbody"><tr><td colspan="8" class="muted" style="text-align:center;padding:24px;">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GRANT CREDITS TAB -->
+    <div id="tab-credits" class="panel">
+      <div class="card">
+        <h2>Grant credits to an account</h2>
+        <p class="muted">Adds credits to the user's balance and creates an audit row in the transactions ledger.</p>
+        <div class="field-row">
+          <label>Email <input id="grant-email" placeholder="user@example.com" /></label>
+          <label>Credits <input id="grant-credits" type="number" placeholder="500" /></label>
+          <label>Note <input id="grant-note" placeholder="Reason for the grant" /></label>
+          <button class="primary" onclick="grantCredits()">Grant</button>
+        </div>
+        <div id="grant-result"></div>
+      </div>
+
+      <div class="card">
+        <h2>Quick presets</h2>
+        <p class="muted">Common grants — click to fill the form above.</p>
+        <button onclick="fillGrant(200, 'Welcome bonus replacement')">+200 (Welcome bonus)</button>
+        <button onclick="fillGrant(500, 'Goodwill credit')">+500 (Goodwill)</button>
+        <button onclick="fillGrant(1000, 'Refund / compensation')">+1000 (Refund)</button>
+        <button onclick="fillGrant(2500, 'Beta tester reward')">+2500 (Beta tester)</button>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="tab-history" class="panel">
+      <div class="card">
+        <h2>Download user history</h2>
+        <p class="muted">Pulls the full transaction log, reveal log, and search log for a user — all timestamped — and saves as CSV. Use for support investigations or compliance requests.</p>
+        <div class="field-row">
+          <label>Email <input id="history-email" placeholder="user@example.com" /></label>
+          <button class="primary" onclick="downloadHistory()">Download CSV</button>
+          <button onclick="previewHistory()">Preview</button>
+        </div>
+        <div id="history-result"></div>
+      </div>
+    </div>
+
+    <!-- SUBMISSIONS TAB -->
+    <div id="tab-submissions" class="panel">
+      <div class="card">
+        <h2>User-submitted GCCs + corrections</h2>
+        <p class="muted">Companies suggested via the "Add a GCC" form and field corrections proposed by users.</p>
+        <div class="filter-row">
+          <button onclick="loadSubmissions('gcc')">Load GCC submissions</button>
+          <button onclick="loadSubmissions('corrections')">Load corrections</button>
+          <button onclick="loadSubmissions('waitlist')">Load enterprise waitlist</button>
+        </div>
+        <div id="submissions-box"></div>
+      </div>
+    </div>
+
+    <!-- SECURITY TAB -->
+    <div id="tab-security" class="panel">
+      <div class="card">
+        <h2>Data security posture</h2>
+        <ul class="security">
+          <li><strong>Encryption at rest:</strong> All Supabase Postgres data is stored on AES-256 encrypted disks. This is Supabase platform-default; no extra config needed.</li>
+          <li><strong>Encryption in transit:</strong> Every API call (browser → Apps Script, Apps Script → Supabase, browser → Razorpay) uses TLS 1.2+. No plaintext over the wire.</li>
+          <li><strong>Service-role key:</strong> Stored in Apps Script <code>Script Properties</code>. Never sent to a browser. Bypasses Postgres row-level security. Anyone with this key has full DB access — treat like a root password.</li>
+          <li><strong>Admin key:</strong> Required to call any admin endpoint (this panel, approve/reject/suspend, grant credits, user history). Stored as <code>GCP_ADMIN_KEY</code> in Script Properties. Rotate periodically.</li>
+          <li><strong>Row-level security:</strong> Enabled on every table. Authenticated end-users cannot read the full <code>companies</code> table directly — only through Apps Script proxy endpoints, which enforce credit checks and audit logging.</li>
+          <li><strong>Field-level filtering:</strong> Reveal endpoint returns only the 12 B2C fields locked on May 16. The other 32 columns (revenue, leader emails, audit notes, etc.) are never sent to a non-admin browser session.</li>
+          <li><strong>Watermarking:</strong> Every revealed company card shows the viewer's email + timestamp + "Confidential" diagonally across the page. Designed to discourage screenshot leaks.</li>
+          <li><strong>Copy protection:</strong> Right-click disabled, text selection blocked, copy event intercepted on the reveal pages. Determined users can still inspect element — this is friction, not encryption.</li>
+          <li><strong>Audit trail:</strong> Every credit spend, reveal, search, login, and admin action is logged with timestamp + metadata. Retention is unlimited (no auto-purge configured).</li>
+          <li><strong>Backups:</strong> Supabase Free tier provides daily backups (retained 7 days). Pro tier adds point-in-time recovery for the last 7 days at any second.</li>
+          <li><strong>Rate limits:</strong> Search is throttled to 60/min and 600/hour per user. Reveal is capped at 50 unique companies per user per calendar month (resets on the 1st).</li>
+          <li><strong>Payment data:</strong> Card numbers are entered directly on Razorpay's checkout — never touch your servers. You only see the payment_id (a non-sensitive reference) and the amount.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>What I would harden next</h2>
+        <ul class="security">
+          <li><strong>Rotate the service-role key</strong> — Supabase lets you regenerate it. Currently in your Apps Script Script Properties.</li>
+          <li><strong>Add 2FA to your Supabase account</strong> — under Supabase → Account Settings.</li>
+          <li><strong>Enable email alerts on Razorpay refunds / chargebacks</strong> — caught early avoids credit-stuffing exploits.</li>
+          <li><strong>Periodically export the user_history CSV</strong> for compliance evidence; especially if anyone files a DSAR (data subject access request).</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
+let ADMIN_KEY = '';
+let ALL_USERS = [];
+
+function toast(msg, isErr) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + (isErr ? 'err' : 'ok');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.style.opacity = '0', 3000);
+  setTimeout(() => t.remove(), 4000);
+}
+
+async function login() {
+  const k = document.getElementById('admin-key').value.trim();
+  if (k.length < 20) { toast('Admin key must be at least 20 characters', true); return; }
+  ADMIN_KEY = k;
+  sessionStorage.setItem('gcc_admin_key', k);
+
+  // Verify key by loading users
+  const ok = await loadUsers(true);
+  if (!ok) return;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+function signOut() {
+  sessionStorage.removeItem('gcc_admin_key');
+  ADMIN_KEY = '';
+  location.reload();
+}
+
+window.addEventListener('load', () => {
+  const cached = sessionStorage.getItem('gcc_admin_key');
+  if (cached) {
+    document.getElementById('admin-key').value = cached;
+    login();
+  }
+});
+
+function showTab(ev, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  ev.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+async function loadUsers(initial) {
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=adminHealth&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.error) {
+      toast(j.error === 'unauthorized' ? 'Invalid admin key' : j.error, true);
+      if (initial) sessionStorage.removeItem('gcc_admin_key');
+      return false;
+    }
+    ALL_USERS = j.users || [];
+    renderUsers();
+    renderStats();
+    if (!initial) toast('Loaded ' + ALL_USERS.length + ' users');
+    return true;
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+    return false;
+  }
+}
+
+function renderStats() {
+  const total = ALL_USERS.length;
+  const counts = { Pending: 0, Approved: 0, Suspended: 0, Rejected: 0 };
+  let totalBalance = 0, totalSpent = 0;
+  ALL_USERS.forEach(u => {
+    counts[u.status] = (counts[u.status] || 0) + 1;
+    totalBalance += Number(u.balance) || 0;
+    totalSpent += Number(u.lifetimeSpent) || 0;
+  });
+  const g = document.getElementById('stats-grid');
+  g.innerHTML = [
+    ['Total users', total],
+    ['Pending', counts.Pending],
+    ['Approved', counts.Approved],
+    ['Suspended', counts.Suspended],
+    ['Rejected', counts.Rejected],
+    ['Total credits outstanding', totalBalance.toLocaleString('en-IN')],
+    ['Total credits spent (lifetime)', totalSpent.toLocaleString('en-IN')]
+  ].map(([lbl, num]) => `<div class="stat"><div class="stat-num">${num}</div><div class="stat-lbl">${lbl}</div></div>`).join('');
+}
+
+function renderUsers() {
+  const filter = document.getElementById('status-filter').value;
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  let rows = filter ? ALL_USERS.filter(u => u.status === filter) : ALL_USERS;
+  if (q) rows = rows.filter(u => (u.email + ' ' + (u.notes || '')).toLowerCase().indexOf(q) >= 0);
+
+  const tbody = document.getElementById('users-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="text-align:center;padding:24px;">No users match.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(u => `
+    <tr>
+      <td>${esc(u.email)}</td>
+      <td>${esc(u.notes ? u.notes.substring(0, 40) : '')}</td>
+      <td><span class="badge badge-${u.status.toLowerCase()}">${esc(u.status)}</span></td>
+      <td>${u.signupDate ? fmtDate(u.signupDate) : ''}</td>
+      <td>${u.lastActive ? fmtDate(u.lastActive) : '<span class="muted">never</span>'}</td>
+      <td>${(u.balance || 0).toLocaleString('en-IN')}</td>
+      <td>${(u.lifetimeSpent || 0).toLocaleString('en-IN')}</td>
+      <td>
+        ${u.status === 'Pending' ? `<button class="primary small" onclick="setStatus('${esc(u.email)}','approve')">Approve</button>` : ''}
+        ${u.status === 'Suspended' ? `<button class="primary small" onclick="setStatus('${esc(u.email)}','approve')">Reinstate</button>` : ''}
+        ${(u.status === 'Approved') ? `<button class="small" onclick="setStatus('${esc(u.email)}','suspend')">Suspend</button>` : ''}
+        ${(u.status !== 'Rejected') ? `<button class="danger small" onclick="setStatus('${esc(u.email)}','reject')">Reject</button>` : ''}
+        <button class="small" onclick="quickGrant('${esc(u.email)}')">+Credits</button>
+        <button class="small" onclick="quickHistory('${esc(u.email)}')">History</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function setStatus(email, action) {
+  const ep = { approve: 'adminApprove', reject: 'adminReject', suspend: 'adminSuspend' }[action];
+  let reason = '';
+  if (action !== 'approve') {
+    reason = prompt('Reason for ' + action + '? (visible to other admins)');
+    if (reason === null) return;
+  }
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=' + ep + '&key=' + encodeURIComponent(ADMIN_KEY) +
+                         '&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason) +
+                         '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.status === 'ok') { toast(j.message || (action + ' OK')); loadUsers(); }
+    else toast(j.message || 'Failed', true);
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+  }
+}
+
+function quickGrant(email) {
+  document.getElementById('grant-email').value = email;
+  document.querySelectorAll('.tab')[1].click();
+  document.getElementById('grant-credits').focus();
+}
+function quickHistory(email) {
+  document.getElementById('history-email').value = email;
+  document.querySelectorAll('.tab')[2].click();
+  previewHistory();
+}
+function fillGrant(credits, note) {
+  document.getElementById('grant-credits').value = credits;
+  document.getElementById('grant-note').value = note;
+}
+
+async function grantCredits() {
+  const email = document.getElementById('grant-email').value.trim().toLowerCase();
+  const credits = parseInt(document.getElementById('grant-credits').value, 10);
+  const note = document.getElementById('grant-note').value.trim() || 'Admin grant';
+  if (!email || !credits) { toast('Email and credits required', true); return; }
+  if (credits > 5000 && !confirm('Grant ' + credits + ' credits? That is a large amount.')) return;
+
+  const box = document.getElementById('grant-result');
+  box.innerHTML = '<div id="result-box">Granting…</div>';
+
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=adminGrant&key=' + encodeURIComponent(ADMIN_KEY) +
+                         '&email=' + encodeURIComponent(email) + '&credits=' + credits +
+                         '&note=' + encodeURIComponent(note) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.status === 'ok') {
+      toast(j.message);
+      box.innerHTML = '<div id="result-box">' + esc(j.message) + '\nNew balance: ' + (j.balance || '?') + '</div>';
+    } else {
+      box.innerHTML = '<div id="result-box" class="err">' + esc(j.message || 'Failed') + '</div>';
+      toast(j.message || 'Failed', true);
+    }
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+  }
+}
+
+async function fetchHistory(email) {
+  const r = await fetch(SCRIPT_URL + '?action=adminUserHistory&key=' + encodeURIComponent(ADMIN_KEY) +
+                       '&email=' + encodeURIComponent(email) + '&_t=' + Date.now(), { cache: 'no-store' });
+  return await r.json();
+}
+
+async function previewHistory() {
+  const email = document.getElementById('history-email').value.trim().toLowerCase();
+  if (!email) { toast('Email required', true); return; }
+  const box = document.getElementById('history-result');
+  box.innerHTML = '<div id="result-box">Fetching…</div>';
+  try {
+    const j = await fetchHistory(email);
+    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
+    const lines = [];
+    lines.push('Email:        ' + email);
+    lines.push('Transactions: ' + (j.transactions || []).length);
+    lines.push('Reveals:      ' + (j.reveals || []).length);
+    lines.push('Searches:     ' + (j.searches || []).length);
+    lines.push('');
+    lines.push('--- Last 10 transactions ---');
+    (j.transactions || []).slice(0, 10).forEach(t => {
+      lines.push((t.ts || '').substring(0, 19) + '  ' + (t.amount > 0 ? '+' : '') + t.amount + '  ' + t.reason);
+    });
+    box.innerHTML = '<div id="result-box">' + esc(lines.join('\n')) + '</div>';
+  } catch (err) {
+    box.innerHTML = '<div id="result-box" class="err">Network error: ' + esc(err.message) + '</div>';
+  }
+}
+
+async function downloadHistory() {
+  const email = document.getElementById('history-email').value.trim().toLowerCase();
+  if (!email) { toast('Email required', true); return; }
+  try {
+    const j = await fetchHistory(email);
+    if (j.error) { toast(j.error, true); return; }
+
+    const csv = [];
+    csv.push('Timestamp,Type,Amount,Reason,Details');
+    (j.transactions || []).forEach(t => {
+      csv.push([t.ts || '', 'transaction', t.amount || 0, t.reason || '', JSON.stringify(t.metadata || {})].map(csvEsc).join(','));
+    });
+    (j.reveals || []).forEach(r => {
+      csv.push([r.revealed_at || '', 'reveal', -(r.credits_charged || 0), 'reveal', 'company_id=' + (r.company_id || '') + ' ym=' + (r.year_month || '')].map(csvEsc).join(','));
+    });
+    (j.searches || []).forEach(s => {
+      csv.push([s.ts || '', 'search', 0, s.query_text || '', JSON.stringify(s.filters || {})].map(csvEsc).join(','));
+    });
+
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gccpros_' + email.replace(/[^a-z0-9]/g, '_') + '_history.csv';
+    a.click();
+    toast('Downloaded ' + (csv.length - 1) + ' rows');
+  } catch (err) {
+    toast('Failed: ' + err.message, true);
+  }
+}
+
+async function loadSubmissions(kind) {
+  const box = document.getElementById('submissions-box');
+  box.innerHTML = '<div id="result-box">Loading ' + kind + '…</div>';
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) +
+                         '&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const j = await r.json();
+    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
+    if (!j.rows || !j.rows.length) { box.innerHTML = '<div id="result-box">No ' + kind + ' submissions yet.</div>'; return; }
+    const cols = Object.keys(j.rows[0]);
+    box.innerHTML = '<table><thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead>' +
+                    '<tbody>' + j.rows.map(r => '<tr>' + cols.map(c => '<td>' + esc(String(r[c] || '').substring(0, 100)) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+  } catch (err) {
+    box.innerHTML = '<div id="result-box" class="err">' + esc(err.message) + '</div>';
+  }
+}
+
+function csvEsc(v) { v = String(v == null ? '' : v); return '"' + v.replace(/"/g, '""') + '"'; }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(s) {
+  try { return new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  catch (_) { return String(s).substring(0, 10); }
+}
+</script>
+
+</body>
+</html>
