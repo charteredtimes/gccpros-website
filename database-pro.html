@@ -1657,6 +1657,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <span class="c-dot"></span>
       <span><strong id="credit-chip-num">-</strong> credits</span>
     </button>
+    <button class="btn-ghost" onclick="openStatement()" id="topbar-statement-btn" title="View credit statement">Statement</button>
     <button class="btn-ghost" onclick="openPwdModal()" title="Change password">Password</button>
     <button class="user-pill" id="user-pill" onclick="onUserPillClick()" title="Sign in or sign out">Sign in</button>
   </div>
@@ -1733,7 +1734,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
             <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--graphite);margin-top:3px;font-weight:600;">Reveals this month</div>
           </div>
           <button class="credit-meter-cta" onclick="openBuyCredits()">Top up</button>
-          <button onclick="openStatement()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;letter-spacing:0.5px;">View statement</button>
         </div>
       </div>
 
@@ -4086,4 +4086,17 @@ async function joinWaitlist(ev) {
       </table>
     </div>
     <div id="stmt-empty" style="display:none;text-align:center;padding:32px 0;color:var(--muted);font-size:13px;">No transactions found.</div>
-    <div id="stmt-err" style
+    <div id="stmt-err" style="display:none;padding:12px;background:#fee2e2;color:#991b1b;border-radius:4px;font-size:13px;margin-top:8px;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeSignInModal()">
+  <div class="modal" style="max-width:520px;padding-bottom:8px;position:relative;">
+    <button onclick="closeSignInModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;" title="Close">&times;</button>
+    <div id="signin-modal-body"></div>
+  </div>
+</div>
+
+</body>
+</html>
+                                                                                                    
