@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin Console · build: supabase-2026-05-16-admin-v1 -->
+<!-- GCCPROs Admin Console · build: supabase-2026-05-17-admin-v2 · rich profile + export -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -105,14 +105,15 @@
             <option value="Suspended">Suspended</option>
             <option value="Rejected">Rejected</option>
           </select>
-          <input id="search-input" placeholder="Search by email or name…" oninput="renderUsers()" />
+          <input id="search-input" placeholder="Search by email, name, city…" oninput="renderUsers()" />
           <button onclick="loadUsers()">↻ Refresh</button>
+          <button class="primary" onclick="exportAllUsersCsv()">⬇ Export filtered users (CSV)</button>
         </div>
         <table>
           <thead>
-            <tr><th>Email</th><th>Name</th><th>Status</th><th>Signup</th><th>Last login</th><th>Balance</th><th>Spent</th><th>Actions</th></tr>
+            <tr><th>Email</th><th>Name</th><th>City</th><th>Status</th><th>Signup</th><th>Last login</th><th>Balance</th><th>Spent</th><th>Actions</th></tr>
           </thead>
-          <tbody id="users-tbody"><tr><td colspan="8" class="muted" style="text-align:center;padding:24px;">Loading…</td></tr></tbody>
+          <tbody id="users-tbody"><tr><td colspan="9" class="muted" style="text-align:center;padding:24px;">Loading…</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -296,179 +297,152 @@ function renderUsers() {
   const filter = document.getElementById('status-filter').value;
   const q = (document.getElementById('search-input').value || '').toLowerCase();
   let rows = filter ? ALL_USERS.filter(u => u.status === filter) : ALL_USERS;
-  if (q) rows = rows.filter(u => (u.email + ' ' + (u.notes || '')).toLowerCase().indexOf(q) >= 0);
+  if (q) {
+    rows = rows.filter(u => {
+      const hay = [u.email, u.fullName, u.currentCity, u.domainExpertise, u.linkedin]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.indexOf(q) >= 0;
+    });
+  }
 
   const tbody = document.getElementById('users-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="muted" style="text-align:center;padding:24px;">No users match.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="muted" style="text-align:center;padding:24px;">No users match.</td></tr>';
     return;
   }
-  tbody.innerHTML = rows.map(u => `
-    <tr>
+  tbody.innerHTML = rows.map((u, idx) => `
+    <tr style="cursor:pointer;" onclick="if(event.target.tagName!=='BUTTON')showDetails(${idx})">
       <td>${esc(u.email)}</td>
-      <td>${esc(u.notes ? u.notes.substring(0, 40) : '')}</td>
+      <td>${esc(u.fullName || '')}</td>
+      <td>${esc(u.currentCity || '')}</td>
       <td><span class="badge badge-${u.status.toLowerCase()}">${esc(u.status)}</span></td>
       <td>${u.signupDate ? fmtDate(u.signupDate) : ''}</td>
       <td>${u.lastActive ? fmtDate(u.lastActive) : '<span class="muted">never</span>'}</td>
       <td>${(u.balance || 0).toLocaleString('en-IN')}</td>
       <td>${(u.lifetimeSpent || 0).toLocaleString('en-IN')}</td>
       <td>
-        ${u.status === 'Pending' ? `<button class="primary small" onclick="setStatus('${esc(u.email)}','approve')">Approve</button>` : ''}
-        ${u.status === 'Suspended' ? `<button class="primary small" onclick="setStatus('${esc(u.email)}','approve')">Reinstate</button>` : ''}
-        ${(u.status === 'Approved') ? `<button class="small" onclick="setStatus('${esc(u.email)}','suspend')">Suspend</button>` : ''}
-        ${(u.status !== 'Rejected') ? `<button class="danger small" onclick="setStatus('${esc(u.email)}','reject')">Reject</button>` : ''}
-        <button class="small" onclick="quickGrant('${esc(u.email)}')">+Credits</button>
-        <button class="small" onclick="quickHistory('${esc(u.email)}')">History</button>
+        <button class="small" onclick="event.stopPropagation();showDetails(${idx})">Details</button>
+        ${u.status === 'Pending' ? `<button class="primary small" onclick="event.stopPropagation();setStatus('${esc(u.email)}','approve')">Approve</button>` : ''}
+        ${u.status === 'Suspended' ? `<button class="primary small" onclick="event.stopPropagation();setStatus('${esc(u.email)}','approve')">Reinstate</button>` : ''}
+        ${(u.status === 'Approved') ? `<button class="small" onclick="event.stopPropagation();setStatus('${esc(u.email)}','suspend')">Suspend</button>` : ''}
+        ${(u.status !== 'Rejected') ? `<button class="danger small" onclick="event.stopPropagation();setStatus('${esc(u.email)}','reject')">Reject</button>` : ''}
+        <button class="small" onclick="event.stopPropagation();quickGrant('${esc(u.email)}')">+Credits</button>
+        <button class="small" onclick="event.stopPropagation();quickHistory('${esc(u.email)}')">History</button>
       </td>
     </tr>
   `).join('');
 }
 
-async function setStatus(email, action) {
-  const ep = { approve: 'adminApprove', reject: 'adminReject', suspend: 'adminSuspend' }[action];
-  let reason = '';
-  if (action !== 'approve') {
-    reason = prompt('Reason for ' + action + '? (visible to other admins)');
-    if (reason === null) return;
-  }
-  try {
-    const r = await fetch(SCRIPT_URL + '?action=' + ep + '&key=' + encodeURIComponent(ADMIN_KEY) +
-                         '&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason) +
-                         '&_t=' + Date.now(), { cache: 'no-store' });
-    const j = await r.json();
-    if (j.status === 'ok') { toast(j.message || (action + ' OK')); loadUsers(); }
-    else toast(j.message || 'Failed', true);
-  } catch (err) {
-    toast('Network error: ' + err.message, true);
-  }
-}
-
-function quickGrant(email) {
-  document.getElementById('grant-email').value = email;
-  document.querySelectorAll('.tab')[1].click();
-  document.getElementById('grant-credits').focus();
-}
-function quickHistory(email) {
-  document.getElementById('history-email').value = email;
-  document.querySelectorAll('.tab')[2].click();
-  previewHistory();
-}
-function fillGrant(credits, note) {
-  document.getElementById('grant-credits').value = credits;
-  document.getElementById('grant-note').value = note;
-}
-
-async function grantCredits() {
-  const email = document.getElementById('grant-email').value.trim().toLowerCase();
-  const credits = parseInt(document.getElementById('grant-credits').value, 10);
-  const note = document.getElementById('grant-note').value.trim() || 'Admin grant';
-  if (!email || !credits) { toast('Email and credits required', true); return; }
-  if (credits > 5000 && !confirm('Grant ' + credits + ' credits? That is a large amount.')) return;
-
-  const box = document.getElementById('grant-result');
-  box.innerHTML = '<div id="result-box">Granting…</div>';
-
-  try {
-    const r = await fetch(SCRIPT_URL + '?action=adminGrant&key=' + encodeURIComponent(ADMIN_KEY) +
-                         '&email=' + encodeURIComponent(email) + '&credits=' + credits +
-                         '&note=' + encodeURIComponent(note) + '&_t=' + Date.now(), { cache: 'no-store' });
-    const j = await r.json();
-    if (j.status === 'ok') {
-      toast(j.message);
-      box.innerHTML = '<div id="result-box">' + esc(j.message) + '\nNew balance: ' + (j.balance || '?') + '</div>';
-    } else {
-      box.innerHTML = '<div id="result-box" class="err">' + esc(j.message || 'Failed') + '</div>';
-      toast(j.message || 'Failed', true);
-    }
-  } catch (err) {
-    toast('Network error: ' + err.message, true);
-  }
-}
-
-async function fetchHistory(email) {
-  const r = await fetch(SCRIPT_URL + '?action=adminUserHistory&key=' + encodeURIComponent(ADMIN_KEY) +
-                       '&email=' + encodeURIComponent(email) + '&_t=' + Date.now(), { cache: 'no-store' });
-  return await r.json();
-}
-
-async function previewHistory() {
-  const email = document.getElementById('history-email').value.trim().toLowerCase();
-  if (!email) { toast('Email required', true); return; }
-  const box = document.getElementById('history-result');
-  box.innerHTML = '<div id="result-box">Fetching…</div>';
-  try {
-    const j = await fetchHistory(email);
-    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
-    const lines = [];
-    lines.push('Email:        ' + email);
-    lines.push('Transactions: ' + (j.transactions || []).length);
-    lines.push('Reveals:      ' + (j.reveals || []).length);
-    lines.push('Searches:     ' + (j.searches || []).length);
-    lines.push('');
-    lines.push('--- Last 10 transactions ---');
-    (j.transactions || []).slice(0, 10).forEach(t => {
-      lines.push((t.ts || '').substring(0, 19) + '  ' + (t.amount > 0 ? '+' : '') + t.amount + '  ' + t.reason);
+// ---- Details modal ----
+function showDetails(idx) {
+  const filter = document.getElementById('status-filter').value;
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  let rows = filter ? ALL_USERS.filter(u => u.status === filter) : ALL_USERS;
+  if (q) {
+    rows = rows.filter(u => {
+      const hay = [u.email, u.fullName, u.currentCity, u.domainExpertise, u.linkedin]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.indexOf(q) >= 0;
     });
-    box.innerHTML = '<div id="result-box">' + esc(lines.join('\n')) + '</div>';
-  } catch (err) {
-    box.innerHTML = '<div id="result-box" class="err">Network error: ' + esc(err.message) + '</div>';
   }
-}
+  const u = rows[idx];
+  if (!u) return;
 
-async function downloadHistory() {
-  const email = document.getElementById('history-email').value.trim().toLowerCase();
-  if (!email) { toast('Email required', true); return; }
-  try {
-    const j = await fetchHistory(email);
-    if (j.error) { toast(j.error, true); return; }
-
-    const csv = [];
-    csv.push('Timestamp,Type,Amount,Reason,Details');
-    (j.transactions || []).forEach(t => {
-      csv.push([t.ts || '', 'transaction', t.amount || 0, t.reason || '', JSON.stringify(t.metadata || {})].map(csvEsc).join(','));
-    });
-    (j.reveals || []).forEach(r => {
-      csv.push([r.revealed_at || '', 'reveal', -(r.credits_charged || 0), 'reveal', 'company_id=' + (r.company_id || '') + ' ym=' + (r.year_month || '')].map(csvEsc).join(','));
-    });
-    (j.searches || []).forEach(s => {
-      csv.push([s.ts || '', 'search', 0, s.query_text || '', JSON.stringify(s.filters || {})].map(csvEsc).join(','));
-    });
-
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'gccpros_' + email.replace(/[^a-z0-9]/g, '_') + '_history.csv';
-    a.click();
-    toast('Downloaded ' + (csv.length - 1) + ' rows');
-  } catch (err) {
-    toast('Failed: ' + err.message, true);
+  // Parse the notes field if it's JSON
+  let extra = {};
+  if (u.notes) {
+    try { extra = JSON.parse(u.notes); } catch (_) { extra = { admin_notes: u.notes }; }
   }
+
+  const fields = [
+    ['Email',              u.email],
+    ['Full name',          u.fullName],
+    ['WhatsApp',           u.whatsapp],
+    ['LinkedIn',           u.linkedin],
+    ['Current city',       u.currentCity],
+    ['Years of experience',u.yearsExperience],
+    ['Domain expertise',   u.domainExpertise],
+    ['Referrer',           u.referrer],
+    ['Email domain',       u.emailDomain],
+    ['Domain class',       u.domainClass],
+    ['Source',             u.source],
+    ['—', '—'],
+    ['Status',             u.status],
+    ['Signup date',        u.signupDate ? fmtDate(u.signupDate) : ''],
+    ['Approved at',        u.approvedAt ? fmtDate(u.approvedAt) : ''],
+    ['Approved by',        u.approvedBy],
+    ['Suspended reason',   u.suspendedReason],
+    ['Last login',         u.lastActive ? fmtDate(u.lastActive) : 'never'],
+    ['Login count',        u.loginCount],
+    ['—', '—'],
+    ['Balance',            (u.balance || 0).toLocaleString('en-IN')],
+    ['Monthly reveals',    u.monthlyReveals],
+    ['Lifetime spent',     (u.lifetimeSpent || 0).toLocaleString('en-IN')],
+    ['Lifetime purchased', (u.lifetimePurchased || 0).toLocaleString('en-IN')],
+    ['—', '—'],
+    ['Signup IP',          extra.signup_ip],
+    ['Signup user agent',  extra.signup_ua],
+    ['GCCs worked with',   extra.gccs_worked_with],
+    ['Eligibility pitch',  extra.eligibility_pitch],
+    ['Flags',              extra.flags],
+    ['Health',             extra.health],
+    ['Admin notes',        extra.admin_notes],
+  ];
+
+  const rowsHtml = fields.map(([k, v]) => {
+    if (k === '—') return '<tr><td colspan="2" style="border-bottom:1px solid #2D3A5C;"></td></tr>';
+    return `<tr><td style="color:#9CA3AF;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:170px;padding:7px 12px;vertical-align:top;">${esc(k)}</td>` +
+           `<td style="font-size:13px;padding:7px 12px;word-break:break-word;">${v ? esc(String(v)) : '<span class="muted">—</span>'}</td></tr>`;
+  }).join('');
+
+  const html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9998;" onclick="this.remove()">
+      <div onclick="event.stopPropagation()" style="background:#14213D;border:1px solid #2D3A5C;border-radius:6px;max-width:760px;width:92%;max-height:88vh;overflow-y:auto;">
+        <div style="padding:18px 24px;border-bottom:1px solid #1F2A44;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h2 style="margin:0;color:#C9973A;font-size:16px;">${esc(u.fullName || u.email)}</h2>
+            <div style="color:#9CA3AF;font-size:12px;margin-top:2px;">${esc(u.email)} · <span class="badge badge-${u.status.toLowerCase()}">${esc(u.status)}</span></div>
+          </div>
+          <button onclick="this.closest('[onclick]').remove()" style="background:none;border:none;color:#9CA3AF;font-size:24px;cursor:pointer;line-height:1;">×</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">${rowsHtml}</table>
+        <div style="padding:14px 24px;border-top:1px solid #1F2A44;display:flex;gap:10px;flex-wrap:wrap;">
+          ${u.status === 'Pending' ? `<button class="primary" onclick="setStatus('${esc(u.email)}','approve');this.closest('[onclick]').remove()">Approve</button>` : ''}
+          ${u.status === 'Approved' ? `<button onclick="setStatus('${esc(u.email)}','suspend');this.closest('[onclick]').remove()">Suspend</button>` : ''}
+          ${u.status === 'Suspended' ? `<button class="primary" onclick="setStatus('${esc(u.email)}','approve');this.closest('[onclick]').remove()">Reinstate</button>` : ''}
+          ${u.status !== 'Rejected' ? `<button class="danger" onclick="setStatus('${esc(u.email)}','reject');this.closest('[onclick]').remove()">Reject</button>` : ''}
+          <button onclick="quickGrant('${esc(u.email)}');this.closest('[onclick]').remove()">Grant credits</button>
+          <button onclick="quickHistory('${esc(u.email)}');this.closest('[onclick]').remove()">View history</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
-async function loadSubmissions(kind) {
-  const box = document.getElementById('submissions-box');
-  box.innerHTML = '<div id="result-box">Loading ' + kind + '…</div>';
-  try {
-    const r = await fetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) +
-                         '&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
-    const j = await r.json();
-    if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
-    if (!j.rows || !j.rows.length) { box.innerHTML = '<div id="result-box">No ' + kind + ' submissions yet.</div>'; return; }
-    const cols = Object.keys(j.rows[0]);
-    box.innerHTML = '<table><thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead>' +
-                    '<tbody>' + j.rows.map(r => '<tr>' + cols.map(c => '<td>' + esc(String(r[c] || '').substring(0, 100)) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
-  } catch (err) {
-    box.innerHTML = '<div id="result-box" class="err">' + esc(err.message) + '</div>';
+// ---- Export currently-filtered users as CSV ----
+function exportAllUsersCsv() {
+  const filter = document.getElementById('status-filter').value;
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  let rows = filter ? ALL_USERS.filter(u => u.status === filter) : ALL_USERS;
+  if (q) {
+    rows = rows.filter(u => {
+      const hay = [u.email, u.fullName, u.currentCity, u.domainExpertise, u.linkedin]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.indexOf(q) >= 0;
+    });
   }
-}
+  if (!rows.length) { toast('No users to export', true); return; }
 
-function csvEsc(v) { v = String(v == null ? '' : v); return '"' + v.replace(/"/g, '""') + '"'; }
-function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmtDate(s) {
-  try { return new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
-  catch (_) { return String(s).substring(0, 10); }
-}
-</script>
-
-</body>
-</html>
+  const headers = ['Email','Full Name','WhatsApp','LinkedIn','Current City','Years Experience',
+    'Domain Expertise','Referrer','Email Domain','Domain Class','Source','Status','Signup Date',
+    'Approved At','Approved By','Suspended Reason','Last Login','Login Count',
+    'Balance','Monthly Reveals','Lifetime Spent','Lifetime Purchased','Signup IP','Signup UA'];
+  const lines = [headers.map(csvEsc).join(',')];
+  rows.forEach(u => {
+    let extra = {};
+    if (u.notes) { try { extra = JSON.parse(u.notes); } catch (_) {} }
+    lines.push([
+      u.email, u.fullName, u.whatsapp, u.linkedin, u.currentCity,
+      u.yearsExperience, u.domainExpertise, u.referrer, u.emailDomain, u.domainClass, u.source,
+      u.status, u.signupDate, u.approvedAt, u.approvedBy, u.suspendedReason,
+      u.lastActive, u.loginCoun
