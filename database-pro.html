@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.4-marketing-final · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.5-featured-banner-faq · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1679,7 +1679,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <div class="ecb-colon">:</div>
       <div class="ecb-unit"><span class="ecb-num" id="ecb-secs">--</span><span class="ecb-lbl">Secs</span></div>
     </div>
-    <a href="#enterprise-waitlist" class="ecb-cta">Join Enterprise Waitlist →</a>
+    
     <button type="button" class="ecb-close" id="ecb-close" aria-label="Dismiss banner" title="Dismiss">&times;</button>
   </div>
 </div>
@@ -1716,20 +1716,21 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
-<!-- ENTERPRISE WAITLIST INLINE BANNER -->
-<section id="enterprise-waitlist" style="background:#0F1A33;color:#fff;padding:14px 18px;border-bottom:1px solid var(--gold-soft);">
-  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;">Enterprise teams</span>
-      <span style="font-size:13px;color:#fff;font-weight:500;">Annual license · team seats · API · audit-grade governance — launching Jun 2026</span>
+<!-- ENTERPRISE WAITLIST INLINE BANNER — FEATURED -->
+<section id="enterprise-waitlist" style="background:linear-gradient(135deg,#0A1628 0%,#14213D 100%);color:#fff;padding:26px 20px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);position:relative;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;">
+    <div style="flex:1 1 360px;min-width:280px;">
+      <div style="display:inline-block;padding:4px 12px;background:var(--gold);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px;margin-bottom:10px;">★ Enterprise Edition · Early access</div>
+      <h2 style="margin:0 0 6px;font-family:'Playfair Display',serif;font-size:22px;line-height:1.2;color:#fff;">Build a corporate license for your team.</h2>
+      <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;">Annual license · team seats · API access · audit-grade governance · launching <strong style="color:var(--gold-soft);">June 2026</strong>. Early-access partners get founder pricing and direct input into the roadmap.</p>
     </div>
-    <form id="ent-waitlist-form" onsubmit="joinWaitlist(event)" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-      <input type="email" id="wl-email" placeholder="Work email" required style="padding:7px 11px;border:1px solid var(--gold-soft);border-radius:2px;background:#fff;color:var(--ink);font-size:12px;width:170px;">
-      <input type="text" id="wl-company" placeholder="Company" required style="padding:7px 11px;border:1px solid var(--gold-soft);border-radius:2px;background:#fff;color:var(--ink);font-size:12px;width:140px;">
-      <button type="submit" style="padding:7px 16px;background:var(--gold);color:var(--ink);border:none;border-radius:2px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:0.4px;">Join Enterprise waitlist</button>
+    <form id="ent-waitlist-form" onsubmit="joinWaitlist(event)" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1 1 420px;min-width:300px;justify-content:flex-end;">
+      <input type="email" id="wl-email" placeholder="Work email" required style="padding:12px 14px;border:1px solid var(--gold-soft);border-radius:3px;background:#fff;color:var(--ink);font-size:14px;width:200px;flex:1 1 180px;min-width:160px;">
+      <input type="text" id="wl-company" placeholder="Company" required style="padding:12px 14px;border:1px solid var(--gold-soft);border-radius:3px;background:#fff;color:var(--ink);font-size:14px;width:160px;flex:1 1 140px;min-width:140px;">
+      <button type="submit" style="padding:12px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:3px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;box-shadow:0 2px 8px rgba(201,151,58,0.35);">Join Enterprise waitlist →</button>
     </form>
-    <div id="wl-msg" style="font-size:11px;color:var(--gold-soft);display:none;"></div>
   </div>
+  <div id="wl-msg" style="max-width:1200px;margin:14px auto 0;font-size:13px;color:var(--gold-soft);display:none;text-align:center;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:3px;"></div>
 </section>
 
 <main class="main">
@@ -2067,6 +2068,66 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </section>
 
 <!-- ════════════════════════════════════════════════════════════════
+     CREDITS FAQ
+     ════════════════════════════════════════════════════════════════ -->
+<section id="credits-faq" style="padding:48px 20px;background:#fff;">
+  <div style="max-width:880px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:30px;">
+      <div style="font-size:13px;color:var(--gold-deep);letter-spacing:2px;text-transform:uppercase;font-weight:700;">Credits FAQ</div>
+      <h2 style="font-size:26px;color:var(--ink);margin:8px 0 12px;font-family:'Playfair Display',serif;line-height:1.25;">How credits work.</h2>
+      <p style="font-size:14px;color:var(--graphite);max-width:680px;margin:0 auto;line-height:1.6;">No subscription. Pay-as-you-go credits. Designed for individual researchers who want depth without committing to an enterprise license.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What do I get for free when I sign up?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">500 credits on approval — enough for either <strong>5 full company reveals</strong> (100 credits each) or <strong>10 search pages</strong> (50 credits each, 5 results per page), or any combination. Credits are added automatically the moment your application is approved.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What does a search cost vs a reveal?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;"><strong>Search:</strong> 50 credits per page of 5 results. You pick a filter (city, industry, headcount, etc.) and get back matching company names + the matched field — no full profile.<br><strong>Reveal:</strong> 100 credits per company. Unlocks the full 12-field profile: Country, HQ Country, GCC City, State, Industry, GCC Domains, Headcount, Office Addresses, Glassdoor rating, GPTW certification, and more.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What's the monthly reveal cap?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;"><strong>50 unique companies per calendar month</strong> — designed for individual research, not bulk extraction. Re-viewing a company you've already revealed this month is <strong>free</strong> (no extra credits). The counter resets on the 1st of each month (Asia/Kolkata timezone).</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Do credits expire?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">No. Credits don't expire and roll over indefinitely as long as your account stays active. Unused credits remain in your balance until you spend them.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">How do I buy more credits?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Click <strong>Top up</strong> in the top bar. We offer 4 packs in INR (₹200 / ₹500 / ₹950 / ₹2,250 for 200 / 500 / 1,000 / 2,500 credits respectively) and 4 packs in USD ($2.50 / $6 / $11.50 / $27 for the same credit tiers). Payments processed by Razorpay — UPI, card, netbanking accepted. GST/VAT included where applicable. Credits land in your balance instantly on payment success.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Can I get a refund on unused credits?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Credits are non-refundable once added to your account — same model as Apple App Store / Google Play credit. If we've made a billing error or you experience a service failure on our side, write to <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> with your payment reference and we'll resolve it case-by-case.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Do I earn credits for anything?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Yes — <strong>accepted corrections earn 20 credits</strong>. If you spot an inaccuracy in any revealed profile, use the "Suggest a correction" button at the bottom of the reveal card. Our research team reviews each correction; if accepted, 20 credits land in your balance automatically with a transaction note. <strong>Suggesting a new GCC</strong> we don't have yet can also earn credits (variable, depending on completeness — contact us).</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What if I run out mid-research?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">A clear "insufficient credits" message appears with your current balance, the cost of the action you tried, and a top-up button. No silent failures.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Is my activity logged or watermarked?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Yes. Every revealed profile is watermarked diagonally with your email + timestamp + "Confidential" — designed to discourage screenshot redistribution. Every reveal, search and top-up is logged in your account transaction history (accessible via the <strong>Statement</strong> button). This protects both you and the integrity of the dataset.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Can my team share one account?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. Sharing logins is a breach of terms and triggers account suspension. For multi-seat / team access, see the Enterprise waitlist at the top of this page.</p>
+      </details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Still have questions?</summary>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> — we usually respond within 1 working day.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════
      FINAL CTA
      ════════════════════════════════════════════════════════════════ -->
 <section id="signup-cta" style="padding:48px 20px;background:var(--ivory);text-align:center;">
@@ -2317,7 +2378,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
-  · <a href="https://www.gccpros.com/faq-loyalty" target="_blank">Credits FAQ</a>
+  · <a href="#credits-faq">Credits FAQ</a>
   · <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>
 </footer>
 
