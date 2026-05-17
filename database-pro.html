@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.5-featured-banner-faq · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.7-mobile-topbar-fix · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1362,8 +1362,14 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 /* responsive */
 @media (max-width: 640px) {
-  .topbar { padding: 12px 16px; gap: 12px; flex-wrap: wrap; }
+  .topbar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
   .topnav { display: none; }
+  .topbar .brand { flex: 0 0 100%; margin-bottom: 4px; }
+  .topbar-right { width: 100%; gap: 6px; flex-wrap: wrap; justify-content: flex-start; }
+  .topbar-right .region-picker { font-size: 12px; padding: 6px 8px; max-width: 130px; }
+  .topbar-right .credit-chip { padding: 6px 10px; font-size: 12px; }
+  .topbar-right .btn-ghost { padding: 6px 10px; font-size: 12px; }
+  .topbar-right .user-pill { padding: 6px 12px; font-size: 12px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hero { padding: 22px 16px; }
   .hero-title { font-size: 26px; }
   .hero-stats { display: none; }
@@ -1459,13 +1465,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   background: #CBE4FE; transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.18);
 }
-.ecb-close {
-  background: transparent; border: none; color: rgba(255,255,255,0.55);
-  font-size: 22px; line-height: 1; cursor: pointer;
-  padding: 0 6px; transition: color 0.2s;
-  font-family: var(--sans);
-}
-.ecb-close:hover { color: #fff; }
 .enterprise-countdown-banner.is-hidden { display: none; }
 .enterprise-countdown-banner.is-launched .ecb-timer,
 .enterprise-countdown-banner.is-launched .ecb-cta { display: none; }
@@ -1476,7 +1475,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   .ecb-unit { min-width: 48px; padding: 6px 8px 5px; }
   .ecb-num { font-size: 19px; }
   .ecb-cta { width: 100%; text-align: center; }
-  .ecb-close { position: absolute; top: 6px; right: 8px; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1680,7 +1678,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <div class="ecb-unit"><span class="ecb-num" id="ecb-secs">--</span><span class="ecb-lbl">Secs</span></div>
     </div>
     
-    <button type="button" class="ecb-close" id="ecb-close" aria-label="Dismiss banner" title="Dismiss">&times;</button>
+    
   </div>
 </div>
 
@@ -2067,65 +2065,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════
-     CREDITS FAQ
-     ════════════════════════════════════════════════════════════════ -->
-<section id="credits-faq" style="padding:48px 20px;background:#fff;">
-  <div style="max-width:880px;margin:0 auto;">
-    <div style="text-align:center;margin-bottom:30px;">
-      <div style="font-size:13px;color:var(--gold-deep);letter-spacing:2px;text-transform:uppercase;font-weight:700;">Credits FAQ</div>
-      <h2 style="font-size:26px;color:var(--ink);margin:8px 0 12px;font-family:'Playfair Display',serif;line-height:1.25;">How credits work.</h2>
-      <p style="font-size:14px;color:var(--graphite);max-width:680px;margin:0 auto;line-height:1.6;">No subscription. Pay-as-you-go credits. Designed for individual researchers who want depth without committing to an enterprise license.</p>
-    </div>
 
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What do I get for free when I sign up?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">500 credits on approval — enough for either <strong>5 full company reveals</strong> (100 credits each) or <strong>10 search pages</strong> (50 credits each, 5 results per page), or any combination. Credits are added automatically the moment your application is approved.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What does a search cost vs a reveal?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;"><strong>Search:</strong> 50 credits per page of 5 results. You pick a filter (city, industry, headcount, etc.) and get back matching company names + the matched field — no full profile.<br><strong>Reveal:</strong> 100 credits per company. Unlocks the full 12-field profile: Country, HQ Country, GCC City, State, Industry, GCC Domains, Headcount, Office Addresses, Glassdoor rating, GPTW certification, and more.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What's the monthly reveal cap?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;"><strong>50 unique companies per calendar month</strong> — designed for individual research, not bulk extraction. Re-viewing a company you've already revealed this month is <strong>free</strong> (no extra credits). The counter resets on the 1st of each month (Asia/Kolkata timezone).</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Do credits expire?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">No. Credits don't expire and roll over indefinitely as long as your account stays active. Unused credits remain in your balance until you spend them.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">How do I buy more credits?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Click <strong>Top up</strong> in the top bar. We offer 4 packs in INR (₹200 / ₹500 / ₹950 / ₹2,250 for 200 / 500 / 1,000 / 2,500 credits respectively) and 4 packs in USD ($2.50 / $6 / $11.50 / $27 for the same credit tiers). Payments processed by Razorpay — UPI, card, netbanking accepted. GST/VAT included where applicable. Credits land in your balance instantly on payment success.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Can I get a refund on unused credits?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Credits are non-refundable once added to your account — same model as Apple App Store / Google Play credit. If we've made a billing error or you experience a service failure on our side, write to <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> with your payment reference and we'll resolve it case-by-case.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Do I earn credits for anything?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Yes — <strong>accepted corrections earn 20 credits</strong>. If you spot an inaccuracy in any revealed profile, use the "Suggest a correction" button at the bottom of the reveal card. Our research team reviews each correction; if accepted, 20 credits land in your balance automatically with a transaction note. <strong>Suggesting a new GCC</strong> we don't have yet can also earn credits (variable, depending on completeness — contact us).</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">What if I run out mid-research?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">A clear "insufficient credits" message appears with your current balance, the cost of the action you tried, and a top-up button. No silent failures.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Is my activity logged or watermarked?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Yes. Every revealed profile is watermarked diagonally with your email + timestamp + "Confidential" — designed to discourage screenshot redistribution. Every reveal, search and top-up is logged in your account transaction history (accessible via the <strong>Statement</strong> button). This protects both you and the integrity of the dataset.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Can my team share one account?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. Sharing logins is a breach of terms and triggers account suspension. For multi-seat / team access, see the Enterprise waitlist at the top of this page.</p>
-      </details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:14px 18px;border-radius:2px;">
-        <summary style="font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;">Still have questions?</summary>
-        <p style="margin:10px 0 0;font-size:14px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> — we usually respond within 1 working day.</p>
-      </details>
-    </div>
-  </div>
-</section>
 
 <!-- ════════════════════════════════════════════════════════════════
      FINAL CTA
@@ -2378,7 +2318,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
-  · <a href="#credits-faq">Credits FAQ</a>
+  · <a href="javascript:void(0)" onclick="openCreditsFaq()" style="cursor:pointer;">Individual Credits FAQ</a>
   · <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>
 </footer>
 
@@ -2437,7 +2377,7 @@ try {
 const auth = firebase.auth();
 
 // ── STATE ────────────────────────────────────────────────
-const SEARCH_COST   = 20;               // credits per page of 5 results
+const SEARCH_COST   = 50;               // credits per page of 5 results
 const REVEAL_COST   = 100;              // credits to reveal a full company profile
 const SIGNUP_BONUS  = 200;              // granted AFTER manual admin approval
 const MONTHLY_REVEAL_CAP = 50;          // max unique reveals per calendar month per user
@@ -3972,7 +3912,7 @@ async function initiatePayment() {
 
 
 // ── CREDIT STATEMENT ─────────────────────────────────────────────────────────
-function openStatement() {
+async function openStatement() {
   document.getElementById('stmt-modal').classList.add('open');
   document.getElementById('stmt-loading').style.display = 'block';
   document.getElementById('stmt-table-wrap').style.display = 'none';
@@ -3987,27 +3927,70 @@ function openStatement() {
     return;
   }
 
-  // Read transactions from localStorage — works instantly, no server call needed.
-  var rows = _ledgerRead();
+  // Authoritative source: server-side credit_transactions via Edge Function.
+  var rows = [];
+  try {
+    var url = SCRIPT_URL + '?action=getCreditStatement&token=' + encodeURIComponent(token) + '&_t=' + Date.now();
+    var resp = await fetch(url, { cache: 'no-store' });
+    var data = await resp.json();
+    if (data && data.error) throw new Error(data.error);
+    rows = (data && data.statement) || [];
+  } catch (err) {
+    rows = _ledgerRead() || [];
+    document.getElementById('stmt-err').textContent = 'Showing offline copy — could not reach server: ' + (err && err.message || err);
+    document.getElementById('stmt-err').style.display = 'block';
+  }
+
   document.getElementById('stmt-loading').style.display = 'none';
-  if (!rows || rows.length === 0) {
+  if (!rows.length) {
     document.getElementById('stmt-empty').style.display = 'block';
     return;
   }
+
+  var runningBal = (typeof _credits === 'number') ? _credits : null;
   var tbody = document.getElementById('stmt-tbody');
   tbody.innerHTML = rows.map(function(row, i) {
-    var d    = new Date(row.ts);
-    var date = isNaN(d.getTime()) ? row.ts : d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    var ts = row.ts || row.timestamp || row.created_at || '';
+    var d = new Date(ts);
+    var date = isNaN(d.getTime()) ? String(ts).substring(0,10) : d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
     var time = isNaN(d.getTime()) ? '' : d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
-    var desc = _stmtDesc(row);
-    var amt  = row.amount > 0 ? '+' + row.amount : String(row.amount);
-    var amtColor = row.amount > 0 ? '#065f46' : '#991b1b';
-    var bg   = i % 2 === 0 ? '#fff' : '#f9fafb';
+    var amt = Number(row.amount || 0);
+    var amtStr = amt > 0 ? '+' + amt : String(amt);
+    var amtColor = amt > 0 ? '#065f46' : '#991b1b';
+    var reason = row.reason || row.type || '';
+    var meta = row.metadata || {};
+    var desc;
+    if (reason === 'reveal') {
+      desc = 'Company reveal' + (meta.company_name ? ' - ' + escHtml(meta.company_name) : '');
+    } else if (reason === 'search') {
+      var q = meta.query || '';
+      desc = 'Search' + (q ? ' - "' + escHtml(String(q).substring(0,40)) + '"' : '');
+    } else if (reason === 'signup_bonus') {
+      desc = 'Welcome bonus on approval';
+    } else if (reason === 'purchase') {
+      desc = 'Credit purchase' + (meta.currency ? ' (' + meta.currency + ')' : '');
+    } else if (reason === 'admin_grant') {
+      desc = 'Admin grant' + (meta.note ? ' - ' + escHtml(String(meta.note).substring(0,40)) : '');
+    } else if (reason === 'migration') {
+      desc = 'Migration credit (legacy V2)';
+    } else {
+      desc = escHtml(reason || 'transaction');
+    }
+    var bal;
+    if (typeof row.balance_after === 'number') {
+      bal = row.balance_after;
+    } else if (runningBal !== null) {
+      bal = runningBal;
+      runningBal = runningBal - amt;
+    } else {
+      bal = '-';
+    }
+    var bg = i % 2 === 0 ? '#fff' : '#f9fafb';
     return '<tr style="background:' + bg + ';border-bottom:1px solid #f0f0f0;">' +
       '<td style="padding:9px 12px;white-space:nowrap;color:var(--muted);">' + date + '<br><span style="font-size:11px;">' + time + '</span></td>' +
       '<td style="padding:9px 12px;">' + desc + '</td>' +
-      '<td style="padding:9px 12px;text-align:right;font-weight:700;color:' + amtColor + ';font-family:var(--mono);">' + amt + '</td>' +
-      '<td style="padding:9px 12px;text-align:right;font-family:var(--mono);color:var(--ink);">' + Number(row.balance).toLocaleString('en-IN') + '</td>' +
+      '<td style="padding:9px 12px;text-align:right;font-weight:700;color:' + amtColor + ';font-family:var(--mono);">' + amtStr + '</td>' +
+      '<td style="padding:9px 12px;text-align:right;font-family:var(--mono);color:var(--ink);">' + (typeof bal === 'number' ? bal.toLocaleString('en-IN') : bal) + '</td>' +
       '</tr>';
   }).join('');
   document.getElementById('stmt-table-wrap').style.display = 'block';
@@ -4261,7 +4244,6 @@ async function joinWaitlist(ev) {
   var $h = document.getElementById('ecb-hours');
   var $m = document.getElementById('ecb-mins');
   var $s = document.getElementById('ecb-secs');
-  var $close = document.getElementById('ecb-close');
   var timer = null;
   function pad(n){ n=String(n); return n.length<2 ? '0'+n : n; }
   function tick(){
@@ -4283,17 +4265,7 @@ async function joinWaitlist(ev) {
     if ($m) $m.textContent = pad(mins);
     if ($s) $s.textContent = pad(secs);
   }
-  if ($close) {
-    $close.addEventListener('click', function(){
-      banner.classList.add('is-hidden');
-      try { sessionStorage.setItem('gccpros_ecb_dismissed','1'); } catch(e){}
-    });
-    try {
-      if (sessionStorage.getItem('gccpros_ecb_dismissed') === '1') {
-        banner.classList.add('is-hidden');
-      }
-    } catch(e){}
-  }
+  // (ecb-close removed — countdown banner is now persistent)
   tick();
   timer = setInterval(tick, 1000);
 })();
@@ -4331,6 +4303,32 @@ async function joinWaitlist(ev) {
     <div id="signin-modal-body"></div>
   </div>
 </div>
+
+<!-- CREDITS FAQ MODAL (opens from footer link) -->
+<div class="modal-overlay" id="credits-faq-modal" onclick="if(event.target===this)closeCreditsFaq()" style="display:none;">
+  <div class="modal" style="max-width:760px;padding-bottom:14px;position:relative;max-height:88vh;overflow-y:auto;">
+    <button onclick="closeCreditsFaq()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Individual Credits FAQ</h3>
+    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">No subscription. Pay-as-you-go credits.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What do I get for free when I sign up?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">500 credits on approval — enough for 5 full company reveals (100 credits each) or 10 search pages (50 credits each, 5 results per page).</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What does a search cost vs a reveal?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;"><strong>Search:</strong> 50 credits per page of 5 results. <strong>Reveal:</strong> 100 credits per company — unlocks the full 12-field profile.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What's the monthly reveal cap?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">50 unique companies per calendar month (Asia/Kolkata). Re-viewing an already-revealed company is free. Counter resets the 1st of each month.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do credits expire?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No. Credits don't expire and roll over indefinitely while your account stays active.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">How do I buy more credits?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Click <strong>Top up</strong> in the top bar. 4 INR packs (₹200 / ₹500 / ₹950 / ₹2,250) and 4 USD packs ($2.50 / $6 / $11.50 / $27) for 200 / 500 / 1,000 / 2,500 credits. Processed by Razorpay. Credits land instantly.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can I get a refund?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Credits are non-refundable once added. For billing errors or service failures on our side, email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do I earn credits for anything?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes — accepted corrections earn 20 credits. Submit via the "Suggest a correction" button on any reveal card. Suggesting a new GCC can also earn credits (variable).</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Is my activity logged and watermarked?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes. Every reveal is watermarked diagonally with your email + timestamp. Every spend is logged in your account transaction history (Statement button in the top bar).</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can my team share one account?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. For multi-seat access, see the Enterprise waitlist at the top of the page.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Still have questions?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> — usually responds within 1 working day.</p></details>
+    </div>
+  </div>
+</div>
+
+<script>
+function openCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); if(m){m.style.display='flex';m.classList.add('open');} }
+function closeCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
+</script>
 
 </body>
 </html>
