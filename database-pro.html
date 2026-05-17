@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.7-mobile-topbar-fix · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.8-modal-err-hide · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1248,6 +1248,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 .btn-secondary:hover { background: var(--gold-soft); border-color: var(--gold); }
 
 .modal-err {
+  display: none;
   background: #FEF0F0;
   border: 1px solid #F5C4C4;
   border-left: 3px solid var(--danger);
@@ -2788,7 +2789,10 @@ function _showSignInErr(msg) {
   var e = document.getElementById('signin-err');
   var o = document.getElementById('signin-ok');
   if (o) o.style.display = 'none';
-  if (e) { e.textContent = msg; e.style.display = 'block'; }
+  if (e) {
+    e.textContent = msg || '';
+    e.style.display = (msg && String(msg).trim()) ? 'block' : 'none';
+  }
 }
 function _showSignInOk(msg) {
   var e = document.getElementById('signin-err');
