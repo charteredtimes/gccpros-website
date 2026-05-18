@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-18-edge-v5.2-community-otp · Phase B + OTP routed back through Apps Script (Gmail) until Edge Function adds requestOTP/verifyOTP -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-18-edge-v6.1-phase-c · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1734,18 +1734,8 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <button type="submit" style="padding:12px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:3px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;box-shadow:0 2px 8px rgba(201,151,58,0.35);">Join Enterprise waitlist →</button>
     </form>
   </div>
-  <!-- CAPTCHA challenge for the waitlist form (compact dark variant). -->
-  <div style="max-width:1200px;margin:14px auto 0;display:flex;justify-content:center;"><div id="turnstile-waitlist" aria-label="Bot protection"></div></div>
   <div id="wl-msg" style="max-width:1200px;margin:14px auto 0;font-size:13px;color:var(--gold-soft);display:none;text-align:center;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:3px;"></div>
 </section>
-<script>
-  // Mount waitlist Turnstile widget once the page is interactive.
-  (function(){
-    function _go(){ try { mountTurnstile('turnstile-waitlist', { theme: 'dark', action: 'enterprise-waitlist' }); } catch(_){} }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _go);
-    else setTimeout(_go, 50);
-  })();
-</script>
 
 <main class="main">
   <div class="grid">
@@ -2427,6 +2417,23 @@ function resetTurnstile(elId) {
     var wid = window._turnstileWidgets[elId];
     if (wid && window.turnstile && window.turnstile.reset) window.turnstile.reset(wid);
   } catch(_){}
+}
+
+// ── apiFetch — wraps fetch() to auto-attach Firebase ID token in
+//    Authorization: Bearer header. Closes the H2 IDOR finding.
+//    The Edge Function runs in observation mode until IDOR_ENFORCE=true,
+//    so adding the header doesn't break unauthenticated paths.
+async function apiFetch(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  try {
+    var user = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (user && typeof user.getIdToken === 'function') {
+      var idToken = await user.getIdToken(false);  // false = use cached if valid
+      if (idToken) options.headers['Authorization'] = 'Bearer ' + idToken;
+    }
+  } catch(_) { /* no token = unauthenticated call; server decides */ }
+  return fetch(url, options);
 }
 
 // ── BETA ACCESS ──────────────────────────────────────────
@@ -3263,7 +3270,7 @@ async function fetchCreditBalance(retryCount) {
   const token = getToken();
   if (!token) return;
   try {
-    const res = await fetch(SCRIPT_URL + '?action=getCreditBalance&token=' + encodeURIComponent(token));
+    const res = await apiFetch(SCRIPT_URL + '?action=getCreditBalance&token=' + encodeURIComponent(token));
     const data = await res.json();
     if (data.error && data.error !== 'new_user' && !data.newUser) {
       console.warn('Credit fetch failed', data.error);
@@ -3402,7 +3409,7 @@ async function deductCredits(cost, reason) {
   try {
     const url = SCRIPT_URL + '?action=deductCredits&token=' + encodeURIComponent(token) +
                 '&amount=' + cost + '&reason=' + encodeURIComponent(reason || 'search');
-    const res = await fetch(url);
+    const res = await apiFetch(url);
     const data = await res.json();
     if (data.error === 'insufficient_credits') { showInsufficientCredits(data.balance || 0, cost); return false; }
     if (data.error) {
@@ -3748,7 +3755,7 @@ async function fetchAndRenderReveal(name, shouldCharge) {
     const url = SCRIPT_URL + '?action=revealCompany'
       + '&token=' + encodeURIComponent(token)
       + '&company=' + encodeURIComponent(name);
-    const res = await fetch(url);
+    const res = await apiFetch(url);
     const data = await res.json();
     if (data.error === 'cap_reached') { showMonthlyCapReached(); return; }
     if (data.error === 'insufficient_credits') { showInsufficientCredits(data.balance || _credits, REVEAL_COST); return; }
@@ -3880,8 +3887,12 @@ function showLoading() {
     <div class="state-box"><div class="loading-dots"><span></span><span></span><span></span></div><p>Retrieving matches from the GCC database…</p></div>`;
 }
 function showState(title, msg) {
+  // H4 audit fix — escape both arguments before injecting into innerHTML.
+  // Callers occasionally pass server-controlled strings (Edge Function error
+  // text); without escHtml, a malicious or accidental error containing HTML
+  // would be rendered as live DOM.
   document.getElementById('results-wrap').innerHTML = `
-    <div class="state-box"><div class="sb-icon">Q</div><h3>${title}</h3><p>${msg}</p></div>`;
+    <div class="state-box"><div class="sb-icon">Q</div><h3>${escHtml(title)}</h3><p>${escHtml(msg)}</p></div>`;
 }
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -3958,62 +3969,56 @@ async function initiatePayment() {
     errBox.style.display = 'block';
     return;
   }
-  if (!window._rzpKey || window._rzpKey === 'YOUR_RAZORPAY_KEY_ID') {
-    errBox.innerHTML = 'Online payments are being set up. To top up immediately, WhatsApp <strong>+91-85069-76700</strong> - we will credit your account manually within the hour.';
+
+  // C1 fix — server creates the Razorpay Order first. We never trust the
+  // client to declare what was paid; the webhook (with HMAC signature) is
+  // the authoritative source of "credits should be added".
+  const packMap = { 200: '200', 500: '500', 1000: '1000', 2500: '2500' };
+  const pack = packMap[_selectedCredits];
+  if (!pack) {
+    errBox.textContent = 'Unsupported credit pack. Please choose 200, 500, 1000 or 2500.';
     errBox.style.display = 'block';
     return;
   }
 
-  const amountMinor = _selectedCurrency === 'USD'
-    ? Math.round(_selectedPrice * 100)   // cents
-    : Math.round(_selectedPrice * 100);  // paise
+  let order;
+  try {
+    const orderRes = await apiFetch(SCRIPT_URL + '?action=razorpayCreateOrder&token=' + encodeURIComponent(token) + '&pack=' + pack);
+    order = await orderRes.json();
+    if (order.error) throw new Error(order.message || order.error);
+  } catch (err) {
+    errBox.textContent = 'Could not start payment (' + (err.message || 'server error') + '). Please retry, or WhatsApp +91-85069-76700.';
+    errBox.style.display = 'block';
+    return;
+  }
 
   const options = {
-    key: window._rzpKey,
-    amount: amountMinor,
-    currency: _selectedCurrency,
+    key: order.key_id,
+    order_id: order.order_id,        // ← binds the checkout to the server-created order
+    amount: order.amount,
+    currency: order.currency,
     name: 'GCCPROs Intelligence Portal',
     description: _selectedCredits + ' research credits',
     prefill: { email: token },
     theme: { color: '#0A1628' },
     handler: async function(response) {
-      // Close and clear the modal immediately — don't make the user wait
-      // for the backend round-trip before the overlay disappears.
+      // The webhook handles the credit grant server-side. The handler() here
+      // is just user feedback while the webhook fires asynchronously.
       closeBuyCredits();
-      showToast('Payment received — adding ' + _selectedCredits + ' credits…', '#1e40af');
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action: 'creditPaymentSuccess',
-            email: token,
-            credits: _selectedCredits,
-            amount: _selectedPrice,
-            currency: _selectedCurrency,
-            razorpay_payment_id: response.razorpay_payment_id
-          })
-        });
-        const data = await res.json();
-        if (data.error === 'not_approved') {
-          errBox.textContent = 'Payment could not be applied — your account is not yet approved. Please contact admin@gccpros.com with your payment reference: ' + response.razorpay_payment_id;
-          errBox.style.display = 'block';
-          payBtn.disabled = false; payBtn.textContent = 'Contact support';
-          return;
-        }
-        if (data.status === 'ok' || typeof data.balance === 'number') {
-          _credits = (typeof data.balance === 'number') ? data.balance : ((_credits || 0) + _selectedCredits);
-          _ledgerPush('credit', _selectedCredits, _credits, 'Top up · ' + _selectedCredits + ' credits (' + (_selectedCurrency === 'USD' ? '$' : '₹') + _selectedPrice + ')');
-          renderCredits();
-          showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
-        } else {
-          errBox.textContent = 'Payment received but credits not yet reflected. Please refresh in a minute, or contact admin@gccpros.com.';
-          errBox.style.display = 'block';
-        }
-      } catch(err) {
-        _credits = (_credits || 0) + _selectedCredits;
-        renderCredits();
-        showToast('✓ Credits added (pending reconciliation).', '#2D7A4E');
+      showToast('Payment received — credits will appear in a few seconds…', '#1e40af');
+      // Poll the server briefly to refresh the balance once the webhook lands.
+      for (let i = 0; i < 6; i++) {
+        await new Promise(r => setTimeout(r, 1500));
+        try {
+          await fetchCreditBalance(); // will update _credits + render
+          if (typeof _credits === 'number' && _credits >= _selectedCredits) {
+            showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
+            return;
+          }
+        } catch(_) {}
       }
+      // Webhook didn't land in 9s — don't silently grant; tell the user.
+      showToast('Payment captured. If balance isn’t updated in 1 minute, email admin@gccpros.com with reference ' + response.razorpay_payment_id, '#1e40af');
     },
     modal: { ondismiss: function() {} }
   };
@@ -4055,7 +4060,7 @@ async function openStatement() {
   var rows = [];
   try {
     var url = SCRIPT_URL + '?action=getCreditStatement&token=' + encodeURIComponent(token) + '&_t=' + Date.now();
-    var resp = await fetch(url, { cache: 'no-store' });
+    var resp = await apiFetch(url, { cache: 'no-store' });
     var data = await resp.json();
     if (data && data.error) throw new Error(data.error);
     rows = (data && data.statement) || [];
@@ -4328,20 +4333,13 @@ async function joinWaitlist(ev) {
     return;
   }
 
-  // CAPTCHA gate — block submit until the Turnstile challenge is solved.
-  const cfToken = readTurnstileToken('turnstile-waitlist');
-  if (!cfToken) {
-    msg.textContent = 'Please complete the "I’m human" verification below the form, then try again.';
-    msg.style.color = '#FF6B6B';
-    return;
-  }
-
   msg.textContent = 'Submitting...';
   msg.style.color = 'inherit';
   try {
+    // No CAPTCHA on this form by design (low-risk endpoint). Server-side
+    // rate-limits this to 3 submissions/hour/IP — see Edge Function.
     const url = SCRIPT_URL + '?action=enterpriseWaitlist&email=' + encodeURIComponent(email)
       + '&company=' + encodeURIComponent(company)
-      + '&cfToken=' + encodeURIComponent(cfToken)
       + '&_t=' + Date.now();
     const res = await fetch(url, { cache: 'no-store' });
     const data = await res.json().catch(() => ({}));
@@ -4350,24 +4348,24 @@ async function joinWaitlist(ev) {
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
-      resetTurnstile('turnstile-waitlist');
+      // (no widget on this form — nothing to reset)
     } else if (data && data.error === 'missing_fields') {
       msg.textContent = 'Please enter both your work email and company.';
       msg.style.color = '#FF6B6B';
     } else if (data && data.error === 'captcha_failed') {
       msg.textContent = 'CAPTCHA verification failed. Please re-tick the box and submit again.';
       msg.style.color = '#FF6B6B';
-      resetTurnstile('turnstile-waitlist');
+      // (no widget on this form — nothing to reset)
     } else if (data && data.error) {
       msg.textContent = 'Could not submit (' + data.error + '). Please email admin@gccpros.com directly.';
       msg.style.color = '#FF6B6B';
-      resetTurnstile('turnstile-waitlist');
+      // (no widget on this form — nothing to reset)
     } else {
       msg.textContent = '✓ Submission received. If you do not hear back in 3 days, email admin@gccpros.com.';
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
-      resetTurnstile('turnstile-waitlist');
+      // (no widget on this form — nothing to reset)
     }
   } catch(e) {
     msg.textContent = 'Network error. Please email admin@gccpros.com with your details.';
