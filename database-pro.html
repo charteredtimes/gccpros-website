@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-17-edge-v4.8-modal-err-hide · Premium positioning + sample reports + 5 personas + new tariffs (500/50/100) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-18-edge-v5.2-community-otp · Phase B + OTP routed back through Apps Script (Gmail) until Edge Function adds requestOTP/verifyOTP -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1632,6 +1632,11 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+<!-- Cloudflare Turnstile (visible CAPTCHA on signup + enterprise waitlist).
+     Replace TURNSTILE_SITE_KEY constant below with your real key from
+     dash.cloudflare.com → Turnstile → Add Site. The default value is
+     Cloudflare's official test key that always passes — fine for staging. -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileReady" async defer></script>
 </head>
 <body>
 
@@ -1729,8 +1734,18 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <button type="submit" style="padding:12px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:3px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;box-shadow:0 2px 8px rgba(201,151,58,0.35);">Join Enterprise waitlist →</button>
     </form>
   </div>
+  <!-- CAPTCHA challenge for the waitlist form (compact dark variant). -->
+  <div style="max-width:1200px;margin:14px auto 0;display:flex;justify-content:center;"><div id="turnstile-waitlist" aria-label="Bot protection"></div></div>
   <div id="wl-msg" style="max-width:1200px;margin:14px auto 0;font-size:13px;color:var(--gold-soft);display:none;text-align:center;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:3px;"></div>
 </section>
+<script>
+  // Mount waitlist Turnstile widget once the page is interactive.
+  (function(){
+    function _go(){ try { mountTurnstile('turnstile-waitlist', { theme: 'dark', action: 'enterprise-waitlist' }); } catch(_){} }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _go);
+    else setTimeout(_go, 50);
+  })();
+</script>
 
 <main class="main">
   <div class="grid">
@@ -2320,7 +2335,13 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
   · <a href="javascript:void(0)" onclick="openCreditsFaq()" style="cursor:pointer;">Individual Credits FAQ</a>
-  · <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>
+  · <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener">Privacy &amp; DPDP</a>
+  · <a href="https://www.gccpros.com/terms" target="_blank" rel="noopener">Terms</a>
+  · <a href="javascript:void(0)" onclick="openInsiderModal()" style="cursor:pointer;">Join Insider Community</a>
+  · <a href="javascript:void(0)" onclick="openCouncilModal()" style="cursor:pointer;">Leadership Council</a>
+  · <a href="javascript:void(0)" onclick="openManageDataModal()" style="cursor:pointer;">Manage my data</a>
+  · <a href="mailto:admin@gccpros.com?subject=DPDP%20Grievance">Grievance officer</a>
+  <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:6px;">Grievance Officer: Shammi Prabhakar · admin@gccpros.com · response SLA 7 working days (DPDP Act 2023)</div>
 </footer>
 
 <script>
@@ -2346,6 +2367,67 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJasC30oJACYX_mxxPi4s5uk1D6GfiZMImazvkTFDZ-9As76kMws890voHhH3uahkd/exec';
 window._rzpKey = 'rzp_live_SoRqo3siqL38Yf'; // Razorpay Key ID (test)
+
+// ── Cloudflare Turnstile (CAPTCHA) ──────────────────────────────
+// `1x00000000000000000000AA` is Cloudflare's TEST site key that always
+// passes. Replace with your real key from Cloudflare → Turnstile →
+// "Add Site" once your domain is registered there. The matching server
+// secret must be set on the Edge Function as TURNSTILE_SECRET_KEY.
+const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+window._turnstileWidgets = {}; // id -> widgetId returned by turnstile.render()
+
+// Called by Turnstile script when ready. Any pending widget mounts run here.
+window.onTurnstileReady = function() {
+  window._turnstileReady = true;
+  (window._turnstileQueue || []).forEach(function(fn){ try { fn(); } catch(_){} });
+  window._turnstileQueue = [];
+};
+
+// Mount a Turnstile widget into the element with id `elId`. Safe to call
+// before the script is loaded — the call is queued.
+function mountTurnstile(elId, opts) {
+  function _mount(){
+    var el = document.getElementById(elId);
+    if (!el || !window.turnstile) return;
+    // Reset if already rendered into this slot
+    if (window._turnstileWidgets[elId]) {
+      try { window.turnstile.remove(window._turnstileWidgets[elId]); } catch(_){}
+      delete window._turnstileWidgets[elId];
+    }
+    try {
+      window._turnstileWidgets[elId] = window.turnstile.render('#' + elId, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: (opts && opts.theme) || 'light',
+        size:  (opts && opts.size)  || 'normal',
+        action: (opts && opts.action) || 'gcc-form',
+        appearance: 'always',
+      });
+    } catch(_){}
+  }
+  if (window._turnstileReady && window.turnstile) _mount();
+  else { window._turnstileQueue = window._turnstileQueue || []; window._turnstileQueue.push(_mount); }
+}
+
+// Read the response token from a Turnstile widget mounted at elId.
+function readTurnstileToken(elId) {
+  try {
+    var wid = window._turnstileWidgets[elId];
+    if (wid && window.turnstile && window.turnstile.getResponse) {
+      return window.turnstile.getResponse(wid) || '';
+    }
+  } catch(_){}
+  // Fallback: read the hidden input the widget injects
+  var inp = document.querySelector('#' + elId + ' input[name="cf-turnstile-response"]');
+  return inp ? (inp.value || '') : '';
+}
+
+// Reset (clear) a Turnstile widget so the user can re-challenge after an error.
+function resetTurnstile(elId) {
+  try {
+    var wid = window._turnstileWidgets[elId];
+    if (wid && window.turnstile && window.turnstile.reset) window.turnstile.reset(wid);
+  } catch(_){}
+}
 
 // ── BETA ACCESS ──────────────────────────────────────────
 // No hardcoded allow-list. Access is gated entirely by the backend:
@@ -2598,10 +2680,19 @@ function showSignInState(mode) {
           '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="Yes"> Yes, I consent</label>' +
           '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
         '</div>' +
+        // DPDP Act 2023 — express consent block. Separate from the marketing
+        // consent above. Mandatory for account creation.
+        '<div style="margin-top:14px;padding:12px 14px;background:#FBF7ED;border:1px solid var(--gold-soft);border-radius:3px;">' +
+          '<label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45;">' +
+            '<input type="checkbox" id="f-dpdp" required style="margin-top:2px;flex-shrink:0;">' +
+            '<span><strong>Privacy &amp; data consent (required).</strong> I have read the <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:underline;">Privacy Policy</a> and consent to GCCPROs processing the personal data above to (a) verify and approve my account, (b) deliver the research portal, (c) maintain security and statutory records, as described in the policy. I understand I may withdraw this consent at any time via <em>Manage my data</em>. Storage is on Supabase (Singapore). DPDP Act 2023, Section 6.</span>' +
+          '</label>' +
+        '</div>' +
         '<label class="field-label" for="su-pwd" style="margin-top:10px;">Password *</label>' +
         '<input type="password" id="su-pwd" class="search-input" required minlength="12" placeholder="Min 12 chars: upper, lower, number, special" autocomplete="new-password">' +
         '<label class="field-label" for="su-pwd2" style="margin-top:6px;">Confirm password *</label>' +
         '<input type="password" id="su-pwd2" class="search-input" required minlength="12" placeholder="Repeat password" autocomplete="new-password">' +
+        '<div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-signup" aria-label="Bot protection"></div></div>' +
         '<button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Apply for access -> 500 credits</button>' +
       '</form>';
     wrap.innerHTML =
@@ -2616,6 +2707,9 @@ function showSignInState(mode) {
         '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
       '</div>' +
       backToChoose;
+    // Mount Cloudflare Turnstile inside the signup card. Safe to call before
+    // the script loads — mountTurnstile queues until onTurnstileReady fires.
+    setTimeout(function(){ mountTurnstile('turnstile-signup', { action: 'signup' }); }, 50);
     return;
   }
 
@@ -2843,6 +2937,8 @@ async function submitPasswordSignUp(ev) {
   var eligibility = val('f-exp2');
   var consentEl   = document.querySelector('input[name="consent"]:checked');
   var waConsent   = consentEl ? consentEl.value : '';
+  var dpdpEl      = document.getElementById('f-dpdp');
+  var dpdpConsent = !!(dpdpEl && dpdpEl.checked);
   var btn = ev.target.querySelector('button[type="submit"]');
 
   if (!fullName)                         return _showSignInErr('Please enter your full name.');
@@ -2855,12 +2951,20 @@ async function submitPasswordSignUp(ev) {
   if (!domainExp)                        return _showSignInErr('Please select your domain expertise.');
   if (!eligibility)                      return _showSignInErr('Please describe your GCC experience and network strength.');
   if (!waConsent)                        return _showSignInErr('Please choose your WhatsApp consent preference.');
+  if (!dpdpConsent)                      return _showSignInErr('Please tick the Privacy & data consent box to continue. (Required under the DPDP Act 2023.)');
   if (!pwd || pwd.length < 12)           return _showSignInErr('Password must be at least 12 characters.');
   if (!/[a-z]/.test(pwd))                return _showSignInErr('Password must include a lowercase letter.');
   if (!/[A-Z]/.test(pwd))                return _showSignInErr('Password must include an uppercase letter.');
   if (!/[0-9]/.test(pwd))                return _showSignInErr('Password must include a number.');
   if (!/[^a-zA-Z0-9]/.test(pwd))         return _showSignInErr('Password must include a special character (e.g. ! @ # $ %).');
   if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
+
+  // CAPTCHA token (Cloudflare Turnstile). Block submit if the user did not
+  // complete the challenge — guards the requestApproval endpoint downstream.
+  var cfToken = readTurnstileToken('turnstile-signup');
+  if (!cfToken) {
+    return _showSignInErr('Please complete the "I’m human" verification just above the Apply button, then try again.');
+  }
 
   if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
 
@@ -2883,18 +2987,26 @@ async function submitPasswordSignUp(ev) {
     }
   } catch(_) { /* if check fails, proceed - server-side gate will catch dups */ }
 
-  // 2. Stash the form so we can resubmit after OTP verifies
+  // 2. Stash the form so we can resubmit after OTP verifies.
+  //    dpdpConsentTs records the exact moment the Data Principal ticked the
+  //    consent box — auditable proof for DPDP Act compliance.
   window._pendingSignup = {
     email: email, pwd: pwd,
     fullName: fullName, whatsapp: whatsapp, linkedin: linkedin,
     gccsWorked: gccsWorked, currentCity: currentCity, yearsExp: yearsExp,
-    domainExpertise: domainExp, eligibility: eligibility, waConsent: waConsent
+    domainExpertise: domainExp, eligibility: eligibility, waConsent: waConsent,
+    cfToken: cfToken,
+    dpdpConsent: 'Yes',
+    dpdpConsentTs: new Date().toISOString(),
+    dpdpPolicyVersion: '2026-05-18'
   };
 
   // 3. Request OTP
   if (btn) btn.textContent = 'Sending code...';
   try {
-    var otpRes = await fetch(SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(email));
+    // OTP send/verify continues to run through the legacy Apps Script (it has
+    // Gmail access for the email). Everything else goes through the Edge Function.
+    var otpRes = await fetch(APPS_SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(email));
     var otpData = await otpRes.json();
     if (otpData.error) {
       if (btn) { btn.disabled = false; btn.textContent = 'Apply for access -> 500 credits'; }
@@ -2902,6 +3014,9 @@ async function submitPasswordSignUp(ev) {
         _showSignInErr('This email is already registered. Try signing in or use Forgot Password.');
       } else if (otpData.error === 'rate_limited') {
         _showSignInErr(otpData.message || 'Please wait before requesting another code.');
+      } else if (otpData.error === 'captcha_failed') {
+        resetTurnstile('turnstile-signup');
+        _showSignInErr('CAPTCHA verification failed. Please tick the "I’m human" box again and re-submit.');
       } else {
         _showSignInErr('Could not send verification code. Try again.');
       }
@@ -2938,7 +3053,7 @@ async function submitOTP(ev) {
   // 1. Verify OTP
   var signupToken = '';
   try {
-    var vres = await fetch(SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(p.email) + '&code=' + encodeURIComponent(code));
+    var vres = await fetch(APPS_SCRIPT_URL + '?action=verifyOTP&email=' + encodeURIComponent(p.email) + '&code=' + encodeURIComponent(code));
     var vdata = await vres.json();
     if (vdata.error) {
       if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
@@ -2979,11 +3094,14 @@ async function submitOTP(ev) {
     return;
   }
 
-  // 3. Submit profile + signupToken to Apps Script (this creates V2_Accounts row)
+  // 3. Submit profile + signupToken to backend (this creates the users row)
+  //    The Turnstile token captured at sign-up time is forwarded here so the
+  //    Edge Function can server-side verify before writing to the DB.
   try {
     await fetch(SCRIPT_URL + '?action=requestApproval'
       + '&token='     + encodeURIComponent(p.email)
       + '&signupToken=' + encodeURIComponent(signupToken)
+      + '&cfToken='   + encodeURIComponent(p.cfToken || '')
       + '&ua='        + encodeURIComponent(navigator.userAgent || '')
       + '&ref='       + encodeURIComponent(document.referrer || '')
       + '&fullName='  + encodeURIComponent(p.fullName)
@@ -2994,8 +3112,10 @@ async function submitOTP(ev) {
       + '&yearsExp='  + encodeURIComponent(p.yearsExp)
       + '&domainExpertise=' + encodeURIComponent(p.domainExpertise)
       + '&eligibility='+ encodeURIComponent(p.eligibility)
-      + '&waConsent=' + encodeURIComponent(p.waConsent),
-      { mode: 'no-cors' });
+      + '&waConsent=' + encodeURIComponent(p.waConsent)
+      + '&dpdpConsent=' + encodeURIComponent(p.dpdpConsent || 'Yes')
+      + '&dpdpConsentTs=' + encodeURIComponent(p.dpdpConsentTs || new Date().toISOString())
+      + '&dpdpPolicyVersion=' + encodeURIComponent(p.dpdpPolicyVersion || '2026-05-18'));
   } catch (_) {}
 
   window._pendingSignup = null;
@@ -3006,7 +3126,7 @@ async function resendOTP() {
   if (!window._pendingSignup) return;
   _showSignInErr('');
   try {
-    var r = await fetch(SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(window._pendingSignup.email));
+    var r = await fetch(APPS_SCRIPT_URL + '?action=requestOTP&email=' + encodeURIComponent(window._pendingSignup.email));
     var d = await r.json();
     if (d.ok) _showSignInOk('A new code has been sent.');
     else if (d.error === 'rate_limited') _showSignInErr(d.message || 'Please wait 30 seconds before requesting another code.');
@@ -4208,10 +4328,21 @@ async function joinWaitlist(ev) {
     return;
   }
 
+  // CAPTCHA gate — block submit until the Turnstile challenge is solved.
+  const cfToken = readTurnstileToken('turnstile-waitlist');
+  if (!cfToken) {
+    msg.textContent = 'Please complete the "I’m human" verification below the form, then try again.';
+    msg.style.color = '#FF6B6B';
+    return;
+  }
+
   msg.textContent = 'Submitting...';
   msg.style.color = 'inherit';
   try {
-    const url = SCRIPT_URL + '?action=enterpriseWaitlist&email=' + encodeURIComponent(email) + '&company=' + encodeURIComponent(company) + '&_t=' + Date.now();
+    const url = SCRIPT_URL + '?action=enterpriseWaitlist&email=' + encodeURIComponent(email)
+      + '&company=' + encodeURIComponent(company)
+      + '&cfToken=' + encodeURIComponent(cfToken)
+      + '&_t=' + Date.now();
     const res = await fetch(url, { cache: 'no-store' });
     const data = await res.json().catch(() => ({}));
     if (data && data.status === 'ok') {
@@ -4219,21 +4350,29 @@ async function joinWaitlist(ev) {
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
+      resetTurnstile('turnstile-waitlist');
     } else if (data && data.error === 'missing_fields') {
       msg.textContent = 'Please enter both your work email and company.';
       msg.style.color = '#FF6B6B';
+    } else if (data && data.error === 'captcha_failed') {
+      msg.textContent = 'CAPTCHA verification failed. Please re-tick the box and submit again.';
+      msg.style.color = '#FF6B6B';
+      resetTurnstile('turnstile-waitlist');
     } else if (data && data.error) {
       msg.textContent = 'Could not submit (' + data.error + '). Please email admin@gccpros.com directly.';
       msg.style.color = '#FF6B6B';
+      resetTurnstile('turnstile-waitlist');
     } else {
       msg.textContent = '✓ Submission received. If you do not hear back in 3 days, email admin@gccpros.com.';
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
+      resetTurnstile('turnstile-waitlist');
     }
   } catch(e) {
     msg.textContent = 'Network error. Please email admin@gccpros.com with your details.';
     msg.style.color = '#FF6B6B';
+    resetTurnstile('turnstile-waitlist');
   }
 }
 
@@ -4307,6 +4446,307 @@ async function joinWaitlist(ev) {
     <div id="signin-modal-body"></div>
   </div>
 </div>
+
+<!-- MANAGE MY DATA MODAL — DPDP Act Section 11-14 Data Principal Rights -->
+<div class="modal-overlay" id="manage-data-modal" onclick="if(event.target===this)closeManageDataModal()" style="display:none;">
+  <div class="modal" style="max-width:560px;padding-bottom:14px;position:relative;max-height:88vh;overflow-y:auto;">
+    <button onclick="closeManageDataModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Manage my data</h3>
+    <p class="modal-sub" style="margin:0 0 14px;color:var(--muted);font-size:13px;">Your statutory rights as a Data Principal under the Digital Personal Data Protection Act, 2023. All requests are honoured within 7 working days.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="dprRequest('access')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:var(--ink);font-size:14px;">Email me a copy of my data</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to access (Sec. 11). We'll send a structured export of your profile, credit ledger, search and reveal history to the email on file.</div>
+      </button>
+      <button onclick="dprRequest('correction')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:var(--ink);font-size:14px;">Correct or update my data</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to correction (Sec. 12). Opens an email pre-filled with your account ID — describe what to change.</div>
+      </button>
+      <button onclick="dprRequest('withdraw')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:var(--ink);font-size:14px;">Withdraw marketing consent</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to withdraw consent (Sec. 6). We'll stop sending you GCC updates on WhatsApp / email. Your account stays active.</div>
+      </button>
+      <button onclick="dprRequest('erasure')" style="text-align:left;padding:14px 16px;background:#FBF3F3;border:1px solid #E8C8C8;border-left:3px solid #C53030;border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:#C53030;font-size:14px;">Delete my account</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to erasure (Sec. 12). Closes your account, deletes personal data within 30 days, retains only what Indian tax law requires (8 years for paid-credit transactions, anonymised).</div>
+      </button>
+      <button onclick="dprRequest('nominate')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:var(--ink);font-size:14px;">Nominate another person</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to nominate (Sec. 14). Authorise another individual to exercise your rights in case of death or incapacity.</div>
+      </button>
+      <button onclick="dprRequest('grievance')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
+        <div style="font-weight:700;color:var(--ink);font-size:14px;">File a grievance</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to grievance redressal (Sec. 13). Contact our Grievance Officer (Shammi Prabhakar). 48-hour acknowledgement, 7-day resolution SLA.</div>
+      </button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin:16px 0 0;line-height:1.5;">Full policy: <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:underline;">Privacy &amp; DPDP</a>. If you remain dissatisfied, you may escalate to the Data Protection Board of India (Sec. 18).</p>
+  </div>
+</div>
+
+<script>
+function openManageDataModal(){ var m=document.getElementById('manage-data-modal'); if(m){m.style.display='flex';m.classList.add('open');} }
+function closeManageDataModal(){ var m=document.getElementById('manage-data-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
+// Open an email composer pre-filled with the request type + the user's email.
+// Server-side handling: any of these requests are received by admin@gccpros.com,
+// where the grievance officer logs and acts on them within the SLA.
+function dprRequest(kind){
+  var who = (window._currentEmail || (typeof getToken === 'function' ? getToken() : '') || 'unknown@unknown').toLowerCase();
+  var subjects = {
+    access:    'DPDP Access Request — email me my data',
+    correction:'DPDP Correction Request',
+    withdraw:  'DPDP Withdraw Marketing Consent',
+    erasure:   'DPDP Erasure Request — delete my account',
+    nominate:  'DPDP Nomination Request',
+    grievance: 'DPDP Grievance'
+  };
+  var bodies = {
+    access:    'Hi GCCPROs team,\n\nPlease send me a structured export of all personal data you hold about my account ('+who+'), including profile fields, credit ledger, search history, reveal history, and the list of third-party processors who have received my data.\n\nI understand the response SLA is 7 working days.\n\nThank you.',
+    correction:'Hi GCCPROs team,\n\nPlease correct the following data on my account ('+who+'):\n\n[describe what is wrong and what it should be]\n\nThank you.',
+    withdraw:  'Hi GCCPROs team,\n\nI am withdrawing my consent to receive marketing communications (WhatsApp / email GCC updates). My account is '+who+'. My main account access should remain active.\n\nThank you.',
+    erasure:   'Hi GCCPROs team,\n\nI am exercising my right to erasure under Sec. 12 of the DPDP Act. Please delete the personal data associated with my account ('+who+') within 30 days, retaining only what Indian tax law strictly requires (in anonymised form).\n\nThank you.',
+    nominate:  'Hi GCCPROs team,\n\nI wish to nominate the following individual to exercise my rights under the DPDP Act in the event of my death or incapacity:\n\nName:\nRelationship:\nEmail:\nMobile:\n\nMy account: '+who+'\n\nThank you.',
+    grievance: 'Hi Shammi (Grievance Officer),\n\nI wish to file a grievance regarding the handling of my personal data on the GCCPROs portal. My account is '+who+'.\n\nGrievance:\n\n[describe the issue]\n\nExpected resolution:\n\nThank you.'
+  };
+  var subj = encodeURIComponent(subjects[kind] || 'DPDP Request');
+  var body = encodeURIComponent(bodies[kind] || ('Account: '+who));
+  window.location.href = 'mailto:admin@gccpros.com?subject=' + subj + '&body=' + body;
+}
+</script>
+
+<!-- INSIDER COMMUNITY APPLICATION MODAL -->
+<div class="modal-overlay" id="insider-modal" onclick="if(event.target===this)closeInsiderModal()" style="display:none;">
+  <div class="modal" style="max-width:620px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeInsiderModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Join the GCC Insider Community</h3>
+    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">Curated group of working-level GCC practitioners who contribute intel, corrections, and on-the-ground signals. Approved Insiders get credit bonuses, early access to publications, and named credit on contributions.</p>
+    <div id="insider-result" style="display:none;padding:12px 14px;border-radius:3px;margin-bottom:14px;font-size:13px;"></div>
+    <form id="insider-form" onsubmit="submitInsider(event)" style="display:flex;flex-direction:column;gap:8px;">
+      <label class="field-label">Full name *</label>
+      <input type="text" id="ins-name" class="search-input" required maxlength="200" placeholder="e.g. Aanya Sharma">
+      <label class="field-label" style="margin-top:6px;">Work email *</label>
+      <input type="email" id="ins-email" class="search-input" required placeholder="you@company.com">
+      <label class="field-label" style="margin-top:6px;">WhatsApp</label>
+      <input type="tel" id="ins-wa" class="search-input" placeholder="+91 98765 43210">
+      <label class="field-label" style="margin-top:6px;">LinkedIn profile *</label>
+      <input type="url" id="ins-li" class="search-input" required placeholder="https://linkedin.com/in/yourprofile">
+      <label class="field-label" style="margin-top:6px;">Current GCC / employer *</label>
+      <input type="text" id="ins-company" class="search-input" required placeholder="e.g. NielsenIQ India">
+      <label class="field-label" style="margin-top:6px;">Role / title *</label>
+      <input type="text" id="ins-role" class="search-input" required placeholder="e.g. Senior Manager, Analytics">
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <div style="flex:1 1 200px;"><label class="field-label">Years in GCCs</label>
+          <select id="ins-yrs" class="field-select">
+            <option value="">Select</option>
+            <option>2-5 years</option><option>5-10 years</option><option>10-15 years</option><option>15+ years</option>
+          </select>
+        </div>
+        <div style="flex:1 1 200px;"><label class="field-label">City</label>
+          <input type="text" id="ins-city" class="search-input" placeholder="e.g. Pune">
+        </div>
+      </div>
+      <label class="field-label" style="margin-top:6px;">Domain expertise</label>
+      <select id="ins-domain" class="field-select">
+        <option value="">Select your domain</option>
+        <option>Analytics &amp; Data Science</option><option>Technology &amp; Engineering</option>
+        <option>Finance &amp; Accounting</option><option>Operations &amp; Supply Chain</option>
+        <option>HR &amp; Talent</option><option>Legal &amp; Compliance</option>
+        <option>Marketing &amp; Strategy</option><option>Product Management</option><option>Other</option>
+      </select>
+      <label class="field-label" style="margin-top:6px;">What you'd like to contribute *</label>
+      <textarea id="ins-contribute" class="search-input" required maxlength="1500" placeholder="e.g. Quarterly intel on hiring trends in BFSI GCCs in Pune; corrections to NielsenIQ profile…" style="min-height:80px;font-family:Inter,sans-serif;"></textarea>
+      <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-insider" aria-label="Bot protection"></div></div>
+      <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45;margin-top:10px;">
+        <input type="checkbox" id="ins-dpdp" required style="margin-top:2px;flex-shrink:0;">
+        <span>I consent to GCCPROs processing the data above to review my Insider Community application, per the <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:underline;">Privacy Policy</a> (DPDP Act 2023). I may withdraw via Manage my data.</span>
+      </label>
+      <button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Apply to the Insider Community →</button>
+    </form>
+  </div>
+</div>
+
+<!-- LEADERSHIP COUNCIL APPLICATION MODAL -->
+<div class="modal-overlay" id="council-modal" onclick="if(event.target===this)closeCouncilModal()" style="display:none;">
+  <div class="modal" style="max-width:680px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeCouncilModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Leadership Council</h3>
+    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">A small, curated advisory body of senior GCC operators — Heads of GCC, Country MDs, ex-CXOs, board advisors. Founder reviews each application personally. Self-nomination welcome; we also accept named nominations.</p>
+    <div id="council-result" style="display:none;padding:12px 14px;border-radius:3px;margin-bottom:14px;font-size:13px;"></div>
+    <form id="council-form" onsubmit="submitCouncil(event)" style="display:flex;flex-direction:column;gap:8px;">
+      <label class="field-label">Full name *</label>
+      <input type="text" id="cn-name" class="search-input" required maxlength="200">
+      <label class="field-label" style="margin-top:6px;">Work email *</label>
+      <input type="email" id="cn-email" class="search-input" required placeholder="you@company.com">
+      <label class="field-label" style="margin-top:6px;">WhatsApp</label>
+      <input type="tel" id="cn-wa" class="search-input">
+      <label class="field-label" style="margin-top:6px;">LinkedIn profile *</label>
+      <input type="url" id="cn-li" class="search-input" required placeholder="https://linkedin.com/in/yourprofile">
+      <label class="field-label" style="margin-top:6px;">Current company *</label>
+      <input type="text" id="cn-company" class="search-input" required>
+      <label class="field-label" style="margin-top:6px;">Current title *</label>
+      <input type="text" id="cn-title" class="search-input" required placeholder="e.g. Managing Director, India">
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <div style="flex:1 1 240px;"><label class="field-label">Seniority band *</label>
+          <select id="cn-seniority" class="field-select" required>
+            <option value="">Select</option>
+            <option>Head of GCC / Site Leader</option>
+            <option>MD / Country Head</option>
+            <option>CXO (CFO / COO / CTO / CHRO)</option>
+            <option>VP / SVP / GVP</option>
+            <option>Board member / Advisor</option>
+          </select>
+        </div>
+        <div style="flex:1 1 200px;"><label class="field-label">Years in senior GCC leadership</label>
+          <select id="cn-yrsr" class="field-select">
+            <option value="">Select</option>
+            <option>5-10 years</option><option>10-15 years</option><option>15-20 years</option><option>20+ years</option>
+          </select>
+        </div>
+      </div>
+      <label class="field-label" style="margin-top:6px;">GCCs led or advised</label>
+      <input type="text" id="cn-gccs" class="search-input" placeholder="e.g. NielsenIQ, Optum, Cargill (3)">
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <div style="flex:1 1 220px;"><label class="field-label">Nomination type *</label>
+          <select id="cn-nomtype" class="field-select" required onchange="document.getElementById('cn-nom-fields').style.display=this.value==='nominated_by'?'flex':'none';">
+            <option value="self">Self-nomination</option>
+            <option value="nominated_by">Nominated by someone</option>
+          </select>
+        </div>
+        <div id="cn-nom-fields" style="display:none;gap:10px;flex:2 1 320px;flex-wrap:wrap;">
+          <input type="text" id="cn-nomname" class="search-input" placeholder="Nominator's full name" style="flex:1 1 140px;">
+          <input type="email" id="cn-nomemail" class="search-input" placeholder="Nominator's email" style="flex:1 1 140px;">
+        </div>
+      </div>
+      <label class="field-label" style="margin-top:6px;">Primary contribution area *</label>
+      <select id="cn-contrib" class="field-select" required>
+        <option value="">Select</option>
+        <option>Advisory (strategic input on roadmap)</option>
+        <option>Events &amp; speaking</option>
+        <option>Publications &amp; thought leadership</option>
+        <option>Mentorship of GCC leaders</option>
+        <option>Investment / venture introductions</option>
+      </select>
+      <label class="field-label" style="margin-top:6px;">Why you want to join *</label>
+      <textarea id="cn-why" class="search-input" required maxlength="2000" placeholder="In 3-5 sentences, describe how you'd contribute and what you'd want in return…" style="min-height:90px;font-family:Inter,sans-serif;"></textarea>
+      <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-council" aria-label="Bot protection"></div></div>
+      <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45;margin-top:10px;">
+        <input type="checkbox" id="cn-dpdp" required style="margin-top:2px;flex-shrink:0;">
+        <span>I consent to GCCPROs processing the data above to review my Leadership Council application, per the <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener" style="color:var(--gold-deep);text-decoration:underline;">Privacy Policy</a> (DPDP Act 2023). I may withdraw via Manage my data.</span>
+      </label>
+      <button type="submit" class="search-btn" style="justify-content:center;margin-top:10px;background:var(--gold);color:var(--ink);border:none;font-weight:700;">Submit Council application →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openInsiderModal(){
+  var m=document.getElementById('insider-modal'); if(!m) return;
+  m.style.display='flex'; m.classList.add('open');
+  setTimeout(function(){ mountTurnstile('turnstile-insider', { action: 'insider-apply' }); }, 60);
+}
+function closeInsiderModal(){ var m=document.getElementById('insider-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
+function openCouncilModal(){
+  var m=document.getElementById('council-modal'); if(!m) return;
+  m.style.display='flex'; m.classList.add('open');
+  setTimeout(function(){ mountTurnstile('turnstile-council', { action: 'council-apply' }); }, 60);
+}
+function closeCouncilModal(){ var m=document.getElementById('council-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
+
+function _appResult(boxId, msg, ok){
+  var b=document.getElementById(boxId);
+  if(!b) return;
+  b.style.display='block';
+  b.style.background = ok ? '#E6F4EA' : '#FDECEA';
+  b.style.color      = ok ? '#1E7E34' : '#C53030';
+  b.textContent = msg;
+}
+
+async function submitInsider(ev){
+  ev.preventDefault();
+  function v(id){ var e=document.getElementById(id); return e ? (e.value||'').trim() : ''; }
+  var cfToken = readTurnstileToken('turnstile-insider');
+  if(!cfToken){ _appResult('insider-result','Please complete the "I’m human" verification.',false); return; }
+  if(!document.getElementById('ins-dpdp').checked){ _appResult('insider-result','Please tick the consent box (required by DPDP Act).',false); return; }
+  var btn=ev.target.querySelector('button[type="submit"]'); if(btn){btn.disabled=true; btn.textContent='Submitting…';}
+  try {
+    var url = SCRIPT_URL + '?action=insiderApply'
+      + '&fullName=' + encodeURIComponent(v('ins-name'))
+      + '&email='    + encodeURIComponent(v('ins-email').toLowerCase())
+      + '&whatsapp=' + encodeURIComponent(v('ins-wa'))
+      + '&linkedin=' + encodeURIComponent(v('ins-li'))
+      + '&company='  + encodeURIComponent(v('ins-company'))
+      + '&role='     + encodeURIComponent(v('ins-role'))
+      + '&yearsInGcc=' + encodeURIComponent(v('ins-yrs'))
+      + '&domain='   + encodeURIComponent(v('ins-domain'))
+      + '&city='     + encodeURIComponent(v('ins-city'))
+      + '&contribute=' + encodeURIComponent(v('ins-contribute'))
+      + '&cfToken='  + encodeURIComponent(cfToken)
+      + '&dpdpConsent=Yes'
+      + '&ua=' + encodeURIComponent(navigator.userAgent || '');
+    var r = await fetch(url, { cache:'no-store' });
+    var j = await r.json().catch(()=>({}));
+    if(j.status==='ok'){
+      _appResult('insider-result','✓ '+ (j.message || 'Application received.'), true);
+      document.getElementById('insider-form').reset();
+      resetTurnstile('turnstile-insider');
+    } else if(j.error==='captcha_failed'){
+      _appResult('insider-result','CAPTCHA verification failed. Re-tick the box and resubmit.', false);
+      resetTurnstile('turnstile-insider');
+    } else {
+      _appResult('insider-result','Could not submit ('+(j.error||'unknown')+'). Please email admin@gccpros.com.', false);
+    }
+  } catch(e){
+    _appResult('insider-result','Network error. Please email admin@gccpros.com.', false);
+  } finally {
+    if(btn){btn.disabled=false; btn.textContent='Apply to the Insider Community →';}
+  }
+}
+
+async function submitCouncil(ev){
+  ev.preventDefault();
+  function v(id){ var e=document.getElementById(id); return e ? (e.value||'').trim() : ''; }
+  var cfToken = readTurnstileToken('turnstile-council');
+  if(!cfToken){ _appResult('council-result','Please complete the "I’m human" verification.',false); return; }
+  if(!document.getElementById('cn-dpdp').checked){ _appResult('council-result','Please tick the consent box (required by DPDP Act).',false); return; }
+  var btn=ev.target.querySelector('button[type="submit"]'); if(btn){btn.disabled=true; btn.textContent='Submitting…';}
+  try {
+    var url = SCRIPT_URL + '?action=councilApply'
+      + '&fullName=' + encodeURIComponent(v('cn-name'))
+      + '&email='    + encodeURIComponent(v('cn-email').toLowerCase())
+      + '&whatsapp=' + encodeURIComponent(v('cn-wa'))
+      + '&linkedin=' + encodeURIComponent(v('cn-li'))
+      + '&company='  + encodeURIComponent(v('cn-company'))
+      + '&title='    + encodeURIComponent(v('cn-title'))
+      + '&seniority='+ encodeURIComponent(v('cn-seniority'))
+      + '&yearsSenior=' + encodeURIComponent(v('cn-yrsr'))
+      + '&gccsLed='  + encodeURIComponent(v('cn-gccs'))
+      + '&nominationType=' + encodeURIComponent(v('cn-nomtype'))
+      + '&nominatorName='  + encodeURIComponent(v('cn-nomname'))
+      + '&nominatorEmail=' + encodeURIComponent(v('cn-nomemail'))
+      + '&contribution=' + encodeURIComponent(v('cn-contrib'))
+      + '&whyJoin=' + encodeURIComponent(v('cn-why'))
+      + '&cfToken='  + encodeURIComponent(cfToken)
+      + '&dpdpConsent=Yes'
+      + '&ua=' + encodeURIComponent(navigator.userAgent || '');
+    var r = await fetch(url, { cache:'no-store' });
+    var j = await r.json().catch(()=>({}));
+    if(j.status==='ok'){
+      _appResult('council-result','✓ '+ (j.message || 'Application received.'), true);
+      document.getElementById('council-form').reset();
+      document.getElementById('cn-nom-fields').style.display='none';
+      resetTurnstile('turnstile-council');
+    } else if(j.error==='captcha_failed'){
+      _appResult('council-result','CAPTCHA verification failed. Re-tick the box and resubmit.', false);
+      resetTurnstile('turnstile-council');
+    } else {
+      _appResult('council-result','Could not submit ('+(j.error||'unknown')+'). Please email admin@gccpros.com.', false);
+    }
+  } catch(e){
+    _appResult('council-result','Network error. Please email admin@gccpros.com.', false);
+  } finally {
+    if(btn){btn.disabled=false; btn.textContent='Submit Council application →';}
+  }
+}
+</script>
 
 <!-- CREDITS FAQ MODAL (opens from footer link) -->
 <div class="modal-overlay" id="credits-faq-modal" onclick="if(event.target===this)closeCreditsFaq()" style="display:none;">
