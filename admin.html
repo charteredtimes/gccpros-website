@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin Console · build: supabase-2026-05-17-admin-v3 · submissions detail + diff view -->
+<!-- GCCPROs Admin Console · build: supabase-2026-05-18-admin-v5-phase-c · admin key moved from URL param to X-Admin-Key header (C3 audit fix) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -88,6 +88,8 @@
       <button class="tab" onclick="showTab(event,'credits')">Grant credits</button>
       <button class="tab" onclick="showTab(event,'history')">User history</button>
       <button class="tab" onclick="showTab(event,'submissions')">Submissions</button>
+      <button class="tab" onclick="showTab(event,'insider')">Insider Community</button>
+      <button class="tab" onclick="showTab(event,'council')">Leadership Council</button>
       <button class="tab" onclick="showTab(event,'security')">Security</button>
     </div>
 
@@ -170,6 +172,44 @@
       </div>
     </div>
 
+    <!-- INSIDER COMMUNITY TAB -->
+    <div id="tab-insider" class="panel">
+      <div class="card">
+        <h2>Insider Community applications</h2>
+        <p class="muted">Working-level GCC professionals who want to contribute intel + corrections + on-the-ground signals. Approved Insiders get credit bonuses and early access to publications.</p>
+        <div class="filter-row">
+          <select id="insider-status" onchange="loadApplications('insider')">
+            <option value="pending" selected>Pending only</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="">All</option>
+          </select>
+          <button onclick="loadApplications('insider')">↻ Refresh</button>
+          <button class="primary" onclick="exportApplicationsCsv('insider')">⬇ Export CSV</button>
+        </div>
+        <div id="insider-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- LEADERSHIP COUNCIL TAB -->
+    <div id="tab-council" class="panel">
+      <div class="card">
+        <h2>Leadership Council applications</h2>
+        <p class="muted">Senior advisory body — GCC Heads, Country MDs, ex-CXOs, board advisors. Smaller, curated, by-invitation-or-application.</p>
+        <div class="filter-row">
+          <select id="council-status" onchange="loadApplications('council')">
+            <option value="pending" selected>Pending only</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="">All</option>
+          </select>
+          <button onclick="loadApplications('council')">↻ Refresh</button>
+          <button class="primary" onclick="exportApplicationsCsv('council')">⬇ Export CSV</button>
+        </div>
+        <div id="council-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
     <!-- SECURITY TAB -->
     <div id="tab-security" class="panel">
       <div class="card">
@@ -207,6 +247,18 @@
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 let ADMIN_KEY = '';
 let ALL_USERS = [];
+
+// C3 audit fix — never put the admin key in a URL. URL params leak into
+// browser history, proxy logs, Referer headers, and Supabase platform logs.
+// adminFetch() sends the key as X-Admin-Key. The Edge Function still accepts
+// the old ?key= URL param for one release as a backward-compat fallback.
+function adminFetch(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  if (ADMIN_KEY) options.headers['X-Admin-Key'] = ADMIN_KEY;
+  if (!('cache' in options)) options.cache = 'no-store';
+  return fetch(url, options);
+}
 
 function toast(msg, isErr) {
   const t = document.createElement('div');
@@ -254,7 +306,7 @@ function showTab(ev, name) {
 
 async function loadUsers(initial) {
   try {
-    const r = await fetch(SCRIPT_URL + '?action=adminHealth&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const r = await adminFetch(SCRIPT_URL + '?action=adminHealth&_t=' + Date.now());
     const j = await r.json();
     if (j.error) {
       toast(j.error === 'unauthorized' ? 'Invalid admin key' : j.error, true);
@@ -466,9 +518,9 @@ async function setStatus(email, action) {
     if (reason === null) return;
   }
   try {
-    const r = await fetch(SCRIPT_URL + '?action=' + ep + '&key=' + encodeURIComponent(ADMIN_KEY) +
+    const r = await adminFetch(SCRIPT_URL + '?action=' + ep +
                          '&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason) +
-                         '&_t=' + Date.now(), { cache: 'no-store' });
+                         '&_t=' + Date.now());
     const j = await r.json();
     if (j.status === 'ok') { toast(j.message || (action + ' OK')); loadUsers(); }
     else toast(j.message || j.error || 'Failed', true);
@@ -505,9 +557,9 @@ async function grantCredits() {
   box.innerHTML = '<div id="result-box">Granting…</div>';
 
   try {
-    const r = await fetch(SCRIPT_URL + '?action=adminGrant&key=' + encodeURIComponent(ADMIN_KEY) +
+    const r = await adminFetch(SCRIPT_URL + '?action=adminGrant' +
                          '&email=' + encodeURIComponent(email) + '&credits=' + credits +
-                         '&note=' + encodeURIComponent(note) + '&_t=' + Date.now(), { cache: 'no-store' });
+                         '&note=' + encodeURIComponent(note) + '&_t=' + Date.now());
     const j = await r.json();
     if (j.status === 'ok') {
       toast(j.message);
@@ -522,8 +574,8 @@ async function grantCredits() {
 }
 
 async function fetchHistory(email) {
-  const r = await fetch(SCRIPT_URL + '?action=adminUserHistory&key=' + encodeURIComponent(ADMIN_KEY) +
-                       '&email=' + encodeURIComponent(email) + '&_t=' + Date.now(), { cache: 'no-store' });
+  const r = await adminFetch(SCRIPT_URL + '?action=adminUserHistory' +
+                       '&email=' + encodeURIComponent(email) + '&_t=' + Date.now());
   return await r.json();
 }
 
@@ -581,14 +633,106 @@ async function downloadHistory() {
 
 let SUBMISSIONS = [];
 let SUBMISSIONS_KIND = '';
+const APPS = { insider: [], council: [] };
+
+// ─── INSIDER + COUNCIL APPLICATION REVIEW ─────────────────────────────
+async function loadApplications(kind) {
+  const status = document.getElementById(kind + '-status').value;
+  const box = document.getElementById(kind + '-box');
+  box.innerHTML = '<p class="muted" style="padding:18px;">Loading…</p>';
+  try {
+    const url = SCRIPT_URL + '?action=adminApplications'
+      + '&kind=' + encodeURIComponent(kind)
+      + (status ? '&status=' + encodeURIComponent(status) : '')
+      + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); box.innerHTML = '<p class="muted" style="padding:18px;">' + esc(j.error) + '</p>'; return; }
+    APPS[kind] = j.rows || [];
+    renderApplications(kind);
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+  }
+}
+
+function renderApplications(kind) {
+  const rows = APPS[kind];
+  const box = document.getElementById(kind + '-box');
+  if (!rows || !rows.length) { box.innerHTML = '<p class="muted" style="padding:18px;">No applications match.</p>'; return; }
+  const cols = (kind === 'insider')
+    ? [['email','Email'],['full_name','Name'],['city','City'],['current_company','Company'],['role_title','Role'],['years_in_gcc','Yrs'],['domain_expertise','Domain'],['status','Status']]
+    : [['email','Email'],['full_name','Name'],['current_company','Company'],['current_title','Title'],['seniority_band','Band'],['years_senior','Yrs sr.'],['contribution_area','Contribution'],['status','Status']];
+  let html = '<table style="width:100%;"><thead><tr>' +
+    cols.map(c => '<th>' + c[1] + '</th>').join('') +
+    '<th>Submitted</th><th>Actions</th></tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    html += '<tr style="cursor:pointer;" onclick="if(event.target.tagName!==\'BUTTON\')showAppDetails(\'' + kind + '\',' + i + ')">';
+    cols.forEach(c => {
+      const v = r[c[0]] || '';
+      if (c[0] === 'status') html += '<td><span class="badge badge-' + (v||'pending') + '">' + esc(v) + '</span></td>';
+      else html += '<td>' + esc(String(v)) + '</td>';
+    });
+    html += '<td>' + (r.created_at ? fmtDate(r.created_at) : '') + '</td>';
+    html += '<td>'
+      + '<button onclick="decideApp(\'' + kind + '\',\'' + r.id + '\',\'approved\')">✓ Approve</button> '
+      + '<button onclick="decideApp(\'' + kind + '\',\'' + r.id + '\',\'rejected\')">✗ Reject</button> '
+      + '<a href="mailto:' + esc(r.email) + '?subject=GCCPROs%20' + (kind === 'insider' ? 'Insider%20Community' : 'Leadership%20Council') + '" style="margin-left:4px;">✉</a>'
+      + '</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+async function decideApp(kind, id, decision) {
+  const notes = prompt('Optional decision note for the audit trail:', '') || '';
+  try {
+    const url = SCRIPT_URL + '?action=adminAppDecision'
+      + '&kind=' + encodeURIComponent(kind)
+      + '&id=' + encodeURIComponent(id)
+      + '&decision=' + encodeURIComponent(decision)
+      + '&notes=' + encodeURIComponent(notes)
+      + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); return; }
+    toast('Marked as ' + decision);
+    loadApplications(kind);
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function showAppDetails(kind, idx) {
+  const r = APPS[kind][idx]; if (!r) return;
+  const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
+    .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:var(--muted);font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;">' + esc(String(r[k])) + '</div></div>').join('');
+  const w = window.open('', '_blank', 'width=720,height=860');
+  w.document.write('<html><head><title>' + (kind === 'insider' ? 'Insider' : 'Council') + ' — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;color:#1c1c1c;} h2{margin:0 0 12px;}</style></head><body><h2>' + (kind === 'insider' ? 'Insider Community' : 'Leadership Council') + ' application</h2>' + html + '</body></html>');
+}
+
+function exportApplicationsCsv(kind) {
+  const rows = APPS[kind]; if (!rows || !rows.length) return toast('Nothing to export', true);
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(','), ...rows.map(r => headers.map(h => {
+    const v = (r[h] == null) ? '' : String(r[h]);
+    return '"' + v.replace(/"/g, '""') + '"';
+  }).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gccpros_' + kind + '_apps_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Exported ' + rows.length + ' rows');
+}
+
 
 async function loadSubmissions(kind) {
   SUBMISSIONS_KIND = kind;
   const box = document.getElementById('submissions-box');
   box.innerHTML = '<div id="result-box">Loading ' + kind + '…</div>';
   try {
-    const r = await fetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) +
-                         '&key=' + encodeURIComponent(ADMIN_KEY) + '&_t=' + Date.now(), { cache: 'no-store' });
+    const r = await adminFetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) +
+                         '&_t=' + Date.now());
     const j = await r.json();
     if (j.error) { box.innerHTML = '<div id="result-box" class="err">' + esc(j.error) + '</div>'; return; }
     SUBMISSIONS = j.rows || [];
