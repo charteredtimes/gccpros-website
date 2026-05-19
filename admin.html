@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin Console · build: supabase-2026-05-18-admin-v5-phase-c · admin key moved from URL param to X-Admin-Key header (C3 audit fix) -->
+<!-- GCCPROs Admin Console · build: supabase-2026-05-19-admin-v6-opps-tabs · adds 4 Opportunities tabs (Jobs · Applications · Partners · Referrals) — parallel to Apps Script, never touches it -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -90,6 +90,10 @@
       <button class="tab" onclick="showTab(event,'submissions')">Submissions</button>
       <button class="tab" onclick="showTab(event,'insider')">Insider Community</button>
       <button class="tab" onclick="showTab(event,'council')">Leadership Council</button>
+      <button class="tab" onclick="showTab(event,'oppsJobs')" style="border-left:2px solid var(--gold,#C9973A);padding-left:10px;">Opps · Jobs</button>
+      <button class="tab" onclick="showTab(event,'oppsApps')">Opps · Applications</button>
+      <button class="tab" onclick="showTab(event,'oppsPartners')">Opps · Partners</button>
+      <button class="tab" onclick="showTab(event,'oppsReferrals')">Opps · Referrals</button>
       <button class="tab" onclick="showTab(event,'security')">Security</button>
     </div>
 
@@ -207,6 +211,125 @@
           <button class="primary" onclick="exportApplicationsCsv('council')">⬇ Export CSV</button>
         </div>
         <div id="council-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         OPPORTUNITIES — JOBS · APPLICATIONS · PARTNERS · REFERRALS
+         All four tabs talk to Supabase Edge Function endpoints prefixed
+         `opps*` (v7+). The Apps Script-backed opportunities.html is NOT
+         affected — these tabs operate on the new opps_* Supabase tables
+         that exist in parallel. Cutover happens at Phase D-6.
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- OPPS JOBS TAB -->
+    <div id="tab-oppsJobs" class="panel">
+      <div class="card">
+        <h2>Opportunities — Jobs</h2>
+        <p class="muted">Job postings stored in <code>opps_jobs</code>. These are the new Supabase-backed listings (parallel to the Apps Script Jobs sheet which still powers the live <code>opportunities.html</code>).</p>
+        <div class="filter-row">
+          <select id="oppsJobs-status" onchange="oppsLoadJobs()">
+            <option value="active" selected>Active only</option>
+            <option value="paused">Paused</option>
+            <option value="closed">Closed</option>
+            <option value="draft">Draft</option>
+            <option value="">All</option>
+          </select>
+          <button onclick="oppsLoadJobs()">↻ Refresh</button>
+          <button class="primary" onclick="oppsOpenJobEditor()">+ New job</button>
+          <button onclick="oppsExportCsv('oppsJobs', OPPS_JOBS)">⬇ Export CSV</button>
+        </div>
+        <div id="oppsJobs-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- OPPS APPLICATIONS TAB -->
+    <div id="tab-oppsApps" class="panel">
+      <div class="card">
+        <h2>Opportunities — Applications</h2>
+        <p class="muted">Job applications submitted via the new Supabase backend (<code>opps_applications</code>). Marking an application <b>placed</b> auto-grants partner earnings if it was a referred application.</p>
+        <div class="filter-row">
+          <select id="oppsApps-status" onchange="oppsLoadApps()">
+            <option value="" selected>All statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="offer">Offer</option>
+            <option value="placed">Placed</option>
+            <option value="rejected">Rejected</option>
+            <option value="withdrawn">Withdrawn</option>
+          </select>
+          <input id="oppsApps-jobId" placeholder="Filter by job ID (optional)" oninput="oppsLoadApps()" style="flex:1;max-width:280px;">
+          <button onclick="oppsLoadApps()">↻ Refresh</button>
+          <button onclick="oppsExportCsv('oppsApps', OPPS_APPS)">⬇ Export CSV</button>
+        </div>
+        <div id="oppsApps-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- OPPS PARTNERS TAB -->
+    <div id="tab-oppsPartners" class="panel">
+      <div class="card">
+        <h2>Opportunities — Partners</h2>
+        <p class="muted">Partner accounts in the new Supabase backend (<code>opps_partners</code>). KYC review + earnings ledger.</p>
+        <div class="filter-row">
+          <select id="oppsPartners-kyc" onchange="oppsLoadPartners()">
+            <option value="">All KYC statuses</option>
+            <option value="not_started">Not started</option>
+            <option value="submitted" selected>Submitted (needs review)</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button onclick="oppsLoadPartners()">↻ Refresh</button>
+          <button onclick="oppsExportCsv('oppsPartners', OPPS_PARTNERS)">⬇ Export CSV</button>
+        </div>
+        <div id="oppsPartners-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- OPPS REFERRALS TAB -->
+    <div id="tab-oppsReferrals" class="panel">
+      <div class="card">
+        <h2>Opportunities — Referrals</h2>
+        <p class="muted">Partner-initiated candidate referrals tracked in <code>opps_referrals</code>. Each row = one token-gated invitation.</p>
+        <div class="filter-row">
+          <select id="oppsReferrals-status" onchange="oppsLoadReferrals()">
+            <option value="" selected>All statuses</option>
+            <option value="invited">Invited</option>
+            <option value="accepted">Accepted</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="placed">Placed</option>
+            <option value="rejected">Rejected</option>
+            <option value="expired">Expired</option>
+          </select>
+          <input id="oppsReferrals-partner" placeholder="Filter by partner email (optional)" oninput="oppsLoadReferrals()" style="flex:1;max-width:280px;">
+          <button onclick="oppsLoadReferrals()">↻ Refresh</button>
+          <button onclick="oppsExportCsv('oppsReferrals', OPPS_REFERRALS)">⬇ Export CSV</button>
+        </div>
+        <div id="oppsReferrals-box"><p class="muted" style="padding:18px;">Click ↻ Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <!-- OPPS JOB EDITOR MODAL -->
+    <div id="opps-job-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;padding:24px;overflow-y:auto;" onclick="if(event.target===this)oppsCloseJobEditor()">
+      <div style="max-width:680px;margin:24px auto;background:#fff;border-radius:5px;padding:24px 28px;position:relative;">
+        <button onclick="oppsCloseJobEditor()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#666;">&times;</button>
+        <h3 id="opps-job-modal-title" style="margin:0 0 4px;font-family:'Playfair Display',serif;color:#0A1628;">New job posting</h3>
+        <p class="muted" style="margin:0 0 16px;font-size:13px;">Writes to <code>opps_jobs</code>. Leave Job code blank to auto-generate.</p>
+        <div id="opps-job-form" style="display:flex;flex-direction:column;gap:8px;">
+          <input type="hidden" id="oj-id">
+          <div style="display:flex;gap:10px;"><div style="flex:1;"><label class="muted" style="font-size:11px;">Job code (e.g. GCC-OPS-001)</label><input id="oj-code" style="width:100%;"></div><div style="flex:2;"><label class="muted" style="font-size:11px;">Title *</label><input id="oj-title" required style="width:100%;"></div></div>
+          <div style="display:flex;gap:10px;"><div style="flex:1;"><label class="muted" style="font-size:11px;">Company *</label><input id="oj-company" required style="width:100%;"></div><div style="flex:1;"><label class="muted" style="font-size:11px;">Industry</label><input id="oj-industry" style="width:100%;" placeholder="BFSI / SaaS / Pharma"></div></div>
+          <div style="display:flex;gap:10px;"><div style="flex:1;"><label class="muted" style="font-size:11px;">Location</label><input id="oj-location" style="width:100%;" placeholder="Bengaluru / Pune"></div><div style="flex:1;"><label class="muted" style="font-size:11px;">Experience band</label><input id="oj-experience" style="width:100%;" placeholder="5-10y"></div></div>
+          <div style="display:flex;gap:10px;"><div style="flex:1;"><label class="muted" style="font-size:11px;">CTC min INR (per annum)</label><input id="oj-ctcmin" type="number" style="width:100%;"></div><div style="flex:1;"><label class="muted" style="font-size:11px;">CTC max INR (per annum)</label><input id="oj-ctcmax" type="number" style="width:100%;"></div></div>
+          <div style="display:flex;gap:10px;"><div style="flex:1;"><label class="muted" style="font-size:11px;">Primary domain</label><input id="oj-domain" style="width:100%;" placeholder="Technology / Finance / HR"></div><div style="flex:1;"><label class="muted" style="font-size:11px;">Referral payout INR</label><input id="oj-payout" type="number" value="50000" style="width:100%;"></div></div>
+          <div><label class="muted" style="font-size:11px;">Description</label><textarea id="oj-description" style="width:100%;min-height:80px;"></textarea></div>
+          <div><label class="muted" style="font-size:11px;">Requirements</label><textarea id="oj-requirements" style="width:100%;min-height:60px;"></textarea></div>
+          <div><label class="muted" style="font-size:11px;">Status</label><select id="oj-status"><option value="draft">Draft</option><option value="active" selected>Active</option><option value="paused">Paused</option><option value="closed">Closed</option></select></div>
+          <button class="primary" onclick="oppsSaveJob()" style="margin-top:10px;">Save</button>
+          <div id="oj-result" class="muted" style="font-size:12px;"></div>
+        </div>
       </div>
     </div>
 
@@ -888,6 +1011,338 @@ function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'
 function fmtDate(s) {
   try { return new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
   catch (_) { return String(s).substring(0, 10); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   OPPORTUNITIES — Jobs / Applications / Partners / Referrals
+   Calls Edge Function v7+ endpoints (oppsAdmin*) via adminFetch.
+   Parallel to live Apps Script; never touches it.
+   ════════════════════════════════════════════════════════════════ */
+
+let OPPS_JOBS = [], OPPS_APPS = [], OPPS_PARTNERS = [], OPPS_REFERRALS = [];
+
+// Common — INR formatter
+function fmtINR(n) {
+  if (n == null || n === '') return '';
+  const num = Number(n); if (!isFinite(num)) return '';
+  return '₹' + num.toLocaleString('en-IN');
+}
+
+// ─── JOBS ───────────────────────────────────────────────────────
+async function oppsLoadJobs() {
+  const status = document.getElementById('oppsJobs-status').value;
+  const box = document.getElementById('oppsJobs-box');
+  box.innerHTML = '<p class="muted" style="padding:18px;">Loading…</p>';
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminListJobs' + (status ? '&status=' + encodeURIComponent(status) : '') + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); box.innerHTML = '<p class="muted" style="padding:18px;">' + esc(j.error) + '</p>'; return; }
+    OPPS_JOBS = j.jobs || [];
+    oppsRenderJobs();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsRenderJobs() {
+  const rows = OPPS_JOBS;
+  const box = document.getElementById('oppsJobs-box');
+  if (!rows.length) { box.innerHTML = '<p class="muted" style="padding:18px;">No jobs match.</p>'; return; }
+  let html = '<table style="width:100%;"><thead><tr>'
+    + '<th>Code</th><th>Title</th><th>Company</th><th>Location</th><th>CTC</th><th>Posted</th><th>Apps</th><th>Status</th><th>Actions</th>'
+    + '</tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    const ctcRange = (r.ctc_min_inr && r.ctc_max_inr) ? (fmtINR(r.ctc_min_inr) + ' – ' + fmtINR(r.ctc_max_inr)) : '';
+    html += '<tr>'
+      + '<td>' + esc(r.job_code || '') + '</td>'
+      + '<td>' + esc(r.title || '') + '</td>'
+      + '<td>' + esc(r.company || '') + '</td>'
+      + '<td>' + esc(r.location || '') + '</td>'
+      + '<td>' + ctcRange + '</td>'
+      + '<td>' + (r.posted_at ? fmtDate(r.posted_at) : '') + '</td>'
+      + '<td style="text-align:center;">' + (r.applications_count || 0) + '</td>'
+      + '<td><span class="badge badge-' + (r.status || '') + '">' + esc(r.status || '') + '</span></td>'
+      + '<td>'
+        + '<button onclick="oppsOpenJobEditor(' + i + ')">✎ Edit</button> '
+        + (r.status === 'active' ? '<button onclick="oppsSetJobStatus(\'' + r.id + '\',\'paused\')">⏸ Pause</button>'
+                                  : '<button onclick="oppsSetJobStatus(\'' + r.id + '\',\'active\')">▶ Activate</button>')
+      + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+function oppsOpenJobEditor(idx) {
+  const modal = document.getElementById('opps-job-modal');
+  const title = document.getElementById('opps-job-modal-title');
+  const data = (idx === undefined) ? null : OPPS_JOBS[idx];
+  title.textContent = data ? ('Edit job — ' + (data.job_code || data.title)) : 'New job posting';
+  function set(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+  set('oj-id', data ? data.id : '');
+  set('oj-code', data ? data.job_code : '');
+  set('oj-title', data ? data.title : '');
+  set('oj-company', data ? data.company : '');
+  set('oj-industry', data ? data.industry : '');
+  set('oj-location', data ? data.location : '');
+  set('oj-experience', data ? data.experience_band : '');
+  set('oj-ctcmin', data ? data.ctc_min_inr : '');
+  set('oj-ctcmax', data ? data.ctc_max_inr : '');
+  set('oj-domain', data ? data.primary_domain : '');
+  set('oj-payout', data ? data.referral_amount_inr : 50000);
+  set('oj-description', data ? data.description : '');
+  set('oj-requirements', data ? data.requirements : '');
+  document.getElementById('oj-status').value = data ? (data.status || 'active') : 'active';
+  document.getElementById('oj-result').textContent = '';
+  modal.style.display = 'block';
+}
+
+function oppsCloseJobEditor() {
+  document.getElementById('opps-job-modal').style.display = 'none';
+}
+
+async function oppsSaveJob() {
+  function v(id) { return (document.getElementById(id).value || '').trim(); }
+  const id = v('oj-id');
+  const params = new URLSearchParams();
+  if (id) params.set('id', id);
+  ['code:job_code','title:title','company:company','industry:industry','location:location',
+   'experience:experience_band','domain:primary_domain','description:description',
+   'requirements:requirements','status:status'].forEach(m => {
+    const [k, col] = m.split(':');
+    const val = v('oj-' + k); if (val) params.set(col, val);
+  });
+  ['ctcmin:ctc_min_inr','ctcmax:ctc_max_inr','payout:referral_amount_inr'].forEach(m => {
+    const [k, col] = m.split(':');
+    const val = v('oj-' + k); if (val !== '') params.set(col, val);
+  });
+  if (!params.get('title') || !params.get('company')) {
+    document.getElementById('oj-result').textContent = 'Title and Company are required.';
+    return;
+  }
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminUpsertJob&' + params.toString() + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { document.getElementById('oj-result').textContent = 'Error: ' + j.error; return; }
+    toast(id ? 'Job updated' : 'Job created');
+    oppsCloseJobEditor();
+    oppsLoadJobs();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+async function oppsSetJobStatus(id, newStatus) {
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminUpsertJob&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(newStatus) + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); return; }
+    toast('Job ' + newStatus);
+    oppsLoadJobs();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+// ─── APPLICATIONS ──────────────────────────────────────────────
+async function oppsLoadApps() {
+  const status = document.getElementById('oppsApps-status').value;
+  const jobId = (document.getElementById('oppsApps-jobId').value || '').trim();
+  const box = document.getElementById('oppsApps-box');
+  box.innerHTML = '<p class="muted" style="padding:18px;">Loading…</p>';
+  try {
+    let url = SCRIPT_URL + '?action=oppsAdminListApplications';
+    if (status) url += '&status=' + encodeURIComponent(status);
+    if (jobId)  url += '&jobId=' + encodeURIComponent(jobId);
+    url += '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); box.innerHTML = '<p class="muted" style="padding:18px;">' + esc(j.error) + '</p>'; return; }
+    OPPS_APPS = j.applications || [];
+    oppsRenderApps();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsRenderApps() {
+  const rows = OPPS_APPS;
+  const box = document.getElementById('oppsApps-box');
+  if (!rows.length) { box.innerHTML = '<p class="muted" style="padding:18px;">No applications match.</p>'; return; }
+  let html = '<table style="width:100%;"><thead><tr>'
+    + '<th>Applicant</th><th>Job ID</th><th>Source</th><th>Referrer</th><th>Applied</th><th>Current company</th><th>Expected CTC</th><th>Status</th><th>Actions</th>'
+    + '</tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    html += '<tr style="cursor:pointer;" onclick="if(event.target.tagName!==\'BUTTON\')oppsShowAppDetails(' + i + ')">'
+      + '<td>' + esc(r.applicant_email || '') + '</td>'
+      + '<td style="font-family:monospace;font-size:11px;">' + esc((r.job_id||'').slice(0, 8)) + '…</td>'
+      + '<td>' + esc(r.source || '') + '</td>'
+      + '<td>' + esc(r.referrer_partner || '') + '</td>'
+      + '<td>' + (r.applied_at ? fmtDate(r.applied_at) : '') + '</td>'
+      + '<td>' + esc(r.current_company || '') + '</td>'
+      + '<td>' + fmtINR(r.expected_ctc_inr) + '</td>'
+      + '<td><span class="badge badge-' + (r.application_status||'') + '">' + esc(r.application_status||'') + '</span></td>'
+      + '<td>'
+        + '<select onchange="oppsAppDecide(\'' + r.id + '\', this.value)" style="font-size:11px;">'
+        + '<option value="">Set status…</option>'
+        + ['shortlisted','interview','offer','placed','rejected','withdrawn']
+            .map(s => '<option value="' + s + '">' + s + '</option>').join('')
+        + '</select>'
+      + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+async function oppsAppDecide(id, decision) {
+  if (!decision) return;
+  if (decision === 'placed' && !confirm('Mark as PLACED? This will grant the referring partner their earnings automatically. Proceed?')) {
+    oppsLoadApps(); return;
+  }
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(decision) + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); return; }
+    toast('Marked ' + decision + (j.warning ? ' · ' + j.warning : ''));
+    oppsLoadApps();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsShowAppDetails(idx) {
+  const r = OPPS_APPS[idx]; if (!r) return;
+  const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
+    .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
+  const w = window.open('', '_blank', 'width=720,height=860');
+  w.document.write('<html><head><title>Application — ' + esc(r.applicant_email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;color:#1c1c1c;}</style></head><body><h2>Application detail</h2>' + html + '</body></html>');
+}
+
+// ─── PARTNERS ──────────────────────────────────────────────────
+async function oppsLoadPartners() {
+  const kyc = document.getElementById('oppsPartners-kyc').value;
+  const box = document.getElementById('oppsPartners-box');
+  box.innerHTML = '<p class="muted" style="padding:18px;">Loading…</p>';
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminListPartners&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); box.innerHTML = '<p class="muted" style="padding:18px;">' + esc(j.error) + '</p>'; return; }
+    OPPS_PARTNERS = (j.partners || []).filter(p => !kyc || p.kyc_status === kyc);
+    oppsRenderPartners();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsRenderPartners() {
+  const rows = OPPS_PARTNERS;
+  const box = document.getElementById('oppsPartners-box');
+  if (!rows.length) { box.innerHTML = '<p class="muted" style="padding:18px;">No partners match.</p>'; return; }
+  let html = '<table style="width:100%;"><thead><tr>'
+    + '<th>Email</th><th>KYC</th><th>PAN</th><th>Bank a/c</th><th>Agreement</th><th>Balance</th><th>Lifetime</th><th>Refs</th><th>Placed</th><th>Actions</th>'
+    + '</tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    html += '<tr style="cursor:pointer;" onclick="if(event.target.tagName!==\'BUTTON\')oppsShowPartnerDetails(' + i + ')">'
+      + '<td>' + esc(r.email || '') + '</td>'
+      + '<td><span class="badge badge-' + (r.kyc_status||'') + '">' + esc(r.kyc_status || '') + '</span></td>'
+      + '<td style="font-family:monospace;font-size:11px;">' + esc(r.kyc_pan || '') + '</td>'
+      + '<td>…' + esc(r.kyc_bank_account_last4 || '') + ' / ' + esc(r.kyc_bank_ifsc || '') + '</td>'
+      + '<td>' + esc(r.agreement_status || '') + '</td>'
+      + '<td>' + fmtINR(r.earnings_balance_inr) + '</td>'
+      + '<td>' + fmtINR(r.earnings_lifetime_inr) + '</td>'
+      + '<td style="text-align:center;">' + (r.total_referrals || 0) + '</td>'
+      + '<td style="text-align:center;">' + (r.total_placements || 0) + '</td>'
+      + '<td>'
+        + (r.kyc_status === 'submitted'
+            ? '<button onclick="oppsKycDecide(\'' + r.email + '\',\'approved\')">✓ Approve KYC</button> '
+              + '<button onclick="oppsKycDecide(\'' + r.email + '\',\'rejected\')">✗ Reject</button>'
+            : '<span class="muted" style="font-size:11px;">no KYC action</span>')
+      + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+async function oppsKycDecide(email, decision) {
+  const notes = prompt('Optional decision note for the audit trail:', '') || '';
+  try {
+    const url = SCRIPT_URL + '?action=oppsAdminPartnerKycDecision&email=' + encodeURIComponent(email) + '&decision=' + encodeURIComponent(decision) + '&notes=' + encodeURIComponent(notes) + '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); return; }
+    toast('KYC ' + decision);
+    oppsLoadPartners();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsShowPartnerDetails(idx) {
+  const r = OPPS_PARTNERS[idx]; if (!r) return;
+  const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
+    .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:200px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
+  const w = window.open('', '_blank', 'width=720,height=860');
+  w.document.write('<html><head><title>Partner — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;}</style></head><body><h2>Partner detail</h2>' + html + '</body></html>');
+}
+
+// ─── REFERRALS ──────────────────────────────────────────────────
+async function oppsLoadReferrals() {
+  const status = document.getElementById('oppsReferrals-status').value;
+  const partner = (document.getElementById('oppsReferrals-partner').value || '').trim().toLowerCase();
+  const box = document.getElementById('oppsReferrals-box');
+  box.innerHTML = '<p class="muted" style="padding:18px;">Loading…</p>';
+  try {
+    let url = SCRIPT_URL + '?action=oppsAdminListReferrals';
+    if (status)  url += '&status=' + encodeURIComponent(status);
+    if (partner) url += '&partner=' + encodeURIComponent(partner);
+    url += '&_t=' + Date.now();
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) { toast(j.error, true); box.innerHTML = '<p class="muted" style="padding:18px;">' + esc(j.error) + '</p>'; return; }
+    OPPS_REFERRALS = j.referrals || [];
+    oppsRenderReferrals();
+  } catch (err) { toast('Network error: ' + err.message, true); }
+}
+
+function oppsRenderReferrals() {
+  const rows = OPPS_REFERRALS;
+  const box = document.getElementById('oppsReferrals-box');
+  if (!rows.length) { box.innerHTML = '<p class="muted" style="padding:18px;">No referrals match.</p>'; return; }
+  let html = '<table style="width:100%;"><thead><tr>'
+    + '<th>Partner</th><th>Candidate</th><th>Email</th><th>Target job ID</th><th>Status</th><th>Invited</th><th>Placed</th><th>Payout</th><th>Token</th>'
+    + '</tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    html += '<tr style="cursor:pointer;" onclick="oppsShowReferralDetails(' + i + ')">'
+      + '<td>' + esc(r.partner_email || '') + '</td>'
+      + '<td>' + esc(r.candidate_name || '') + '</td>'
+      + '<td>' + esc(r.candidate_email || '') + '</td>'
+      + '<td style="font-family:monospace;font-size:11px;">' + esc((r.target_job_id||'').slice(0, 8)) + (r.target_job_id ? '…' : '') + '</td>'
+      + '<td><span class="badge badge-' + (r.referral_status||'') + '">' + esc(r.referral_status || '') + '</span></td>'
+      + '<td>' + (r.invited_at ? fmtDate(r.invited_at) : '') + '</td>'
+      + '<td>' + (r.placed_at ? fmtDate(r.placed_at) : '') + '</td>'
+      + '<td>' + fmtINR(r.payout_inr) + '</td>'
+      + '<td style="font-family:monospace;font-size:10px;">' + esc((r.candidate_token||'').slice(0, 12)) + '…</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+function oppsShowReferralDetails(idx) {
+  const r = OPPS_REFERRALS[idx]; if (!r) return;
+  const tokenUrl = r.candidate_token ? ('https://www.gccpros.com/candidate-referral.html?token=' + r.candidate_token) : '';
+  const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
+    .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
+  const linkBlock = tokenUrl ? '<p style="margin:16px 0 8px;"><b>Candidate URL:</b><br><a href="' + esc(tokenUrl) + '" target="_blank" style="word-break:break-all;">' + esc(tokenUrl) + '</a></p>' : '';
+  const w = window.open('', '_blank', 'width=720,height=860');
+  w.document.write('<html><head><title>Referral — ' + esc(r.candidate_name||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;}</style></head><body><h2>Referral detail</h2>' + linkBlock + html + '</body></html>');
+}
+
+// ─── CSV EXPORT (shared) ───────────────────────────────────────
+function oppsExportCsv(kindLabel, rows) {
+  if (!rows || !rows.length) return toast('Nothing to export', true);
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(','), ...rows.map(r => headers.map(h => csvEsc(r[h])).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gccpros_' + kindLabel + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Exported ' + rows.length + ' rows');
 }
 </script>
 
