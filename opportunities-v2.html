@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-role-truth-v4
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-ux-hardening-v5
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -403,7 +403,12 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <div class="field"><label>Current Designation <span class="required">*</span></label><input type="text" id="js-desig"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Current Location <span class="required">*</span></label><input type="text" id="js-location"></div>
+        <div class="field"><label>Current Location <span class="required">*</span></label>
+          <select id="js-location">
+            <option value="">Select your city</option>
+            <option>Bengaluru</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Chennai</option><option>Gurugram</option><option>Noida</option><option>Delhi NCR</option><option>Kolkata</option><option>Ahmedabad</option><option>Coimbatore</option><option>Thiruvananthapuram</option><option>Kochi (Cochin)</option><option>Indore</option><option>Jaipur</option><option>Chandigarh</option><option>Mohali</option><option>Lucknow</option><option>Bhubaneswar</option><option>Vishakhapatnam</option><option>Mysuru (Mysore)</option><option>Mangaluru</option><option>Vadodara</option><option>Surat</option><option>Nagpur</option><option>Bhopal</option><option>Faridabad</option><option>Ghaziabad</option><option>Greater Noida</option><option>Other (India)</option><option>Outside India</option>
+          </select>
+        </div>
         <div class="field"><label>Total Years Experience <span class="required">*</span></label><input type="number" id="js-totalexp" min="0" max="50"></div>
       </div>
       <div class="field"><label>Domain / Function <span class="required">*</span></label>
@@ -543,21 +548,33 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:6px;">Your contact (from profile &mdash; override below if needed)</div>
       <div class="field-row" style="margin-top:6px;">
         <div class="field" style="margin-top:0;"><label>Email <span class="field-verified">&#10003; auth&apos;d</span></label><input type="email" id="ap-email" readonly></div>
-        <div class="field" style="margin-top:0;"><label>Phone <span class="required">*</span></label><input type="tel" id="ap-phone" pattern="[0-9]{10,15}"></div>
+        <div class="field" style="margin-top:0;"><label>Phone <span class="required">*</span></label><input type="tel" id="ap-phone" pattern="[0-9]{10,15}" placeholder="10-digit mobile, +91 prefix optional"><div class="field-hint">Used for shortlist call. Indian numbers preferred.</div></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Alt Phone</label><input type="tel" id="ap-altphone"></div>
-        <div class="field"><label>LinkedIn URL</label><input type="url" id="ap-linkedin"></div>
+        <div class="field"><label>Alt Phone (optional)</label><input type="tel" id="ap-altphone" placeholder="Spouse / friend backup number"></div>
+        <div class="field"><label>LinkedIn URL <span class="required">*</span></label><input type="url" id="ap-linkedin" placeholder="https://linkedin.com/in/your-handle"><div class="field-hint">Must be a public, complete profile.</div></div>
       </div>
     </div>
 
+    <div class="field-row">
+      <div class="field"><label>Current City <span class="required">*</span></label>
+        <select id="ap-curcity">
+          <option value="">Select your city</option>
+          <option>Bengaluru</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Chennai</option><option>Gurugram</option><option>Noida</option><option>Delhi NCR</option><option>Kolkata</option><option>Ahmedabad</option><option>Coimbatore</option><option>Thiruvananthapuram</option><option>Kochi (Cochin)</option><option>Indore</option><option>Jaipur</option><option>Chandigarh</option><option>Mohali</option><option>Lucknow</option><option>Bhubaneswar</option><option>Vishakhapatnam</option><option>Mysuru (Mysore)</option><option>Mangaluru</option><option>Vadodara</option><option>Surat</option><option>Nagpur</option><option>Bhopal</option><option>Faridabad</option><option>Ghaziabad</option><option>Greater Noida</option><option>Other (India)</option><option>Outside India</option>
+        </select>
+      </div>
+      <div class="field"><label>Total Years Experience <span class="required">*</span></label>
+        <input type="number" id="ap-totalexp" min="0" max="50" step="0.5" placeholder="e.g. 7">
+        <div class="field-hint">Round to nearest 0.5 year. Used for shortlisting.</div>
+      </div>
+    </div>
     <div class="field-row">
       <div class="field"><label>Current Company <span class="required">*</span></label><input type="text" id="ap-curcompany"></div>
       <div class="field"><label>Current Designation <span class="required">*</span></label><input type="text" id="ap-curdesig"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label>Current CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" id="ap-curctc" placeholder="e.g. 18"></div>
-      <div class="field"><label>Expected CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" id="ap-expctc" placeholder="e.g. 26"></div>
+      <div class="field"><label>Current CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-curctc" placeholder="e.g. 18"><div class="field-hint">In ₹ lakhs per annum. Fixed + variable.</div></div>
+      <div class="field"><label>Expected CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-expctc" placeholder="e.g. 26"><div class="field-hint">Realistic ask. Wide gaps from current → fewer callbacks.</div></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Notice Period <span class="required">*</span></label>
@@ -571,11 +588,12 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <div class="field"><label>Highest Qualification <span class="required">*</span></label>
       <select id="ap-qual">
         <option value="">Select qualification</option>
-        <option>Bachelor's Degree</option><option>Master's Degree</option><option>MBA</option><option>Chartered Accountant (CA)</option><option>CFA</option><option>PhD</option><option>Diploma</option><option>Other</option>
+        <option>Bachelor of Commerce (B.Com)</option><option>Bachelor of Arts (B.A.)</option><option>Bachelor of Science (B.Sc.)</option><option>Bachelor of Business Administration (BBA)</option><option>Bachelor of Engineering / Technology (B.E. / B.Tech)</option><option>Bachelor of Computer Applications (BCA)</option><option>Bachelor of Laws (LLB)</option><option>Bachelor of Pharmacy (B.Pharm)</option><option>Master of Commerce (M.Com)</option><option>Master of Arts (M.A.)</option><option>Master of Science (M.Sc.)</option><option>Master of Business Administration (MBA / PGDM)</option><option>Master of Computer Applications (MCA)</option><option>Master of Technology (M.Tech / M.E.)</option><option>Master of Laws (LLM)</option><option>Master of Social Work (MSW)</option><option>PhD / Doctorate</option><option>Chartered Accountant (CA)</option><option>Cost &amp; Management Accountant (CMA / ICWA)</option><option>Company Secretary (CS)</option><option>Chartered Financial Analyst (CFA)</option><option>Financial Risk Manager (FRM)</option><option>Certified Public Accountant (CPA)</option><option>ACCA</option><option>CIMA</option><option>Project Management Professional (PMP)</option><option>Six Sigma (Black / Green Belt)</option><option>Diploma</option><option>Other</option>
       </select>
+      <div class="field-hint">Pick the highest completed qualification. Pursuing counts only if Final-year.</div>
     </div>
-    <div class="field"><label>Relevant Skills <span class="required">*</span> (comma-separated)</label><textarea id="ap-skills" rows="2" placeholder="e.g. Fund Accounting, NAV, Bloomberg, SimCorp"></textarea></div>
-    <div class="field"><label>Why are you a good fit for this role? <span class="required">*</span></label><textarea id="ap-eligibility" rows="3" placeholder="2&ndash;4 sentences on why you match this role's requirements"></textarea></div>
+    <div class="field"><label>Relevant Skills <span class="required">*</span> (min 3, comma-separated)</label><textarea id="ap-skills" rows="2" placeholder="e.g. Fund Accounting, NAV, Bloomberg, SimCorp"></textarea><div class="field-hint" id="ap-skills-hint">List 3+ skills directly relevant to this role.</div></div>
+    <div class="field"><label>Why are you a good fit for this role? <span class="required">*</span></label><textarea id="ap-eligibility" rows="3" placeholder="At least 20 words. Specific examples land best." oninput="updateWordCount(this,'ap-eligibility-count',20)"></textarea><div class="field-hint" id="ap-eligibility-count">0 / 20 words minimum</div></div>
     <div class="field-row">
       <div class="field"><label>Work Mode Preference <span class="required">*</span></label>
         <select id="ap-workmode"><option value="">Select</option><option>Flexible</option><option>Hybrid</option><option>Remote</option><option>On-site</option></select>
@@ -583,8 +601,8 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Earliest Join Date <span class="required">*</span></label><input type="date" id="ap-joindate"></div>
     </div>
     <div class="field"><label>Willing to Relocate?</label><select id="ap-relocate"><option>Yes</option><option>No</option><option>Depends on location</option></select></div>
-    <div class="field"><label>Reference 1 (Name | Title | Email | Phone | Relationship)</label><input type="text" id="ap-ref1" placeholder="John Doe | Senior Manager | john@company.com | 9999999999 | Reported to him"></div>
-    <div class="field"><label>Reference 2 (optional)</label><input type="text" id="ap-ref2"></div>
+    <div class="field"><label>Reference 1 (Name | Title | Email | Phone | Relationship) <span class="required">*</span></label><input type="text" id="ap-ref1" placeholder="John Doe | Senior Manager | john@company.com | 9999999999 | Reported to him"><div class="field-hint">Use pipe (|) as separator. Reference will be contacted only after candidate shortlisting.</div></div>
+    <div class="field"><label>Reference 2 (optional)</label><input type="text" id="ap-ref2" placeholder="Same format as Reference 1"></div>
 
     <div class="field"><label>Resume / CV for this application <span class="required">*</span> (PDF/DOC/DOCX, max 5MB)</label>
       <input type="file" id="ap-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
@@ -633,10 +651,10 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     </div>
     <div class="field"><label>Candidate Full Name <span class="required">*</span></label><input type="text" id="ref-name"></div>
     <div class="field-row">
-      <div class="field"><label>Candidate Email <span class="required">*</span></label><input type="email" id="ref-email"></div>
-      <div class="field"><label>Candidate Phone</label><input type="tel" id="ref-phone"></div>
+      <div class="field"><label>Candidate Email <span class="required">*</span></label><input type="email" id="ref-email" placeholder="candidate@company.com"><div class="field-hint">Must NOT already be registered on GCCPROs.</div></div>
+      <div class="field"><label>Candidate Phone <span class="required">*</span></label><input type="tel" id="ref-phone" placeholder="10-digit mobile"></div>
     </div>
-    <div class="field"><label>Candidate LinkedIn</label><input type="url" id="ref-linkedin"></div>
+    <div class="field"><label>Candidate LinkedIn <span class="required">*</span></label><input type="url" id="ref-linkedin" placeholder="https://linkedin.com/in/handle"><div class="field-hint">Public profile only.</div></div>
     <div class="field-row">
       <div class="field"><label>Relationship</label>
         <select id="ref-relationship"><option>Managed directly</option><option>Reported to them</option><option>Peer / Colleague</option><option>Common network</option><option>Friend</option></select>
@@ -653,7 +671,15 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <select id="ref-confidence"><option>High</option><option>Medium</option><option>Low</option></select>
       </div>
     </div>
-    <div class="field"><label>Why a Good Fit?</label><textarea id="ref-whyfit" rows="3"></textarea></div>
+    <div class="field"><label>Why a Good Fit? <span class="required">*</span></label><textarea id="ref-whyfit" rows="3" placeholder="2-3 sentences. Specific achievements they delivered." oninput="updateWordCount(this,'ref-whyfit-count',15)"></textarea><div class="field-hint" id="ref-whyfit-count">0 / 15 words minimum</div></div>
+
+    <div class="field"><label>Skill Assessment <span class="required">*</span></label>
+      <p class="field-hint" style="margin-bottom:8px;">Rate the candidate on the role's core competencies. All required.</p>
+      <div id="ref-skill-grid" style="display:flex;flex-direction:column;gap:8px;background:var(--cream);padding:12px;border-radius:6px;">
+        <!-- populated dynamically when modal opens -->
+      </div>
+      <div class="field-hint">Average score below 3.5 = recommend Medium/Low confidence above.</div>
+    </div>
     <button class="btn brand-orange" style="width:100%;margin-top:14px;" onclick="refSubmit()">Generate Referral Link</button>
     <div id="ref-result" class="form-result"></div>
   </div>
@@ -676,7 +702,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-19-role-truth-v4';
+const BUILD = 'opps-v2-2026-05-19-ux-hardening-v5';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -729,6 +755,47 @@ function relTime(iso) {
   return d.toLocaleDateString();
 }
 function splitToArr(s) { if (!s) return []; return String(s).split(/[,;|\n]/).map(x => x.trim()).filter(Boolean); }
+
+// v5: live word-count hint for required-min-length textareas
+function updateWordCount(ta, hintId, min) {
+  const words = (ta.value || '').trim().split(/\s+/).filter(Boolean);
+  const n = ta.value.trim() ? words.length : 0;
+  const h = document.getElementById(hintId);
+  if (!h) return;
+  h.textContent = n + ' / ' + min + ' words minimum' + (n >= min ? ' ✓' : '');
+  h.className = 'field-hint ' + (n >= min ? 'ok' : (n > 0 ? 'err' : ''));
+}
+
+// v5: render mandatory skill-rating grid in the Refer modal for the selected job
+function renderReferSkillAssessment(jobId) {
+  const j = JOB_LIST.find(x => x.id === jobId);
+  const skills = j ? splitToArr(j.skills).slice(0, 8) : [];
+  const grid = document.getElementById('ref-skill-grid');
+  if (!grid) return;
+  if (!skills.length) {
+    grid.innerHTML = '<p class="field-hint">No specific skills listed on this job — rate on general competencies below.</p>' +
+      ['Communication','Domain expertise','Problem solving','Leadership'].map((s,i) => _skillRowHTML(s, 'general_'+i)).join('');
+  } else {
+    grid.innerHTML = skills.map((s,i) => _skillRowHTML(s, 'skill_'+i)).join('');
+  }
+}
+function _skillRowHTML(label, id) {
+  return '<div style="display:flex;align-items:center;gap:10px;">' +
+    '<div style="flex:1;font-size:13px;font-weight:500;">' + esc(label) + '</div>' +
+    '<select data-skill="' + esc(label) + '" id="ref-rate-' + esc(id) + '" required style="padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;">' +
+      '<option value="">Rate</option><option value="1">1 — Beginner</option><option value="2">2 — Working</option><option value="3">3 — Proficient</option><option value="4">4 — Strong</option><option value="5">5 — Expert</option>' +
+    '</select></div>';
+}
+function _collectSkillRatings() {
+  const sels = document.querySelectorAll('#ref-skill-grid select[data-skill]');
+  const ratings = [];
+  let allFilled = true;
+  sels.forEach(s => {
+    if (!s.value) allFilled = false;
+    else ratings.push({ skill: s.getAttribute('data-skill'), rating: Number(s.value) });
+  });
+  return { ratings, allFilled };
+}
 
 window._tsWidgets = {};
 window.onTurnstileReadyV2 = function() {
@@ -886,6 +953,8 @@ async function handleGoogleCredentialResponse(response) {
   } catch (_) {}
   if (blacklisted) { alert('This account has been blocked. Contact admin@gccpros.com.'); return; }
 
+  // v5: hide signup chrome immediately (don't wait for Firebase auth state to propagate)
+  setSignedInChrome(true);
   try {
     const cred = firebase.auth.GoogleAuthProvider.credential(idToken);
     await firebase.auth().signInWithCredential(cred);
@@ -1012,8 +1081,9 @@ async function loadProfileAndDashboard() {
     }
   }
 
-  // Auto-filter only for job seekers (partners refer across domains — full list by default)
-  if (CURRENT_ACTIVE_VIEW === 'job_seeker' && CURRENT_PRIMARY_DOMAIN) {
+  // v5: BOTH seekers and partners auto-filter to their primary domain by default.
+  // Partners refer most often in their own domain; the "All domains" pill is always one click away.
+  if (CURRENT_PRIMARY_DOMAIN) {
     ACTIVE_DOMAIN = CURRENT_PRIMARY_DOMAIN;
   } else {
     ACTIVE_DOMAIN = '';
@@ -1050,8 +1120,9 @@ function populateFilters() {
     const your = isYour ? ' your-domain' : '';
     html += '<button class="filter-pill' + active + your + '" data-domain="' + esc(d) + '">' + esc(d) + (isYour ? ' ★ Your Domain' : '') + '</button>';
   });
-  if (CURRENT_PRIMARY_DOMAIN && CURRENT_USER_TYPE === 'job_seeker') {
-    html += '<span class="your-domain-note">Filtered to your domain by default. Click <b>All domains</b> to see everything.</span>';
+  if (CURRENT_PRIMARY_DOMAIN && CURRENT_EMAIL) {
+    const view = CURRENT_ACTIVE_VIEW === 'partner' ? 'partner' : 'seeker';
+    html += '<span class="your-domain-note">Filtered to your ' + view + ' domain by default. Click <b>All domains</b> to see everything.</span>';
   }
   dp.innerHTML = html;
   dp.querySelectorAll('.filter-pill').forEach(btn => {
@@ -1115,7 +1186,8 @@ function renderJobCard(j) {
   const desc = j.description ? esc(String(j.description).slice(0, 220)) + (String(j.description).length > 220 ? '…' : '') : '';
   const skillChips = skills.slice(0, 5).map(s => '<span class="skill-chip">' + esc(s) + '</span>').join('')
     + (skills.length > 5 ? '<span class="skill-chip more">+' + (skills.length - 5) + '</span>' : '');
-  const referrerBlock = (j.referral_amount_inr || j.referral_amount_inr === 0)
+  // v5: referral amount visible only to Partners (referrers care; seekers don't)
+  const referrerBlock = (CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0))
     ? '<span class="referral-coin">🪙 ' + fmtINR(j.referral_amount_inr) + ' referral</span>'
     : '<span></span>';
   const safeId = (j.id || '').replace(/'/g, "\\'");
@@ -1200,7 +1272,7 @@ function openJobDetail(jobId) {
       ${j.contract_duration ? `<div><label>Duration</label><strong>${esc(j.contract_duration)}</strong></div>` : ''}
       ${j.team_size ? `<div><label>Team size</label><strong>${esc(j.team_size)}</strong></div>` : ''}
       <div><label>Compensation</label><strong>${esc(ctcText)}</strong></div>
-      ${(j.referral_amount_inr || j.referral_amount_inr === 0) ? `<div><label>Referral payout</label><strong style="color:var(--brand-orange);">🪙 ${fmtINR(j.referral_amount_inr)}</strong></div>` : ''}
+      ${(CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0)) ? `<div><label>Referral payout</label><strong style="color:var(--brand-orange);">🪙 ${fmtINR(j.referral_amount_inr)}</strong></div>` : ''}
     </div>
     ${j.description ? `<div class="jd-section"><h4>About the role</h4><p>${esc(j.description)}</p></div>` : ''}
     ${resp.length ? `<div class="jd-section"><h4>Key responsibilities</h4><ul>${resp.map(r => '<li>' + esc(r) + '</li>').join('')}</ul></div>` : ''}
@@ -1386,6 +1458,8 @@ function openApplyModal(jobId, title, company) {
   set('ap-linkedin', pf.linkedin || '');
   set('ap-curcompany', pf.currentCompany || pf.current_company || '');
   set('ap-curdesig', pf.designation || '');
+  set('ap-curcity', pf.city || pf.current_city || '');
+  set('ap-totalexp', pf.totalExp != null ? pf.totalExp : (pf.total_exp || ''));
   // CV file picker hint
   const cv = document.getElementById('ap-cv');
   if (cv) {
@@ -1416,15 +1490,35 @@ function openApplyModal(jobId, title, company) {
 
 async function apSubmit() {
   const v = id => (document.getElementById(id).value || '').trim();
+  // v5: every field has a friendly error message
   const required = [
-    ['ap-phone','Phone'], ['ap-curcompany','Current Company'], ['ap-curdesig','Current Designation'],
+    ['ap-phone','Phone'], ['ap-linkedin','LinkedIn URL'],
+    ['ap-curcity','Current City'], ['ap-totalexp','Total Years Experience'],
+    ['ap-curcompany','Current Company'], ['ap-curdesig','Current Designation'],
     ['ap-curctc','Current CTC'], ['ap-expctc','Expected CTC'], ['ap-notice','Notice Period'],
     ['ap-pan','PAN'], ['ap-qual','Qualification'], ['ap-skills','Skills'],
-    ['ap-eligibility','Why you fit'], ['ap-workmode','Work Mode'], ['ap-joindate','Earliest Join Date']
+    ['ap-eligibility','Why you fit'], ['ap-workmode','Work Mode'], ['ap-joindate','Earliest Join Date'],
+    ['ap-ref1','Reference 1']
   ];
   for (const [id, lbl] of required) if (!v(id)) return showResult('ap-result', lbl + ' is required.', false);
-  if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number looks invalid.', false);
+  if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number must be 10–15 digits.', false);
+  if (!/^https?:\/\//i.test(v('ap-linkedin'))) return showResult('ap-result', 'LinkedIn URL must start with http:// or https://', false);
   if (!PAN_RX.test(v('ap-pan').toUpperCase())) return showResult('ap-result', 'PAN must be 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F).', false);
+  const expN = parseFloat(v('ap-totalexp'));
+  if (isNaN(expN) || expN < 0 || expN > 50) return showResult('ap-result', 'Total years experience must be between 0 and 50.', false);
+  const ctcCur = parseFloat(v('ap-curctc')), ctcExp = parseFloat(v('ap-expctc'));
+  if (isNaN(ctcCur) || ctcCur < 0) return showResult('ap-result', 'Current CTC must be a positive number (in LPA).', false);
+  if (isNaN(ctcExp) || ctcExp < 0) return showResult('ap-result', 'Expected CTC must be a positive number (in LPA).', false);
+  const skillsArr = v('ap-skills').split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
+  if (skillsArr.length < 3) return showResult('ap-result', 'List at least 3 relevant skills (comma-separated).', false);
+  const elgWords = v('ap-eligibility').split(/\s+/).filter(Boolean).length;
+  if (elgWords < 20) return showResult('ap-result', '"Why you fit" needs at least 20 words (you have ' + elgWords + ').', false);
+  // Join date must be today or future
+  const jd = new Date(v('ap-joindate'));
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (isNaN(jd.getTime()) || jd < today) return showResult('ap-result', 'Earliest Join Date must be today or later.', false);
+  // Reference format check (must contain | separators)
+  if (v('ap-ref1').split('|').length < 4) return showResult('ap-result', 'Reference 1 format invalid. Use: Name | Title | Email | Phone | Relationship', false);
   const cvFile = document.getElementById('ap-cv').files[0];
   if (!cvFile) return showResult('ap-result', 'CV upload is mandatory.', false);
   if (cvFile.size > CV_MAX_BYTES) return showResult('ap-result', 'CV exceeds 5 MB.', false);
@@ -1448,6 +1542,7 @@ async function apSubmit() {
       action: 'oppsSubmitApplication',
       email: CURRENT_EMAIL, jobId: v('ap-jobid'),
       contactPhone: v('ap-phone'), contactAltPhone: v('ap-altphone'), contactLinkedin: v('ap-linkedin'),
+      currentCity: v('ap-curcity'), totalExperience: v('ap-totalexp'),
       currentCompany: v('ap-curcompany'), currentDesignation: v('ap-curdesig'),
       currentCtc: v('ap-curctc'), expectedCtc: v('ap-expctc'),
       noticeDays: v('ap-notice'), pan: v('ap-pan').toUpperCase(),
@@ -1510,18 +1605,35 @@ function openReferModal(preselectJobId) {
     return;
   }
   if (CURRENT_ACTIVE_VIEW !== 'partner' && CURRENT_USER_TYPE === 'both') {
-    // Switch view silently before opening refer
     CURRENT_ACTIVE_VIEW = 'partner';
   }
-  if (preselectJobId) { const sel = document.getElementById('ref-job'); if (sel) sel.value = preselectJobId; }
+  const sel = document.getElementById('ref-job');
+  if (preselectJobId && sel) sel.value = preselectJobId;
+  // v5: render mandatory skill assessment for the chosen job
+  renderReferSkillAssessment(sel ? sel.value : '');
+  if (sel) sel.onchange = () => renderReferSkillAssessment(sel.value);
+  // Reset textareas + counters
+  const wf = document.getElementById('ref-whyfit'); if (wf) { wf.value=''; updateWordCount(wf, 'ref-whyfit-count', 15); }
   document.getElementById('ref-result').style.display = 'none';
   openModal('refer-modal');
 }
 async function refSubmit() {
   const v = id => document.getElementById(id).value.trim();
   if (!CURRENT_EMAIL) return showResult('ref-result', 'Not signed in.', false);
-  if (!v('ref-name')) return showResult('ref-result', 'Candidate name required.', false);
-  if (!v('ref-email')) return showResult('ref-result', 'Candidate email required (we check it against the database).', false);
+  // v5: comprehensive validation
+  if (!v('ref-name')) return showResult('ref-result', 'Candidate name is required.', false);
+  if (!v('ref-email')) return showResult('ref-result', 'Candidate email is required.', false);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ref-email'))) return showResult('ref-result', 'Candidate email format invalid.', false);
+  if (!v('ref-phone')) return showResult('ref-result', 'Candidate phone is required.', false);
+  if (!PHONE_RX.test(v('ref-phone'))) return showResult('ref-result', 'Candidate phone must be 10–15 digits.', false);
+  if (!v('ref-linkedin')) return showResult('ref-result', 'Candidate LinkedIn URL is required.', false);
+  if (!/^https?:\/\//i.test(v('ref-linkedin'))) return showResult('ref-result', 'LinkedIn URL must start with http:// or https://', false);
+  const whyWords = v('ref-whyfit').split(/\s+/).filter(Boolean).length;
+  if (whyWords < 15) return showResult('ref-result', '"Why a Good Fit?" needs at least 15 words (you have ' + whyWords + ').', false);
+  // Skill assessment must be fully rated
+  const sk = _collectSkillRatings();
+  if (!sk.allFilled) return showResult('ref-result', 'Please rate the candidate on every skill in the Skill Assessment.', false);
+  const avgRating = sk.ratings.reduce((a,r) => a + r.rating, 0) / Math.max(1, sk.ratings.length);
   try {
     const params = new URLSearchParams({
       action: 'oppsInitiateReferral',
@@ -1531,7 +1643,9 @@ async function refSubmit() {
       targetJobId: v('ref-job'),
       relationship: v('ref-relationship'), knownDuration: v('ref-duration'),
       workedTogether: v('ref-worked'), confidenceLevel: v('ref-confidence'),
-      whyGoodFit: v('ref-whyfit')
+      whyGoodFit: v('ref-whyfit'),
+      skillRatings: JSON.stringify(sk.ratings),
+      skillAvgRating: avgRating.toFixed(2),
     });
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
     const j = await r.json();
