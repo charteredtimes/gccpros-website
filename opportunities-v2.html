@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-deep-audit-fix-v3
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-role-truth-v4
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -78,6 +78,9 @@ a:hover { text-decoration: underline; }
 .role-chip { font-size: 9.5px; padding: 2px 8px; border-radius: 8px; background: var(--gold); color: #fff; letter-spacing: 0.5px; font-weight: 700; text-transform: uppercase; }
 .role-chip.partner { background: var(--brand-orange); }
 .role-chip.both    { background: linear-gradient(90deg, var(--gold), var(--brand-orange)); }
+.role-chip.seeker  { background: var(--gold); }
+.partner-pending-banner.rejected { background: #FEF2F2; border-color: var(--red); color: var(--red); }
+.partner-pending-banner.rejected h4 { color: var(--red); }
 .hero { background: linear-gradient(135deg, var(--ink) 0%, var(--blue-mid) 100%); color: #fff; padding: 56px 0 64px; text-align: center; position: relative; }
 .hero h1 { font-family: 'Playfair Display', serif; font-size: 46px; line-height: 1.1; margin-bottom: 12px; color: #fff; }
 .hero-tagline { font-size: 16px; color: var(--gold-light); font-style: italic; margin-bottom: 18px; }
@@ -244,6 +247,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <button class="btn secondary" id="signin-btn" onclick="openLoginModal()">Sign in</button>
       <span class="user-pill" id="user-pill" style="display:none;"></span>
       <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
+      <button class="btn secondary" id="role-debug-btn" onclick="alert('Role debug:\n\n' + JSON.stringify({CURRENT_EMAIL,CURRENT_USER_TYPE,CURRENT_ACTIVE_VIEW,CURRENT_APPROVAL,CURRENT_PRIMARY_DOMAIN,partnerStatus:CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus,debug:CURRENT_PROFILE && CURRENT_PROFILE.debug}, null, 2))" style="display:none;font-size:10px;padding:6px 8px;" title="Show role detection debug info">🔍</button>
     </div>
   </div>
 </header>
@@ -672,7 +676,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-19-deep-audit-fix-v3';
+const BUILD = 'opps-v2-2026-05-19-role-truth-v4';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -693,7 +697,8 @@ firebase.initializeApp({
 
 // State (all authoritative reads come from oppsCheckUserStatus AFTER sign-in)
 let CURRENT_EMAIL = null;
-let CURRENT_USER_TYPE = null;         // 'job_seeker' | 'partner' | 'both' | null
+let CURRENT_USER_TYPE = null;         // 'job_seeker' | 'partner' | 'both' | null — the user's ACTUAL role per DB
+let CURRENT_ACTIVE_VIEW = 'job_seeker'; // 'job_seeker' | 'partner' — which view a 'both' user is currently looking at
 let CURRENT_PROFILE = null;            // full payload from oppsCheckUserStatus + partner row
 let CURRENT_APPROVAL = null;           // 'approved' | 'pending' | 'rejected'
 let CURRENT_PRIMARY_DOMAIN = '';       // for auto-filter
@@ -780,6 +785,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
     CURRENT_EMAIL = (user.email || '').toLowerCase();
     document.getElementById('signin-btn').style.display = 'none';
     document.getElementById('signout-btn').style.display = '';
+    document.getElementById('role-debug-btn').style.display = '';
     const pill = document.getElementById('user-pill');
     pill.style.display = '';
     pill.innerHTML = esc(CURRENT_EMAIL) + '<span class="role-chip" id="role-chip-pill">&hellip;</span>';
@@ -788,9 +794,11 @@ firebase.auth().onAuthStateChanged(async function(user) {
     await loadProfileAndDashboard();
   } else {
     CURRENT_EMAIL = null; CURRENT_USER_TYPE = null; CURRENT_PROFILE = null;
-    CURRENT_APPROVAL = null; CURRENT_PRIMARY_DOMAIN = '';
+    CURRENT_APPROVAL = null; CURRENT_PRIMARY_DOMAIN = ''; CURRENT_ACTIVE_VIEW = 'job_seeker';
+    ACTIVE_DOMAIN = '';
     document.getElementById('signin-btn').style.display = '';
     document.getElementById('signout-btn').style.display = 'none';
+    document.getElementById('role-debug-btn').style.display = 'none';
     document.getElementById('user-pill').style.display = 'none';
     document.getElementById('dashboard-section').style.display = 'none';
     setSignedInChrome(false);
@@ -925,30 +933,90 @@ async function doEmailSignIn() {
   }
 }
 
-// SERVER-AUTHORITATIVE profile + role load
+// SERVER-AUTHORITATIVE profile + role load (v7.7 — bulletproof role detection)
+function _normalizeRole(t) {
+  const s = String(t || '').toLowerCase();
+  if (s === 'referrer' || s === 'partner' || s === 'partners') return 'partner';
+  if (s === 'both') return 'both';
+  return 'job_seeker';
+}
 async function loadProfileAndDashboard() {
   if (!CURRENT_EMAIL) return;
+  // 12 s timeout — never let a stalled fetch silently downgrade the role
+  const ctrl = new AbortController();
+  const tmo = setTimeout(() => ctrl.abort(), 12000);
+  let sj = null;
   try {
-    const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL));
-    const sj = await sr.json();
-    CURRENT_PROFILE = sj || {};
-    CURRENT_USER_TYPE = sj.type || 'job_seeker';
+    // Cache-buster — defeat CDN/proxy caching of role-sensitive response
+    const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now(), { signal: ctrl.signal });
+    sj = await sr.json();
+  } catch (err) {
+    console.warn('[role] checkUserStatus failed:', err && err.message);
+  } finally { clearTimeout(tmo); }
+
+  if (sj && sj.exists !== undefined) {
+    CURRENT_PROFILE = sj;
+    // FULL diagnostic log so we can debug any "wrong role" report from screenshot alone
+    console.log('[role] oppsCheckUserStatus →', JSON.stringify(sj));
+    if (sj.debug) console.log('[role] DEBUG payload:', sj.debug);
+    CURRENT_USER_TYPE = _normalizeRole(sj.effective_role || sj.type);
     CURRENT_APPROVAL = sj.approvalStatus || 'pending';
     CURRENT_PRIMARY_DOMAIN = sj.primaryDomain || sj.domain || '';
-  } catch (_) {
-    CURRENT_USER_TYPE = 'job_seeker'; CURRENT_APPROVAL = 'pending';
+    // For 'both' users, default the active view to whichever tab they clicked on login
+    if (CURRENT_USER_TYPE === 'both' && (loginRolePref === 'jobSeeker' || loginRolePref === 'partner')) {
+      CURRENT_ACTIVE_VIEW = (loginRolePref === 'partner') ? 'partner' : 'job_seeker';
+    } else {
+      CURRENT_ACTIVE_VIEW = CURRENT_USER_TYPE === 'partner' ? 'partner' : 'job_seeker';
+    }
+  } else {
+    // Empty/missing — user is signed into Firebase but has no opps_users row
+    console.warn('[role] no opps_users row for', CURRENT_EMAIL, '→ defaulting to job_seeker');
+    CURRENT_USER_TYPE = 'job_seeker';
+    CURRENT_APPROVAL = 'pending';
+    CURRENT_ACTIVE_VIEW = 'job_seeker';
+    CURRENT_PROFILE = {};
   }
-  // Update role chip
+
+  // Render role chip — driven by CURRENT_ACTIVE_VIEW (what they're CURRENTLY browsing as)
   const chip = document.getElementById('role-chip-pill');
   if (chip) {
-    chip.classList.remove('partner','both');
-    if (CURRENT_USER_TYPE === 'partner') { chip.textContent = 'Partner'; chip.classList.add('partner'); }
-    else if (CURRENT_USER_TYPE === 'both') { chip.textContent = 'Both'; chip.classList.add('both'); }
-    else { chip.textContent = 'Seeker'; }
+    chip.classList.remove('partner','both','seeker');
+    if (CURRENT_ACTIVE_VIEW === 'partner') {
+      chip.textContent = 'Partner';
+      chip.classList.add('partner');
+    } else {
+      chip.textContent = 'Seeker';
+      chip.classList.add('seeker');
+    }
+    // For 'both' users, show a small switcher
+    if (CURRENT_USER_TYPE === 'both') {
+      chip.title = 'You have both Job Seeker and Partner profiles. Click to switch.';
+      chip.style.cursor = 'pointer';
+      chip.onclick = () => {
+        CURRENT_ACTIVE_VIEW = (CURRENT_ACTIVE_VIEW === 'partner') ? 'job_seeker' : 'partner';
+        loadDashboard();
+        renderJobs();
+        // Re-render chip with new view
+        const c2 = document.getElementById('role-chip-pill');
+        if (c2) {
+          c2.classList.remove('partner','both','seeker');
+          c2.textContent = CURRENT_ACTIVE_VIEW === 'partner' ? 'Partner ⇄' : 'Seeker ⇄';
+          c2.classList.add(CURRENT_ACTIVE_VIEW === 'partner' ? 'partner' : 'seeker');
+        }
+      };
+      chip.textContent += ' ⇄';
+    } else {
+      chip.title = '';
+      chip.style.cursor = 'default';
+      chip.onclick = null;
+    }
   }
-  // Auto-filter to user's domain (with "All Domains" remaining clickable)
-  if (CURRENT_PRIMARY_DOMAIN) {
+
+  // Auto-filter only for job seekers (partners refer across domains — full list by default)
+  if (CURRENT_ACTIVE_VIEW === 'job_seeker' && CURRENT_PRIMARY_DOMAIN) {
     ACTIVE_DOMAIN = CURRENT_PRIMARY_DOMAIN;
+  } else {
+    ACTIVE_DOMAIN = '';
   }
   populateFilters();
   renderJobs();
@@ -1053,12 +1121,10 @@ function renderJobCard(j) {
   const safeId = (j.id || '').replace(/'/g, "\\'");
   const safeTitle = esc(j.title || '').replace(/'/g, "\\'");
   const safeCo = esc(j.company || '').replace(/'/g, "\\'");
-  // Action button depends on user role (issue #3, #9)
+  // v7.7: button follows the ACTIVE VIEW (what user is currently browsing as)
   let actionBtn;
-  if (CURRENT_USER_TYPE === 'partner') {
+  if (CURRENT_ACTIVE_VIEW === 'partner') {
     actionBtn = `<button class="btn brand-orange" onclick="openReferModal('${safeId}')">Refer →</button>`;
-  } else if (CURRENT_USER_TYPE === 'both') {
-    actionBtn = `<button class="btn" onclick="openApplyModal('${safeId}', '${safeTitle}', '${safeCo}')">Apply</button><button class="btn brand-orange" onclick="openReferModal('${safeId}')">Refer</button>`;
   } else {
     actionBtn = `<button class="btn" onclick="openApplyModal('${safeId}', '${safeTitle}', '${safeCo}')">Apply →</button>`;
   }
@@ -1103,8 +1169,8 @@ function openJobDetail(jobId) {
   const ctcText = (j.ctc_min_inr || j.ctc_max_inr)
     ? fmtINR(j.ctc_min_inr) + ' – ' + fmtINR(j.ctc_max_inr) + ' LPA'
     : (j.budget_text || 'Competitive');
-  const isPartner = CURRENT_USER_TYPE === 'partner';
-  const isBoth    = CURRENT_USER_TYPE === 'both';
+  const isPartner = CURRENT_ACTIVE_VIEW === 'partner';
+  const isBoth    = false; // v7.7: "both" users see whichever view they're in; no dual buttons
   const safeId = (j.id || '').replace(/'/g,"\\'");
   const safeTitle = esc(j.title || '').replace(/'/g,"\\'");
   const safeCo = esc(j.company || '').replace(/'/g,"\\'");
@@ -1301,8 +1367,8 @@ async function ptSubmit() {
 // Apply for Job — with prefill, validation, file upload
 function openApplyModal(jobId, title, company) {
   if (!CURRENT_EMAIL) { alert('Please sign in first.'); openLoginModal(); return; }
-  if (CURRENT_USER_TYPE === 'partner') {
-    alert("You are signed in as a Partner. Use 'Refer' instead — Partners cannot apply.");
+  if (CURRENT_ACTIVE_VIEW === 'partner') {
+    alert("You are currently viewing as a Partner. Use 'Refer' instead.");
     openReferModal(jobId);
     return;
   }
@@ -1312,12 +1378,14 @@ function openApplyModal(jobId, title, company) {
   document.getElementById('ap-result').style.display = 'none';
   // Prefill from profile (issue #12)
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  // Accept both camelCase (v7.7 normalized) and snake_case (raw Supabase) keys
+  const pf = CURRENT_PROFILE || {};
   set('ap-email', CURRENT_EMAIL);
-  set('ap-phone', (CURRENT_PROFILE && CURRENT_PROFILE.phone) || '');
-  set('ap-altphone', (CURRENT_PROFILE && CURRENT_PROFILE.altPhone) || '');
-  set('ap-linkedin', (CURRENT_PROFILE && CURRENT_PROFILE.linkedin) || '');
-  set('ap-curcompany', (CURRENT_PROFILE && CURRENT_PROFILE.currentCompany) || '');
-  set('ap-curdesig', (CURRENT_PROFILE && CURRENT_PROFILE.designation) || '');
+  set('ap-phone', pf.phone || pf.contact_phone || '');
+  set('ap-altphone', pf.altPhone || pf.alt_phone || '');
+  set('ap-linkedin', pf.linkedin || '');
+  set('ap-curcompany', pf.currentCompany || pf.current_company || '');
+  set('ap-curdesig', pf.designation || '');
   // CV file picker hint
   const cv = document.getElementById('ap-cv');
   if (cv) {
@@ -1438,8 +1506,12 @@ async function kycSubmit() {
 function openReferModal(preselectJobId) {
   if (!CURRENT_EMAIL) { alert('Please sign in first.'); openLoginModal(); return; }
   if (CURRENT_USER_TYPE !== 'partner' && CURRENT_USER_TYPE !== 'both') {
-    alert('Only approved Partners can refer candidates.');
+    alert('Only approved Partners can refer candidates. Register as a Partner from the home page if you qualify (15+ years).');
     return;
+  }
+  if (CURRENT_ACTIVE_VIEW !== 'partner' && CURRENT_USER_TYPE === 'both') {
+    // Switch view silently before opening refer
+    CURRENT_ACTIVE_VIEW = 'partner';
   }
   if (preselectJobId) { const sel = document.getElementById('ref-job'); if (sel) sel.value = preselectJobId; }
   document.getElementById('ref-result').style.display = 'none';
@@ -1480,27 +1552,36 @@ async function loadDashboard() {
   const body = document.getElementById('dashboard-body');
   body.innerHTML = '<p style="text-align:center;color:var(--muted);">Loading…</p>';
 
-  // Partner status check first
-  if (CURRENT_USER_TYPE === 'partner' || CURRENT_USER_TYPE === 'both') {
-    // Pending banner if approval not granted yet (issue #7)
-    if (CURRENT_APPROVAL === 'pending') {
-      body.innerHTML = `
-        <div class="partner-pending-banner">
-          <h4>⏳ Partner Application Under Review</h4>
-          <p>Thanks for applying! Our team manually verifies every Partner application (LinkedIn check, 15+ years experience, references). You'll receive an email within 48 hours.</p>
-          <p style="margin-top:10px;font-size:12px;">While we review, you can browse open roles. KYC / Referral / Earnings tools unlock once approved.</p>
-        </div>
-      `;
-      return;
+  // Render partner dashboard if user IS a partner AND currently viewing as partner
+  const showingPartner = (CURRENT_USER_TYPE === 'partner') || (CURRENT_USER_TYPE === 'both' && CURRENT_ACTIVE_VIEW === 'partner');
+  if (showingPartner) {
+    // Pending banner — use partnerStatus from opps_partners (more accurate than opps_users.approval_status)
+    const partnerStatus = String((CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus) || '').toLowerCase();
+    if (partnerStatus === 'pending' || partnerStatus === '') {
+      const ps = String((CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus) || 'Pending');
+      const isRejected = ps.toLowerCase() === 'rejected';
+      const isAccepted = ps.toLowerCase() === 'accepted';
+      if (!isAccepted) {
+        body.innerHTML = `
+          <div class="partner-pending-banner${isRejected ? ' rejected' : ''}">
+            <h4>${isRejected ? '✕ Partner Application Not Approved' : '⏳ Partner Application Under Review'}</h4>
+            <p>${isRejected
+              ? "Your Partner application was not approved. Please contact <a href='mailto:admin@gccpros.com'>admin@gccpros.com</a> for details."
+              : "Thanks for applying! Our team manually verifies every Partner application (LinkedIn check, 15+ years experience, references). You'll receive an email within 48 hours."}</p>
+            <p style="margin-top:10px;font-size:12px;">Current status: <b>${esc(ps)}</b>. ${isRejected ? '' : "While we review, you can browse open roles. KYC / Referral / Earnings tools unlock once approved."}</p>
+          </div>
+        `;
+        return;
+      }
     }
     // Approved partner — load partner dashboard
     try {
-      const pr = await apiFetch(SCRIPT_URL + '?action=oppsPartnerDashboard&email=' + encodeURIComponent(CURRENT_EMAIL));
+      const pr = await apiFetch(SCRIPT_URL + '?action=oppsPartnerDashboard&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now());
       const pj = await pr.json();
       if (pj && pj.partner) {
         let jsData = null;
         if (CURRENT_USER_TYPE === 'both') {
-          try { const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL)); jsData = await ar.json(); } catch(_) {}
+          try { const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now()); jsData = await ar.json(); } catch(_) {}
         }
         renderPartnerDashboard(pj, jsData);
         return;
@@ -1512,7 +1593,7 @@ async function loadDashboard() {
 
   // Job seeker dashboard
   try {
-    const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL));
+    const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now());
     const aj = await ar.json();
     renderJobSeekerDashboard(aj || { applications: [] });
   } catch (err) {
