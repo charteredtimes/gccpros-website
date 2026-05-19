@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-ux-hardening-v5
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-pm-grade-v6
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -301,7 +301,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 <section class="jobs-section">
   <div class="container">
     <div class="section-intro">
-      <h2>Open GCC Roles</h2>
+      <h2>Active Opportunities</h2>
       <p>Live listings from verified Global Capability Centres &middot; <span id="jobs-count-pill" style="color:var(--gold);font-weight:700;">loading&hellip;</span></p>
     </div>
 
@@ -592,7 +592,11 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       </select>
       <div class="field-hint">Pick the highest completed qualification. Pursuing counts only if Final-year.</div>
     </div>
-    <div class="field"><label>Relevant Skills <span class="required">*</span> (min 3, comma-separated)</label><textarea id="ap-skills" rows="2" placeholder="e.g. Fund Accounting, NAV, Bloomberg, SimCorp"></textarea><div class="field-hint" id="ap-skills-hint">List 3+ skills directly relevant to this role.</div></div>
+    <div class="field"><label>Select your relevant skills <span class="required">*</span> (pick at least 3)</label>
+      <div id="ap-skill-grid" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--cream);border-radius:6px;min-height:50px;"></div>
+      <div class="field-hint" id="ap-skills-hint">Tick at least 3 skills from the role's requirements. Other (write-in) is at the end.</div>
+      <input type="text" id="ap-skills-other" placeholder="Other skills (comma-separated, optional)" style="margin-top:6px;">
+    </div>
     <div class="field"><label>Why are you a good fit for this role? <span class="required">*</span></label><textarea id="ap-eligibility" rows="3" placeholder="At least 20 words. Specific examples land best." oninput="updateWordCount(this,'ap-eligibility-count',20)"></textarea><div class="field-hint" id="ap-eligibility-count">0 / 20 words minimum</div></div>
     <div class="field-row">
       <div class="field"><label>Work Mode Preference <span class="required">*</span></label>
@@ -601,8 +605,29 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Earliest Join Date <span class="required">*</span></label><input type="date" id="ap-joindate"></div>
     </div>
     <div class="field"><label>Willing to Relocate?</label><select id="ap-relocate"><option>Yes</option><option>No</option><option>Depends on location</option></select></div>
-    <div class="field"><label>Reference 1 (Name | Title | Email | Phone | Relationship) <span class="required">*</span></label><input type="text" id="ap-ref1" placeholder="John Doe | Senior Manager | john@company.com | 9999999999 | Reported to him"><div class="field-hint">Use pipe (|) as separator. Reference will be contacted only after candidate shortlisting.</div></div>
-    <div class="field"><label>Reference 2 (optional)</label><input type="text" id="ap-ref2" placeholder="Same format as Reference 1"></div>
+    <div class="field"><label>Reference 1 <span class="required">*</span></label>
+      <div class="field-hint" style="margin-bottom:6px;">Reference will only be contacted after candidate shortlisting.</div>
+      <div class="field-row" style="gap:8px;margin-top:4px;">
+        <input type="text" id="ap-ref1-name" placeholder="Name *">
+        <input type="text" id="ap-ref1-title" placeholder="Title / Designation *">
+      </div>
+      <div class="field-row" style="gap:8px;margin-top:6px;">
+        <input type="email" id="ap-ref1-email" placeholder="Email *">
+        <input type="tel" id="ap-ref1-phone" placeholder="Phone (10+ digits) *">
+      </div>
+      <input type="text" id="ap-ref1-relation" placeholder="Relationship (e.g. Reported to him for 3 years) *" style="margin-top:6px;">
+    </div>
+    <div class="field"><label>Reference 2 (optional)</label>
+      <div class="field-row" style="gap:8px;">
+        <input type="text" id="ap-ref2-name" placeholder="Name">
+        <input type="text" id="ap-ref2-title" placeholder="Title / Designation">
+      </div>
+      <div class="field-row" style="gap:8px;margin-top:6px;">
+        <input type="email" id="ap-ref2-email" placeholder="Email">
+        <input type="tel" id="ap-ref2-phone" placeholder="Phone">
+      </div>
+      <input type="text" id="ap-ref2-relation" placeholder="Relationship" style="margin-top:6px;">
+    </div>
 
     <div class="field"><label>Resume / CV for this application <span class="required">*</span> (PDF/DOC/DOCX, max 5MB)</label>
       <input type="file" id="ap-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
@@ -702,7 +727,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-19-ux-hardening-v5';
+const BUILD = 'opps-v2-2026-05-19-pm-grade-v6';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -764,6 +789,30 @@ function updateWordCount(ta, hintId, min) {
   if (!h) return;
   h.textContent = n + ' / ' + min + ' words minimum' + (n >= min ? ' ✓' : '');
   h.className = 'field-hint ' + (n >= min ? 'ok' : (n > 0 ? 'err' : ''));
+}
+
+// v6: render skill-CHECKBOX grid in the Apply modal (candidate ticks ≥3 from the role's listed skills)
+function renderApplySkillGrid(jobId) {
+  const j = JOB_LIST.find(x => x.id === jobId);
+  const skills = j ? splitToArr(j.skills) : [];
+  const grid = document.getElementById('ap-skill-grid');
+  if (!grid) return;
+  if (!skills.length) {
+    grid.innerHTML = '<p class="field-hint" style="margin:6px;">No skills listed on this role — use the "Other skills" box below.</p>';
+    return;
+  }
+  grid.innerHTML = skills.map((s,i) => {
+    const id = 'ap-skill-' + i;
+    return '<label style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:12.5px;">' +
+      '<input type="checkbox" id="' + id + '" data-skill="' + esc(s) + '" style="width:auto;margin:0;"> ' + esc(s) +
+      '</label>';
+  }).join('');
+}
+function collectApplySkills() {
+  const ticked = Array.from(document.querySelectorAll('#ap-skill-grid input[type="checkbox"]:checked')).map(c => c.getAttribute('data-skill'));
+  const otherRaw = (document.getElementById('ap-skills-other').value || '').trim();
+  const other = otherRaw ? otherRaw.split(/[,;]/).map(s => s.trim()).filter(Boolean) : [];
+  return ticked.concat(other);
 }
 
 // v5: render mandatory skill-rating grid in the Refer modal for the selected job
@@ -1369,7 +1418,11 @@ async function jsSubmit() {
         body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
       });
       const uj = await ur.json();
-      if (uj.error) showResult('js-result-3', '✓ Account created but CV upload failed: ' + uj.error + '. You can re-upload from your dashboard.', 'warn');
+      if (uj.error) {
+        const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+        console.error('[CV upload failed]', uj);
+        showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
+      }
       else          showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
       setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
     };
@@ -1485,6 +1538,8 @@ function openApplyModal(jobId, title, company) {
   // Date min = today
   const dt = document.getElementById('ap-joindate');
   if (dt) { const t = new Date(); dt.min = t.toISOString().slice(0,10); }
+  // v6: populate skill checkbox grid from the job's skills list
+  renderApplySkillGrid(jobId);
   openModal('apply-modal');
 }
 
@@ -1498,7 +1553,7 @@ async function apSubmit() {
     ['ap-curctc','Current CTC'], ['ap-expctc','Expected CTC'], ['ap-notice','Notice Period'],
     ['ap-pan','PAN'], ['ap-qual','Qualification'], ['ap-skills','Skills'],
     ['ap-eligibility','Why you fit'], ['ap-workmode','Work Mode'], ['ap-joindate','Earliest Join Date'],
-    ['ap-ref1','Reference 1']
+    ['ap-ref1-name','Reference 1 Name'],['ap-ref1-title','Reference 1 Title'],['ap-ref1-email','Reference 1 Email'],['ap-ref1-phone','Reference 1 Phone'],['ap-ref1-relation','Reference 1 Relationship']
   ];
   for (const [id, lbl] of required) if (!v(id)) return showResult('ap-result', lbl + ' is required.', false);
   if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number must be 10–15 digits.', false);
@@ -1509,16 +1564,17 @@ async function apSubmit() {
   const ctcCur = parseFloat(v('ap-curctc')), ctcExp = parseFloat(v('ap-expctc'));
   if (isNaN(ctcCur) || ctcCur < 0) return showResult('ap-result', 'Current CTC must be a positive number (in LPA).', false);
   if (isNaN(ctcExp) || ctcExp < 0) return showResult('ap-result', 'Expected CTC must be a positive number (in LPA).', false);
-  const skillsArr = v('ap-skills').split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
-  if (skillsArr.length < 3) return showResult('ap-result', 'List at least 3 relevant skills (comma-separated).', false);
+  const skillsArr = collectApplySkills();
+  if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above) — you selected ' + skillsArr.length + '.', false);
   const elgWords = v('ap-eligibility').split(/\s+/).filter(Boolean).length;
   if (elgWords < 20) return showResult('ap-result', '"Why you fit" needs at least 20 words (you have ' + elgWords + ').', false);
   // Join date must be today or future
   const jd = new Date(v('ap-joindate'));
   const today = new Date(); today.setHours(0,0,0,0);
   if (isNaN(jd.getTime()) || jd < today) return showResult('ap-result', 'Earliest Join Date must be today or later.', false);
-  // Reference format check (must contain | separators)
-  if (v('ap-ref1').split('|').length < 4) return showResult('ap-result', 'Reference 1 format invalid. Use: Name | Title | Email | Phone | Relationship', false);
+  // v6: ref1 validation — email + phone format
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ap-ref1-email'))) return showResult('ap-result', 'Reference 1 Email looks invalid.', false);
+  if (!PHONE_RX.test(v('ap-ref1-phone'))) return showResult('ap-result', 'Reference 1 Phone must be 10–15 digits.', false);
   const cvFile = document.getElementById('ap-cv').files[0];
   if (!cvFile) return showResult('ap-result', 'CV upload is mandatory.', false);
   if (cvFile.size > CV_MAX_BYTES) return showResult('ap-result', 'CV exceeds 5 MB.', false);
@@ -1534,7 +1590,11 @@ async function apSubmit() {
       body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
     });
     const uj = await ur.json();
-    if (uj.error) throw new Error('CV upload failed: ' + uj.error);
+    if (uj.error) {
+      const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      console.error('[CV upload failed]', uj);
+      throw new Error('CV upload failed: ' + detailMsg);
+    }
     const cvPath = uj.path, cvFilename = uj.filename || cvFile.name;
     btn.textContent = 'Submitting application…';
     // Step 2 — submit application
@@ -1546,11 +1606,12 @@ async function apSubmit() {
       currentCompany: v('ap-curcompany'), currentDesignation: v('ap-curdesig'),
       currentCtc: v('ap-curctc'), expectedCtc: v('ap-expctc'),
       noticeDays: v('ap-notice'), pan: v('ap-pan').toUpperCase(),
-      qualification: v('ap-qual'), selectedSkills: v('ap-skills'),
+      qualification: v('ap-qual'), selectedSkills: collectApplySkills().join(', '),
       eligibilityStatement: v('ap-eligibility'),
       workModePreference: v('ap-workmode'), earliestJoinDate: v('ap-joindate'),
       willingRelocate: v('ap-relocate'),
-      reference1: v('ap-ref1'), reference2: v('ap-ref2'),
+      reference1: [v('ap-ref1-name'), v('ap-ref1-title'), v('ap-ref1-email'), v('ap-ref1-phone'), v('ap-ref1-relation')].join(' | '),
+      reference2: (v('ap-ref2-name') || v('ap-ref2-email')) ? [v('ap-ref2-name'), v('ap-ref2-title'), v('ap-ref2-email'), v('ap-ref2-phone'), v('ap-ref2-relation')].join(' | ') : '',
       cvUrl: cvPath, cvFilename, coverNote: v('ap-note')
     });
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
@@ -1653,7 +1714,20 @@ async function refSubmit() {
     if (j.error === 'duplicate_referral')      return showResult('ref-result', j.message || 'You already referred this candidate.', false);
     if (j.error === 'partner_not_approved')    return showResult('ref-result', j.message || 'Your partner application is still under review.', 'warn');
     if (j.error) throw new Error(j.error);
-    showResult('ref-result', '✓ Referral link generated:\n' + (j.referralUrl || j.referral_url || ''), true);
+    const refUrl = j.referralUrl || j.referral_url || '';
+    const draft = j.candidateEmailDraft || null;
+    let msg = '✓ Referral link generated:\n' + refUrl;
+    if (draft && draft.to) {
+      msg += '\n\n→ Opening your email client with a pre-filled message to the candidate…';
+      // Open mailto: in a new tab (most browsers route to default mail client)
+      const mailto = 'mailto:' + encodeURIComponent(draft.to) +
+        '?subject=' + encodeURIComponent(draft.subject || '') +
+        '&body=' + encodeURIComponent(draft.body || refUrl);
+      setTimeout(() => { try { window.open(mailto, '_blank'); } catch(_) { location.href = mailto; } }, 600);
+    } else {
+      msg += '\n\n(Copy and paste this link into a message to the candidate.)';
+    }
+    showResult('ref-result', msg, true);
     loadDashboard();
   } catch (err) { showResult('ref-result', err.message, false); }
 }

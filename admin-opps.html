@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v1
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v2
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -403,7 +403,7 @@ function toggleAppDetail(i) {
 async function setAppStatus(id, status) {
   if (!confirm('Set application status to "' + status + '"?')) return;
   try {
-    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status));
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(status));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
     alert('✓ Status updated.');
