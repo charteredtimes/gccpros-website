@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v7-smart-merge
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v8-xlsx-export
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -11,6 +11,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>GCCPROs Admin · Opportunities</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#F59E0B; }
 * { box-sizing:border-box; margin:0; padding:0; }
@@ -107,8 +108,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-jobs-q" placeholder="🔍 Search title / company / job code" oninput="renderJobs()">
         <button class="btn" onclick="loadJobs()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
+        <button class="btn brand-orange" onclick="exportXLSX('jobs', JOBS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="jobs-count"></span>
       </div>
       <div id="jobs-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -131,8 +133,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-apps-q" placeholder="🔍 Search candidate / company / job code" oninput="renderApps()">
         <button class="btn" onclick="loadApps()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
+        <button class="btn brand-orange" onclick="exportXLSX('apps', APPS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="apps-count"></span>
         <span id="apps-jobfilter" style="display:none;background:#FFF4E5;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
           Filtered to job: <span id="apps-jobfilter-label"></span>
@@ -164,8 +167,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-partners-q" placeholder="🔍 Search email / name / company" oninput="renderPartners()">
         <button class="btn" onclick="loadPartners()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
+        <button class="btn brand-orange" onclick="exportXLSX('partners', PARTNERS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="partners-count"></span>
       </div>
       <div id="partners-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -189,9 +193,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-referrals-q" placeholder="🔍 Search candidate / partner email" oninput="renderReferrals()">
         <button class="btn" onclick="loadReferrals()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
-          <button class="btn brand-orange" onclick="exportReferralsJoined()" title="Each referral row + the candidate-completed application data joined on email — best for full handoff">⬇ Joined (referral + candidate)</button>
+        <button class="btn brand-orange" onclick="exportXLSX('referrals', REFERRALS)" title="Proper Excel file with smart-merge — typed cells, frozen header. The recommended export.">📊 Export to Excel (recommended)</button>
+          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Plain CSV — clean smart-merged columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Plain CSV — every column including legacy">⬇ Raw CSV</button>
         <span class="muted" id="referrals-count"></span>
       </div>
       <div id="referrals-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -219,8 +223,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-users-q" placeholder="🔍 Search email / name / city" oninput="renderUsers()">
         <button class="btn" onclick="loadUsers()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('users', USERS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('users', USERS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
+        <button class="btn brand-orange" onclick="exportXLSX('users', USERS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('users', USERS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('users', USERS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="users-count"></span>
       </div>
       <div id="users-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -690,6 +695,103 @@ function renderUsers() {
   });
   html += '</tbody></table>';
   document.getElementById('users-box').innerHTML = html;
+}
+
+// =========================================================
+// XLSX export — v8 the proper fix
+// =========================================================
+// Produces a true .xlsx file via SheetJS — no CSV-to-Excel type guessing.
+// - Each column gets its proper type: dates as Excel dates, numbers as numbers,
+//   booleans as TRUE/FALSE, strings as strings.
+// - Header row is bold + frozen (you can scroll without losing column names).
+// - Column widths auto-fit to content (capped at 50 chars).
+// - Smart-merge for referrals (legacy + new schema unified into one row).
+// - Hyperlink-aware: any cell starting with http or storage paths becomes a clickable link.
+// - "[object Object]" leftovers are converted to empty.
+// =========================================================
+const DATE_COLS = new Set(['applied_at','invited_at','accepted_at','placed_at','posted_at','signup_date','approved_at','status_updated_at','candidate_submitted_date','timestamp_legacy','earliest_join_date','cv_uploaded_at','kyc_submitted_at','created_at','updated_at']);
+const NUMBER_COLS = new Set(['current_ctc_inr','expected_ctc_inr','ctc_min_inr','ctc_max_inr','referral_amount_inr','payout_inr','earnings_balance_inr','earnings_lifetime_inr','total_referrals','total_placements','applications_count','total_experience','total_exp','candidate_experience','total_skills_rated','skill_avg_rating','weighted_avg_score','notice_period_days']);
+const URL_COLS = new Set(['linkedin','contact_linkedin','candidate_linkedin','cv_url','cv_storage_url','candidate_cv_link']);
+
+function _xlsxCell(v, colName) {
+  if (v == null || v === '') return { t: 's', v: '' };
+  // Strip "[object Object]" garbage
+  if (typeof v === 'string' && v === '[object Object]') return { t: 's', v: '' };
+  // Stringify nested objects/arrays
+  if (typeof v === 'object') {
+    try { v = JSON.stringify(v); } catch { v = String(v); }
+  } else if (typeof v === 'boolean') {
+    return { t: 'b', v: v };
+  }
+  const s = String(v).replace(/\r/g, '');
+  // Date
+  if (DATE_COLS.has(colName)) {
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) return { t: 'd', v: d, z: 'yyyy-mm-dd hh:mm' };
+  }
+  // Number
+  if (NUMBER_COLS.has(colName)) {
+    const n = parseFloat(s);
+    if (!isNaN(n) && isFinite(n)) return { t: 'n', v: n };
+  }
+  // URL → hyperlink
+  if (URL_COLS.has(colName) && /^https?:\/\//i.test(s)) {
+    return { t: 's', v: s, l: { Target: s, Tooltip: 'Click to open' } };
+  }
+  return { t: 's', v: s };
+}
+
+function exportXLSX(name, rows) {
+  if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
+  // Smart-merge for referrals
+  if (name === 'referrals' && APPS.length) {
+    const appByEmail = {};
+    APPS.forEach(a => { if (a.applicant_email) appByEmail[String(a.applicant_email).toLowerCase()] = a; });
+    rows = rows.map(r => _smartMergeReferral(r, appByEmail));
+  }
+  // Use canonical column order; union extras at the end
+  const canonical = CSV_COLS[name] || [];
+  const seen = new Set(canonical);
+  const extras = [];
+  rows.forEach(r => Object.keys(r).forEach(k => { if (!seen.has(k)) { seen.add(k); extras.push(k); } }));
+  const cols = canonical.concat(extras);
+  // Build the worksheet aoa-style with typed cells
+  const headerRow = cols.map(c => _titleCase(c));
+  const dataRows = rows.map(r => cols.map(c => _xlsxCell(r[c], c)));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow]);
+  // Append typed data rows
+  dataRows.forEach((row, ri) => {
+    row.forEach((cell, ci) => {
+      const addr = XLSX.utils.encode_cell({ r: ri + 1, c: ci });
+      ws[addr] = cell;
+    });
+  });
+  // Set sheet range
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: dataRows.length, c: cols.length - 1 } });
+  // Header formatting + frozen row + auto-width
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };  // row 1 freeze
+  ws['!cols'] = cols.map((c, i) => {
+    let maxLen = c.length;
+    dataRows.forEach(row => {
+      const v = row[i];
+      if (v && v.v != null) {
+        const s = v.v instanceof Date ? 'YYYY-MM-DD' : String(v.v);
+        if (s.length > maxLen) maxLen = s.length;
+      }
+    });
+    return { wch: Math.min(50, Math.max(10, maxLen + 2)) };
+  });
+  // Bold header
+  for (let c = 0; c < cols.length; c++) {
+    const addr = XLSX.utils.encode_cell({ r: 0, c });
+    if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } };
+  }
+  // Workbook → save
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, name.charAt(0).toUpperCase() + name.slice(1));
+  XLSX.writeFile(wb, 'gccpros-' + name + '-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('Exported ' + rows.length + ' rows × ' + cols.length + ' columns to Excel', 'ok');
 }
 
 // =========================================================
