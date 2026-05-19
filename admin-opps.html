@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v6-referrals-export
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v7-smart-merge
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -596,6 +596,12 @@ async function loadReferrals() {
     const j = await r.json();
     if (j.error) throw new Error(j.error);
     REFERRALS = j.referrals || j.rows || [];
+    // v7: silently load APPS in background so smart-merge exports work without an extra click
+    if (!APPS.length) {
+      adminFetch(SCRIPT_URL + '?action=oppsAdminListApplications').then(r2 => r2.json()).then(j2 => {
+        if (j2 && !j2.error) APPS = j2.applications || j2.rows || [];
+      }).catch(() => {});
+    }
     renderReferrals();
   } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
 }
@@ -753,6 +759,7 @@ const CSV_COLS = {
     // Candidate consent + submission timestamp
     'consent_role','consent_privacy','candidate_submitted_date',
     // System / legacy IDs at the end
+    'linked_application_id','linked_application_status',
     'candidate_token','referral_id_legacy','timestamp_legacy','id'
   ],
   users: [
@@ -782,6 +789,53 @@ function _csvCell(v) {
   s = s.replace(/\r/g, '');
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
+// v7: smart-merge — given a referral + appByEmail map, return a copy where
+// blank LEGACY candidate_* fields are filled from the candidate's application
+// row. Old/migrated referrals already have these populated; new (v7+) referrals
+// have them blank but the data exists on the application row. Result: a single
+// unified row with complete candidate info regardless of when the referral was
+// created.
+function _smartMergeReferral(r, appByEmail) {
+  const email = String(r.candidate_email || '').toLowerCase();
+  const a = email ? appByEmail[email] : null;
+  if (!a) return r;
+  const m = Object.assign({}, r);
+  // Helper: fill the legacy column only if blank/null and the app has a value
+  const fill = (legacyKey, appVal) => {
+    if (appVal == null || appVal === '') return;
+    if (m[legacyKey] == null || m[legacyKey] === '' || m[legacyKey] === '[object Object]') {
+      m[legacyKey] = appVal;
+    }
+  };
+  // App field → Legacy referral field mappings
+  fill('candidate_phone', a.contact_phone);
+  fill('candidate_linkedin', a.contact_linkedin);
+  fill('candidate_company', a.current_company);
+  fill('candidate_designation', a.current_designation);
+  fill('candidate_experience', a.total_experience);
+  fill('candidate_qualification', a.qualification);
+  fill('candidate_location', a.current_city);
+  // CTC: app stores INR / year, legacy stores LPA. Convert if numeric.
+  if (a.current_ctc_inr != null && a.current_ctc_inr !== '') {
+    fill('candidate_ctc_lpa', (parseFloat(a.current_ctc_inr) / 100000).toFixed(2) + ' LPA');
+  }
+  if (a.expected_ctc_inr != null && a.expected_ctc_inr !== '') {
+    fill('candidate_expected_ctc', (parseFloat(a.expected_ctc_inr) / 100000).toFixed(2) + ' LPA');
+  }
+  fill('candidate_notice_period', a.notice_period_days ? (a.notice_period_days + ' days') : null);
+  fill('candidate_willing_to_relocate', a.willing_to_relocate);
+  fill('candidate_reason_for_change', a.reason_for_change);
+  fill('candidate_cv_link', a.cv_storage_url);
+  fill('candidate_pan', a.pan_number);
+  fill('candidate_submitted_date', a.applied_at);
+  // If why_good_fit (referrer side) is blank, fall back to eligibility_statement (candidate side)
+  fill('why_good_fit', a.eligibility_statement);
+  // Always add the application linkage so admin can find the full app row
+  if (a.id) m['linked_application_id'] = a.id;
+  if (a.application_status) m['linked_application_status'] = a.application_status;
+  return m;
+}
+
 // v6: joined export — referrals enriched with their candidate's application data
 async function exportReferralsJoined() {
   if (!REFERRALS.length) { toast('Load referrals first.', 'err'); return; }
@@ -842,6 +896,14 @@ async function exportReferralsJoined() {
 function exportCSV(name, rows, mode) {
   if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
   mode = mode || 'recruiter';
+  // v7: for clean referrals export, smart-merge from APPS so legacy fields auto-populate
+  if (name === 'referrals' && mode === 'recruiter') {
+    if (APPS.length) {
+      const appByEmail = {};
+      APPS.forEach(a => { if (a.applicant_email) appByEmail[String(a.applicant_email).toLowerCase()] = a; });
+      rows = rows.map(r => _smartMergeReferral(r, appByEmail));
+    }
+  }
   const canonical = CSV_COLS[name] || [];
   // Discover any extra keys present in data but not in canonical list
   const seen = new Set(canonical);
