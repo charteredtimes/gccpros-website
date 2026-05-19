@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v3
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v5-csv-fix
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -107,7 +107,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-jobs-q" placeholder="🔍 Search title / company / job code" oninput="renderJobs()">
         <button class="btn" onclick="loadJobs()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('jobs', JOBS)">⬇ Export CSV</button>
+        <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
         <span class="muted" id="jobs-count"></span>
       </div>
       <div id="jobs-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -130,8 +131,13 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-apps-q" placeholder="🔍 Search candidate / company / job code" oninput="renderApps()">
         <button class="btn" onclick="loadApps()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('apps', APPS)">⬇ Export CSV</button>
+        <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
         <span class="muted" id="apps-count"></span>
+        <span id="apps-jobfilter" style="display:none;background:#FFF4E5;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
+          Filtered to job: <span id="apps-jobfilter-label"></span>
+          <button onclick="clearJobFilter()" style="background:none;border:none;color:var(--brand-orange);cursor:pointer;font-size:14px;padding:0 0 0 6px;font-weight:700;">×</button>
+        </span>
       </div>
       <div id="apps-box"><p class="loading">Click ↻ Refresh to load.</p></div>
     </div>
@@ -158,7 +164,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-partners-q" placeholder="🔍 Search email / name / company" oninput="renderPartners()">
         <button class="btn" onclick="loadPartners()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('partners', PARTNERS)">⬇ Export CSV</button>
+        <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
         <span class="muted" id="partners-count"></span>
       </div>
       <div id="partners-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -182,7 +189,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-referrals-q" placeholder="🔍 Search candidate / partner email" oninput="renderReferrals()">
         <button class="btn" onclick="loadReferrals()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS)">⬇ Export CSV</button>
+        <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
         <span class="muted" id="referrals-count"></span>
       </div>
       <div id="referrals-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -210,7 +218,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-users-q" placeholder="🔍 Search email / name / city" oninput="renderUsers()">
         <button class="btn" onclick="loadUsers()">↻ Refresh</button>
-        <button class="btn secondary" onclick="exportCSV('users', USERS)">⬇ Export CSV</button>
+        <button class="btn secondary" onclick="exportCSV('users', USERS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('users', USERS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
         <span class="muted" id="users-count"></span>
       </div>
       <div id="users-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -223,6 +232,7 @@ td.actions { white-space:nowrap; }
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 let ADMIN_KEY = '';
 let JOBS = [], APPS = [], PARTNERS = [], REFERRALS = [], USERS = [];
+let CURRENT_JOB_FILTER = null;  // {id, code, title} when drilling down from Jobs tab
 
 // Restore key from session storage
 try { const k = sessionStorage.getItem('GCC_ADMIN_KEY'); if (k) { ADMIN_KEY = k; document.getElementById('admin-key').value = k; submitKey(true); } } catch(_) {}
@@ -233,6 +243,20 @@ function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return isN
 function fmtDateTime(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleString(); }
 function badge(val, cls) { if (!val) return ''; return `<span class="badge b-${esc(String(val).toLowerCase().replace(/\s+/g,'_'))}">${esc(val)}</span>`; }
 function bool(v) { return v ? '✓' : '—'; }
+// v4: derive a display name when applicants only have an email + use a JOBS lookup for label
+function _derivName(a) {
+  if (a.applicant_name) return a.applicant_name;
+  const e = String(a.applicant_email || '');
+  if (!e) return '—';
+  const local = e.split('@')[0];
+  return local.split(/[._-]/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+}
+function _jobLabel(jobId) {
+  if (!jobId) return '—';
+  const j = JOBS.find(x => x.id === jobId);
+  if (j) return esc(j.job_code || jobId.slice(0,8)) + ' <span class="muted" style="font-size:10px;">' + esc((j.title || '').slice(0, 30)) + '</span>';
+  return '<code style="font-size:10px;">' + esc(jobId.slice(0,8)) + '…</code>';
+}
 
 function adminFetch(url, options) {
   options = options || {};
@@ -258,7 +282,7 @@ async function submitKey(silent) {
     document.getElementById('app').style.display = '';
     document.getElementById('logout-btn').style.display = '';
     document.getElementById('admin-status').textContent = 'Signed in · ' + (j.email || 'admin');
-    // Auto-load first tab
+    // Auto-load Jobs (also feeds the _jobLabel() lookup used in Applications tab)
     loadJobs();
   } catch (err) {
     if (!silent) showGateResult('Connection error: ' + err.message, false);
@@ -278,14 +302,40 @@ function showGateResult(msg, ok) {
 
 function showTab(ev, name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  ev.currentTarget.classList.add('active');
+  if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
+  else {
+    // Programmatic switch — find the tab button by name
+    const btn = document.querySelector(`.tab[onclick*="'${name}'"]`);
+    if (btn) btn.classList.add('active');
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  // Lazy-load each tab the first time
   if (name === 'apps' && !APPS.length) loadApps();
   else if (name === 'partners' && !PARTNERS.length) loadPartners();
   else if (name === 'referrals' && !REFERRALS.length) loadReferrals();
   else if (name === 'users' && !USERS.length) loadUsers();
+}
+
+// v4: drill from a Job row into its Applications — switch tab + set jobId filter
+function viewJobApplicants(jobId, jobCode, jobTitle) {
+  CURRENT_JOB_FILTER = { id: jobId, code: jobCode, title: jobTitle };
+  // Reset status filter so we see ALL applications for this job (not just submitted)
+  document.getElementById('f-apps-status').value = '';
+  // Show filter chip
+  const chip = document.getElementById('apps-jobfilter');
+  const label = document.getElementById('apps-jobfilter-label');
+  chip.style.display = '';
+  label.textContent = jobCode + ' — ' + jobTitle;
+  // Switch tab programmatically
+  showTab(null, 'apps');
+  // Load applications filtered to this job
+  loadApps();
+}
+
+function clearJobFilter() {
+  CURRENT_JOB_FILTER = null;
+  document.getElementById('apps-jobfilter').style.display = 'none';
+  loadApps();
 }
 
 // =========================================================
@@ -308,7 +358,7 @@ function renderJobs() {
   const filtered = JOBS.filter(j => !q || [j.title, j.company, j.job_code, j.primary_domain, j.location].join(' ').toLowerCase().includes(q));
   document.getElementById('jobs-count').textContent = filtered.length + ' / ' + JOBS.length + ' jobs';
   if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
-  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Apps</th><th>Status</th><th>Posted</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Posted</th></tr></thead><tbody>';
   filtered.forEach(j => {
     const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
     html += `<tr>
@@ -320,7 +370,12 @@ function renderJobs() {
       <td>${esc(j.mode || '')}</td>
       <td>${ctc}</td>
       <td>${esc(j.experience_band || '')}</td>
-      <td>${j.applications_count || 0}</td>
+      <td>
+        ${(j.applications_count > 0) 
+          ? `<button class="btn small" onclick="viewJobApplicants('${esc(j.id)}', '${esc(j.job_code || j.id.slice(0,8))}', '${esc((j.title || '').replace(/'/g, "\\'"))}')">View ${j.applications_count} →</button>`
+          : `<span class="muted">0</span>`
+        }
+      </td>
       <td>${badge(j.status)}</td>
       <td>${fmtDate(j.posted_at)}</td>
     </tr>`;
@@ -337,7 +392,10 @@ async function loadApps() {
   const box = document.getElementById('apps-box');
   box.innerHTML = '<p class="loading">Loading…</p>';
   try {
-    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListApplications' + (status ? '&status=' + encodeURIComponent(status) : ''));
+    let url = SCRIPT_URL + '?action=oppsAdminListApplications';
+    if (status) url += '&status=' + encodeURIComponent(status);
+    if (CURRENT_JOB_FILTER && CURRENT_JOB_FILTER.id) url += '&jobId=' + encodeURIComponent(CURRENT_JOB_FILTER.id);
+    const r = await adminFetch(url);
     const j = await r.json();
     if (j.error) throw new Error(j.error);
     APPS = j.applications || j.rows || [];
@@ -349,13 +407,14 @@ function renderApps() {
   const filtered = APPS.filter(a => !q || [a.applicant_email, a.current_company, a.current_designation, a.job_id, a.contact_phone].join(' ').toLowerCase().includes(q));
   document.getElementById('apps-count').textContent = filtered.length + ' / ' + APPS.length + ' applications';
   if (!filtered.length) { document.getElementById('apps-box').innerHTML = '<p class="loading">No applications match.</p>'; return; }
-  let html = '<table><thead><tr><th>Applied</th><th>Email</th><th>Job ID</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Applied</th><th>Candidate</th><th>Email</th><th>Job</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
   filtered.forEach((a, i) => {
     const cv = a.cv_storage_url ? `<button class="btn small" onclick="downloadCV('${esc(a.cv_storage_url)}')">⬇</button>` : '—';
     html += `<tr>
       <td>${fmtDate(a.applied_at)}</td>
+      <td><strong>${esc(_derivName(a))}</strong></td>
       <td class="email">${esc(a.applicant_email || '')}</td>
-      <td class="email">${esc((a.job_id || '').slice(0,8))}…</td>
+      <td class="email" title="${esc(a.job_id || '')}">${_jobLabel(a.job_id)}</td>
       <td>${esc(a.contact_phone || '')}</td>
       <td>${esc(a.current_city || '')}</td>
       <td>${esc(a.total_experience || '')}</td>
@@ -378,7 +437,7 @@ function renderApps() {
         <button class="btn small secondary" onclick="toggleAppDetail(${i})" title="Show all fields">⊞</button>
       </td>
     </tr>
-    <tr class="detail-row" id="app-detail-${i}" style="display:none;"><td colspan="13">
+    <tr class="detail-row" id="app-detail-${i}" style="display:none;"><td colspan="14">
       <div class="detail-grid">
         <div><label>Designation</label><strong>${esc(a.current_designation || '')}</strong></div>
         <div><label>Company</label><strong>${esc(a.current_company || '')}</strong></div>
@@ -627,24 +686,98 @@ function renderUsers() {
 }
 
 // =========================================================
-// CSV export
+// CSV export — v5 hardened
+// - canonical column list per resource (predictable order; clean export)
+// - any extra keys not in the canonical list are appended in stable order
+// - proper JSON serialization for objects/arrays (no more "[object Object]")
+// - human-readable header labels (Title Case)
+// - cells containing , " \n \r get quoted + " escaped
+// - mode="recruiter" exports only the curated columns; mode="raw" exports everything
 // =========================================================
-function exportCSV(name, rows) {
-  if (!rows || !rows.length) { alert('No rows to export.'); return; }
-  const cols = Object.keys(rows[0]);
-  const header = cols.join(',');
-  const lines = rows.map(r => cols.map(c => {
-    const v = r[c];
-    if (v == null) return '';
-    const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
-    return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s;
-  }).join(','));
-  const csv = [header].concat(lines).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
+const CSV_COLS = {
+  apps: [
+    'applied_at','application_status','applicant_email','applicant_name',
+    'job_id',
+    'contact_phone','contact_alt_phone','contact_linkedin',
+    'current_city','current_company','current_designation','total_experience',
+    'current_ctc_inr','expected_ctc_inr','notice_period_days','willing_to_relocate',
+    'pan_number','qualification','selected_skills',
+    'eligibility_statement','work_mode_preference','earliest_join_date',
+    'reference_1','reference_2',
+    'cv_storage_url','cv_filename','cover_note',
+    'source','referrer_partner','candidate_token',
+    'status_updated_at','id'
+  ],
+  jobs: [
+    'job_code','title','company','industry','primary_domain','location','mode',
+    'experience_band','level','qualification','job_type_legacy',
+    'budget_text','ctc_min_inr','ctc_max_inr','referral_amount_inr',
+    'description','responsibilities','skills','requirements',
+    'team_size','contract_duration','status','applications_count',
+    'posted_at','id'
+  ],
+  partners: [
+    'email','full_name','phone','alt_phone','linkedin','current_city',
+    'current_company','designation','total_exp',
+    'primary_domain','secondary_domain','expertise_domains','languages',
+    'partner_status','kyc_status','agreement_status',
+    'total_referrals','total_placements',
+    'earnings_balance_inr','earnings_lifetime_inr',
+    'signup_date','approved_at','approved_by','id'
+  ],
+  referrals: [
+    'invited_at','referral_status','partner_email',
+    'candidate_name','candidate_email','candidate_phone','candidate_linkedin',
+    'target_job_id',
+    'relationship','known_duration','worked_together','confidence_level',
+    'why_good_fit','skill_avg_rating','skill_ratings_json',
+    'placed_at','payout_inr','candidate_token','id'
+  ],
+  users: [
+    'signup_date','email','full_name','user_type','approval_status',
+    'phone','alt_phone','current_city','linkedin',
+    'current_company','designation','domain','total_exp',
+    'notice_period','current_ctc_lpa','expected_ctc_lpa',
+    'pan_number','cv_url','cv_filename','cv_uploaded_at',
+    'reason_for_change','source','email_verified_via','referred_by_code',
+    'approved_at','approved_by','user_id_legacy','id'
+  ]
+};
+function _titleCase(snake) {
+  return String(snake).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace(/\bInr\b/g, 'INR').replace(/\bCtc\b/g, 'CTC').replace(/\bPan\b/g, 'PAN').replace(/\bCv\b/g, 'CV').replace(/\bKyc\b/g, 'KYC').replace(/\bLpa\b/g, 'LPA').replace(/\bId\b/g, 'ID').replace(/\bUrl\b/g, 'URL').replace(/\bJson\b/g, 'JSON');
+}
+function _csvCell(v) {
+  if (v == null) return '';
+  let s;
+  if (typeof v === 'object') {
+    try { s = JSON.stringify(v); } catch (_) { s = String(v); }
+  } else {
+    s = String(v);
+  }
+  // Strip CR (Excel-safe), then quote if cell contains , " or newline
+  s = s.replace(/\r/g, '');
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function exportCSV(name, rows, mode) {
+  if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
+  mode = mode || 'recruiter';
+  const canonical = CSV_COLS[name] || [];
+  // Discover any extra keys present in data but not in canonical list
+  const seen = new Set(canonical);
+  const extras = [];
+  rows.forEach(r => Object.keys(r).forEach(k => { if (!seen.has(k)) { seen.add(k); extras.push(k); } }));
+  // For recruiter mode use ONLY canonical; for raw mode use canonical + extras
+  const cols = mode === 'raw' ? canonical.concat(extras) : canonical;
+  const header = cols.map(c => _csvCell(_titleCase(c))).join(',');
+  const lines = rows.map(r => cols.map(c => _csvCell(r[c])).join(','));
+  // BOM + CRLF for Excel-friendly UTF-8 reading
+  const csv = '\uFEFF' + [header].concat(lines).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'gccpros-admin-' + name + '-' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
+  a.download = 'gccpros-' + name + '-' + (mode === 'raw' ? 'raw-' : '') + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('Exported ' + rows.length + ' rows (' + cols.length + ' columns)', 'ok');
 }
 </script>
 
