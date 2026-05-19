@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v9-full-join-export
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v10-EVERYTHING
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -748,17 +748,31 @@ function _xlsxCell(v, colName) {
 }
 
 // =========================================================
-// v9: Full-join composers — give Excel ALL the candidate data
+// v10: EVERYTHING export — guaranteed complete candidate + reference data
 // =========================================================
-// Each composed row pulls from:
-//   Application: opps_users (candidate profile) + opps_jobs (job context) + opps_applications
-//   Referral:    opps_partners (partner) + opps_users (candidate) + opps_jobs (job) + opps_applications + opps_referrals
-// Column names are prefixed by section so the recruiter can see at a glance
-// where each value originated: "Profile · Full Name", "Application · CV URL", "Job · Title".
-// Returns a flat object keyed by Title-Case section labels — sheet renders directly.
-// =========================================================
+// Approach:
+//   1. Before composing, AWAIT all 5 tables. If any not loaded yet, fetch synchronously.
+//      No more race conditions.
+//   2. Capture EVERY column from EVERY joined table (no hand-picked field list to miss).
+//   3. Parse pipe-separated Reference 1 and Reference 2 into 5 columns each:
+//      Reference 1 · Name / Title / Email / Phone / Relationship.
+//   4. Sectional column prefixes for clarity: "Application · X", "Profile · X", etc.
+//   5. Loading toast keeps the user informed during 5 parallel fetches.
 
-function _buildLookups() {
+async function _ensureAllLoaded() {
+  const tasks = [];
+  if (!JOBS.length)      tasks.push(['Jobs',      loadJobs()]);
+  if (!APPS.length)      tasks.push(['Apps',      loadApps()]);
+  if (!PARTNERS.length)  tasks.push(['Partners',  loadPartners()]);
+  if (!REFERRALS.length) tasks.push(['Referrals', loadReferrals()]);
+  if (!USERS.length)     tasks.push(['Users',     loadUsers()]);
+  if (tasks.length) {
+    toast('Loading ' + tasks.map(t => t[0]).join(' · ') + '…');
+    await Promise.all(tasks.map(t => t[1]));
+  }
+}
+
+function _buildLookupsV10() {
   const usersByEmail = {}, jobsById = {}, partnersByEmail = {}, refsByCandidate = {}, appsByEmail = {};
   USERS.forEach(u => { if (u.email) usersByEmail[String(u.email).toLowerCase()] = u; });
   JOBS.forEach(j => { if (j.id) jobsById[j.id] = j; });
@@ -768,73 +782,45 @@ function _buildLookups() {
   return { usersByEmail, jobsById, partnersByEmail, refsByCandidate, appsByEmail };
 }
 
-// Helper: pick + rename fields from src into target, prefixed by section name.
-function _pick(target, src, sectionPrefix, fieldMap) {
-  if (!src) return;
-  for (const [srcKey, displayName] of fieldMap) {
-    const val = src[srcKey];
-    if (val !== undefined) target[sectionPrefix + displayName] = val;
-  }
+// Take a pipe-separated reference string and split into 5 fields. Returns object.
+function _parseReference(raw, prefix) {
+  const out = {};
+  const parts = String(raw || '').split('|').map(s => s.trim());
+  const labels = ['Name', 'Title', 'Email', 'Phone', 'Relationship'];
+  labels.forEach((lbl, i) => { out[prefix + ' · ' + lbl] = parts[i] || ''; });
+  return out;
 }
 
-function _composeApplicationRow(app, L) {
+// Add ALL keys from src into target with a section prefix.
+function _addAllFields(target, src, sectionPrefix) {
+  if (!src || typeof src !== 'object') return;
+  Object.keys(src).forEach(k => {
+    let v = src[k];
+    // Recursively flatten nested objects (like signup_metadata jsonb)
+    if (v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
+      try { v = JSON.stringify(v); } catch { v = String(v); }
+    }
+    target[sectionPrefix + ' · ' + _titleCase(k)] = v;
+  });
+}
+
+function _composeApplicationRowV10(app, L) {
   const out = {};
   const email = String(app.applicant_email || '').toLowerCase();
   const user = L.usersByEmail[email];
   const job = L.jobsById[app.job_id];
   const referral = L.refsByCandidate[email];
-
-  _pick(out, app, 'Application · ', [
-    ['applied_at','Applied At'],['application_status','Status'],['source','Source'],
-    ['referrer_partner','Referrer Partner Email'],
-    ['contact_phone','Contact Phone (override)'],['contact_alt_phone','Alt Phone (override)'],['contact_linkedin','LinkedIn (override)'],
-    ['current_company','Current Company (per-app)'],['current_designation','Current Designation (per-app)'],
-    ['current_city','Current City (per-app)'],['total_experience','Total Years Experience'],
-    ['current_ctc_inr','Current CTC (₹/yr)'],['expected_ctc_inr','Expected CTC (₹/yr)'],
-    ['notice_period_days','Notice Period (days)'],['pan_number','PAN'],
-    ['qualification','Qualification'],['selected_skills','Selected Skills'],
-    ['eligibility_statement','Why a Good Fit (statement)'],
-    ['work_mode_preference','Work Mode Preference'],['earliest_join_date','Earliest Join Date'],
-    ['willing_to_relocate','Willing to Relocate'],
-    ['reference_1','Reference 1'],['reference_2','Reference 2'],
-    ['cv_storage_url','CV (per-app)'],['cv_filename','CV Filename (per-app)'],
-    ['cover_note','Cover Note'],
-    ['id','Application ID']
-  ]);
-
-  _pick(out, user, 'Profile · ', [
-    ['full_name','Full Name'],['phone','Phone (primary)'],['alt_phone','Alt Phone (primary)'],
-    ['linkedin','LinkedIn (primary)'],['current_city','City (profile)'],['domain','Domain'],
-    ['current_company','Current Company (profile)'],['designation','Designation (profile)'],
-    ['total_exp','Total Years (profile)'],['relevant_exp','Relevant Years'],
-    ['current_ctc_lpa','Current CTC (LPA, profile)'],['expected_ctc_lpa','Expected CTC (LPA, profile)'],
-    ['notice_period','Notice (profile)'],['reason_for_change','Reason for Change'],
-    ['cv_url','CV (profile)'],['user_type','User Type'],['approval_status','Approval Status'],
-    ['email_verified_via','Email Verified Via'],['hear_about','Heard About'],
-    ['referred_by_code','Referred By'],['signup_date','Signup Date'],['user_id_legacy','Legacy User ID']
-  ]);
-
-  _pick(out, job, 'Job · ', [
-    ['job_code','Code'],['title','Title'],['company','Company'],['industry','Industry'],
-    ['primary_domain','Domain'],['location','Location'],['mode','Work Mode'],
-    ['experience_band','Experience Band'],['level','Level'],['qualification','Qualification Req'],
-    ['budget_text','Budget (text)'],['ctc_min_inr','CTC Min (₹)'],['ctc_max_inr','CTC Max (₹)'],
-    ['referral_amount_inr','Referral Amount (₹)'],
-    ['status','Job Status'],['posted_at','Job Posted At'],['id','Job ID']
-  ]);
-
-  _pick(out, referral, 'Referral · ', [
-    ['partner_email','Partner Email'],['relationship','Relationship'],['known_duration','Known Duration'],
-    ['worked_together','Worked Together'],['confidence_level','Partner Confidence'],
-    ['why_good_fit','Why Good Fit (partner)'],
-    ['skill_avg_rating','Skill Avg (partner)'],['referral_status','Referral Status'],
-    ['invited_at','Invited At']
-  ]);
-
+  _addAllFields(out, app, 'Application');
+  // Parse pipe-separated references into separate columns
+  if (app.reference_1) Object.assign(out, _parseReference(app.reference_1, 'Reference 1'));
+  if (app.reference_2) Object.assign(out, _parseReference(app.reference_2, 'Reference 2'));
+  _addAllFields(out, user,     'Candidate Profile');
+  _addAllFields(out, job,      'Job');
+  _addAllFields(out, referral, 'Referral (if referred)');
   return out;
 }
 
-function _composeReferralRow(ref, L) {
+function _composeReferralRowV10(ref, L) {
   const out = {};
   const candEmail = String(ref.candidate_email || '').toLowerCase();
   const partnerEmail = String(ref.partner_email || '').toLowerCase();
@@ -842,80 +828,27 @@ function _composeReferralRow(ref, L) {
   const partner = L.partnersByEmail[partnerEmail];
   const job = L.jobsById[ref.target_job_id];
   const app = L.appsByEmail[candEmail];
-
-  _pick(out, ref, 'Referral · ', [
-    ['invited_at','Invited At'],['referral_status','Status'],
-    ['placed_at','Placed At'],['payout_inr','Payout (₹)'],['referral_amount_inr','Configured Payout (₹)'],
-    ['relationship','Relationship'],['known_duration','Known Duration'],
-    ['worked_together','Worked Together'],['confidence_level','Partner Confidence'],
-    ['why_good_fit','Why Good Fit (partner)'],
-    ['skill_avg_rating','Skill Avg'],['skill_ratings_json','Skill Ratings JSON'],
-    ['candidate_highlights','Candidate Highlights'],['candidate_concerns','Candidate Concerns'],
-    ['additional_notes','Notes'],['admin_notes','Admin Notes'],
-    ['referral_id_legacy','Legacy Referral ID'],['id','Referral ID']
-  ]);
-
-  _pick(out, partner, 'Partner · ', [
-    ['email','Email'],['full_name','Name'],['phone','Phone'],['linkedin','LinkedIn'],
-    ['current_company','Company'],['designation','Designation'],['total_exp','Years Experience'],
-    ['primary_domain','Primary Domain'],['secondary_domain','Secondary Domain'],
-    ['partner_status','Partner Status'],['kyc_status','KYC Status']
-  ]);
-
-  // Candidate identity (referrer-supplied at invite)
-  _pick(out, ref, 'Candidate (from referral) · ', [
-    ['candidate_name','Name'],['candidate_email','Email'],['candidate_phone','Phone'],['candidate_linkedin','LinkedIn'],
-    ['candidate_company','Company (legacy)'],['candidate_designation','Designation (legacy)'],
-    ['candidate_experience','Years (legacy)'],['candidate_qualification','Qualification (legacy)'],
-    ['candidate_location','Location (legacy)'],
-    ['candidate_ctc_lpa','Current CTC LPA (legacy)'],['candidate_expected_ctc','Expected CTC (legacy)'],
-    ['candidate_notice_period','Notice (legacy)'],['candidate_pan','PAN (legacy)'],
-    ['candidate_cv_link','CV Link (legacy)'],['candidate_reason_for_change','Reason (legacy)']
-  ]);
-
-  // Candidate-completed (new v7+ data in opps_users + opps_applications)
-  _pick(out, candidate, 'Candidate Profile · ', [
-    ['full_name','Full Name'],['phone','Phone (primary)'],['linkedin','LinkedIn (primary)'],
-    ['current_company','Current Company'],['designation','Designation'],['current_city','City'],
-    ['total_exp','Years Experience'],['domain','Domain'],
-    ['current_ctc_lpa','Current CTC LPA'],['expected_ctc_lpa','Expected CTC LPA'],
-    ['notice_period','Notice Period'],['reason_for_change','Reason for Change'],
-    ['cv_url','Profile CV'],['signup_date','Profile Created']
-  ]);
-
-  _pick(out, app, 'Candidate Application · ', [
-    ['applied_at','Applied At'],['application_status','Status'],
-    ['current_company','Current Company (per-app)'],['current_designation','Current Designation (per-app)'],
-    ['current_ctc_inr','Current CTC (₹/yr)'],['expected_ctc_inr','Expected CTC (₹/yr)'],
-    ['notice_period_days','Notice (days)'],['pan_number','PAN'],['qualification','Qualification'],
-    ['selected_skills','Selected Skills'],['eligibility_statement','Why a Good Fit'],
-    ['work_mode_preference','Work Mode'],['earliest_join_date','Earliest Join'],
-    ['willing_to_relocate','Willing to Relocate'],
-    ['cv_storage_url','CV (per-app)'],['cv_filename','CV Filename'],
-    ['reference_1','Reference 1'],['reference_2','Reference 2'],
-    ['cover_note','Cover Note'],['id','Application ID']
-  ]);
-
-  _pick(out, job, 'Job · ', [
-    ['job_code','Code'],['title','Title'],['company','Company'],['primary_domain','Domain'],
-    ['location','Location'],['mode','Work Mode'],['experience_band','Experience Band'],
-    ['budget_text','Budget'],['ctc_min_inr','CTC Min (₹)'],['ctc_max_inr','CTC Max (₹)'],
-    ['referral_amount_inr','Referral Amount (₹)'],['status','Job Status'],['id','Job ID']
-  ]);
-
+  _addAllFields(out, ref,       'Referral');
+  _addAllFields(out, partner,   'Partner');
+  _addAllFields(out, candidate, 'Candidate Profile');
+  _addAllFields(out, app,       'Candidate Application');
+  // Parse pipe-separated references too (if candidate completed an application)
+  if (app && app.reference_1) Object.assign(out, _parseReference(app.reference_1, 'Candidate Application Reference 1'));
+  if (app && app.reference_2) Object.assign(out, _parseReference(app.reference_2, 'Candidate Application Reference 2'));
+  _addAllFields(out, job,       'Job');
   return out;
 }
 
-// New top-level entry for the full-join export — overrides the v8 single-table flow.
-function exportXLSXFullJoin(name) {
+async function exportXLSXFullJoin(name) {
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
+  await _ensureAllLoaded();
   const sources = { applications: APPS, referrals: REFERRALS };
   const rows = sources[name];
-  if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
-  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
-  const L = _buildLookups();
-  // Build mega-rows
-  const composed = rows.map(r => name === 'applications' ? _composeApplicationRow(r, L) : _composeReferralRow(r, L));
-  // Union of all keys, preserving insertion order from the first row
+  if (!rows || !rows.length) { toast('No ' + name + ' to export.', 'err'); return; }
+  toast('Composing ' + rows.length + ' rows across 5 tables…');
+  const L = _buildLookupsV10();
+  const composed = rows.map(r => name === 'applications' ? _composeApplicationRowV10(r, L) : _composeReferralRowV10(r, L));
+  // Union of all keys (preserves insertion order from row 0, appends new keys as they appear)
   const colSet = new Set();
   composed.forEach(c => Object.keys(c).forEach(k => colSet.add(k)));
   const cols = Array.from(colSet);
@@ -923,22 +856,23 @@ function exportXLSXFullJoin(name) {
   const headerRow = cols;
   const dataRows = composed.map(row => cols.map(c => {
     const v = row[c];
-    // Date-y prefixes
-    if (/At|Date/.test(c) && v) {
+    // Date columns
+    if (/ · (.*At|.*Date|.*Created|Posted At|Invited At|Applied At|Placed At|Signup Date|Approved At|Submitted Date)$/i.test(c) && v) {
       const d = new Date(v);
       if (!isNaN(d.getTime())) return { t: 'd', v: d, z: 'yyyy-mm-dd hh:mm' };
     }
-    // Number-y prefixes
-    if (/\(₹|LPA|days\)|Years|Min \(|Max \(|Avg/.test(c) && v != null && v !== '') {
+    // Number columns
+    if (/ · (.*CTC.*|.*INR.*|.*LPA.*|.*Days|.*Years|.*Exp|.*Count|.*Total|.*Rating|.*Score|.*Amount|.*Payout|.*Balance|.*Lifetime|.*Referrals|.*Placements)$/i.test(c) && v != null && v !== '') {
       const n = parseFloat(v);
       if (!isNaN(n) && isFinite(n)) return { t: 'n', v: n };
     }
-    // URL columns
-    if (/LinkedIn|CV/.test(c) && typeof v === 'string' && /^https?:\/\//i.test(v)) {
+    // Boolean
+    if (typeof v === 'boolean') return { t: 'b', v };
+    // URL → hyperlink
+    if (typeof v === 'string' && /^https?:\/\//i.test(v) && /(URL|Linkedin|CV|Link)/i.test(c)) {
       return { t: 's', v, l: { Target: v, Tooltip: 'Click to open' } };
     }
     if (v == null || v === '' || v === '[object Object]') return { t: 's', v: '' };
-    if (typeof v === 'boolean') return { t: 'b', v };
     if (typeof v === 'object') { try { return { t: 's', v: JSON.stringify(v) }; } catch { return { t: 's', v: String(v) }; } }
     return { t: 's', v: String(v).replace(/\r/g, '') };
   }));
@@ -953,23 +887,23 @@ function exportXLSXFullJoin(name) {
   ws['!cols'] = cols.map((c, i) => {
     let maxLen = c.length;
     dataRows.forEach(row => {
-      const v = row[i];
-      if (v && v.v != null) {
-        const s = v.v instanceof Date ? 'YYYY-MM-DD HH:MM' : String(v.v);
+      const cell = row[i];
+      if (cell && cell.v != null) {
+        const s = cell.v instanceof Date ? 'YYYY-MM-DD HH:MM' : String(cell.v);
         if (s.length > maxLen) maxLen = s.length;
       }
     });
-    return { wch: Math.min(50, Math.max(12, maxLen + 2)) };
+    return { wch: Math.min(60, Math.max(14, maxLen + 2)) };
   });
   for (let c = 0; c < cols.length; c++) {
     const addr = XLSX.utils.encode_cell({ r: 0, c });
     if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } };
   }
   const wb = XLSX.utils.book_new();
-  const sheetName = name === 'applications' ? 'Applications (full join)' : 'Referrals (full join)';
+  const sheetName = name === 'applications' ? 'Applications EVERYTHING' : 'Referrals EVERYTHING';
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  XLSX.writeFile(wb, 'gccpros-' + name + '-FULL-' + new Date().toISOString().slice(0,10) + '.xlsx');
-  toast('Exported ' + composed.length + ' rows × ' + cols.length + ' joined columns to Excel', 'ok');
+  XLSX.writeFile(wb, 'gccpros-' + name + '-EVERYTHING-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('✓ Exported ' + composed.length + ' rows × ' + cols.length + ' columns to Excel', 'ok');
 }
 
 function exportXLSX(name, rows) {
