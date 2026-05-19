@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v8-xlsx-export
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v9-full-join-export
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -133,7 +133,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-apps-q" placeholder="🔍 Search candidate / company / job code" oninput="renderApps()">
         <button class="btn" onclick="loadApps()">↻ Refresh</button>
-        <button class="btn brand-orange" onclick="exportXLSX('apps', APPS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
+        <button class="btn brand-orange" onclick="exportXLSXFullJoin('applications')" title="Joins opps_applications + opps_users + opps_jobs + opps_referrals into one row per application. ALL candidate data in one file.">📊 Export FULL Excel (joined)</button>
+          <button class="btn secondary" onclick="exportXLSX('apps', APPS)" title="Application table only — no joins">📋 Apps only</button>
           <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
           <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="apps-count"></span>
@@ -193,7 +194,8 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-referrals-q" placeholder="🔍 Search candidate / partner email" oninput="renderReferrals()">
         <button class="btn" onclick="loadReferrals()">↻ Refresh</button>
-        <button class="btn brand-orange" onclick="exportXLSX('referrals', REFERRALS)" title="Proper Excel file with smart-merge — typed cells, frozen header. The recommended export.">📊 Export to Excel (recommended)</button>
+        <button class="btn brand-orange" onclick="exportXLSXFullJoin('referrals')" title="Joins opps_referrals + opps_partners + opps_users + opps_jobs + opps_applications. EVERY field the partner submitted AND the candidate filled, in one row.">📊 Export FULL Excel (joined)</button>
+          <button class="btn secondary" onclick="exportXLSX('referrals', REFERRALS)" title="Referral table only — no joins">📋 Refs only</button>
           <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Plain CSV — clean smart-merged columns">⬇ CSV (clean)</button>
           <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Plain CSV — every column including legacy">⬇ Raw CSV</button>
         <span class="muted" id="referrals-count"></span>
@@ -288,8 +290,12 @@ async function submitKey(silent) {
     document.getElementById('app').style.display = '';
     document.getElementById('logout-btn').style.display = '';
     document.getElementById('admin-status').textContent = 'Signed in · ' + (j.email || 'admin');
-    // Auto-load Jobs (also feeds the _jobLabel() lookup used in Applications tab)
+    // v9: eager-preload all 5 resources in background so Excel exports can join across tables
     loadJobs();
+    setTimeout(() => { if (!APPS.length) loadApps(); }, 200);
+    setTimeout(() => { if (!PARTNERS.length) loadPartners(); }, 400);
+    setTimeout(() => { if (!REFERRALS.length) loadReferrals(); }, 600);
+    setTimeout(() => { if (!USERS.length) loadUsers(); }, 800);
   } catch (err) {
     if (!silent) showGateResult('Connection error: ' + err.message, false);
   }
@@ -739,6 +745,231 @@ function _xlsxCell(v, colName) {
     return { t: 's', v: s, l: { Target: s, Tooltip: 'Click to open' } };
   }
   return { t: 's', v: s };
+}
+
+// =========================================================
+// v9: Full-join composers — give Excel ALL the candidate data
+// =========================================================
+// Each composed row pulls from:
+//   Application: opps_users (candidate profile) + opps_jobs (job context) + opps_applications
+//   Referral:    opps_partners (partner) + opps_users (candidate) + opps_jobs (job) + opps_applications + opps_referrals
+// Column names are prefixed by section so the recruiter can see at a glance
+// where each value originated: "Profile · Full Name", "Application · CV URL", "Job · Title".
+// Returns a flat object keyed by Title-Case section labels — sheet renders directly.
+// =========================================================
+
+function _buildLookups() {
+  const usersByEmail = {}, jobsById = {}, partnersByEmail = {}, refsByCandidate = {}, appsByEmail = {};
+  USERS.forEach(u => { if (u.email) usersByEmail[String(u.email).toLowerCase()] = u; });
+  JOBS.forEach(j => { if (j.id) jobsById[j.id] = j; });
+  PARTNERS.forEach(p => { if (p.email) partnersByEmail[String(p.email).toLowerCase()] = p; });
+  REFERRALS.forEach(r => { if (r.candidate_email) refsByCandidate[String(r.candidate_email).toLowerCase()] = r; });
+  APPS.forEach(a => { if (a.applicant_email) appsByEmail[String(a.applicant_email).toLowerCase()] = a; });
+  return { usersByEmail, jobsById, partnersByEmail, refsByCandidate, appsByEmail };
+}
+
+// Helper: pick + rename fields from src into target, prefixed by section name.
+function _pick(target, src, sectionPrefix, fieldMap) {
+  if (!src) return;
+  for (const [srcKey, displayName] of fieldMap) {
+    const val = src[srcKey];
+    if (val !== undefined) target[sectionPrefix + displayName] = val;
+  }
+}
+
+function _composeApplicationRow(app, L) {
+  const out = {};
+  const email = String(app.applicant_email || '').toLowerCase();
+  const user = L.usersByEmail[email];
+  const job = L.jobsById[app.job_id];
+  const referral = L.refsByCandidate[email];
+
+  _pick(out, app, 'Application · ', [
+    ['applied_at','Applied At'],['application_status','Status'],['source','Source'],
+    ['referrer_partner','Referrer Partner Email'],
+    ['contact_phone','Contact Phone (override)'],['contact_alt_phone','Alt Phone (override)'],['contact_linkedin','LinkedIn (override)'],
+    ['current_company','Current Company (per-app)'],['current_designation','Current Designation (per-app)'],
+    ['current_city','Current City (per-app)'],['total_experience','Total Years Experience'],
+    ['current_ctc_inr','Current CTC (₹/yr)'],['expected_ctc_inr','Expected CTC (₹/yr)'],
+    ['notice_period_days','Notice Period (days)'],['pan_number','PAN'],
+    ['qualification','Qualification'],['selected_skills','Selected Skills'],
+    ['eligibility_statement','Why a Good Fit (statement)'],
+    ['work_mode_preference','Work Mode Preference'],['earliest_join_date','Earliest Join Date'],
+    ['willing_to_relocate','Willing to Relocate'],
+    ['reference_1','Reference 1'],['reference_2','Reference 2'],
+    ['cv_storage_url','CV (per-app)'],['cv_filename','CV Filename (per-app)'],
+    ['cover_note','Cover Note'],
+    ['id','Application ID']
+  ]);
+
+  _pick(out, user, 'Profile · ', [
+    ['full_name','Full Name'],['phone','Phone (primary)'],['alt_phone','Alt Phone (primary)'],
+    ['linkedin','LinkedIn (primary)'],['current_city','City (profile)'],['domain','Domain'],
+    ['current_company','Current Company (profile)'],['designation','Designation (profile)'],
+    ['total_exp','Total Years (profile)'],['relevant_exp','Relevant Years'],
+    ['current_ctc_lpa','Current CTC (LPA, profile)'],['expected_ctc_lpa','Expected CTC (LPA, profile)'],
+    ['notice_period','Notice (profile)'],['reason_for_change','Reason for Change'],
+    ['cv_url','CV (profile)'],['user_type','User Type'],['approval_status','Approval Status'],
+    ['email_verified_via','Email Verified Via'],['hear_about','Heard About'],
+    ['referred_by_code','Referred By'],['signup_date','Signup Date'],['user_id_legacy','Legacy User ID']
+  ]);
+
+  _pick(out, job, 'Job · ', [
+    ['job_code','Code'],['title','Title'],['company','Company'],['industry','Industry'],
+    ['primary_domain','Domain'],['location','Location'],['mode','Work Mode'],
+    ['experience_band','Experience Band'],['level','Level'],['qualification','Qualification Req'],
+    ['budget_text','Budget (text)'],['ctc_min_inr','CTC Min (₹)'],['ctc_max_inr','CTC Max (₹)'],
+    ['referral_amount_inr','Referral Amount (₹)'],
+    ['status','Job Status'],['posted_at','Job Posted At'],['id','Job ID']
+  ]);
+
+  _pick(out, referral, 'Referral · ', [
+    ['partner_email','Partner Email'],['relationship','Relationship'],['known_duration','Known Duration'],
+    ['worked_together','Worked Together'],['confidence_level','Partner Confidence'],
+    ['why_good_fit','Why Good Fit (partner)'],
+    ['skill_avg_rating','Skill Avg (partner)'],['referral_status','Referral Status'],
+    ['invited_at','Invited At']
+  ]);
+
+  return out;
+}
+
+function _composeReferralRow(ref, L) {
+  const out = {};
+  const candEmail = String(ref.candidate_email || '').toLowerCase();
+  const partnerEmail = String(ref.partner_email || '').toLowerCase();
+  const candidate = L.usersByEmail[candEmail];
+  const partner = L.partnersByEmail[partnerEmail];
+  const job = L.jobsById[ref.target_job_id];
+  const app = L.appsByEmail[candEmail];
+
+  _pick(out, ref, 'Referral · ', [
+    ['invited_at','Invited At'],['referral_status','Status'],
+    ['placed_at','Placed At'],['payout_inr','Payout (₹)'],['referral_amount_inr','Configured Payout (₹)'],
+    ['relationship','Relationship'],['known_duration','Known Duration'],
+    ['worked_together','Worked Together'],['confidence_level','Partner Confidence'],
+    ['why_good_fit','Why Good Fit (partner)'],
+    ['skill_avg_rating','Skill Avg'],['skill_ratings_json','Skill Ratings JSON'],
+    ['candidate_highlights','Candidate Highlights'],['candidate_concerns','Candidate Concerns'],
+    ['additional_notes','Notes'],['admin_notes','Admin Notes'],
+    ['referral_id_legacy','Legacy Referral ID'],['id','Referral ID']
+  ]);
+
+  _pick(out, partner, 'Partner · ', [
+    ['email','Email'],['full_name','Name'],['phone','Phone'],['linkedin','LinkedIn'],
+    ['current_company','Company'],['designation','Designation'],['total_exp','Years Experience'],
+    ['primary_domain','Primary Domain'],['secondary_domain','Secondary Domain'],
+    ['partner_status','Partner Status'],['kyc_status','KYC Status']
+  ]);
+
+  // Candidate identity (referrer-supplied at invite)
+  _pick(out, ref, 'Candidate (from referral) · ', [
+    ['candidate_name','Name'],['candidate_email','Email'],['candidate_phone','Phone'],['candidate_linkedin','LinkedIn'],
+    ['candidate_company','Company (legacy)'],['candidate_designation','Designation (legacy)'],
+    ['candidate_experience','Years (legacy)'],['candidate_qualification','Qualification (legacy)'],
+    ['candidate_location','Location (legacy)'],
+    ['candidate_ctc_lpa','Current CTC LPA (legacy)'],['candidate_expected_ctc','Expected CTC (legacy)'],
+    ['candidate_notice_period','Notice (legacy)'],['candidate_pan','PAN (legacy)'],
+    ['candidate_cv_link','CV Link (legacy)'],['candidate_reason_for_change','Reason (legacy)']
+  ]);
+
+  // Candidate-completed (new v7+ data in opps_users + opps_applications)
+  _pick(out, candidate, 'Candidate Profile · ', [
+    ['full_name','Full Name'],['phone','Phone (primary)'],['linkedin','LinkedIn (primary)'],
+    ['current_company','Current Company'],['designation','Designation'],['current_city','City'],
+    ['total_exp','Years Experience'],['domain','Domain'],
+    ['current_ctc_lpa','Current CTC LPA'],['expected_ctc_lpa','Expected CTC LPA'],
+    ['notice_period','Notice Period'],['reason_for_change','Reason for Change'],
+    ['cv_url','Profile CV'],['signup_date','Profile Created']
+  ]);
+
+  _pick(out, app, 'Candidate Application · ', [
+    ['applied_at','Applied At'],['application_status','Status'],
+    ['current_company','Current Company (per-app)'],['current_designation','Current Designation (per-app)'],
+    ['current_ctc_inr','Current CTC (₹/yr)'],['expected_ctc_inr','Expected CTC (₹/yr)'],
+    ['notice_period_days','Notice (days)'],['pan_number','PAN'],['qualification','Qualification'],
+    ['selected_skills','Selected Skills'],['eligibility_statement','Why a Good Fit'],
+    ['work_mode_preference','Work Mode'],['earliest_join_date','Earliest Join'],
+    ['willing_to_relocate','Willing to Relocate'],
+    ['cv_storage_url','CV (per-app)'],['cv_filename','CV Filename'],
+    ['reference_1','Reference 1'],['reference_2','Reference 2'],
+    ['cover_note','Cover Note'],['id','Application ID']
+  ]);
+
+  _pick(out, job, 'Job · ', [
+    ['job_code','Code'],['title','Title'],['company','Company'],['primary_domain','Domain'],
+    ['location','Location'],['mode','Work Mode'],['experience_band','Experience Band'],
+    ['budget_text','Budget'],['ctc_min_inr','CTC Min (₹)'],['ctc_max_inr','CTC Max (₹)'],
+    ['referral_amount_inr','Referral Amount (₹)'],['status','Job Status'],['id','Job ID']
+  ]);
+
+  return out;
+}
+
+// New top-level entry for the full-join export — overrides the v8 single-table flow.
+function exportXLSXFullJoin(name) {
+  const sources = { applications: APPS, referrals: REFERRALS };
+  const rows = sources[name];
+  if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
+  const L = _buildLookups();
+  // Build mega-rows
+  const composed = rows.map(r => name === 'applications' ? _composeApplicationRow(r, L) : _composeReferralRow(r, L));
+  // Union of all keys, preserving insertion order from the first row
+  const colSet = new Set();
+  composed.forEach(c => Object.keys(c).forEach(k => colSet.add(k)));
+  const cols = Array.from(colSet);
+  // Build typed cells
+  const headerRow = cols;
+  const dataRows = composed.map(row => cols.map(c => {
+    const v = row[c];
+    // Date-y prefixes
+    if (/At|Date/.test(c) && v) {
+      const d = new Date(v);
+      if (!isNaN(d.getTime())) return { t: 'd', v: d, z: 'yyyy-mm-dd hh:mm' };
+    }
+    // Number-y prefixes
+    if (/\(₹|LPA|days\)|Years|Min \(|Max \(|Avg/.test(c) && v != null && v !== '') {
+      const n = parseFloat(v);
+      if (!isNaN(n) && isFinite(n)) return { t: 'n', v: n };
+    }
+    // URL columns
+    if (/LinkedIn|CV/.test(c) && typeof v === 'string' && /^https?:\/\//i.test(v)) {
+      return { t: 's', v, l: { Target: v, Tooltip: 'Click to open' } };
+    }
+    if (v == null || v === '' || v === '[object Object]') return { t: 's', v: '' };
+    if (typeof v === 'boolean') return { t: 'b', v };
+    if (typeof v === 'object') { try { return { t: 's', v: JSON.stringify(v) }; } catch { return { t: 's', v: String(v) }; } }
+    return { t: 's', v: String(v).replace(/\r/g, '') };
+  }));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow]);
+  dataRows.forEach((row, ri) => {
+    row.forEach((cell, ci) => {
+      ws[XLSX.utils.encode_cell({ r: ri + 1, c: ci })] = cell;
+    });
+  });
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: dataRows.length, c: cols.length - 1 } });
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  ws['!cols'] = cols.map((c, i) => {
+    let maxLen = c.length;
+    dataRows.forEach(row => {
+      const v = row[i];
+      if (v && v.v != null) {
+        const s = v.v instanceof Date ? 'YYYY-MM-DD HH:MM' : String(v.v);
+        if (s.length > maxLen) maxLen = s.length;
+      }
+    });
+    return { wch: Math.min(50, Math.max(12, maxLen + 2)) };
+  });
+  for (let c = 0; c < cols.length; c++) {
+    const addr = XLSX.utils.encode_cell({ r: 0, c });
+    if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } };
+  }
+  const wb = XLSX.utils.book_new();
+  const sheetName = name === 'applications' ? 'Applications (full join)' : 'Referrals (full join)';
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, 'gccpros-' + name + '-FULL-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('Exported ' + composed.length + ' rows × ' + cols.length + ' joined columns to Excel', 'ok');
 }
 
 function exportXLSX(name, rows) {
