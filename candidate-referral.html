@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<!-- GCCPROs Candidate Referral v2 · build: cand-ref-v2-2026-05-19-supabase · token-gated form, calls Supabase oppsCandidateComplete (v9.1 atomic RPC) -->
+<!-- GCCPROs Candidate Referral · build: cand-ref-2026-05-19-v2-strict
+     v2 hardening: every field required + live validation + dropdowns where
+     sensible + direct CV upload (no Google Drive link). CV goes to the
+     Supabase Storage `opps-cvs` private bucket via oppsUploadCV
+     (context=referral). Recruiters download via signed URL only. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,42 +13,59 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root { --ink:#0A1628; --gold:#C9973A; --gold-deep:#9A6F26; --ivory:#FBF7ED; --muted:#6a6a6a; --line:#e5e5e5; --line-2:#d0d0d0; --ok:#2D7A4E; --err:#C53030; --bg:#fafaf6; }
+:root { --ink:#0A1628; --gold:#0A66C2; --gold-deep:#084c8c; --ivory:#F8F7F4; --muted:#64748B; --line:#E2E8F0; --line-2:#cbd5e1; --ok:#059669; --err:#DC2626; --bg:#fafaf6; --amber:#F59E0B; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; font-size:14px; padding:0; }
-.test-banner { background:#FEF5E7; border-bottom:2px solid var(--gold); padding:8px 20px; font-size:12px; text-align:center; }
-.test-banner b { color:var(--gold-deep); }
-header { background:var(--ink); color:#fff; padding:18px 24px; }
-header h1 { margin:0; font-family:'Playfair Display',serif; font-size:22px; }
-header .sub { font-size:13px; opacity:0.8; margin-top:4px; }
-main { max-width:680px; margin:24px auto; padding:0 18px 60px; }
-.card { background:#fff; border:1px solid var(--line); border-radius:5px; padding:24px 28px; }
-.card h2 { margin:0 0 4px; font-family:'Playfair Display',serif; font-size:20px; }
-.card .sub { color:var(--muted); font-size:13px; margin:0 0 16px; }
-label { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:10px; }
-input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--line-2); border-radius:3px; font-size:14px; font-family:inherit; }
-.row { display:flex; gap:10px; }
-.row > * { flex:1; }
-.btn { padding:11px 18px; background:var(--gold); color:var(--ink); border:none; border-radius:3px; font-weight:600; cursor:pointer; font-size:14px; width:100%; margin-top:16px; }
-.btn:hover { background:var(--gold-deep); color:#fff; }
-.consent { display:flex; gap:8px; align-items:flex-start; margin-top:14px; font-size:12px; color:var(--muted); }
+.test-banner { background:#FEF5E7; border-bottom:2px solid var(--amber); padding:7px 20px; font-size:11.5px; text-align:center; }
+.test-banner b { color:#92400E; }
+header { background:linear-gradient(135deg, var(--ink) 0%, #1E40AF 100%); color:#fff; padding:24px 24px; }
+header h1 { margin:0; font-family:'Playfair Display',serif; font-size:24px; }
+header .sub { font-size:13px; opacity:0.85; margin-top:4px; }
+main { max-width:720px; margin:24px auto; padding:0 18px 60px; }
+.card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:24px 28px; }
+.card h2 { margin:0 0 6px; font-family:'Playfair Display',serif; font-size:22px; }
+.card .sub { color:var(--muted); font-size:13px; margin:0 0 18px; }
+label { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:14px; font-weight:600; }
+label .req { color:var(--err); }
+input, select, textarea { width:100%; padding:10px 12px; border:1px solid var(--line-2); border-radius:4px; font-size:14px; font-family:inherit; background:#fff; color:var(--ink); }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--gold); }
+input.invalid, select.invalid, textarea.invalid { border-color:var(--err); background:#FEF2F2; }
+input.valid { border-color:var(--ok); }
+.hint { font-size:11px; color:var(--muted); margin-top:4px; }
+.hint.err { color:var(--err); }
+.hint.ok { color:var(--ok); }
+.row { display:flex; gap:12px; flex-wrap:wrap; }
+.row > * { flex:1; min-width:200px; }
+.btn { padding:12px 18px; background:var(--gold); color:#fff; border:none; border-radius:4px; font-weight:700; cursor:pointer; font-size:14px; width:100%; margin-top:18px; }
+.btn:hover { background:var(--gold-deep); }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+.consent { display:flex; gap:8px; align-items:flex-start; margin-top:18px; font-size:12.5px; color:var(--ink); padding:12px;background:var(--ivory);border-radius:4px; }
 .consent input { width:auto; margin-top:3px; }
-.consent a { color:var(--gold-deep); }
-.alert { padding:14px 16px; border-radius:3px; margin:14px 0; font-size:13px; }
-.alert.err { background:#FDECEA; color:var(--err); border-left:3px solid var(--err); }
-.alert.ok  { background:#E8F5EC; color:var(--ok); border-left:3px solid var(--ok); }
+.consent a { color:var(--gold); }
+.alert { padding:14px 16px; border-radius:4px; margin:14px 0; font-size:13px; }
+.alert.err { background:#FEF2F2; color:var(--err); border-left:3px solid var(--err); }
+.alert.ok  { background:#ECFDF5; color:var(--ok); border-left:3px solid var(--ok); }
 .alert.info{ background:var(--ivory); color:var(--ink); border-left:3px solid var(--gold); }
-.referrer-pill { display:inline-block; background:var(--ivory); padding:6px 12px; border-radius:14px; font-size:12px; color:var(--gold-deep); margin-top:6px; }
-.success-card { text-align:center; padding:40px 20px; }
-.success-card h2 { color:var(--ok); margin-bottom:14px; }
+.section { margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+.section h3 { font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin:0 0 6px; font-weight:700; }
+.radio-row { display:flex; gap:18px; margin-top:6px; }
+.radio-row label { margin:0; text-transform:none; letter-spacing:0; color:var(--ink); font-weight:500; font-size:14px; display:flex; align-items:center; gap:6px; cursor:pointer; }
+.radio-row input { width:auto; }
+.success-card { text-align:center; padding:50px 20px; }
+.success-card h2 { color:var(--ok); margin-bottom:14px; font-size:28px; }
 .success-card p { font-size:14px; color:var(--muted); }
+.referrer-pill { display:inline-block; background:rgba(10,102,194,0.1); color:var(--gold); padding:4px 12px; border-radius:14px; font-size:11.5px; font-weight:700; margin-left:6px; }
+.upload-zone { border:2px dashed var(--line-2); border-radius:4px; padding:14px; text-align:center; cursor:pointer; transition:all 0.15s; background:#fff; }
+.upload-zone:hover, .upload-zone.dragover { border-color:var(--gold); background:var(--ivory); }
+.upload-zone.has-file { border-style:solid; border-color:var(--ok); background:#ECFDF5; }
+.upload-zone .uz-prompt { color:var(--muted); font-size:13px; }
+.upload-zone .uz-file { color:var(--ok); font-weight:600; font-size:13px; }
+.word-count { display:inline-block; margin-top:4px; font-size:11px; font-weight:600; }
+.word-count.err { color:var(--err); }
+.word-count.ok { color:var(--ok); }
 </style>
 </head>
 <body>
-
-<div class="test-banner">
-  <b>TEST PAGE</b> · candidate-referral v2 (Supabase). The live <a href="/candidate-referral.html">candidate-referral.html</a> on Apps Script is unchanged.
-</div>
 
 <header>
   <h1>Complete your candidate profile</h1>
@@ -57,47 +78,151 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
   <div id="error-state" style="display:none;"></div>
 
   <div id="form-container" class="card" style="display:none;">
-    <h2>Welcome — you've been referred by <span id="referrer-name"></span></h2>
-    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023 — see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
+    <h2>Welcome <span id="cand-firstname"></span></h2>
+    <p class="sub">Referred by <span id="referrer-name" class="referrer-pill"></span><br><br>Please complete the profile below. All fields are required (mandatory) unless marked optional. Your details are processed under DPDP Act 2023 — see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
 
     <div id="target-job-block" class="alert info" style="display:none;">
       <b>Target role:</b> <span id="target-job-text"></span>
     </div>
 
-    <div class="row"><div><label>Full name *</label><input id="cf-name" required></div><div><label>Work email *</label><input type="email" id="cf-email" required></div></div>
-    <div class="row"><div><label>Phone</label><input id="cf-phone"></div><div><label>LinkedIn</label><input id="cf-linkedin" placeholder="https://linkedin.com/in/…"></div></div>
-    <div class="row"><div><label>Current company</label><input id="cf-curcompany"></div><div><label>Current designation</label><input id="cf-curdesig"></div></div>
-    <div class="row"><div><label>Current CTC (INR / year)</label><input type="number" id="cf-curctc"></div><div><label>Expected CTC (INR / year)</label><input type="number" id="cf-expctc"></div></div>
-    <div class="row"><div><label>Notice period (days)</label><input type="number" id="cf-notice"></div><div><label>PAN (ABCDE1234F)</label><input id="cf-pan" maxlength="10" style="text-transform:uppercase;"></div></div>
-    <label>Highest qualification</label><input id="cf-qual">
-    <label>Reason for change</label><textarea id="cf-reason" rows="3"></textarea>
-    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;text-transform:none;letter-spacing:0;color:var(--ink);font-size:13px;"><input type="checkbox" id="cf-relocate" style="width:auto;"><span>Willing to relocate</span></label>
-    <label>CV link (Google Drive / Dropbox / public URL)</label><input id="cf-cvurl" placeholder="https://…">
-    <label>CV filename (optional)</label><input id="cf-cvname">
+    <!-- IDENTITY -->
+    <div class="section" style="border-top:none;padding-top:0;margin-top:0;">
+      <h3>Personal</h3>
+      <div class="row">
+        <div>
+          <label>Full name <span class="req">*</span></label>
+          <input id="cf-name" required>
+          <div class="hint" id="h-cf-name">Use the name on your PAN card.</div>
+        </div>
+        <div>
+          <label>Work / personal email <span class="req">*</span></label>
+          <input type="email" id="cf-email" required>
+          <div class="hint" id="h-cf-email">We'll use this for shortlist communication.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Phone <span class="req">*</span></label>
+          <input type="tel" id="cf-phone" required>
+          <div class="hint" id="h-cf-phone">10–15 digits, country code optional.</div>
+        </div>
+        <div>
+          <label>LinkedIn profile URL <span class="req">*</span></label>
+          <input type="url" id="cf-linkedin" placeholder="https://linkedin.com/in/your-handle" required>
+          <div class="hint" id="h-cf-linkedin">Must be a public profile.</div>
+        </div>
+      </div>
+      <label>Current city <span class="req">*</span></label>
+      <select id="cf-city" required>
+        <option value="">Select your city</option>
+        <option>Bengaluru</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Chennai</option><option>Gurugram</option><option>Noida</option><option>Delhi NCR</option><option>Kolkata</option><option>Ahmedabad</option><option>Coimbatore</option><option>Thiruvananthapuram</option><option>Kochi (Cochin)</option><option>Indore</option><option>Jaipur</option><option>Chandigarh</option><option>Mohali</option><option>Lucknow</option><option>Bhubaneswar</option><option>Vishakhapatnam</option><option>Mysuru (Mysore)</option><option>Mangaluru</option><option>Vadodara</option><option>Surat</option><option>Nagpur</option><option>Bhopal</option><option>Faridabad</option><option>Ghaziabad</option><option>Greater Noida</option><option>Other (India)</option><option>Outside India</option>
+      </select>
+    </div>
+
+    <!-- PROFESSIONAL -->
+    <div class="section">
+      <h3>Professional</h3>
+      <div class="row">
+        <div>
+          <label>Current company <span class="req">*</span></label>
+          <input id="cf-curcompany" required>
+        </div>
+        <div>
+          <label>Current designation <span class="req">*</span></label>
+          <input id="cf-curdesig" required>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Total years experience <span class="req">*</span></label>
+          <input type="number" id="cf-totalexp" min="0" max="50" step="0.5" required>
+          <div class="hint">Round to nearest 0.5 year.</div>
+        </div>
+        <div>
+          <label>Highest qualification <span class="req">*</span></label>
+          <select id="cf-qual" required>
+            <option value="">Select qualification</option>
+            <option>Bachelor of Commerce (B.Com)</option><option>Bachelor of Arts (B.A.)</option><option>Bachelor of Science (B.Sc.)</option><option>Bachelor of Business Administration (BBA)</option><option>Bachelor of Engineering / Technology (B.E. / B.Tech)</option><option>Bachelor of Computer Applications (BCA)</option><option>Bachelor of Laws (LLB)</option><option>Bachelor of Pharmacy (B.Pharm)</option><option>Master of Commerce (M.Com)</option><option>Master of Arts (M.A.)</option><option>Master of Science (M.Sc.)</option><option>Master of Business Administration (MBA / PGDM)</option><option>Master of Computer Applications (MCA)</option><option>Master of Technology (M.Tech / M.E.)</option><option>Master of Laws (LLM)</option><option>Master of Social Work (MSW)</option><option>PhD / Doctorate</option><option>Chartered Accountant (CA)</option><option>Cost &amp; Management Accountant (CMA / ICWA)</option><option>Company Secretary (CS)</option><option>Chartered Financial Analyst (CFA)</option><option>Financial Risk Manager (FRM)</option><option>Certified Public Accountant (CPA)</option><option>ACCA</option><option>CIMA</option><option>Project Management Professional (PMP)</option><option>Six Sigma (Black / Green Belt)</option><option>Diploma</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Current CTC (LPA) <span class="req">*</span></label>
+          <input type="number" id="cf-curctc" min="0" max="500" step="0.1" required>
+          <div class="hint">In ₹ lakhs per annum. Fixed + variable.</div>
+        </div>
+        <div>
+          <label>Expected CTC (LPA) <span class="req">*</span></label>
+          <input type="number" id="cf-expctc" min="0" max="500" step="0.1" required>
+          <div class="hint">Realistic ask. Wide gaps = fewer callbacks.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Notice period <span class="req">*</span></label>
+          <select id="cf-notice" required>
+            <option value="">Select notice period</option>
+            <option>Immediately Available</option><option>15 days</option><option>30 days</option><option>45 days</option><option>60 days</option><option>90 days</option><option>Negotiable</option>
+          </select>
+        </div>
+        <div>
+          <label>PAN number <span class="req">*</span></label>
+          <input id="cf-pan" maxlength="10" style="text-transform:uppercase;" placeholder="ABCDE1234F" required>
+          <div class="hint" id="h-cf-pan">5 letters + 4 digits + 1 letter.</div>
+        </div>
+      </div>
+      <label>Willing to relocate? <span class="req">*</span></label>
+      <div class="radio-row">
+        <label><input type="radio" name="cf-relocate" value="Yes" required> Yes</label>
+        <label><input type="radio" name="cf-relocate" value="No"> No</label>
+        <label><input type="radio" name="cf-relocate" value="Depends"> Depends on location</label>
+      </div>
+    </div>
+
+    <!-- WHY + CV -->
+    <div class="section">
+      <h3>Why &amp; CV</h3>
+      <label>Reason for change <span class="req">*</span></label>
+      <textarea id="cf-reason" rows="4" placeholder="At least 20 words. What's making you explore this role?" oninput="updateWordCount(this,'h-cf-reason',20)" required></textarea>
+      <div class="hint" id="h-cf-reason">0 / 20 words minimum</div>
+
+      <label>Resume / CV <span class="req">*</span></label>
+      <div class="upload-zone" id="cf-cv-zone" onclick="document.getElementById('cf-cv').click()">
+        <input type="file" id="cf-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" onchange="cvSelected()">
+        <div class="uz-prompt" id="cf-cv-prompt">&#128206; Click here or drag a file to upload your CV<br><span style="font-size:11px;">PDF / DOC / DOCX &middot; max 5 MB</span></div>
+      </div>
+      <div class="hint">Stored securely in our private Supabase bucket. Only authorised GCCPROs recruiters can download via signed URL &mdash; never shared publicly.</div>
+    </div>
 
     <div class="consent">
       <input type="checkbox" id="cf-consent" required>
-      <span>I consent to GCCPROs processing the data above to evaluate me for the referred opportunity, per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span>
+      <span>I confirm the above is accurate and I consent to GCCPROs processing this data to evaluate me for the referred opportunity, per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023). My data will be retained per legal &amp; business need and never sold to third parties.</span>
     </div>
 
-    <button class="btn" id="cf-submit" onclick="submitProfile()">Submit profile →</button>
+    <button class="btn" id="cf-submit" onclick="submitProfile()">Submit profile &rarr;</button>
     <div id="submit-result"></div>
   </div>
 
   <div id="success-state" class="card success-card" style="display:none;">
-    <h2>✓ Profile received</h2>
-    <p id="success-msg">We'll evaluate your profile against the role and the GCCPROs team will be in touch shortly.</p>
-    <p style="margin-top:18px;"><a class="btn" href="/opportunities.html" style="display:inline-block;width:auto;text-decoration:none;">Explore more opportunities →</a></p>
+    <h2>&#10003; Profile received</h2>
+    <p id="success-msg">Thanks! We'll evaluate your profile against the role and the GCCPROs team will be in touch within 5 working days.</p>
+    <p style="margin-top:22px;"><a class="btn" href="/opportunities.html" style="display:inline-block;width:auto;text-decoration:none;color:#fff;padding:12px 28px;">Explore more opportunities &rarr;</a></p>
   </div>
 
 </main>
 
 <script>
+'use strict';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
-
-// Parse token from URL
 const TOKEN = new URLSearchParams(window.location.search).get('token') || '';
-let JOB_TITLE = '', JOB_COMPANY = '';
+const PAN_RX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+const PHONE_RX = /^[+]?[0-9\s\-()]{10,18}$/;
+const EMAIL_RX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const URL_RX = /^https?:\/\/.+/i;
+const CV_MAX_BYTES = 5 * 1024 * 1024;
+let JOB_TITLE = '', JOB_COMPANY = '', JOB_ID = '';
+let CV_FILE = null;
 
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function showError(msg) {
@@ -105,8 +230,76 @@ function showError(msg) {
   document.getElementById('error-state').style.display = 'block';
   document.getElementById('error-state').innerHTML = '<div class="alert err">' + esc(msg) + '</div>';
 }
+function updateWordCount(ta, hintId, min) {
+  const n = (ta.value || '').trim().split(/\s+/).filter(Boolean).length;
+  const h = document.getElementById(hintId);
+  if (!h) return;
+  h.textContent = n + ' / ' + min + ' words minimum' + (n >= min ? ' ✓' : '');
+  h.className = 'hint ' + (n >= min ? 'ok' : (n > 0 ? 'err' : ''));
+}
 
-// 1. Load the referral context from the token
+// CV file picker — drag-and-drop + click
+function cvSelected() {
+  const f = document.getElementById('cf-cv').files[0];
+  if (!f) return;
+  CV_FILE = f;
+  const z = document.getElementById('cf-cv-zone');
+  const p = document.getElementById('cf-cv-prompt');
+  z.classList.add('has-file');
+  const sizeKB = (f.size / 1024).toFixed(1);
+  if (f.size > CV_MAX_BYTES) {
+    z.classList.remove('has-file');
+    p.innerHTML = '<span style="color:var(--err);">✗ ' + esc(f.name) + ' (' + sizeKB + ' KB) is over 5 MB &mdash; please pick a smaller file.</span>';
+    CV_FILE = null;
+  } else {
+    p.innerHTML = '<span class="uz-file">✓ ' + esc(f.name) + ' (' + sizeKB + ' KB)</span> &mdash; click to change.';
+  }
+}
+['dragover','dragenter'].forEach(ev => document.addEventListener(ev, e => {
+  if (e.target.closest && e.target.closest('#cf-cv-zone')) { e.preventDefault(); document.getElementById('cf-cv-zone').classList.add('dragover'); }
+}));
+['dragleave','drop'].forEach(ev => document.addEventListener(ev, e => {
+  if (e.target.closest && e.target.closest('#cf-cv-zone')) { e.preventDefault(); document.getElementById('cf-cv-zone').classList.remove('dragover'); }
+}));
+document.addEventListener('drop', e => {
+  if (e.target.closest && e.target.closest('#cf-cv-zone')) {
+    e.preventDefault();
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files[0]) { document.getElementById('cf-cv').files = files; cvSelected(); }
+  }
+});
+
+function setupLiveValidation() {
+  const fields = [
+    ['cf-name',     v => v.length >= 2,                            'Enter your full name'],
+    ['cf-email',    v => EMAIL_RX.test(v),                         'Email format invalid'],
+    ['cf-phone',    v => PHONE_RX.test(v),                         '10–15 digits required'],
+    ['cf-linkedin', v => URL_RX.test(v) && /linkedin/i.test(v),    'Must be a valid LinkedIn URL'],
+    ['cf-curcompany', v => v.length >= 2,                          'Required'],
+    ['cf-curdesig',   v => v.length >= 2,                          'Required'],
+    ['cf-totalexp', v => !isNaN(parseFloat(v)) && +v >= 0 && +v <= 50, '0 to 50 years'],
+    ['cf-curctc',   v => !isNaN(parseFloat(v)) && +v >= 0,         'Numeric, LPA'],
+    ['cf-expctc',   v => !isNaN(parseFloat(v)) && +v >= 0,         'Numeric, LPA'],
+    ['cf-pan',      v => PAN_RX.test(v.toUpperCase()),             'Format: ABCDE1234F'],
+  ];
+  fields.forEach(([id, ok, errMsg]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('blur', () => {
+      const v = el.value.trim();
+      if (!v) { el.classList.remove('valid','invalid'); return; }
+      const valid = ok(v);
+      el.classList.toggle('valid', valid);
+      el.classList.toggle('invalid', !valid);
+      const h = document.getElementById('h-' + id);
+      if (h && !valid) { h.textContent = errMsg; h.className = 'hint err'; }
+    });
+    if (id === 'cf-pan') {
+      el.addEventListener('input', () => { el.value = el.value.toUpperCase(); });
+    }
+  });
+}
+
 async function loadReferral() {
   if (!TOKEN) return showError('No referral token in URL. The link you used is invalid or incomplete.');
   try {
@@ -119,11 +312,14 @@ async function loadReferral() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('form-container').style.display = 'block';
     document.getElementById('referrer-name').textContent = ref.partner_email || 'a Partner';
+    const fn = (ref.candidate_name || '').split(/\s+/)[0];
+    document.getElementById('cand-firstname').textContent = fn ? ', ' + fn : '';
     document.getElementById('cf-name').value = ref.candidate_name || '';
     document.getElementById('cf-email').value = ref.candidate_email || '';
     document.getElementById('cf-phone').value = ref.candidate_phone || '';
     document.getElementById('cf-linkedin').value = ref.candidate_linkedin || '';
-    if (ref.target_job_id) loadTargetJob(ref.target_job_id);
+    if (ref.target_job_id) { JOB_ID = ref.target_job_id; loadTargetJob(ref.target_job_id); }
+    setupLiveValidation();
   } catch (err) { showError('Network error: ' + err.message); }
 }
 
@@ -134,29 +330,73 @@ async function loadTargetJob(jobId) {
     if (j.job) {
       JOB_TITLE = j.job.title; JOB_COMPANY = j.job.company;
       document.getElementById('target-job-block').style.display = 'block';
-      document.getElementById('target-job-text').textContent = j.job.title + ' at ' + j.job.company + ' (' + (j.job.location || '') + ')';
+      document.getElementById('target-job-text').textContent = j.job.title + ' at ' + j.job.company + (j.job.location ? ' (' + j.job.location + ')' : '');
     }
   } catch (_) {}
 }
 
-// 2. Submit the candidate profile
 async function submitProfile() {
   const v = id => (document.getElementById(id).value || '').trim();
   const resultEl = document.getElementById('submit-result');
   resultEl.innerHTML = '';
-  if (!v('cf-name') || !v('cf-email')) { resultEl.innerHTML = '<div class="alert err">Name and email are required.</div>'; return; }
-  if (!document.getElementById('cf-consent').checked) { resultEl.innerHTML = '<div class="alert err">Please accept the privacy notice.</div>'; return; }
+
+  function err(msg, id) {
+    resultEl.innerHTML = '<div class="alert err">' + esc(msg) + '</div>';
+    if (id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('invalid'); el.focus(); el.scrollIntoView({behavior:'smooth', block:'center'}); }
+    }
+    return false;
+  }
+
+  if (!v('cf-name'))                                      return err('Full name is required.', 'cf-name');
+  if (!EMAIL_RX.test(v('cf-email')))                      return err('A valid email is required.', 'cf-email');
+  if (!PHONE_RX.test(v('cf-phone')))                      return err('A valid phone number is required (10–15 digits).', 'cf-phone');
+  if (!URL_RX.test(v('cf-linkedin')))                     return err('A valid LinkedIn URL is required (starting with http:// or https://).', 'cf-linkedin');
+  if (!v('cf-city'))                                      return err('Please select your current city.', 'cf-city');
+  if (!v('cf-curcompany'))                                return err('Current company is required.', 'cf-curcompany');
+  if (!v('cf-curdesig'))                                  return err('Current designation is required.', 'cf-curdesig');
+  const totalexp = parseFloat(v('cf-totalexp'));
+  if (isNaN(totalexp) || totalexp < 0 || totalexp > 50)   return err('Total experience must be a number between 0 and 50.', 'cf-totalexp');
+  if (!v('cf-qual'))                                      return err('Please select your highest qualification.', 'cf-qual');
+  const cur = parseFloat(v('cf-curctc')), exp = parseFloat(v('cf-expctc'));
+  if (isNaN(cur) || cur < 0)                              return err('Current CTC must be a non-negative number (in LPA).', 'cf-curctc');
+  if (isNaN(exp) || exp < 0)                              return err('Expected CTC must be a non-negative number (in LPA).', 'cf-expctc');
+  if (!v('cf-notice'))                                    return err('Please select your notice period.', 'cf-notice');
   const pan = v('cf-pan').toUpperCase();
-  if (pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) { resultEl.innerHTML = '<div class="alert err">PAN format must be ABCDE1234F.</div>'; return; }
+  if (!PAN_RX.test(pan))                                  return err('PAN must match format ABCDE1234F.', 'cf-pan');
+  const relocate = document.querySelector('input[name="cf-relocate"]:checked');
+  if (!relocate)                                          return err('Please select Yes / No / Depends on relocation.');
+  const reasonWords = v('cf-reason').split(/\s+/).filter(Boolean).length;
+  if (reasonWords < 20)                                   return err('"Reason for change" needs at least 20 words (you have ' + reasonWords + ').', 'cf-reason');
+  if (!CV_FILE)                                           return err('Please upload your CV (PDF / DOC / DOCX, max 5 MB).');
+  if (CV_FILE.size > CV_MAX_BYTES)                        return err('CV is over 5 MB — please pick a smaller file.');
+  if (!document.getElementById('cf-consent').checked)     return err('Please accept the privacy notice to continue.', 'cf-consent');
 
   const btn = document.getElementById('cf-submit');
-  btn.disabled = true; btn.textContent = 'Submitting…';
+  btn.disabled = true; btn.textContent = 'Uploading CV…';
 
   try {
+    const fr = new FileReader();
+    const cvDataUrl = await new Promise((res, rej) => { fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(CV_FILE); });
+    const b64 = cvDataUrl.split(',').pop();
+    const email = v('cf-email').toLowerCase();
+    const ur = await fetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email) + '&context=referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: b64, fileName: CV_FILE.name, mimeType: CV_FILE.type })
+    });
+    const uj = await ur.json();
+    if (uj.error) {
+      const detail = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      throw new Error('CV upload failed: ' + detail);
+    }
+    const cvPath = uj.path, cvFilename = uj.filename || CV_FILE.name;
+
+    btn.textContent = 'Submitting profile…';
     const params = new URLSearchParams({
       action: 'oppsCandidateComplete',
-      token: TOKEN,
-      email: v('cf-email').toLowerCase(),
+      token: TOKEN, email,
       fullName: v('cf-name'),
       phone: v('cf-phone'),
       linkedin: v('cf-linkedin'),
@@ -168,22 +408,23 @@ async function submitProfile() {
       pan,
       qualification: v('cf-qual'),
       reasonForChange: v('cf-reason'),
-      willingRelocate: document.getElementById('cf-relocate').checked ? 'true' : 'false',
-      cvUrl: v('cf-cvurl'),
-      cvFilename: v('cf-cvname'),
+      willingRelocate: relocate.value === 'Yes' ? 'true' : 'false',
+      cvUrl: cvPath,
+      cvFilename,
     });
     const r = await fetch(SCRIPT_URL + '?' + params.toString(), { method: 'GET' });
     const j = await r.json();
-    if (j.error === 'invalid_token') { resultEl.innerHTML = '<div class="alert err">This referral link is no longer valid.</div>'; btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
-    if (j.error === 'expired')       { resultEl.innerHTML = '<div class="alert err">This referral link has expired.</div>';  btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
-    if (j.error === 'rate_limited')  { resultEl.innerHTML = '<div class="alert err">Too many submissions. Please wait a few minutes.</div>'; btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
-    if (j.error) throw new Error(j.error);
+    if (j.error === 'invalid_token')  { return err('This referral link is no longer valid.'); }
+    if (j.error === 'expired')        { return err('This referral link has expired.'); }
+    if (j.error === 'rate_limited')   { return err('Too many submissions. Please wait a few minutes.'); }
+    if (j.error)                      throw new Error(j.error);
 
-    // Success — swap to success card
     document.getElementById('form-container').style.display = 'none';
     document.getElementById('success-state').style.display = 'block';
-  } catch (err) {
-    resultEl.innerHTML = '<div class="alert err">Something went wrong: ' + esc(err.message) + '. Please try again or email <a href="mailto:admin@gccpros.com">admin@gccpros.com</a> with your token: <code>' + esc(TOKEN) + '</code></div>';
+  } catch (err2) {
+    console.error('[submitProfile]', err2);
+    resultEl.innerHTML = '<div class="alert err">Something went wrong: ' + esc(err2.message) + '.<br>Please try again or email <a href="mailto:admin@gccpros.com">admin@gccpros.com</a> with your token: <code>' + esc(TOKEN) + '</code></div>';
+  } finally {
     btn.disabled = false; btn.textContent = 'Submit profile →';
   }
 }
