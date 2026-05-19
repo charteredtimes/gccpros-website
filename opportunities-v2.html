@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-pm-grade-v6
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-pm-grade-v6.1
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -727,7 +727,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-19-pm-grade-v6';
+const BUILD = 'opps-v2-2026-05-19-pm-grade-v6.1';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -993,12 +993,15 @@ async function handleGoogleCredentialResponse(response) {
   if (!email) { alert('Could not read email from Google credential.'); return; }
   googleVerifiedEmail = email;
 
-  let exists = false, blacklisted = false;
+  // v7 perf: capture the FULL status response and stash it so loadProfileAndDashboard
+  // can reuse it without re-fetching (saves ~600-1200ms on slow networks).
+  let exists = false, blacklisted = false, prefetchedStatus = null;
   try {
     const typeHint = (googleSignInIntent !== 'login') ? googleSignInIntent : (loginRolePref || '');
-    const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(email) + (typeHint ? '&type=' + typeHint : ''));
-    const sj = await sr.json();
-    exists = !!sj.exists; blacklisted = !!sj.blacklisted;
+    const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(email) + (typeHint ? '&type=' + typeHint : '') + '&_t=' + Date.now());
+    prefetchedStatus = await sr.json();
+    exists = !!prefetchedStatus.exists; blacklisted = !!prefetchedStatus.blacklisted;
+    window._prefetchedStatus = prefetchedStatus;  // stashed for loadProfileAndDashboard
   } catch (_) {}
   if (blacklisted) { alert('This account has been blocked. Contact admin@gccpros.com.'); return; }
 
@@ -1064,13 +1067,20 @@ async function loadProfileAndDashboard() {
   const ctrl = new AbortController();
   const tmo = setTimeout(() => ctrl.abort(), 12000);
   let sj = null;
-  try {
-    // Cache-buster — defeat CDN/proxy caching of role-sensitive response
-    const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now(), { signal: ctrl.signal });
-    sj = await sr.json();
-  } catch (err) {
-    console.warn('[role] checkUserStatus failed:', err && err.message);
-  } finally { clearTimeout(tmo); }
+  // v7 perf: reuse the prefetched status from Google sign-in if available (saves a round trip)
+  if (window._prefetchedStatus && window._prefetchedStatus.exists !== undefined) {
+    sj = window._prefetchedStatus;
+    window._prefetchedStatus = null;  // consume once
+    clearTimeout(tmo);
+    console.log('[role] using prefetched status from Google sign-in');
+  } else {
+    try {
+      const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now(), { signal: ctrl.signal });
+      sj = await sr.json();
+    } catch (err) {
+      console.warn('[role] checkUserStatus failed:', err && err.message);
+    } finally { clearTimeout(tmo); }
+  }
 
   if (sj && sj.exists !== undefined) {
     CURRENT_PROFILE = sj;
@@ -1544,14 +1554,27 @@ function openApplyModal(jobId, title, company) {
 }
 
 async function apSubmit() {
-  const v = id => (document.getElementById(id).value || '').trim();
+  // v7 hardening: wrap in try/catch + log full error to console.
+  // Always show ANY error to the user as a result message.
+  try {
+    return await _apSubmitInner();
+  } catch (err) {
+    console.error('[apSubmit] uncaught:', err);
+    showResult('ap-result', 'Submission error: ' + (err && err.message ? err.message : String(err)), false);
+    const btn = document.querySelector('#apply-modal .btn:not(.secondary)');
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit Application'; }
+  }
+}
+async function _apSubmitInner() {
+  const _g = id => document.getElementById(id);
+  const v = id => (_g(id) ? (_g(id).value || '').trim() : '');
   // v5: every field has a friendly error message
   const required = [
     ['ap-phone','Phone'], ['ap-linkedin','LinkedIn URL'],
     ['ap-curcity','Current City'], ['ap-totalexp','Total Years Experience'],
     ['ap-curcompany','Current Company'], ['ap-curdesig','Current Designation'],
     ['ap-curctc','Current CTC'], ['ap-expctc','Expected CTC'], ['ap-notice','Notice Period'],
-    ['ap-pan','PAN'], ['ap-qual','Qualification'], ['ap-skills','Skills'],
+    ['ap-pan','PAN'], ['ap-qual','Qualification'],
     ['ap-eligibility','Why you fit'], ['ap-workmode','Work Mode'], ['ap-joindate','Earliest Join Date'],
     ['ap-ref1-name','Reference 1 Name'],['ap-ref1-title','Reference 1 Title'],['ap-ref1-email','Reference 1 Email'],['ap-ref1-phone','Reference 1 Phone'],['ap-ref1-relation','Reference 1 Relationship']
   ];
@@ -1716,18 +1739,22 @@ async function refSubmit() {
     if (j.error) throw new Error(j.error);
     const refUrl = j.referralUrl || j.referral_url || '';
     const draft = j.candidateEmailDraft || null;
-    let msg = '✓ Referral link generated:\n' + refUrl;
+    const rr = document.getElementById('ref-result');
+    rr.className = 'form-result ok';
+    rr.style.display = 'block';
+    let html = '<strong>✓ Referral generated.</strong><br>';
+    html += '<div style="margin:8px 0;padding:8px;background:#fff;border:1px solid var(--green);border-radius:4px;font-size:11px;word-break:break-all;font-family:monospace;">' + esc(refUrl) + '</div>';
     if (draft && draft.to) {
-      msg += '\n\n→ Opening your email client with a pre-filled message to the candidate…';
-      // Open mailto: in a new tab (most browsers route to default mail client)
       const mailto = 'mailto:' + encodeURIComponent(draft.to) +
         '?subject=' + encodeURIComponent(draft.subject || '') +
         '&body=' + encodeURIComponent(draft.body || refUrl);
-      setTimeout(() => { try { window.open(mailto, '_blank'); } catch(_) { location.href = mailto; } }, 600);
+      html += '<a href="' + mailto + '" target="_blank" style="display:inline-block;background:var(--brand-orange);color:#fff;padding:10px 18px;border-radius:4px;text-decoration:none;font-weight:700;margin-top:6px;">✉ Send email to ' + esc(draft.to) + '</a>';
+      html += '<button class="btn secondary" onclick="navigator.clipboard.writeText(\'' + draft.body.replace(/'/g,"\\\'").replace(/\n/g,'\\n') + '\'); this.textContent=\'✓ Copied\';" style="margin-left:8px;">Copy email body</button>';
+      html += '<button class="btn secondary" onclick="navigator.clipboard.writeText(\'' + refUrl + '\'); this.textContent=\'✓ Copied\';" style="margin-left:8px;">Copy link only</button>';
     } else {
-      msg += '\n\n(Copy and paste this link into a message to the candidate.)';
+      html += '<p style="margin-top:8px;font-size:12px;">Send this link to the candidate via your preferred channel.</p>';
     }
-    showResult('ref-result', msg, true);
+    rr.innerHTML = html;
     loadDashboard();
   } catch (err) { showResult('ref-result', err.message, false); }
 }

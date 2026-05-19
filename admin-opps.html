@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v2
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v3
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -349,7 +349,7 @@ function renderApps() {
   const filtered = APPS.filter(a => !q || [a.applicant_email, a.current_company, a.current_designation, a.job_id, a.contact_phone].join(' ').toLowerCase().includes(q));
   document.getElementById('apps-count').textContent = filtered.length + ' / ' + APPS.length + ' applications';
   if (!filtered.length) { document.getElementById('apps-box').innerHTML = '<p class="loading">No applications match.</p>'; return; }
-  let html = '<table><thead><tr><th>Applied</th><th>Email</th><th>Job ID</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th>Detail</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Applied</th><th>Email</th><th>Job ID</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
   filtered.forEach((a, i) => {
     const cv = a.cv_storage_url ? `<button class="btn small" onclick="downloadCV('${esc(a.cv_storage_url)}')">⬇</button>` : '—';
     html += `<tr>
@@ -365,7 +365,18 @@ function renderApps() {
       <td>${esc(a.work_mode_preference || '')}</td>
       <td>${badge(a.application_status)}</td>
       <td>${cv}</td>
-      <td><button class="btn small secondary" onclick="toggleAppDetail(${i})">+</button></td>
+      <td style="white-space:nowrap;">
+        <select class="btn small" onchange="if(this.value){setAppStatus('${esc(a.id)}', this.value); this.value='';}" style="padding:4px 6px;font-size:11px;">
+          <option value="">Set status…</option>
+          <option value="shortlisted">→ Shortlisted</option>
+          <option value="interview">→ Interview</option>
+          <option value="offer">→ Offer</option>
+          <option value="placed">→ Placed (pays referrer)</option>
+          <option value="rejected">→ Rejected</option>
+          <option value="withdrawn">→ Withdrawn</option>
+        </select>
+        <button class="btn small secondary" onclick="toggleAppDetail(${i})" title="Show all fields">⊞</button>
+      </td>
     </tr>
     <tr class="detail-row" id="app-detail-${i}" style="display:none;"><td colspan="13">
       <div class="detail-grid">
@@ -385,12 +396,7 @@ function renderApps() {
       <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>${esc(a.reference_1 || '—')}</span></div>
       <div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>${esc(a.reference_2 || '—')}</span></div>
       ${a.cover_note ? `<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Cover note</label><br><em>${esc(a.cover_note)}</em></div>` : ''}
-      <div style="margin-top:14px;display:flex;gap:8px;">
-        <button class="btn small" onclick="setAppStatus('${esc(a.id)}','shortlisted')">→ Shortlisted</button>
-        <button class="btn small" onclick="setAppStatus('${esc(a.id)}','interview')">→ Interview</button>
-        <button class="btn small brand-orange" onclick="setAppStatus('${esc(a.id)}','placed')">→ Placed (auto-pays referrer)</button>
-        <button class="btn small danger" onclick="setAppStatus('${esc(a.id)}','rejected')">→ Rejected</button>
-      </div>
+      <p class="muted" style="margin-top:12px;font-size:11px;">Status changes via the dropdown on the row above. Placed → auto-pays referrer.</p>
     </td></tr>`;
   });
   html += '</tbody></table>';
@@ -401,14 +407,31 @@ function toggleAppDetail(i) {
   if (r) r.style.display = r.style.display === 'none' ? '' : 'none';
 }
 async function setAppStatus(id, status) {
-  if (!confirm('Set application status to "' + status + '"?')) return;
+  // v3: inline toast instead of confirm/alert popups
+  toast('Updating status to ' + status + '…');
   try {
     const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(status));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
-    alert('✓ Status updated.');
+    toast('✓ Status set to ' + status, 'ok');
     loadApps();
-  } catch (err) { alert('Failed: ' + err.message); }
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+
+// Reusable bottom-right toast notification
+function toast(msg, kind) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:6px;font-size:13px;font-weight:500;z-index:1000;box-shadow:0 6px 18px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.15s;';
+    document.body.appendChild(t);
+  }
+  t.style.background = kind === 'err' ? 'var(--red)' : kind === 'ok' ? 'var(--green)' : 'var(--ink)';
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._tmo);
+  t._tmo = setTimeout(() => { t.style.opacity = '0'; }, 3500);
 }
 async function downloadCV(path) {
   try {
@@ -481,24 +504,24 @@ function renderPartners() {
   document.getElementById('partners-box').innerHTML = html;
 }
 async function setPartnerStatus(email, status) {
-  if (!confirm(`Set ${email} partner status to "${status}"?`)) return;
+  toast('Setting ' + email + ' → ' + status + '…');
   try {
     const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
-    alert('✓ Partner status updated.');
+    toast('✓ Partner ' + status, 'ok');
     loadPartners();
-  } catch (err) { alert('Failed: ' + err.message); }
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
 }
 async function kycDecide(email, decision) {
-  if (!confirm(`KYC ${decision} for ${email}?`)) return;
+  toast('KYC ' + decision + ' for ' + email + '…');
   try {
     const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminPartnerKycDecision&email=' + encodeURIComponent(email) + '&decision=' + encodeURIComponent(decision));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
-    alert('✓ KYC decision saved.');
+    toast('✓ KYC ' + decision, 'ok');
     loadPartners();
-  } catch (err) { alert('Failed: ' + err.message); }
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
 }
 
 // =========================================================
