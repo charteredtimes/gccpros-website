@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Candidate Referral · build: cand-ref-2026-05-19-v2-strict
+<!-- GCCPROs Candidate Referral · build: cand-ref-2026-05-19-v2.1-token-auth
      v2 hardening: every field required + live validation + dropdowns where
      sensible + direct CV upload (no Google Drive link). CV goes to the
      Supabase Storage `opps-cvs` private bucket via oppsUploadCV
@@ -381,14 +381,15 @@ async function submitProfile() {
     const cvDataUrl = await new Promise((res, rej) => { fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(CV_FILE); });
     const b64 = cvDataUrl.split(',').pop();
     const email = v('cf-email').toLowerCase();
-    const ur = await fetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email) + '&context=referral', {
+    const ur = await fetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email) + '&context=referral&token=' + encodeURIComponent(TOKEN), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fileBase64: b64, fileName: CV_FILE.name, mimeType: CV_FILE.type })
     });
     const uj = await ur.json();
     if (uj.error) {
-      const detail = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      const detail = [uj.error, uj.reason, uj.message, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      console.error('[CV upload failed]', uj);
       throw new Error('CV upload failed: ' + detail);
     }
     const cvPath = uj.path, cvFilename = uj.filename || CV_FILE.name;
