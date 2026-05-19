@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-supabase-parallel · TEST PAGE running on the new Supabase backend (v7.2). Apps Script opportunities.html stays untouched until cutover. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>GCC Opportunities · v2 test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileReadyV2" async defer></script>
+
+<style>
+:root {
+  --ink:#0A1628; --ink-2:#14213D; --graphite:#3a3a3a; --muted:#6a6a6a;
+  --line:#e5e5e5; --line-2:#d0d0d0; --ivory:#FBF7ED; --gold:#C9973A;
+  --gold-soft:#E5C880; --gold-deep:#9A6F26; --bg:#fafaf6; --card:#fff;
+  --ok:#2D7A4E; --warn:#C9973A; --err:#C53030;
+}
+* { box-sizing: border-box; }
+body { margin:0; font-family:'Inter',-apple-system,Segoe UI,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; font-size:14px; }
+a { color:var(--gold-deep); text-decoration:underline; text-underline-offset:2px; }
+button { font-family:inherit; cursor:pointer; }
+.btn { padding:9px 16px; background:var(--gold); color:var(--ink); border:none; border-radius:3px; font-weight:600; font-size:13px; }
+.btn:hover { background:var(--gold-deep); color:#fff; }
+.btn.secondary { background:#fff; color:var(--ink); border:1px solid var(--line-2); }
+.btn.danger { background:var(--err); color:#fff; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+input, select, textarea { padding:8px 11px; border:1px solid var(--line-2); border-radius:3px; font-size:13px; font-family:inherit; width:100%; }
+label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-top:6px; }
+
+/* Test mode banner */
+.test-banner { background:#FEF5E7; border-bottom:2px solid var(--gold); padding:8px 20px; font-size:12px; color:var(--ink); text-align:center; }
+.test-banner b { color:var(--gold-deep); }
+
+/* Header */
+.topbar { background:var(--ink); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; }
+.topbar .brand { font-family:'Playfair Display',serif; font-size:18px; color:#fff; text-decoration:none; }
+.topbar .brand span { color:var(--gold); font-size:11px; letter-spacing:2px; margin-left:8px; }
+.topbar .right { display:flex; gap:10px; align-items:center; font-size:13px; }
+.topbar .user-pill { background:rgba(255,255,255,0.1); padding:5px 12px; border-radius:14px; font-size:12px; }
+
+/* Hero */
+.hero { background:linear-gradient(135deg,var(--ink) 0%,var(--ink-2) 100%); color:#fff; padding:40px 20px; }
+.hero-inner { max-width:1100px; margin:0 auto; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:30px; margin:0 0 8px; }
+.hero p { margin:0; opacity:0.85; max-width:680px; }
+.hero-cta { display:flex; gap:10px; margin-top:18px; }
+
+/* Main grid */
+main { max-width:1100px; margin:0 auto; padding:24px 20px 60px; }
+.section { background:#fff; border:1px solid var(--line); border-radius:4px; padding:20px 24px; margin:16px 0; }
+.section h2 { font-family:'Playfair Display',serif; font-size:20px; margin:0 0 4px; color:var(--ink); }
+.section .sub { font-size:13px; color:var(--muted); margin:0 0 14px; }
+
+/* Job list */
+.job-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; margin-top:14px; }
+.job-card { background:#fff; border:1px solid var(--line); border-radius:4px; padding:16px 18px; transition:all 0.15s; cursor:pointer; }
+.job-card:hover { border-color:var(--gold); box-shadow:0 4px 12px rgba(201,151,58,0.12); transform:translateY(-1px); }
+.job-card .code { font-size:10px; letter-spacing:1.5px; color:var(--gold-deep); font-weight:700; }
+.job-card h3 { margin:6px 0 2px; font-size:16px; color:var(--ink); font-family:'Inter'; font-weight:700; }
+.job-card .company { font-size:13px; color:var(--graphite); margin:0 0 8px; }
+.job-card .meta { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:8px 0; }
+.job-card .meta span { display:inline-block; }
+.job-card .ctc { font-weight:700; color:var(--ink); font-size:13px; margin-top:6px; }
+.job-card .apply-btn { margin-top:10px; width:100%; }
+
+/* Auth tiles */
+.auth-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.auth-tile { padding:20px; background:var(--ivory); border:1px solid var(--gold-soft); border-radius:4px; text-align:center; }
+.auth-tile h3 { margin:0 0 6px; color:var(--ink); font-family:'Playfair Display',serif; font-size:18px; }
+.auth-tile p { font-size:12px; color:var(--muted); margin:0 0 14px; }
+
+/* Modal */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:none; align-items:flex-start; justify-content:center; z-index:200; overflow-y:auto; padding:30px 14px; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; max-width:560px; width:100%; border-radius:5px; padding:24px 28px; position:relative; max-height:88vh; overflow-y:auto; }
+.modal h3 { font-family:'Playfair Display',serif; font-size:20px; margin:0 0 4px; }
+.modal .close { position:absolute; top:14px; right:16px; background:none; border:none; font-size:24px; color:var(--muted); cursor:pointer; }
+.modal .row { display:flex; gap:10px; }
+.modal .row > * { flex:1; }
+.form-result { margin-top:10px; padding:10px 12px; border-radius:3px; font-size:13px; display:none; }
+.form-result.ok  { background:#E8F5EC; color:var(--ok); }
+.form-result.err { background:#FDECEA; color:var(--err); }
+
+/* Dashboard cards */
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:14px 0; }
+.kpi { background:var(--ivory); padding:14px; border-radius:3px; text-align:center; }
+.kpi .n { font-size:22px; font-weight:700; color:var(--ink); }
+.kpi .l { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+
+table { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+th, td { padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; }
+th { background:var(--ivory); font-weight:700; }
+
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; }
+.b-active, .b-approved, .b-placed { background:#E8F5EC; color:var(--ok); }
+.b-pending, .b-submitted, .b-invited, .b-accepted, .b-interview { background:#FFF9E6; color:#8A6D00; }
+.b-rejected, .b-suspended, .b-expired { background:#FDECEA; color:var(--err); }
+.b-draft, .b-paused, .b-closed { background:#eee; color:var(--graphite); }
+
+footer { text-align:center; padding:24px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); margin-top:30px; }
+@media (max-width:640px) { .auth-grid { grid-template-columns:1fr; } .modal .row { flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<div class="test-banner">
+  <b>TEST PAGE</b> · This is opportunities-v2 running on the new Supabase backend. The live <a href="/opportunities.html">opportunities.html</a> on Apps Script is unchanged. Test accounts here do NOT carry over to the live system.
+</div>
+
+<header class="topbar">
+  <a href="#" class="brand">GCCPROs <span>OPPORTUNITIES · v2</span></a>
+  <div class="right">
+    <button class="btn secondary" id="signin-btn" onclick="openSigninModal()">Sign in</button>
+    <span class="user-pill" id="user-pill" style="display:none;"></span>
+    <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Career-shaping GCC opportunities, on the new platform.</h1>
+    <p>Browse open roles, apply with one click, or join the Partner programme to earn ₹50,000 per accepted placement. This page is running on Supabase — same flows as the live opportunities page, fresh backend.</p>
+  </div>
+</section>
+
+<main>
+
+  <!-- ─── JOB LISTINGS ─── -->
+  <section class="section">
+    <h2>Open GCC roles</h2>
+    <p class="sub">Live from <code>opps_jobs</code>. Click <b>Apply</b> on any role. (You'll need to sign up as a Job Seeker first.)</p>
+    <div id="job-list" class="job-list">
+      <p class="sub" style="grid-column:1/-1;">Loading…</p>
+    </div>
+  </section>
+
+  <!-- ─── SIGN UP TILES ─── -->
+  <section class="section" id="signup-section">
+    <h2>Choose your track</h2>
+    <p class="sub">Job Seekers browse + apply. Partners refer candidates + earn payouts on placements.</p>
+    <div class="auth-grid">
+      <div class="auth-tile">
+        <h3>Job Seeker</h3>
+        <p>Browse open roles, apply with your CV, track your applications.</p>
+        <button class="btn" onclick="openJobSeekerSignup()">Apply as Job Seeker →</button>
+      </div>
+      <div class="auth-tile">
+        <h3>Partner (Referrer)</h3>
+        <p>Refer candidates to GCC roles. Earn ₹50,000 per placement.</p>
+        <button class="btn" onclick="openPartnerSignup()">Become a Partner →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DASHBOARD (visible after sign-in) ─── -->
+  <section class="section" id="dashboard-section" style="display:none;">
+    <h2>Your dashboard</h2>
+    <div id="dashboard-body"></div>
+  </section>
+
+</main>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Sign in -->
+<div class="modal-overlay" id="signin-modal" onclick="if(event.target===this)closeModal('signin-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('signin-modal')">&times;</button>
+    <h3>Sign in</h3>
+    <p class="sub" style="margin-bottom:12px;">Use the email + password you registered with.</p>
+    <label>Email</label>
+    <input type="email" id="si-email" autocomplete="email">
+    <label>Password</label>
+    <input type="password" id="si-pwd" autocomplete="current-password">
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="doSignIn()">Sign in</button>
+    <div id="si-result" class="form-result"></div>
+    <p style="margin-top:12px;font-size:12px;color:var(--muted);">No account yet? Use the "Apply as Job Seeker" or "Become a Partner" tiles above.</p>
+  </div>
+</div>
+
+<!-- Job Seeker sign up -->
+<div class="modal-overlay" id="jobseeker-modal" onclick="if(event.target===this)closeModal('jobseeker-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('jobseeker-modal')">&times;</button>
+    <h3>Sign up as a Job Seeker</h3>
+    <p class="sub" style="margin-bottom:12px;">We'll create a Firebase auth + an opps_users row.</p>
+    <div class="row"><div><label>Full name *</label><input id="js-name"></div><div><label>Work email *</label><input type="email" id="js-email" autocomplete="email"></div></div>
+    <div class="row"><div><label>Phone</label><input id="js-phone"></div><div><label>WhatsApp</label><input id="js-whatsapp"></div></div>
+    <label>LinkedIn URL</label><input id="js-linkedin" placeholder="https://linkedin.com/in/yourprofile">
+    <label>Current city</label><input id="js-city">
+    <label>Password (min 12 chars, mixed)</label><input type="password" id="js-pwd" minlength="12">
+    <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-js"></div></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-top:14px;font-size:11px;text-transform:none;letter-spacing:0;color:var(--graphite);"><input type="checkbox" id="js-consent" style="width:auto;margin-top:2px;"><span>I consent to GCCPROs processing my data per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span></label>
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="submitJobSeeker()">Create account</button>
+    <div id="js-result" class="form-result"></div>
+  </div>
+</div>
+
+<!-- Partner sign up -->
+<div class="modal-overlay" id="partner-modal" onclick="if(event.target===this)closeModal('partner-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('partner-modal')">&times;</button>
+    <h3>Become a Partner</h3>
+    <p class="sub" style="margin-bottom:12px;">Refer candidates, earn ₹50,000 per accepted placement.</p>
+    <div class="row"><div><label>Full name *</label><input id="pt-name"></div><div><label>Work email *</label><input type="email" id="pt-email" autocomplete="email"></div></div>
+    <div class="row"><div><label>Phone</label><input id="pt-phone"></div><div><label>WhatsApp</label><input id="pt-whatsapp"></div></div>
+    <label>LinkedIn URL</label><input id="pt-linkedin" placeholder="https://linkedin.com/in/yourprofile">
+    <label>Current city</label><input id="pt-city">
+    <label>Password (min 12 chars, mixed)</label><input type="password" id="pt-pwd" minlength="12">
+    <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-pt"></div></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-top:14px;font-size:11px;text-transform:none;letter-spacing:0;color:var(--graphite);"><input type="checkbox" id="pt-consent" style="width:auto;margin-top:2px;"><span>I consent to GCCPROs processing my data per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span></label>
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="submitPartner()">Create Partner account</button>
+    <div id="pt-result" class="form-result"></div>
+  </div>
+</div>
+
+<!-- Apply for job -->
+<div class="modal-overlay" id="apply-modal" onclick="if(event.target===this)closeModal('apply-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('apply-modal')">&times;</button>
+    <h3 id="apply-title">Apply for job</h3>
+    <p class="sub" id="apply-sub"></p>
+    <input type="hidden" id="ap-jobid">
+    <div class="row"><div><label>Current company</label><input id="ap-curcompany"></div><div><label>Current designation</label><input id="ap-curdesig"></div></div>
+    <div class="row"><div><label>Current CTC (INR/year)</label><input id="ap-curctc" type="number"></div><div><label>Expected CTC (INR/year)</label><input id="ap-expctc" type="number"></div></div>
+    <div class="row"><div><label>Notice period (days)</label><input id="ap-notice" type="number"></div><div><label>PAN (ABCDE1234F)</label><input id="ap-pan" maxlength="10"></div></div>
+    <label>Highest qualification</label><input id="ap-qual">
+    <label>Reason for change</label><textarea id="ap-reason" rows="2"></textarea>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:8px;text-transform:none;letter-spacing:0;color:var(--graphite);font-size:12px;"><input type="checkbox" id="ap-relocate" style="width:auto;"><span>Willing to relocate</span></label>
+    <label>CV upload URL (paste a Google Drive / Dropbox link for now)</label><input id="ap-cvurl">
+    <label>CV filename (optional)</label><input id="ap-cvname">
+    <label>Cover note</label><textarea id="ap-note" rows="2"></textarea>
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="submitApplication()">Submit application</button>
+    <div id="ap-result" class="form-result"></div>
+  </div>
+</div>
+
+<!-- Submit KYC (partner) -->
+<div class="modal-overlay" id="kyc-modal" onclick="if(event.target===this)closeModal('kyc-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('kyc-modal')">&times;</button>
+    <h3>Partner KYC</h3>
+    <p class="sub" style="margin-bottom:12px;">Required before your first payout. PAN + bank routing only — no document upload at v2 yet.</p>
+    <label>PAN (ABCDE1234F)</label><input id="kyc-pan" maxlength="10">
+    <div class="row"><div><label>Bank account — last 4 digits</label><input id="kyc-last4" maxlength="4" inputmode="numeric"></div><div><label>IFSC</label><input id="kyc-ifsc" maxlength="11"></div></div>
+    <label>Address (optional, for cheque correspondence)</label><textarea id="kyc-address" rows="2"></textarea>
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="submitKYC()">Submit KYC</button>
+    <div id="kyc-result" class="form-result"></div>
+  </div>
+</div>
+
+<!-- Refer a candidate -->
+<div class="modal-overlay" id="refer-modal" onclick="if(event.target===this)closeModal('refer-modal')">
+  <div class="modal">
+    <button class="close" onclick="closeModal('refer-modal')">&times;</button>
+    <h3>Refer a candidate</h3>
+    <p class="sub" style="margin-bottom:12px;">We'll generate a token URL. Send it to the candidate; they complete the form. You're tracked as the referrer for any placement.</p>
+    <label>Target job (optional)</label>
+    <select id="ref-job"><option value="">— general referral (no specific job) —</option></select>
+    <label>Candidate full name *</label><input id="ref-name">
+    <div class="row"><div><label>Candidate email</label><input type="email" id="ref-email"></div><div><label>Candidate phone</label><input id="ref-phone"></div></div>
+    <label>Candidate LinkedIn</label><input id="ref-linkedin">
+    <button class="btn" style="margin-top:14px;width:100%;" onclick="submitReferral()">Generate referral link</button>
+    <div id="ref-result" class="form-result"></div>
+  </div>
+</div>
+
+<footer>
+  GCCPROs Opportunities v2 (test) · Supabase backend · build <span id="bld"></span>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   GCCPROs Opportunities · v2 client (parallel to Apps Script)
+   ════════════════════════════════════════════════════════════════ */
+
+const BUILD = 'opps-v2-2026-05-19-supabase-parallel';
+document.getElementById('bld').textContent = BUILD;
+
+const SCRIPT_URL        = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
+const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';   // test key — swap to real for production
+
+// ── Firebase init (same project as database-pro.html) ──
+firebase.initializeApp({
+  apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain:"gccpros-9aadb.firebaseapp.com",
+  projectId:"gccpros-9aadb",
+  storageBucket:"gccpros-9aadb.firebasestorage.app",
+  messagingSenderId:"764592723192",
+  appId:"1:764592723192:web:002a03f217b57d47f0570d"
+});
+
+// ── Turnstile widget mgmt (mirrors database-pro.html) ──
+window._tsWidgets = {};
+window.onTurnstileReadyV2 = function() {
+  window._tsReady = true;
+  (window._tsQueue || []).forEach(fn => { try { fn(); } catch(_){} });
+  window._tsQueue = [];
+};
+function mountTS(elId) {
+  function _go() {
+    var el = document.getElementById(elId);
+    if (!el || !window.turnstile) return;
+    if (window._tsWidgets[elId]) { try { window.turnstile.remove(window._tsWidgets[elId]); } catch(_){} delete window._tsWidgets[elId]; }
+    try { window._tsWidgets[elId] = window.turnstile.render('#'+elId, { sitekey: TURNSTILE_SITE_KEY, theme:'light' }); } catch(_){}
+  }
+  if (window._tsReady && window.turnstile) _go();
+  else { window._tsQueue = window._tsQueue || []; window._tsQueue.push(_go); }
+}
+function tsToken(elId) {
+  try { var w = window._tsWidgets[elId]; if (w && window.turnstile && window.turnstile.getResponse) return window.turnstile.getResponse(w) || ''; } catch(_){}
+  var inp = document.querySelector('#'+elId+' input[name="cf-turnstile-response"]');
+  return inp ? (inp.value || '') : '';
+}
+function tsReset(elId) {
+  try { var w = window._tsWidgets[elId]; if (w && window.turnstile && window.turnstile.reset) window.turnstile.reset(w); } catch(_){}
+}
+
+// ── apiFetch with auto-attached Firebase ID token ──
+async function apiFetch(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  try {
+    var user = firebase.auth().currentUser;
+    if (user) {
+      var idTok = await user.getIdToken(false);
+      if (idTok) options.headers['Authorization'] = 'Bearer ' + idTok;
+    }
+  } catch(_) {}
+  return fetch(url, options);
+}
+
+// ── Modal helpers ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showResult(id, msg, ok) {
+  var e = document.getElementById(id);
+  e.style.display = 'block';
+  e.className = 'form-result ' + (ok ? 'ok' : 'err');
+  e.textContent = msg;
+}
+
+// ── State ──
+let CURRENT_EMAIL = null;
+let JOB_LIST = [];
+
+// ── Auth state ──
+firebase.auth().onAuthStateChanged(async function(user) {
+  if (user) {
+    CURRENT_EMAIL = (user.email || '').toLowerCase();
+    document.getElementById('signin-btn').style.display = 'none';
+    document.getElementById('signout-btn').style.display = '';
+    var pill = document.getElementById('user-pill');
+    pill.style.display = ''; pill.textContent = CURRENT_EMAIL;
+    closeModal('signin-modal');
+    await loadDashboard();
+  } else {
+    CURRENT_EMAIL = null;
+    document.getElementById('signin-btn').style.display = '';
+    document.getElementById('signout-btn').style.display = 'none';
+    document.getElementById('user-pill').style.display = 'none';
+    document.getElementById('dashboard-section').style.display = 'none';
+  }
+});
+
+function signOut() { firebase.auth().signOut(); }
+function openSigninModal() { openModal('signin-modal'); }
+
+async function doSignIn() {
+  var e = (document.getElementById('si-email').value || '').trim().toLowerCase();
+  var p = document.getElementById('si-pwd').value;
+  if (!e || !p) return showResult('si-result', 'Email and password required.', false);
+  try {
+    await firebase.auth().signInWithEmailAndPassword(e, p);
+    // onAuthStateChanged handles the rest
+  } catch (err) {
+    showResult('si-result', err.code + ' — ' + err.message, false);
+  }
+}
+
+// ─── JOB LIST ───────────────────────────────────────────
+async function loadJobs() {
+  try {
+    var r = await fetch(SCRIPT_URL + '?action=oppsListJobs&_t=' + Date.now());
+    var j = await r.json();
+    JOB_LIST = j.jobs || [];
+    renderJobs();
+    // Also populate referral job dropdown
+    var sel = document.getElementById('ref-job');
+    var opts = '<option value="">— general referral (no specific job) —</option>';
+    JOB_LIST.forEach(jr => { opts += '<option value="' + jr.id + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ' — ' + esc(jr.title) + '</option>'; });
+    sel.innerHTML = opts;
+  } catch (err) {
+    document.getElementById('job-list').innerHTML = '<p class="sub" style="grid-column:1/-1;">Failed to load jobs: ' + esc(err.message) + '</p>';
+  }
+}
+function renderJobs() {
+  var el = document.getElementById('job-list');
+  if (!JOB_LIST.length) { el.innerHTML = '<p class="sub" style="grid-column:1/-1;">No active jobs right now.</p>'; return; }
+  el.innerHTML = JOB_LIST.map(j => `
+    <div class="job-card" onclick="openApplyModal('${j.id}', '${esc(j.title)}', '${esc(j.company)}')">
+      <div class="code">${esc(j.job_code || '')}</div>
+      <h3>${esc(j.title)}</h3>
+      <p class="company">${esc(j.company)} · ${esc(j.industry || '')}</p>
+      <div class="meta"><span>📍 ${esc(j.location || '')}</span><span>${esc(j.experience_band || '')}</span><span>${esc(j.primary_domain || '')}</span></div>
+      <div class="ctc">${fmtINR(j.ctc_min_inr)} – ${fmtINR(j.ctc_max_inr)}</div>
+      <button class="btn apply-btn" onclick="event.stopPropagation(); openApplyModal('${j.id}', '${esc(j.title)}', '${esc(j.company)}')">Apply →</button>
+    </div>
+  `).join('');
+}
+function fmtINR(n) { if (!n) return ''; return '₹' + Number(n).toLocaleString('en-IN'); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ─── JOB SEEKER SIGNUP ──────────────────────────────────
+function openJobSeekerSignup() { openModal('jobseeker-modal'); setTimeout(() => mountTS('turnstile-js'), 80); }
+async function submitJobSeeker() {
+  var v = id => (document.getElementById(id).value || '').trim();
+  var email = v('js-email').toLowerCase(), pwd = document.getElementById('js-pwd').value;
+  if (!v('js-name') || !email || !pwd) return showResult('js-result', 'Name, email, password required.', false);
+  if (pwd.length < 12) return showResult('js-result', 'Password ≥ 12 characters.', false);
+  if (!document.getElementById('js-consent').checked) return showResult('js-result', 'Please accept the privacy notice.', false);
+  var cf = tsToken('turnstile-js');
+  if (!cf) return showResult('js-result', 'Please complete the CAPTCHA.', false);
+  try {
+    // 1. Firebase auth user
+    await firebase.auth().createUserWithEmailAndPassword(email, pwd);
+    // 2. Edge Function opps_users insert
+    var url = SCRIPT_URL + '?action=oppsJobSeekerSignup'
+      + '&email='    + encodeURIComponent(email)
+      + '&fullName=' + encodeURIComponent(v('js-name'))
+      + '&phone='    + encodeURIComponent(v('js-phone'))
+      + '&whatsapp=' + encodeURIComponent(v('js-whatsapp'))
+      + '&linkedin=' + encodeURIComponent(v('js-linkedin'))
+      + '&city='     + encodeURIComponent(v('js-city'))
+      + '&cfToken='  + encodeURIComponent(cf)
+      + '&ua='       + encodeURIComponent(navigator.userAgent || '');
+    var r = await fetch(url, { cache:'no-store' });
+    var j = await r.json();
+    if (j.error) throw new Error(j.error);
+    showResult('js-result', '✓ Account created. Status: ' + (j.approval_status || 'pending') + '. You are signed in.', true);
+    setTimeout(() => closeModal('jobseeker-modal'), 1500);
+  } catch (err) {
+    showResult('js-result', (err.code || 'Error') + ' — ' + err.message, false);
+    tsReset('turnstile-js');
+  }
+}
+
+// ─── PARTNER SIGNUP ─────────────────────────────────────
+function openPartnerSignup() { openModal('partner-modal'); setTimeout(() => mountTS('turnstile-pt'), 80); }
+async function submitPartner() {
+  var v = id => (document.getElementById(id).value || '').trim();
+  var email = v('pt-email').toLowerCase(), pwd = document.getElementById('pt-pwd').value;
+  if (!v('pt-name') || !email || !pwd) return showResult('pt-result', 'Name, email, password required.', false);
+  if (pwd.length < 12) return showResult('pt-result', 'Password ≥ 12 characters.', false);
+  if (!document.getElementById('pt-consent').checked) return showResult('pt-result', 'Please accept the privacy notice.', false);
+  var cf = tsToken('turnstile-pt');
+  if (!cf) return showResult('pt-result', 'Please complete the CAPTCHA.', false);
+  try {
+    // Try to create Firebase user; if email already exists, just sign in
+    try { await firebase.auth().createUserWithEmailAndPassword(email, pwd); }
+    catch (e) { if (e.code === 'auth/email-already-in-use') { await firebase.auth().signInWithEmailAndPassword(email, pwd); } else throw e; }
+    var url = SCRIPT_URL + '?action=oppsPartnerSignup'
+      + '&email='    + encodeURIComponent(email)
+      + '&fullName=' + encodeURIComponent(v('pt-name'))
+      + '&phone='    + encodeURIComponent(v('pt-phone'))
+      + '&whatsapp=' + encodeURIComponent(v('pt-whatsapp'))
+      + '&linkedin=' + encodeURIComponent(v('pt-linkedin'))
+      + '&city='     + encodeURIComponent(v('pt-city'))
+      + '&cfToken='  + encodeURIComponent(cf);
+    var r = await fetch(url, { cache:'no-store' });
+    var j = await r.json();
+    if (j.error) throw new Error(j.error);
+    showResult('pt-result', '✓ ' + (j.message || 'Partner application received.'), true);
+    setTimeout(() => closeModal('partner-modal'), 1800);
+  } catch (err) {
+    showResult('pt-result', (err.code || 'Error') + ' — ' + err.message, false);
+    tsReset('turnstile-pt');
+  }
+}
+
+// ─── APPLY FOR JOB ──────────────────────────────────────
+function openApplyModal(jobId, title, company) {
+  if (!CURRENT_EMAIL) { alert('Please sign in or sign up as a Job Seeker first.'); openModal('signin-modal'); return; }
+  document.getElementById('ap-jobid').value = jobId;
+  document.getElementById('apply-title').textContent = 'Apply for: ' + title;
+  document.getElementById('apply-sub').textContent = 'at ' + company;
+  openModal('apply-modal');
+}
+async function submitApplication() {
+  var v = id => (document.getElementById(id).value || '').trim();
+  var jobId = v('ap-jobid');
+  if (!CURRENT_EMAIL || !jobId) return showResult('ap-result', 'Missing job or auth.', false);
+  try {
+    var params = new URLSearchParams({
+      action: 'oppsSubmitApplication', email: CURRENT_EMAIL, jobId,
+      currentCompany:     v('ap-curcompany'),
+      currentDesignation: v('ap-curdesig'),
+      currentCtc:         v('ap-curctc'),
+      expectedCtc:        v('ap-expctc'),
+      noticeDays:         v('ap-notice'),
+      pan:                v('ap-pan').toUpperCase(),
+      qualification:      v('ap-qual'),
+      reasonForChange:    v('ap-reason'),
+      willingRelocate:    document.getElementById('ap-relocate').checked ? 'true' : 'false',
+      cvUrl:              v('ap-cvurl'),
+      cvFilename:         v('ap-cvname'),
+      coverNote:          v('ap-note'),
+    });
+    var r = await apiFetch(SCRIPT_URL + '?' + params.toString());
+    var j = await r.json();
+    if (j.error === 'already_applied') return showResult('ap-result', 'You already applied to this role.', false);
+    if (j.error) throw new Error(j.error);
+    showResult('ap-result', '✓ ' + (j.message || 'Application submitted.'), true);
+    loadDashboard();
+    setTimeout(() => closeModal('apply-modal'), 1500);
+  } catch (err) {
+    showResult('ap-result', err.message, false);
+  }
+}
+
+// ─── KYC ────────────────────────────────────────────────
+function openKYCModal() { openModal('kyc-modal'); }
+async function submitKYC() {
+  var v = id => (document.getElementById(id).value || '').trim();
+  if (!CURRENT_EMAIL) return showResult('kyc-result', 'Not signed in.', false);
+  var pan = v('kyc-pan').toUpperCase(), last4 = v('kyc-last4'), ifsc = v('kyc-ifsc').toUpperCase();
+  if (!pan || !last4 || !ifsc) return showResult('kyc-result', 'PAN, bank last 4, IFSC required.', false);
+  try {
+    var url = SCRIPT_URL + '?action=oppsSubmitKYC'
+      + '&email='     + encodeURIComponent(CURRENT_EMAIL)
+      + '&pan='       + encodeURIComponent(pan)
+      + '&bankLast4=' + encodeURIComponent(last4)
+      + '&ifsc='      + encodeURIComponent(ifsc)
+      + '&address='   + encodeURIComponent(v('kyc-address'));
+    var r = await apiFetch(url);
+    var j = await r.json();
+    if (j.error) throw new Error(j.error);
+    showResult('kyc-result', '✓ ' + (j.message || 'KYC submitted.'), true);
+    loadDashboard();
+    setTimeout(() => closeModal('kyc-modal'), 1500);
+  } catch (err) {
+    showResult('kyc-result', err.message, false);
+  }
+}
+
+// ─── REFER A CANDIDATE ──────────────────────────────────
+function openReferModal() { openModal('refer-modal'); }
+async function submitReferral() {
+  var v = id => (document.getElementById(id).value || '').trim();
+  if (!CURRENT_EMAIL) return showResult('ref-result', 'Not signed in.', false);
+  if (!v('ref-name')) return showResult('ref-result', 'Candidate name required.', false);
+  try {
+    var url = SCRIPT_URL + '?action=oppsInitiateReferral'
+      + '&email='             + encodeURIComponent(CURRENT_EMAIL)
+      + '&candidateName='     + encodeURIComponent(v('ref-name'))
+      + '&candidateEmail='    + encodeURIComponent(v('ref-email'))
+      + '&candidatePhone='    + encodeURIComponent(v('ref-phone'))
+      + '&candidateLinkedin=' + encodeURIComponent(v('ref-linkedin'))
+      + '&targetJobId='       + encodeURIComponent(v('ref-job'));
+    var r = await apiFetch(url);
+    var j = await r.json();
+    if (j.error) throw new Error(j.error);
+    showResult('ref-result', '✓ Referral link generated. Send to candidate:\n\n' + j.referralUrl, true);
+    loadDashboard();
+  } catch (err) {
+    showResult('ref-result', err.message, false);
+  }
+}
+
+// ─── DASHBOARD ──────────────────────────────────────────
+async function loadDashboard() {
+  if (!CURRENT_EMAIL) return;
+  var s = document.getElementById('dashboard-section');
+  var body = document.getElementById('dashboard-body');
+  s.style.display = '';
+  body.innerHTML = '<p class="sub">Loading…</p>';
+  // Try partner dashboard first (returns 404 if not a partner)
+  try {
+    var pr = await apiFetch(SCRIPT_URL + '?action=oppsPartnerDashboard&email=' + encodeURIComponent(CURRENT_EMAIL));
+    var pj = await pr.json();
+    if (pj.partner) return renderPartnerDashboard(pj);
+  } catch (_) { /* not a partner */ }
+  // Fallback: job seeker — list applications
+  try {
+    var ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL));
+    var aj = await ar.json();
+    renderJobSeekerDashboard(aj);
+  } catch (err) {
+    body.innerHTML = '<p class="sub" style="color:var(--err);">Failed to load: ' + esc(err.message) + '</p>';
+  }
+}
+
+function renderPartnerDashboard(d) {
+  var p = d.partner;
+  var refs = d.referrals || [], earn = d.earnings || [];
+  document.getElementById('dashboard-body').innerHTML = `
+    <div class="kpi-row">
+      <div class="kpi"><div class="n">${fmtINR(p.earnings_balance_inr) || '₹0'}</div><div class="l">Balance</div></div>
+      <div class="kpi"><div class="n">${fmtINR(p.earnings_lifetime_inr) || '₹0'}</div><div class="l">Lifetime</div></div>
+      <div class="kpi"><div class="n">${p.total_referrals || 0}</div><div class="l">Referrals</div></div>
+      <div class="kpi"><div class="n">${p.total_placements || 0}</div><div class="l">Placements</div></div>
+      <div class="kpi"><div class="n"><span class="badge b-${p.kyc_status||'pending'}">${esc(p.kyc_status||'')}</span></div><div class="l">KYC</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin:14px 0;">
+      <button class="btn" onclick="openReferModal()">+ Refer a candidate</button>
+      ${p.kyc_status === 'not_started' || p.kyc_status === 'rejected' ? '<button class="btn secondary" onclick="openKYCModal()">Submit KYC</button>' : ''}
+    </div>
+    <h3 style="margin:18px 0 6px;font-size:14px;">Your referrals</h3>
+    ${refs.length ? renderRefTable(refs) : '<p class="sub">No referrals yet.</p>'}
+    <h3 style="margin:18px 0 6px;font-size:14px;">Earnings ledger</h3>
+    ${earn.length ? renderEarnTable(earn) : '<p class="sub">No earnings yet.</p>'}
+  `;
+}
+
+function renderRefTable(refs) {
+  return '<table><thead><tr><th>Candidate</th><th>Status</th><th>Invited</th><th>Placed</th><th>Payout</th></tr></thead><tbody>' +
+    refs.map(r => `<tr><td>${esc(r.candidate_name || r.candidate_email || '')}</td><td><span class="badge b-${r.referral_status}">${esc(r.referral_status)}</span></td><td>${r.invited_at ? new Date(r.invited_at).toLocaleDateString() : ''}</td><td>${r.placed_at ? new Date(r.placed_at).toLocaleDateString() : ''}</td><td>${fmtINR(r.payout_inr) || '—'}</td></tr>`).join('') +
+    '</tbody></table>';
+}
+function renderEarnTable(earn) {
+  return '<table><thead><tr><th>When</th><th>Event</th><th>Amount</th><th>Balance after</th><th>Note</th></tr></thead><tbody>' +
+    earn.map(e => `<tr><td>${new Date(e.created_at).toLocaleDateString()}</td><td>${esc(e.event_type)}</td><td>${fmtINR(e.amount_inr)}</td><td>${fmtINR(e.balance_after_inr)}</td><td>${esc(e.description || '')}</td></tr>`).join('') +
+    '</tbody></table>';
+}
+
+function renderJobSeekerDashboard(d) {
+  var apps = d.applications || [];
+  document.getElementById('dashboard-body').innerHTML = `
+    <p class="sub">Signed in as <b>${esc(CURRENT_EMAIL)}</b> (Job Seeker).</p>
+    <h3 style="margin:18px 0 6px;font-size:14px;">Your applications</h3>
+    ${apps.length ? renderAppsTable(apps) : '<p class="sub">No applications yet. Click any job above to apply.</p>'}
+  `;
+}
+function renderAppsTable(apps) {
+  return '<table><thead><tr><th>Job ID</th><th>Source</th><th>Status</th><th>Applied</th></tr></thead><tbody>' +
+    apps.map(a => `<tr><td style="font-family:monospace;font-size:11px;">${esc((a.job_id||'').slice(0,8))}…</td><td>${esc(a.source)}</td><td><span class="badge b-${a.application_status}">${esc(a.application_status)}</span></td><td>${new Date(a.applied_at).toLocaleDateString()}</td></tr>`).join('') +
+    '</tbody></table>';
+}
+
+// ─── BOOTSTRAP ──────────────────────────────────────────
+loadJobs();
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!-- GCCPROs Candidate Referral v2 · build: cand-ref-v2-2026-05-19-supabase · token-gated form, calls Supabase oppsCandidateComplete (v9.1 atomic RPC) -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Complete your referral · GCCPROs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root { --ink:#0A1628; --gold:#C9973A; --gold-deep:#9A6F26; --ivory:#FBF7ED; --muted:#6a6a6a; --line:#e5e5e5; --line-2:#d0d0d0; --ok:#2D7A4E; --err:#C53030; --bg:#fafaf6; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; font-size:14px; padding:0; }
+.test-banner { background:#FEF5E7; border-bottom:2px solid var(--gold); padding:8px 20px; font-size:12px; text-align:center; }
+.test-banner b { color:var(--gold-deep); }
+header { background:var(--ink); color:#fff; padding:18px 24px; }
+header h1 { margin:0; font-family:'Playfair Display',serif; font-size:22px; }
+header .sub { font-size:13px; opacity:0.8; margin-top:4px; }
+main { max-width:680px; margin:24px auto; padding:0 18px 60px; }
+.card { background:#fff; border:1px solid var(--line); border-radius:5px; padding:24px 28px; }
+.card h2 { margin:0 0 4px; font-family:'Playfair Display',serif; font-size:20px; }
+.card .sub { color:var(--muted); font-size:13px; margin:0 0 16px; }
+label { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:10px; }
+input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--line-2); border-radius:3px; font-size:14px; font-family:inherit; }
+.row { display:flex; gap:10px; }
+.row > * { flex:1; }
+.btn { padding:11px 18px; background:var(--gold); color:var(--ink); border:none; border-radius:3px; font-weight:600; cursor:pointer; font-size:14px; width:100%; margin-top:16px; }
+.btn:hover { background:var(--gold-deep); color:#fff; }
+.consent { display:flex; gap:8px; align-items:flex-start; margin-top:14px; font-size:12px; color:var(--muted); }
+.consent input { width:auto; margin-top:3px; }
+.consent a { color:var(--gold-deep); }
+.alert { padding:14px 16px; border-radius:3px; margin:14px 0; font-size:13px; }
+.alert.err { background:#FDECEA; color:var(--err); border-left:3px solid var(--err); }
+.alert.ok  { background:#E8F5EC; color:var(--ok); border-left:3px solid var(--ok); }
+.alert.info{ background:var(--ivory); color:var(--ink); border-left:3px solid var(--gold); }
+.referrer-pill { display:inline-block; background:var(--ivory); padding:6px 12px; border-radius:14px; font-size:12px; color:var(--gold-deep); margin-top:6px; }
+.success-card { text-align:center; padding:40px 20px; }
+.success-card h2 { color:var(--ok); margin-bottom:14px; }
+.success-card p { font-size:14px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="test-banner">
+  <b>TEST PAGE</b> · candidate-referral v2 (Supabase). The live <a href="/candidate-referral.html">candidate-referral.html</a> on Apps Script is unchanged.
+</div>
+
+<header>
+  <h1>Complete your candidate profile</h1>
+  <div class="sub">A GCCPROs Partner has referred you for a GCC opportunity. Fill the form below — we'll handle the rest.</div>
+</header>
+
+<main>
+
+  <div id="loading" class="alert info">Loading your referral details…</div>
+  <div id="error-state" style="display:none;"></div>
+
+  <div id="form-container" class="card" style="display:none;">
+    <h2>Welcome — you've been referred by <span id="referrer-name"></span></h2>
+    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023 — see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
+
+    <div id="target-job-block" class="alert info" style="display:none;">
+      <b>Target role:</b> <span id="target-job-text"></span>
+    </div>
+
+    <div class="row"><div><label>Full name *</label><input id="cf-name" required></div><div><label>Work email *</label><input type="email" id="cf-email" required></div></div>
+    <div class="row"><div><label>Phone</label><input id="cf-phone"></div><div><label>LinkedIn</label><input id="cf-linkedin" placeholder="https://linkedin.com/in/…"></div></div>
+    <div class="row"><div><label>Current company</label><input id="cf-curcompany"></div><div><label>Current designation</label><input id="cf-curdesig"></div></div>
+    <div class="row"><div><label>Current CTC (INR / year)</label><input type="number" id="cf-curctc"></div><div><label>Expected CTC (INR / year)</label><input type="number" id="cf-expctc"></div></div>
+    <div class="row"><div><label>Notice period (days)</label><input type="number" id="cf-notice"></div><div><label>PAN (ABCDE1234F)</label><input id="cf-pan" maxlength="10" style="text-transform:uppercase;"></div></div>
+    <label>Highest qualification</label><input id="cf-qual">
+    <label>Reason for change</label><textarea id="cf-reason" rows="3"></textarea>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;text-transform:none;letter-spacing:0;color:var(--ink);font-size:13px;"><input type="checkbox" id="cf-relocate" style="width:auto;"><span>Willing to relocate</span></label>
+    <label>CV link (Google Drive / Dropbox / public URL)</label><input id="cf-cvurl" placeholder="https://…">
+    <label>CV filename (optional)</label><input id="cf-cvname">
+
+    <div class="consent">
+      <input type="checkbox" id="cf-consent" required>
+      <span>I consent to GCCPROs processing the data above to evaluate me for the referred opportunity, per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span>
+    </div>
+
+    <button class="btn" id="cf-submit" onclick="submitProfile()">Submit profile →</button>
+    <div id="submit-result"></div>
+  </div>
+
+  <div id="success-state" class="card success-card" style="display:none;">
+    <h2>✓ Profile received</h2>
+    <p id="success-msg">We'll evaluate your profile against the role and the GCCPROs team will be in touch shortly.</p>
+    <p style="margin-top:18px;"><a class="btn" href="/opportunities.html" style="display:inline-block;width:auto;text-decoration:none;">Explore more opportunities →</a></p>
+  </div>
+
+</main>
+
+<script>
+const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
+
+// Parse token from URL
+const TOKEN = new URLSearchParams(window.location.search).get('token') || '';
+let JOB_TITLE = '', JOB_COMPANY = '';
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error-state').style.display = 'block';
+  document.getElementById('error-state').innerHTML = '<div class="alert err">' + esc(msg) + '</div>';
+}
+
+// 1. Load the referral context from the token
+async function loadReferral() {
+  if (!TOKEN) return showError('No referral token in URL. The link you used is invalid or incomplete.');
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=oppsGetReferral&token=' + encodeURIComponent(TOKEN));
+    const j = await r.json();
+    if (j.error === 'invalid_token') return showError('Invalid or expired referral link. Please contact the partner who referred you.');
+    if (j.error === 'rate_limited') return showError('Too many requests. Please try again in a few minutes.');
+    if (j.error) return showError('Could not load referral: ' + j.error);
+    const ref = j.referral;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('form-container').style.display = 'block';
+    document.getElementById('referrer-name').textContent = ref.partner_email || 'a Partner';
+    document.getElementById('cf-name').value = ref.candidate_name || '';
+    document.getElementById('cf-email').value = ref.candidate_email || '';
+    document.getElementById('cf-phone').value = ref.candidate_phone || '';
+    document.getElementById('cf-linkedin').value = ref.candidate_linkedin || '';
+    if (ref.target_job_id) loadTargetJob(ref.target_job_id);
+  } catch (err) { showError('Network error: ' + err.message); }
+}
+
+async function loadTargetJob(jobId) {
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=oppsGetJob&id=' + encodeURIComponent(jobId));
+    const j = await r.json();
+    if (j.job) {
+      JOB_TITLE = j.job.title; JOB_COMPANY = j.job.company;
+      document.getElementById('target-job-block').style.display = 'block';
+      document.getElementById('target-job-text').textContent = j.job.title + ' at ' + j.job.company + ' (' + (j.job.location || '') + ')';
+    }
+  } catch (_) {}
+}
+
+// 2. Submit the candidate profile
+async function submitProfile() {
+  const v = id => (document.getElementById(id).value || '').trim();
+  const resultEl = document.getElementById('submit-result');
+  resultEl.innerHTML = '';
+  if (!v('cf-name') || !v('cf-email')) { resultEl.innerHTML = '<div class="alert err">Name and email are required.</div>'; return; }
+  if (!document.getElementById('cf-consent').checked) { resultEl.innerHTML = '<div class="alert err">Please accept the privacy notice.</div>'; return; }
+  const pan = v('cf-pan').toUpperCase();
+  if (pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) { resultEl.innerHTML = '<div class="alert err">PAN format must be ABCDE1234F.</div>'; return; }
+
+  const btn = document.getElementById('cf-submit');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  try {
+    const params = new URLSearchParams({
+      action: 'oppsCandidateComplete',
+      token: TOKEN,
+      email: v('cf-email').toLowerCase(),
+      fullName: v('cf-name'),
+      phone: v('cf-phone'),
+      linkedin: v('cf-linkedin'),
+      currentCompany: v('cf-curcompany'),
+      currentDesignation: v('cf-curdesig'),
+      currentCtc: v('cf-curctc'),
+      expectedCtc: v('cf-expctc'),
+      noticeDays: v('cf-notice'),
+      pan,
+      qualification: v('cf-qual'),
+      reasonForChange: v('cf-reason'),
+      willingRelocate: document.getElementById('cf-relocate').checked ? 'true' : 'false',
+      cvUrl: v('cf-cvurl'),
+      cvFilename: v('cf-cvname'),
+    });
+    const r = await fetch(SCRIPT_URL + '?' + params.toString(), { method: 'GET' });
+    const j = await r.json();
+    if (j.error === 'invalid_token') { resultEl.innerHTML = '<div class="alert err">This referral link is no longer valid.</div>'; btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
+    if (j.error === 'expired')       { resultEl.innerHTML = '<div class="alert err">This referral link has expired.</div>';  btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
+    if (j.error === 'rate_limited')  { resultEl.innerHTML = '<div class="alert err">Too many submissions. Please wait a few minutes.</div>'; btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
+    if (j.error) throw new Error(j.error);
+
+    // Success — swap to success card
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('success-state').style.display = 'block';
+  } catch (err) {
+    resultEl.innerHTML = '<div class="alert err">Something went wrong: ' + esc(err.message) + '. Please try again or email <a href="mailto:admin@gccpros.com">admin@gccpros.com</a> with your token: <code>' + esc(TOKEN) + '</code></div>';
+    btn.disabled = false; btn.textContent = 'Submit profile →';
+  }
+}
+
+loadReferral();
+</script>
+</body>
+</html>
