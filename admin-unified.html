@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-19-v1
+     One page for everything: Database (credits + history), Opportunities
+     (jobs / apps / partners / referrals / users with smart-merge + Excel),
+     Community (insider + council applications). Three large domain cards;
+     click one to switch the workspace. Single sign-in.
+     EVERYTHING export auto-prunes 100%-blank columns. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>GCCPROs Admin Console</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#F59E0B; --blue:#1E40AF; --purple:#7C3AED; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); font-size:14px; }
+.topbar { background:#fff; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; justify-content:space-between; align-items:center; }
+.brand { font-family:'Playfair Display',serif; font-size:20px; }
+.brand-mark { color:var(--gold); }
+.tag { font-size:10px; color:var(--brand-orange); letter-spacing:2px; margin-left:8px; font-weight:600; }
+.container { max-width:1400px; margin:0 auto; padding:18px 24px; }
+.gate { max-width:480px; margin:80px auto; background:#fff; padding:32px; border-radius:8px; border:1px solid var(--border); }
+.gate h2 { font-family:'Playfair Display',serif; margin-bottom:8px; }
+.gate p { color:var(--muted); margin-bottom:14px; font-size:13px; line-height:1.5; }
+.gate input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:4px; font-size:14px; margin-bottom:10px; }
+.btn { padding:8px 14px; background:var(--gold); color:#fff; border:none; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; }
+.btn:hover { background:#084c8c; }
+.btn.secondary { background:#fff; color:var(--ink); border:1px solid var(--border); }
+.btn.brand-orange { background:var(--brand-orange); color:#fff; }
+.btn.danger { background:var(--red); color:#fff; }
+.btn.small { padding:4px 10px; font-size:11.5px; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Three large domain cards */
+.domain-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:24px; }
+.domain-card { background:#fff; border:2px solid var(--border); border-radius:10px; padding:22px 26px; cursor:pointer; transition:all 0.18s; position:relative; overflow:hidden; }
+.domain-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+.domain-card.active { border-width:3px; box-shadow:0 8px 28px rgba(10,102,194,0.18); }
+.domain-card .icon { font-size:34px; margin-bottom:10px; }
+.domain-card h2 { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:6px; }
+.domain-card p { color:var(--muted); font-size:13px; line-height:1.5; }
+.domain-card .pills { margin-top:10px; display:flex; flex-wrap:wrap; gap:4px; }
+.domain-card .pills span { font-size:10.5px; padding:2px 8px; background:var(--cream); border-radius:10px; color:var(--ink); }
+.domain-card.db { border-top-color:var(--gold); }
+.domain-card.db.active { border-color:var(--gold); }
+.domain-card.opps { border-top-color:var(--brand-orange); }
+.domain-card.opps.active { border-color:var(--brand-orange); }
+.domain-card.comm { border-top-color:var(--purple); }
+.domain-card.comm.active { border-color:var(--purple); }
+@media (max-width:900px) { .domain-row { grid-template-columns:1fr; } }
+
+/* Sub-tabs */
+.tabs { display:flex; gap:4px; margin-bottom:18px; border-bottom:2px solid var(--border); flex-wrap:wrap; }
+.tab { padding:10px 18px; background:none; border:none; cursor:pointer; font-weight:600; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px; font-family:inherit; font-size:13.5px; }
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab.active.opps { color:var(--brand-orange); border-bottom-color:var(--brand-orange); }
+.tab.active.comm { color:var(--purple); border-bottom-color:var(--purple); }
+.panel { display:none; }
+.panel.active { display:block; }
+.card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:16px; }
+.card h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:8px; }
+.filter-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; align-items:center; }
+.filter-row select, .filter-row input { padding:7px 12px; border:1px solid var(--border); border-radius:4px; font-size:13px; font-family:inherit; }
+.filter-row input[type="search"] { flex:1; min-width:200px; }
+table { width:100%; border-collapse:collapse; font-size:12.5px; background:#fff; }
+th, td { padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+th { background:var(--cream); font-weight:700; font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); white-space:nowrap; }
+td.email { font-family:monospace; font-size:11.5px; }
+td.actions { white-space:nowrap; }
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; }
+.b-active, .b-approved, .b-placed, .b-accepted, .b-paid { background:#D1FAE5; color:var(--green); }
+.b-pending, .b-submitted, .b-invited, .b-interview, .b-shortlisted, .b-draft, .b-paused, .b-not_started { background:#FEF3C7; color:#92400E; }
+.b-rejected, .b-suspended, .b-expired, .b-closed { background:#FEE2E2; color:var(--red); }
+.b-urgent { background:#FFE4D5; color:var(--brand-orange); }
+.b-both { background:linear-gradient(90deg,var(--gold),var(--brand-orange)); color:#fff; }
+.b-partner { background:#FFE4D5; color:var(--brand-orange); }
+.b-job_seeker, .b-jobseeker { background:#DBEAFE; color:var(--gold); }
+.result { margin-top:8px; padding:8px 12px; border-radius:4px; font-size:12px; }
+.result.ok { background:#ECFDF5; color:var(--green); }
+.result.err { background:#FEF2F2; color:var(--red); }
+.loading { padding:30px; text-align:center; color:var(--muted); }
+.detail-row td { background:var(--cream); padding:12px 20px; font-size:12px; }
+.detail-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:10px; }
+.detail-grid > div { font-size:12px; }
+.detail-grid label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:2px; }
+.detail-grid strong { font-size:13px; color:var(--ink); display:block; }
+.muted { color:var(--muted); font-size:12px; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:10px; margin-bottom:16px; }
+.kpi { background:#fff; border:1px solid var(--border); border-radius:6px; padding:14px; text-align:center; }
+.kpi-n { font-size:22px; font-weight:700; color:var(--ink); font-family:'Playfair Display',serif; }
+.kpi-l { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+.grant-form { display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:14px; background:var(--cream); border-radius:6px; margin-bottom:12px; }
+.grant-form input, .grant-form select { padding:7px 12px; border:1px solid var(--border); border-radius:4px; font-size:13px; }
+.grant-form input[type="email"] { min-width:240px; }
+.grant-form input[type="number"] { width:120px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><span class="brand">GCC<span class="brand-mark">PROs</span></span><span class="tag">ADMIN CONSOLE</span></div>
+  <div><span id="admin-status" class="muted"></span> <button class="btn secondary small" id="logout-btn" onclick="forgetKey()" style="display:none;">Forget key</button></div>
+</div>
+
+<div id="gate" class="gate">
+  <h2>Admin sign-in</h2>
+  <p>Enter your <code>GCP_ADMIN_KEY</code> (Supabase &rarr; Project Settings &rarr; Edge Functions &rarr; Secrets). Cached in this tab's sessionStorage so a refresh keeps you signed in.</p>
+  <input type="password" id="admin-key" placeholder="admin key" autocomplete="off" onkeydown="if(event.key==='Enter')submitKey()">
+  <button class="btn" onclick="submitKey()" style="width:100%;">Sign in</button>
+  <div id="gate-result" class="result" style="display:none;"></div>
+</div>
+
+<div id="app" class="container" style="display:none;">
+  <!-- Three large domain cards -->
+  <div class="domain-row">
+    <div class="domain-card db" onclick="pickDomain('database')" id="card-database">
+      <div class="icon">&#128202;</div>
+      <h2>Database</h2>
+      <p>Credits, user history, account management for the GCC database product.</p>
+      <div class="pills"><span>Credits</span><span>History</span><span>User accounts</span></div>
+    </div>
+    <div class="domain-card opps active" onclick="pickDomain('opportunities')" id="card-opportunities">
+      <div class="icon">&#128188;</div>
+      <h2>Opportunities</h2>
+      <p>Jobs, applications, partners, referrals. Full talent acquisition pipeline.</p>
+      <div class="pills"><span>Jobs</span><span>Apps</span><span>Partners</span><span>Referrals</span><span>Users</span></div>
+    </div>
+    <div class="domain-card comm" onclick="pickDomain('community')" id="card-community">
+      <div class="icon">&#129309;</div>
+      <h2>Community</h2>
+      <p>Insider Community + Leadership Council applications &amp; approvals.</p>
+      <div class="pills"><span>Insider</span><span>Council</span></div>
+    </div>
+  </div>
+
+  <!-- DATABASE DOMAIN -->
+  <div id="domain-database" class="domain-section" style="display:none;">
+    <div class="tabs">
+      <button class="tab active" onclick="showSubTab(event,'database','credits')">Grant credits</button>
+      <button class="tab" onclick="showSubTab(event,'database','history')">User history</button>
+    </div>
+
+    <div id="db-credits" class="panel active">
+      <div class="card">
+        <h3>Grant Credits</h3>
+        <p class="muted">Add credits to any user's account. Logged in the audit trail.</p>
+        <div class="grant-form">
+          <input type="email" id="grant-email" placeholder="user@example.com">
+          <input type="number" id="grant-credits" placeholder="Credits (e.g. 100)" min="1">
+          <input type="text" id="grant-note" placeholder="Reason / note" style="flex:1;min-width:200px;">
+          <button class="btn" onclick="grantCredits()">+ Grant</button>
+        </div>
+        <div id="grant-result" class="result" style="display:none;"></div>
+        <div style="margin-top:18px;">
+          <p class="muted" style="font-size:11px;">Quick presets:</p>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <button class="btn small secondary" onclick="document.getElementById('grant-credits').value=50;document.getElementById('grant-note').value='Promotional grant';">50 promo</button>
+            <button class="btn small secondary" onclick="document.getElementById('grant-credits').value=100;document.getElementById('grant-note').value='Welcome bonus';">100 welcome</button>
+            <button class="btn small secondary" onclick="document.getElementById('grant-credits').value=500;document.getElementById('grant-note').value='Manual top-up';">500 top-up</button>
+            <button class="btn small secondary" onclick="document.getElementById('grant-credits').value=1000;document.getElementById('grant-note').value='Refund';">1000 refund</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="db-history" class="panel">
+      <div class="card">
+        <h3>User Credit History</h3>
+        <p class="muted">Full credit ledger for any user account.</p>
+        <div class="grant-form">
+          <input type="email" id="hist-email" placeholder="user@example.com">
+          <button class="btn" onclick="loadHistory()">View history</button>
+          <button class="btn secondary" onclick="exportHistory()">&#8595; Download CSV</button>
+        </div>
+        <div id="hist-box"><p class="loading">Enter an email and click View history.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITIES DOMAIN -->
+  <div id="domain-opportunities" class="domain-section">
+    <div class="tabs">
+      <button class="tab opps active" onclick="showSubTab(event,'opportunities','jobs')">Jobs</button>
+      <button class="tab opps" onclick="showSubTab(event,'opportunities','apps')">Applications</button>
+      <button class="tab opps" onclick="showSubTab(event,'opportunities','partners')">Partners</button>
+      <button class="tab opps" onclick="showSubTab(event,'opportunities','referrals')">Referrals</button>
+      <button class="tab opps" onclick="showSubTab(event,'opportunities','users')">Users</button>
+    </div>
+
+    <div id="opp-jobs" class="panel active">
+      <div class="card">
+        <h3>Opportunities &mdash; Jobs</h3>
+        <p class="muted">Live job postings in <code>opps_jobs</code>.</p>
+        <div class="filter-row">
+          <select id="f-jobs-status" onchange="loadJobs()">
+            <option value="">All statuses</option>
+            <option value="active" selected>Active</option><option value="draft">Draft</option>
+            <option value="urgent">Urgent</option><option value="paused">Paused</option><option value="closed">Closed</option>
+          </select>
+          <input type="search" id="f-jobs-q" placeholder="&#128269; Search title / company / job code" oninput="renderJobs()">
+          <button class="btn" onclick="loadJobs()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('jobs', JOBS)">&#128202; Export Excel</button>
+          <span class="muted" id="jobs-count"></span>
+        </div>
+        <div id="jobs-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <div id="opp-apps" class="panel">
+      <div class="card">
+        <h3>Opportunities &mdash; Applications</h3>
+        <p class="muted">Job applications. Set status to <b>placed</b> to auto-grant partner earnings.</p>
+        <div class="filter-row">
+          <select id="f-apps-status" onchange="loadApps()">
+            <option value="">All statuses</option>
+            <option value="submitted" selected>Submitted</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="placed">Placed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <input type="search" id="f-apps-q" placeholder="&#128269; Search candidate / company / job" oninput="renderApps()">
+          <button class="btn" onclick="loadApps()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSXFullJoin('applications')" title="Joins applications + users + jobs + referrals into one row each. All candidate data in one file. Blank columns auto-pruned.">&#128202; Export FULL Excel (joined)</button>
+          <span class="muted" id="apps-count"></span>
+          <span id="apps-jobfilter" style="display:none;background:#FFF4E5;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
+            Filtered to job: <span id="apps-jobfilter-label"></span>
+            <button onclick="clearJobFilter()" style="background:none;border:none;color:var(--brand-orange);cursor:pointer;font-size:14px;padding:0 0 0 6px;font-weight:700;">&times;</button>
+          </span>
+        </div>
+        <div id="apps-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <div id="opp-partners" class="panel">
+      <div class="card">
+        <h3>Opportunities &mdash; Partners</h3>
+        <p class="muted">Partner accounts in <code>opps_partners</code>. Approve / reject + KYC review.</p>
+        <div class="filter-row">
+          <select id="f-partners-status" onchange="loadPartners()">
+            <option value="">All statuses</option>
+            <option value="Pending" selected>Pending (needs review)</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <select id="f-partners-kyc" onchange="renderPartners()">
+            <option value="">All KYC</option>
+            <option value="not_started">Not started</option>
+            <option value="submitted">Submitted</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <input type="search" id="f-partners-q" placeholder="&#128269; Search email / name / company" oninput="renderPartners()">
+          <button class="btn" onclick="loadPartners()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('partners', PARTNERS)">&#128202; Export Excel</button>
+          <span class="muted" id="partners-count"></span>
+        </div>
+        <div id="partners-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <div id="opp-referrals" class="panel">
+      <div class="card">
+        <h3>Opportunities &mdash; Referrals</h3>
+        <p class="muted">Partner-initiated referrals with skill assessments.</p>
+        <div class="filter-row">
+          <select id="f-referrals-status" onchange="loadReferrals()">
+            <option value="">All statuses</option>
+            <option value="invited" selected>Invited</option>
+            <option value="accepted">Accepted</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="placed">Placed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <input type="search" id="f-referrals-q" placeholder="&#128269; Search candidate / partner email" oninput="renderReferrals()">
+          <button class="btn" onclick="loadReferrals()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSXFullJoin('referrals')" title="Joins referrals + partners + users + jobs + applications. Every field from every table for each referral. Blank columns auto-pruned.">&#128202; Export FULL Excel (joined)</button>
+          <span class="muted" id="referrals-count"></span>
+        </div>
+        <div id="referrals-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <div id="opp-users" class="panel">
+      <div class="card">
+        <h3>Opportunities &mdash; Users</h3>
+        <p class="muted">All users in <code>opps_users</code>.</p>
+        <div class="filter-row">
+          <select id="f-users-type" onchange="renderUsers()">
+            <option value="">All roles</option>
+            <option value="job_seeker">Job Seeker</option>
+            <option value="partner">Partner</option>
+            <option value="both">Both</option>
+          </select>
+          <select id="f-users-status" onchange="renderUsers()">
+            <option value="">All approvals</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="suspended">Suspended</option>
+          </select>
+          <input type="search" id="f-users-q" placeholder="&#128269; Search email / name / city" oninput="renderUsers()">
+          <button class="btn" onclick="loadUsers()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('users', USERS)">&#128202; Export Excel</button>
+          <span class="muted" id="users-count"></span>
+        </div>
+        <div id="users-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMUNITY DOMAIN -->
+  <div id="domain-community" class="domain-section" style="display:none;">
+    <div class="tabs">
+      <button class="tab comm active" onclick="showSubTab(event,'community','insider')">Insider Community</button>
+      <button class="tab comm" onclick="showSubTab(event,'community','council')">Leadership Council</button>
+    </div>
+
+    <div id="comm-insider" class="panel active">
+      <div class="card">
+        <h3>Insider Community Applications</h3>
+        <p class="muted">Active GCC professional applications via <code>insiderApply</code>.</p>
+        <div class="filter-row">
+          <select id="f-insider-status" onchange="loadCommunity('insider')">
+            <option value="">All statuses</option>
+            <option value="pending" selected>Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btn" onclick="loadCommunity('insider')">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('insider', INSIDER)">&#128202; Export Excel</button>
+          <span class="muted" id="insider-count"></span>
+        </div>
+        <div id="insider-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+
+    <div id="comm-council" class="panel">
+      <div class="card">
+        <h3>Leadership Council Applications</h3>
+        <p class="muted">Senior leader nominations via <code>councilApply</code>.</p>
+        <div class="filter-row">
+          <select id="f-council-status" onchange="loadCommunity('council')">
+            <option value="">All statuses</option>
+            <option value="pending" selected>Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btn" onclick="loadCommunity('council')">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('council', COUNCIL)">&#128202; Export Excel</button>
+          <span class="muted" id="council-count"></span>
+        </div>
+        <div id="council-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
+let ADMIN_KEY = '';
+let JOBS = [], APPS = [], PARTNERS = [], REFERRALS = [], USERS = [];
+let INSIDER = [], COUNCIL = [];
+let CURRENT_JOB_FILTER = null;
+let CURRENT_DOMAIN = 'opportunities';
+
+try { const k = sessionStorage.getItem('GCC_ADMIN_KEY'); if (k) { ADMIN_KEY = k; document.getElementById('admin-key').value = k; submitKey(true); } } catch(_) {}
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtINR(n) { if (n == null || n === '' || isNaN(Number(n))) return ''; return '₹' + Number(n).toLocaleString('en-IN'); }
+function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString(); }
+function fmtDateTime(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleString(); }
+function badge(val) { if (!val) return ''; return `<span class="badge b-${esc(String(val).toLowerCase().replace(/\s+/g,'_'))}">${esc(val)}</span>`; }
+function bool(v) { return v ? '✓' : '—'; }
+function _titleCase(s) { return String(s).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace(/\bInr\b/g, 'INR').replace(/\bCtc\b/g, 'CTC').replace(/\bPan\b/g, 'PAN').replace(/\bCv\b/g, 'CV').replace(/\bKyc\b/g, 'KYC').replace(/\bLpa\b/g, 'LPA').replace(/\bId\b/g, 'ID').replace(/\bUrl\b/g, 'URL').replace(/\bJson\b/g, 'JSON'); }
+
+function adminFetch(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  if (ADMIN_KEY) options.headers['X-Admin-Key'] = ADMIN_KEY;
+  return fetch(url, options);
+}
+
+async function submitKey(silent) {
+  const k = (document.getElementById('admin-key').value || '').trim();
+  if (!k) return;
+  ADMIN_KEY = k;
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminHealth&_t=' + Date.now());
+    const j = await r.json();
+    if (j.error) {
+      if (!silent) showGateResult('Key rejected: ' + j.error, false);
+      ADMIN_KEY = '';
+      return;
+    }
+    sessionStorage.setItem('GCC_ADMIN_KEY', k);
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = '';
+    document.getElementById('logout-btn').style.display = '';
+    document.getElementById('admin-status').textContent = 'Signed in · ' + (j.email || 'admin');
+    pickDomain('opportunities');
+    loadJobs();
+    setTimeout(() => { if (!APPS.length) loadApps(); }, 200);
+    setTimeout(() => { if (!PARTNERS.length) loadPartners(); }, 400);
+    setTimeout(() => { if (!REFERRALS.length) loadReferrals(); }, 600);
+    setTimeout(() => { if (!USERS.length) loadUsers(); }, 800);
+  } catch (err) { if (!silent) showGateResult('Connection error: ' + err.message, false); }
+}
+function forgetKey() { ADMIN_KEY = ''; sessionStorage.removeItem('GCC_ADMIN_KEY'); location.reload(); }
+function showGateResult(msg, ok) { const r = document.getElementById('gate-result'); r.style.display = 'block'; r.className = 'result ' + (ok ? 'ok' : 'err'); r.textContent = msg; }
+
+function pickDomain(name) {
+  CURRENT_DOMAIN = name;
+  ['database','opportunities','community'].forEach(d => {
+    document.getElementById('card-' + d).classList.toggle('active', d === name);
+    document.getElementById('domain-' + d).style.display = (d === name) ? '' : 'none';
+  });
+}
+
+function showSubTab(ev, domain, sub) {
+  const tabs = document.querySelectorAll('#domain-' + domain + ' .tabs .tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
+  const panels = document.querySelectorAll('#domain-' + domain + ' .panel');
+  panels.forEach(p => p.classList.remove('active'));
+  const prefix = domain === 'database' ? 'db-' : domain === 'community' ? 'comm-' : 'opp-';
+  const target = document.getElementById(prefix + sub);
+  if (target) target.classList.add('active');
+  // Lazy-loads
+  if (domain === 'community') {
+    if (sub === 'insider' && !INSIDER.length) loadCommunity('insider');
+    else if (sub === 'council' && !COUNCIL.length) loadCommunity('council');
+  }
+}
+
+function toast(msg, kind) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:6px;font-size:13px;font-weight:500;z-index:1000;box-shadow:0 6px 18px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.15s;';
+    document.body.appendChild(t);
+  }
+  t.style.background = kind === 'err' ? 'var(--red)' : kind === 'ok' ? 'var(--green)' : 'var(--ink)';
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._tmo);
+  t._tmo = setTimeout(() => { t.style.opacity = '0'; }, 3500);
+}
+
+// =========================================================
+// DATABASE — Credits + History
+// =========================================================
+async function grantCredits() {
+  const email = document.getElementById('grant-email').value.trim().toLowerCase();
+  const credits = parseInt(document.getElementById('grant-credits').value, 10);
+  const note = document.getElementById('grant-note').value.trim();
+  const r = document.getElementById('grant-result');
+  if (!email || !credits || credits <= 0) { r.className='result err'; r.style.display='block'; r.textContent='Email and positive credits required.'; return; }
+  try {
+    const resp = await adminFetch(SCRIPT_URL + '?action=adminGrant&email=' + encodeURIComponent(email) + '&credits=' + credits + '&note=' + encodeURIComponent(note));
+    const j = await resp.json();
+    if (j.error) throw new Error(j.error);
+    r.className='result ok'; r.style.display='block';
+    r.textContent = '✓ Granted ' + credits + ' credits to ' + email + '. New balance: ' + (j.balance != null ? j.balance : '?');
+    document.getElementById('grant-credits').value=''; document.getElementById('grant-note').value='';
+  } catch (err) { r.className='result err'; r.style.display='block'; r.textContent='Failed: '+err.message; }
+}
+
+let HIST_ROWS = [];
+async function loadHistory() {
+  const email = document.getElementById('hist-email').value.trim().toLowerCase();
+  if (!email) { toast('Enter an email first.', 'err'); return; }
+  const box = document.getElementById('hist-box');
+  box.innerHTML = '<p class="loading">Loading history…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminUserHistory&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    HIST_ROWS = j.history || j.rows || [];
+    if (!HIST_ROWS.length) { box.innerHTML = '<p class="loading">No history found for ' + esc(email) + '.</p>'; return; }
+    let html = '<table><thead><tr><th>When</th><th>Event</th><th>Delta</th><th>Balance</th><th>Note</th></tr></thead><tbody>';
+    HIST_ROWS.forEach(h => {
+      html += '<tr><td>' + fmtDateTime(h.created_at || h.ts) + '</td><td>' + esc(h.event_type || h.type || '') + '</td><td>' + esc(h.amount != null ? h.amount : (h.delta != null ? h.delta : '')) + '</td><td>' + esc(h.balance_after != null ? h.balance_after : '') + '</td><td>' + esc(h.note || h.description || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function exportHistory() {
+  if (!HIST_ROWS.length) { toast('Load a history first.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
+  const cols = ['created_at','event_type','amount','balance_after','description'];
+  const headerRow = cols.map(_titleCase);
+  const dataRows = HIST_ROWS.map(h => cols.map(c => h[c] != null ? h[c] : ''));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow].concat(dataRows));
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Credit history');
+  XLSX.writeFile(wb, 'gccpros-credit-history-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('✓ Exported history', 'ok');
+}
+
+// =========================================================
+// COMMUNITY — Insider + Council
+// =========================================================
+async function loadCommunity(kind) {
+  const status = document.getElementById('f-' + kind + '-status').value;
+  const box = document.getElementById(kind + '-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminApplications&kind=' + kind + (status ? '&status=' + encodeURIComponent(status) : ''));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    const rows = j.applications || j.rows || [];
+    if (kind === 'insider') INSIDER = rows; else COUNCIL = rows;
+    document.getElementById(kind + '-count').textContent = rows.length + ' applications';
+    if (!rows.length) { box.innerHTML = '<p class="loading">No applications.</p>'; return; }
+    let html = '<table><thead><tr><th>Created</th><th>Email</th><th>Name</th><th>LinkedIn</th><th>Company</th><th>Designation</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    rows.forEach((a, i) => {
+      const linkedinCell = a.linkedin ? '<a href="' + esc(a.linkedin) + '" target="_blank">link &#8599;</a>' : '—';
+      html += '<tr>';
+      html += '<td>' + fmtDate(a.created_at) + '</td>';
+      html += '<td class="email">' + esc(a.email || '') + '</td>';
+      html += '<td>' + esc(a.full_name || '') + '</td>';
+      html += '<td>' + linkedinCell + '</td>';
+      html += '<td>' + esc(a.company || '') + '</td>';
+      html += '<td>' + esc(a.designation || '') + '</td>';
+      html += '<td>' + badge(a.status) + '</td>';
+      html += '<td class="actions">';
+      if ((a.status || '').toLowerCase() === 'pending') {
+        html += '<button class="btn small" onclick="decideCommApp(\'' + kind + '\',\'' + esc(a.id) + '\',\'approved\')">Approve</button> ';
+        html += '<button class="btn small danger" onclick="decideCommApp(\'' + kind + '\',\'' + esc(a.id) + '\',\'rejected\')">Reject</button>';
+      } else {
+        html += '<span class="muted">' + esc(a.status) + '</span>';
+      }
+      html += '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+async function decideCommApp(kind, id, decision) {
+  toast('Setting ' + id.substring(0,8) + ' to ' + decision + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminAppDecision&kind=' + kind + '&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(decision));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ ' + decision, 'ok');
+    loadCommunity(kind);
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+
+
+// =========================================================
+// OPPORTUNITIES — Jobs / Apps / Partners / Referrals / Users
+// (Same logic as admin-opps.html v10)
+// =========================================================
+
+async function loadJobs() {
+  const status = document.getElementById('f-jobs-status').value;
+  const box = document.getElementById('jobs-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListJobs' + (status ? '&status=' + encodeURIComponent(status) : ''));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    JOBS = j.jobs || j.rows || [];
+    renderJobs();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function renderJobs() {
+  const q = (document.getElementById('f-jobs-q').value || '').toLowerCase();
+  const filtered = JOBS.filter(j => !q || [j.title, j.company, j.job_code, j.primary_domain, j.location].join(' ').toLowerCase().includes(q));
+  document.getElementById('jobs-count').textContent = filtered.length + ' / ' + JOBS.length + ' jobs';
+  if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
+  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Posted</th></tr></thead><tbody>';
+  filtered.forEach(j => {
+    const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
+    const apps = (j.applications_count > 0)
+      ? '<button class="btn small" onclick="viewJobApplicants(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\', \'' + esc((j.title || '').replace(/'/g, "\\'")) + '\')">View ' + j.applications_count + ' &rarr;</button>'
+      : '<span class="muted">0</span>';
+    html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + fmtDate(j.posted_at) + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('jobs-box').innerHTML = html;
+}
+function viewJobApplicants(jobId, jobCode, jobTitle) {
+  CURRENT_JOB_FILTER = { id: jobId, code: jobCode, title: jobTitle };
+  document.getElementById('f-apps-status').value = '';
+  document.getElementById('apps-jobfilter').style.display = '';
+  document.getElementById('apps-jobfilter-label').textContent = jobCode + ' — ' + jobTitle;
+  pickDomain('opportunities');
+  // switch to Apps sub-tab programmatically
+  document.querySelectorAll('#domain-opportunities .tab').forEach(t => t.classList.remove('active'));
+  const appTab = document.querySelectorAll('#domain-opportunities .tab')[1];
+  if (appTab) appTab.classList.add('active');
+  document.querySelectorAll('#domain-opportunities .panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('opp-apps').classList.add('active');
+  loadApps();
+}
+function clearJobFilter() { CURRENT_JOB_FILTER = null; document.getElementById('apps-jobfilter').style.display = 'none'; loadApps(); }
+
+async function loadApps() {
+  const status = document.getElementById('f-apps-status').value;
+  const box = document.getElementById('apps-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    let url = SCRIPT_URL + '?action=oppsAdminListApplications';
+    if (status) url += '&status=' + encodeURIComponent(status);
+    if (CURRENT_JOB_FILTER && CURRENT_JOB_FILTER.id) url += '&jobId=' + encodeURIComponent(CURRENT_JOB_FILTER.id);
+    const r = await adminFetch(url);
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    APPS = j.applications || j.rows || [];
+    renderApps();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function _derivName(a) {
+  if (a.applicant_name) return a.applicant_name;
+  const e = String(a.applicant_email || '');
+  if (!e) return '—';
+  const local = e.split('@')[0];
+  return local.split(/[._-]/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+}
+function _jobLabel(jobId) {
+  if (!jobId) return '—';
+  const j = JOBS.find(x => x.id === jobId);
+  if (j) return esc(j.job_code || jobId.slice(0,8)) + ' <span class="muted" style="font-size:10px;">' + esc((j.title || '').slice(0, 30)) + '</span>';
+  return '<code style="font-size:10px;">' + esc(jobId.slice(0,8)) + '…</code>';
+}
+function renderApps() {
+  const q = (document.getElementById('f-apps-q').value || '').toLowerCase();
+  const filtered = APPS.filter(a => !q || [a.applicant_email, a.current_company, a.current_designation, a.job_id, a.contact_phone].join(' ').toLowerCase().includes(q));
+  document.getElementById('apps-count').textContent = filtered.length + ' / ' + APPS.length + ' applications';
+  if (!filtered.length) { document.getElementById('apps-box').innerHTML = '<p class="loading">No applications match.</p>'; return; }
+  let html = '<table><thead><tr><th>Applied</th><th>Candidate</th><th>Email</th><th>Job</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
+  filtered.forEach((a, i) => {
+    const cv = a.cv_storage_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(a.cv_storage_url) + '\')">&#8595;</button>' : '—';
+    html += '<tr><td>' + fmtDate(a.applied_at) + '</td><td><strong>' + esc(_derivName(a)) + '</strong></td><td class="email">' + esc(a.applicant_email || '') + '</td><td class="email" title="' + esc(a.job_id || '') + '">' + _jobLabel(a.job_id) + '</td><td>' + esc(a.contact_phone || '') + '</td><td>' + esc(a.current_city || '') + '</td><td>' + esc(a.total_experience || '') + '</td><td>' + esc(a.current_ctc_inr || '') + '</td><td>' + esc(a.expected_ctc_inr || '') + '</td><td>' + esc(a.notice_period_days || '') + '</td><td>' + esc(a.work_mode_preference || '') + '</td><td>' + badge(a.application_status) + '</td><td>' + cv + '</td>';
+    html += '<td style="white-space:nowrap;"><select class="btn small" onchange="if(this.value){setAppStatus(\'' + esc(a.id) + '\', this.value); this.value=\'\';}" style="padding:4px 6px;font-size:11px;">';
+    html += '<option value="">Set status…</option><option value="shortlisted">→ Shortlisted</option><option value="interview">→ Interview</option><option value="offer">→ Offer</option><option value="placed">→ Placed (pays referrer)</option><option value="rejected">→ Rejected</option><option value="withdrawn">→ Withdrawn</option></select>';
+    html += '<button class="btn small secondary" onclick="toggleAppDetail(' + i + ')" title="Show all fields">&#8862;</button></td></tr>';
+    html += '<tr class="detail-row" id="app-detail-' + i + '" style="display:none;"><td colspan="14"><div class="detail-grid">';
+    html += '<div><label>Designation</label><strong>' + esc(a.current_designation || '') + '</strong></div>';
+    html += '<div><label>Company</label><strong>' + esc(a.current_company || '') + '</strong></div>';
+    html += '<div><label>LinkedIn</label><strong>' + (a.contact_linkedin ? '<a href="' + esc(a.contact_linkedin) + '" target="_blank">&#8599; link</a>' : '—') + '</strong></div>';
+    html += '<div><label>Alt phone</label><strong>' + esc(a.contact_alt_phone || '—') + '</strong></div>';
+    html += '<div><label>PAN</label><strong>' + esc(a.pan_number || '') + '</strong></div>';
+    html += '<div><label>Qualification</label><strong>' + esc(a.qualification || '') + '</strong></div>';
+    html += '<div><label>Earliest join</label><strong>' + fmtDate(a.earliest_join_date) + '</strong></div>';
+    html += '<div><label>Relocate</label><strong>' + bool(a.willing_to_relocate) + '</strong></div>';
+    html += '<div><label>Source</label><strong>' + esc(a.source || '') + '</strong></div>';
+    html += '<div><label>Referrer</label><strong>' + esc(a.referrer_partner || '—') + '</strong></div>';
+    html += '</div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skills</label><br><strong>' + esc(a.selected_skills || '—') + '</strong></div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>' + esc(a.eligibility_statement || '—') + '</span></div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>' + esc(a.reference_1 || '—') + '</span></div>';
+    html += '<div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>' + esc(a.reference_2 || '—') + '</span></div>';
+    if (a.cover_note) html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Cover note</label><br><em>' + esc(a.cover_note) + '</em></div>';
+    html += '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('apps-box').innerHTML = html;
+}
+function toggleAppDetail(i) { const r = document.getElementById('app-detail-' + i); if (r) r.style.display = r.style.display === 'none' ? '' : 'none'; }
+async function setAppStatus(id, status) {
+  toast('Updating status to ' + status + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(status));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Status set to ' + status, 'ok');
+    loadApps();
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+async function downloadCV(path) {
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminCvSignedUrl&path=' + encodeURIComponent(path));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    window.open(j.url || j.signedUrl, '_blank');
+  } catch (err) { toast('Failed to sign URL: ' + err.message, 'err'); }
+}
+
+async function loadPartners() {
+  const status = document.getElementById('f-partners-status').value;
+  const box = document.getElementById('partners-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListPartners' + (status ? '&status=' + encodeURIComponent(status) : ''));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    PARTNERS = j.partners || j.rows || [];
+    renderPartners();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function renderPartners() {
+  const kyc = document.getElementById('f-partners-kyc').value;
+  const q = (document.getElementById('f-partners-q').value || '').toLowerCase();
+  const filtered = PARTNERS.filter(p => {
+    if (kyc && (p.kyc_status || '') !== kyc) return false;
+    if (q && ![p.email, p.full_name, p.current_company, p.primary_domain].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('partners-count').textContent = filtered.length + ' / ' + PARTNERS.length + ' partners';
+  if (!filtered.length) { document.getElementById('partners-box').innerHTML = '<p class="loading">No partners match.</p>'; return; }
+  const pending = filtered.filter(p => (p.partner_status||'').toLowerCase()==='pending').length;
+  const accepted = filtered.filter(p => (p.partner_status||'').toLowerCase()==='accepted').length;
+  const kycSubmitted = filtered.filter(p => p.kyc_status==='submitted').length;
+  let html = '<div class="kpi-row"><div class="kpi"><div class="kpi-n">' + pending + '</div><div class="kpi-l">Pending review</div></div><div class="kpi"><div class="kpi-n">' + accepted + '</div><div class="kpi-l">Accepted</div></div><div class="kpi"><div class="kpi-n">' + kycSubmitted + '</div><div class="kpi-l">KYC submitted</div></div><div class="kpi"><div class="kpi-n">' + PARTNERS.reduce((a,p) => a + (p.total_referrals||0), 0) + '</div><div class="kpi-l">Total referrals</div></div></div>';
+  html += '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Company</th><th>Domain</th><th>Exp</th><th>Status</th><th>KYC</th><th>Refs</th><th>Placed</th><th>Balance</th><th>Action</th></tr></thead><tbody>';
+  filtered.forEach(p => {
+    html += '<tr><td>' + fmtDate(p.signup_date || p.created_at) + '</td><td class="email">' + esc(p.email || '') + '</td><td>' + esc(p.full_name || '') + '</td><td>' + esc(p.current_company || '') + '</td><td>' + esc(p.primary_domain || '') + '</td><td>' + esc(p.total_exp || '') + 'y</td><td>' + badge(p.partner_status || 'Pending') + '</td><td>' + badge(p.kyc_status || 'not_started') + '</td><td>' + (p.total_referrals || 0) + '</td><td>' + (p.total_placements || 0) + '</td><td>' + (fmtINR(p.earnings_balance_inr) || '—') + '</td><td class="actions">';
+    if ((p.partner_status||'').toLowerCase()==='pending') {
+      html += '<button class="btn small" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Accepted\')">Approve</button> <button class="btn small danger" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Rejected\')">Reject</button>';
+    } else {
+      html += '<button class="btn small secondary" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Pending\')">&#8617; Re-pending</button>';
+    }
+    if (p.kyc_status === 'submitted') html += ' <button class="btn small secondary" onclick="kycDecide(\'' + esc(p.email) + '\',\'approved\')">KYC &#10003;</button>';
+    html += '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('partners-box').innerHTML = html;
+}
+async function setPartnerStatus(email, status) {
+  toast('Setting ' + email + ' → ' + status + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Partner ' + status, 'ok');
+    loadPartners();
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+async function kycDecide(email, decision) {
+  toast('KYC ' + decision + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminPartnerKycDecision&email=' + encodeURIComponent(email) + '&decision=' + encodeURIComponent(decision));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ KYC ' + decision, 'ok');
+    loadPartners();
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+
+
+async function loadReferrals() {
+  const status = document.getElementById('f-referrals-status').value;
+  const box = document.getElementById('referrals-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListReferrals' + (status ? '&status=' + encodeURIComponent(status) : ''));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    REFERRALS = j.referrals || j.rows || [];
+    if (!APPS.length) {
+      adminFetch(SCRIPT_URL + '?action=oppsAdminListApplications').then(r2 => r2.json()).then(j2 => {
+        if (j2 && !j2.error) APPS = j2.applications || j2.rows || [];
+      }).catch(() => {});
+    }
+    renderReferrals();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function renderReferrals() {
+  const q = (document.getElementById('f-referrals-q').value || '').toLowerCase();
+  const filtered = REFERRALS.filter(r => !q || [r.candidate_email, r.candidate_name, r.partner_email, r.target_job_id].join(' ').toLowerCase().includes(q));
+  document.getElementById('referrals-count').textContent = filtered.length + ' / ' + REFERRALS.length + ' referrals';
+  if (!filtered.length) { document.getElementById('referrals-box').innerHTML = '<p class="loading">No referrals match.</p>'; return; }
+  let html = '<table><thead><tr><th>Invited</th><th>Partner</th><th>Candidate</th><th>Email</th><th>Phone</th><th>Target Job</th><th>Status</th><th>Conf</th><th>Skill avg</th><th>Worked</th><th>Detail</th></tr></thead><tbody>';
+  filtered.forEach((r, i) => {
+    html += '<tr><td>' + fmtDate(r.invited_at) + '</td><td class="email">' + esc(r.partner_email || '') + '</td><td>' + esc(r.candidate_name || '') + '</td><td class="email">' + esc(r.candidate_email || '') + '</td><td>' + esc(r.candidate_phone || '') + '</td><td class="email">' + esc((r.target_job_id || '').slice(0,8)) + '…</td><td>' + badge(r.referral_status) + '</td><td>' + esc(r.confidence_level || '') + '</td><td>' + (r.skill_avg_rating != null ? Number(r.skill_avg_rating).toFixed(2) : '—') + '</td><td>' + esc(r.worked_together || '') + '</td><td><button class="btn small secondary" onclick="toggleRefDetail(' + i + ')">+</button></td></tr>';
+    html += '<tr class="detail-row" id="ref-detail-' + i + '" style="display:none;"><td colspan="11"><div class="detail-grid">';
+    html += '<div><label>Relationship</label><strong>' + esc(r.relationship || '—') + '</strong></div>';
+    html += '<div><label>Known duration</label><strong>' + esc(r.known_duration || '—') + '</strong></div>';
+    html += '<div><label>LinkedIn</label><strong>' + (r.candidate_linkedin ? '<a href="' + esc(r.candidate_linkedin) + '" target="_blank">&#8599; link</a>' : '—') + '</strong></div>';
+    html += '<div><label>Placed</label><strong>' + (fmtDate(r.placed_at) || '—') + '</strong></div>';
+    html += '<div><label>Payout</label><strong>' + (fmtINR(r.payout_inr) || '—') + '</strong></div>';
+    html += '</div>';
+    if (r.why_good_fit) html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>' + esc(r.why_good_fit) + '</span></div>';
+    html += '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('referrals-box').innerHTML = html;
+}
+function toggleRefDetail(i) { const r = document.getElementById('ref-detail-' + i); if (r) r.style.display = r.style.display === 'none' ? '' : 'none'; }
+
+async function loadUsers() {
+  const box = document.getElementById('users-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListUsers');
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    USERS = j.users || j.rows || [];
+    renderUsers();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function renderUsers() {
+  const t = document.getElementById('f-users-type').value;
+  const s = document.getElementById('f-users-status').value;
+  const q = (document.getElementById('f-users-q').value || '').toLowerCase();
+  const filtered = USERS.filter(u => {
+    if (t && (u.user_type || '') !== t) return false;
+    if (s && (u.approval_status || '') !== s) return false;
+    if (q && ![u.email, u.full_name, u.current_city, u.current_company, u.domain].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('users-count').textContent = filtered.length + ' / ' + USERS.length + ' users';
+  if (!filtered.length) { document.getElementById('users-box').innerHTML = '<p class="loading">No users match.</p>'; return; }
+  let html = '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Role</th><th>Approval</th><th>Phone</th><th>City</th><th>Domain</th><th>Company</th><th>Exp</th><th>CV</th></tr></thead><tbody>';
+  filtered.forEach(u => {
+    const cv = u.cv_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(u.cv_url) + '\')">&#8595;</button>' : '—';
+    html += '<tr><td>' + fmtDate(u.signup_date || u.created_at) + '</td><td class="email">' + esc(u.email || '') + '</td><td>' + esc(u.full_name || '') + '</td><td>' + badge(u.user_type) + '</td><td>' + badge(u.approval_status) + '</td><td>' + esc(u.phone || '') + '</td><td>' + esc(u.current_city || '') + '</td><td>' + esc(u.domain || '') + '</td><td>' + esc(u.current_company || '') + '</td><td>' + esc(u.total_exp || '') + '</td><td>' + cv + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('users-box').innerHTML = html;
+}
+
+// =========================================================
+// EXCEL EXPORT — full join + blank-column pruning
+// =========================================================
+async function _ensureAllLoaded() {
+  const tasks = [];
+  if (!JOBS.length)      tasks.push(['Jobs',      loadJobs()]);
+  if (!APPS.length)      tasks.push(['Apps',      loadApps()]);
+  if (!PARTNERS.length)  tasks.push(['Partners',  loadPartners()]);
+  if (!REFERRALS.length) tasks.push(['Referrals', loadReferrals()]);
+  if (!USERS.length)     tasks.push(['Users',     loadUsers()]);
+  if (tasks.length) { toast('Loading ' + tasks.map(t => t[0]).join(' · ') + '…'); await Promise.all(tasks.map(t => t[1])); }
+}
+function _buildLookups() {
+  const usersByEmail = {}, jobsById = {}, partnersByEmail = {}, refsByCandidate = {}, appsByEmail = {};
+  USERS.forEach(u => { if (u.email) usersByEmail[String(u.email).toLowerCase()] = u; });
+  JOBS.forEach(j => { if (j.id) jobsById[j.id] = j; });
+  PARTNERS.forEach(p => { if (p.email) partnersByEmail[String(p.email).toLowerCase()] = p; });
+  REFERRALS.forEach(r => { if (r.candidate_email) refsByCandidate[String(r.candidate_email).toLowerCase()] = r; });
+  APPS.forEach(a => { if (a.applicant_email) appsByEmail[String(a.applicant_email).toLowerCase()] = a; });
+  return { usersByEmail, jobsById, partnersByEmail, refsByCandidate, appsByEmail };
+}
+function _parseReference(raw, prefix) {
+  const out = {};
+  const parts = String(raw || '').split('|').map(s => s.trim());
+  ['Name', 'Title', 'Email', 'Phone', 'Relationship'].forEach((lbl, i) => { out[prefix + ' · ' + lbl] = parts[i] || ''; });
+  return out;
+}
+function _addAllFields(target, src, sectionPrefix) {
+  if (!src || typeof src !== 'object') return;
+  Object.keys(src).forEach(k => {
+    let v = src[k];
+    if (v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) { try { v = JSON.stringify(v); } catch { v = String(v); } }
+    target[sectionPrefix + ' · ' + _titleCase(k)] = v;
+  });
+}
+function _composeApplicationRow(app, L) {
+  const out = {};
+  const email = String(app.applicant_email || '').toLowerCase();
+  const user = L.usersByEmail[email];
+  const job = L.jobsById[app.job_id];
+  const referral = L.refsByCandidate[email];
+  _addAllFields(out, app, 'Application');
+  if (app.reference_1) Object.assign(out, _parseReference(app.reference_1, 'Reference 1'));
+  if (app.reference_2) Object.assign(out, _parseReference(app.reference_2, 'Reference 2'));
+  _addAllFields(out, user,     'Candidate Profile');
+  _addAllFields(out, job,      'Job');
+  _addAllFields(out, referral, 'Referral (if referred)');
+  return out;
+}
+function _composeReferralRow(ref, L) {
+  const out = {};
+  const candEmail = String(ref.candidate_email || '').toLowerCase();
+  const partnerEmail = String(ref.partner_email || '').toLowerCase();
+  const candidate = L.usersByEmail[candEmail];
+  const partner = L.partnersByEmail[partnerEmail];
+  const job = L.jobsById[ref.target_job_id];
+  const app = L.appsByEmail[candEmail];
+  _addAllFields(out, ref,       'Referral');
+  _addAllFields(out, partner,   'Partner');
+  _addAllFields(out, candidate, 'Candidate Profile');
+  _addAllFields(out, app,       'Candidate Application');
+  if (app && app.reference_1) Object.assign(out, _parseReference(app.reference_1, 'Candidate Reference 1'));
+  if (app && app.reference_2) Object.assign(out, _parseReference(app.reference_2, 'Candidate Reference 2'));
+  _addAllFields(out, job,       'Job');
+  return out;
+}
+function _cellValue(v, colName) {
+  if (v == null || v === '' || v === '[object Object]') return { t: 's', v: '' };
+  if (/(At|Date|Created|Posted|Invited|Applied|Placed|Signup|Approved|Submitted)$/i.test(colName) && v) {
+    const d = new Date(v); if (!isNaN(d.getTime())) return { t: 'd', v: d, z: 'yyyy-mm-dd hh:mm' };
+  }
+  if (/(CTC|INR|LPA|Days|Years|Exp|Count|Total|Rating|Score|Amount|Payout|Balance|Lifetime|Referrals|Placements)$/i.test(colName) && v != null && v !== '') {
+    const n = parseFloat(v); if (!isNaN(n) && isFinite(n)) return { t: 'n', v: n };
+  }
+  if (typeof v === 'boolean') return { t: 'b', v };
+  if (typeof v === 'string' && /^https?:\/\//i.test(v) && /(URL|Linkedin|CV|Link)/i.test(colName)) return { t: 's', v, l: { Target: v, Tooltip: 'Click to open' } };
+  if (typeof v === 'object') { try { return { t: 's', v: JSON.stringify(v) }; } catch { return { t: 's', v: String(v) }; } }
+  return { t: 's', v: String(v).replace(/\r/g, '') };
+}
+async function exportXLSXFullJoin(name) {
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
+  await _ensureAllLoaded();
+  const sources = { applications: APPS, referrals: REFERRALS };
+  const rows = sources[name];
+  if (!rows || !rows.length) { toast('No ' + name + '.', 'err'); return; }
+  toast('Composing ' + rows.length + ' rows…');
+  const L = _buildLookups();
+  const composed = rows.map(r => name === 'applications' ? _composeApplicationRow(r, L) : _composeReferralRow(r, L));
+  // Union of all keys
+  const colSet = new Set();
+  composed.forEach(c => Object.keys(c).forEach(k => colSet.add(k)));
+  let cols = Array.from(colSet);
+  // PRUNE 100%-blank columns (the key fix)
+  cols = cols.filter(c => composed.some(r => {
+    const v = r[c];
+    return v != null && v !== '' && v !== '[object Object]';
+  }));
+  const headerRow = cols;
+  const dataRows = composed.map(row => cols.map(c => _cellValue(row[c], c)));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow]);
+  dataRows.forEach((row, ri) => row.forEach((cell, ci) => { ws[XLSX.utils.encode_cell({ r: ri + 1, c: ci })] = cell; }));
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: dataRows.length, c: cols.length - 1 } });
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  ws['!cols'] = cols.map((c, i) => {
+    let maxLen = c.length;
+    dataRows.forEach(row => { const cell = row[i]; if (cell && cell.v != null) { const s = cell.v instanceof Date ? 'YYYY-MM-DD HH:MM' : String(cell.v); if (s.length > maxLen) maxLen = s.length; } });
+    return { wch: Math.min(60, Math.max(14, maxLen + 2)) };
+  });
+  for (let c = 0; c < cols.length; c++) {
+    const addr = XLSX.utils.encode_cell({ r: 0, c });
+    if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } };
+  }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, name === 'applications' ? 'Applications FULL' : 'Referrals FULL');
+  XLSX.writeFile(wb, 'gccpros-' + name + '-FULL-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('✓ Exported ' + composed.length + ' rows × ' + cols.length + ' columns (blank columns pruned)', 'ok');
+}
+function exportXLSX(name, rows) {
+  if (!rows || !rows.length) { toast('No rows.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
+  // Union of all keys
+  const colSet = new Set();
+  rows.forEach(r => Object.keys(r).forEach(k => colSet.add(k)));
+  let cols = Array.from(colSet);
+  // Prune 100% blank
+  cols = cols.filter(c => rows.some(r => { const v = r[c]; return v != null && v !== '' && v !== '[object Object]'; }));
+  const headerRow = cols.map(_titleCase);
+  const dataRows = rows.map(r => cols.map(c => _cellValue(r[c], _titleCase(c))));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow]);
+  dataRows.forEach((row, ri) => row.forEach((cell, ci) => { ws[XLSX.utils.encode_cell({ r: ri + 1, c: ci })] = cell; }));
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: dataRows.length, c: cols.length - 1 } });
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, name.charAt(0).toUpperCase() + name.slice(1));
+  XLSX.writeFile(wb, 'gccpros-' + name + '-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('✓ Exported ' + rows.length + ' rows × ' + cols.length + ' columns', 'ok');
+}
+</script>
+</body>
+</html>
