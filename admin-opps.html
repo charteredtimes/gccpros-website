@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v5-csv-fix
+<!-- GCCPROs Admin · Opportunities Tab Suite · build: admin-opps-2026-05-19-v6-referrals-export
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
@@ -191,6 +191,7 @@ td.actions { white-space:nowrap; }
         <button class="btn" onclick="loadReferrals()">↻ Refresh</button>
         <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Curated columns only — clean for recruiter handoff">⬇ Export (clean)</button>
           <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Every column from the DB including legacy/migration fields">⬇ Raw</button>
+          <button class="btn brand-orange" onclick="exportReferralsJoined()" title="Each referral row + the candidate-completed application data joined on email — best for full handoff">⬇ Joined (referral + candidate)</button>
         <span class="muted" id="referrals-count"></span>
       </div>
       <div id="referrals-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -726,12 +727,33 @@ const CSV_COLS = {
     'signup_date','approved_at','approved_by','id'
   ],
   referrals: [
-    'invited_at','referral_status','partner_email',
+    // Referral metadata
+    'invited_at','referral_status','partner_email','referrer_name',
+    'target_job_id','job_title','job_domain','job_company',
+    // Candidate identity (from referrer at invite + candidate-form override)
     'candidate_name','candidate_email','candidate_phone','candidate_linkedin',
-    'target_job_id',
+    // Candidate professional (filled by candidate)
+    'candidate_company','candidate_designation','candidate_experience',
+    'candidate_qualification','candidate_location',
+    // Compensation
+    'candidate_ctc_lpa','candidate_expected_ctc','candidate_notice_period',
+    'candidate_willing_to_relocate','candidate_reason_for_change',
+    // CV + KYC
+    'candidate_cv_link','candidate_pan',
+    // Referrer's qualitative assessment
     'relationship','known_duration','worked_together','confidence_level',
-    'why_good_fit','skill_avg_rating','skill_ratings_json',
-    'placed_at','payout_inr','candidate_token','id'
+    'why_good_fit','candidate_highlights','candidate_concerns',
+    // Skill assessment (v7+) and legacy weighted-score (migration)
+    'skill_ratings_json','skill_avg_rating','skill_ratings',
+    'weighted_avg_score','total_skills_rated',
+    // Outcomes + payout
+    'placed_at','payout_inr','referral_amount_inr','is_reduced_referral',
+    // Notes
+    'additional_notes','admin_notes',
+    // Candidate consent + submission timestamp
+    'consent_role','consent_privacy','candidate_submitted_date',
+    // System / legacy IDs at the end
+    'candidate_token','referral_id_legacy','timestamp_legacy','id'
   ],
   users: [
     'signup_date','email','full_name','user_type','approval_status',
@@ -754,10 +776,69 @@ function _csvCell(v) {
   } else {
     s = String(v);
   }
+  // v6: clean up "[object Object]" leftovers (badly serialised JSONB at insert time)
+  if (s === '[object Object]') s = '';
   // Strip CR (Excel-safe), then quote if cell contains , " or newline
   s = s.replace(/\r/g, '');
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
+// v6: joined export — referrals enriched with their candidate's application data
+async function exportReferralsJoined() {
+  if (!REFERRALS.length) { toast('Load referrals first.', 'err'); return; }
+  toast('Fetching candidate applications to join…');
+  // Ensure APPS is loaded
+  if (!APPS.length) {
+    try {
+      const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListApplications');
+      const j = await r.json();
+      if (j.error) throw new Error(j.error);
+      APPS = j.applications || j.rows || [];
+    } catch (err) { toast('Failed to load applications: ' + err.message, 'err'); return; }
+  }
+  // Build email → application map
+  const appByEmail = {};
+  APPS.forEach(a => { if (a.applicant_email) appByEmail[String(a.applicant_email).toLowerCase()] = a; });
+  // For each referral, attach the matching application's candidate-filled fields.
+  // app_ fields are namespaced so they don't collide with referral columns.
+  const joined = REFERRALS.map(r => {
+    const email = String(r.candidate_email || '').toLowerCase();
+    const a = email ? appByEmail[email] : null;
+    if (!a) return r;
+    const j = Object.assign({}, r);
+    // Pull these fields off the candidate's application row
+    const lift = ['contact_phone','contact_alt_phone','contact_linkedin','current_city','total_experience',
+                  'current_company','current_designation','current_ctc_inr','expected_ctc_inr',
+                  'notice_period_days','pan_number','qualification','selected_skills',
+                  'eligibility_statement','work_mode_preference','earliest_join_date',
+                  'willing_to_relocate','reason_for_change','reference_1','reference_2',
+                  'cv_storage_url','cv_filename','cover_note','application_status','applied_at','id'];
+    lift.forEach(k => { if (a[k] != null) j['app_' + k] = a[k]; });
+    return j;
+  });
+  // Build a union column list: canonical referral + canonical app- prefixed
+  const refCols = CSV_COLS.referrals;
+  const appCols = ['app_applied_at','app_application_status',
+    'app_contact_phone','app_contact_alt_phone','app_contact_linkedin',
+    'app_current_city','app_total_experience','app_current_company','app_current_designation',
+    'app_current_ctc_inr','app_expected_ctc_inr','app_notice_period_days',
+    'app_pan_number','app_qualification','app_selected_skills',
+    'app_eligibility_statement','app_work_mode_preference','app_earliest_join_date',
+    'app_willing_to_relocate','app_reason_for_change',
+    'app_reference_1','app_reference_2',
+    'app_cv_storage_url','app_cv_filename','app_cover_note','app_id'];
+  const cols = refCols.concat(appCols);
+  const header = cols.map(c => _csvCell(_titleCase(c.replace(/^app_/, 'Candidate Submitted — ')))).join(',');
+  const lines = joined.map(r => cols.map(c => _csvCell(r[c])).join(','));
+  const csv = '\uFEFF' + [header].concat(lines).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gccpros-referrals-joined-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  const enriched = joined.filter(r => Object.keys(r).some(k => k.startsWith('app_'))).length;
+  toast('Exported ' + joined.length + ' referrals (' + enriched + ' enriched with candidate-form data)', 'ok');
+}
+
 function exportCSV(name, rows, mode) {
   if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
   mode = mode || 'recruiter';
