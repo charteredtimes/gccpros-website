@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.9-pwd-errors
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.13-googlepwd
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -792,7 +792,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.9-pwd-errors';
+const BUILD = 'opps-v2-2026-05-20-v8.13-googlepwd';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -981,19 +981,33 @@ function tsToken(elId) {
   return inp ? (inp.value || '') : '';
 }
 
-// v8.8 — strong-password helpers (shared by both signup forms)
+// v8.11 — strong-password helpers (shared). Meter is GATED on PWD_RX so the bar
+// can never say "Strong" for a password the validator would reject (e.g. long but no symbol).
 const PWD_RX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+function pwdReqs(p){ p = p || ''; return { len: p.length>=8, lower: /[a-z]/.test(p), upper: /[A-Z]/.test(p), digit: /\d/.test(p), sym: /[^A-Za-z0-9]/.test(p) }; }
 function pwdStrong(p){ return PWD_RX.test(p || ''); }
-function pwdScore(p){ p = p || ''; let s = 0; if (p.length>=8) s++; if (/[a-z]/.test(p)) s++; if (/[A-Z]/.test(p)) s++; if (/\d/.test(p)) s++; if (/[^A-Za-z0-9]/.test(p)) s++; if (p.length>=12) s++; return s; }
 function pwdMeterUpdate(pfx){
   const el = document.getElementById(pfx+'-pwd'); if (!el) return;
-  const p = el.value || ''; const sc = pwdScore(p);
+  const p = el.value || ''; const r = pwdReqs(p);
+  const met = [r.len, r.lower, r.upper, r.digit, r.sym].filter(Boolean).length;
+  const ok = pwdStrong(p);
   const bar = document.getElementById(pfx+'-pwd-bar'); const hint = document.getElementById(pfx+'-pwd-hint');
-  const pct = Math.min(100, Math.round(sc/6*100));
-  const col = sc<=2 ? '#dc2626' : (sc<=4 ? '#f59e0b' : '#16a34a');
-  const lbl = sc<=2 ? 'Weak' : (sc<=4 ? 'Fair' : 'Strong');
+  let pct, col;
+  if (ok) { col = '#16a34a'; pct = (p.length>=12 ? 100 : 80); }
+  else { col = (met<=2 ? '#dc2626' : '#f59e0b'); pct = Math.max(8, met*18); }
   if (bar){ bar.style.width = pct+'%'; bar.style.background = col; }
-  if (hint){ hint.textContent = p ? (lbl + ' — 8+ chars with upper, lower, number & symbol') : 'Min 8 chars incl. upper, lower, number & symbol.'; hint.style.color = p ? col : ''; }
+  if (hint){
+    if (!p){ hint.textContent = 'Min 8 chars incl. upper, lower, number & symbol.'; hint.style.color = ''; return; }
+    if (ok){ hint.textContent = (p.length>=12 ? 'Very strong' : 'Strong') + ' \u2713'; hint.style.color = '#16a34a'; return; }
+    const miss = [];
+    if (!r.len) miss.push('8+ characters');
+    if (!r.upper) miss.push('an uppercase letter');
+    if (!r.lower) miss.push('a lowercase letter');
+    if (!r.digit) miss.push('a number');
+    if (!r.sym) miss.push('a symbol (!@#$%)');
+    hint.textContent = 'Add: ' + miss.join(', ');
+    hint.style.color = '#dc2626';
+  }
 }
 
 async function apiFetch(url, options) {
@@ -1122,6 +1136,7 @@ async function handleGoogleCredentialResponse(response) {
   } catch (e) {}
   if (!email) { alert('Could not read email from Google credential.'); return; }
   googleVerifiedEmail = email;
+  applyPwdVisibility();
 
   // v7 perf: capture the FULL status response and stash it so loadProfileAndDashboard
   // can reuse it without re-fetching (saves ~600-1200ms on slow networks).
@@ -1191,11 +1206,10 @@ async function doEmailSignIn() {
   try {
     await firebase.auth().signInWithEmailAndPassword(eIn, p);
   } catch (err) {
-    let msg = err.code + ' — ' + err.message;
     const c = String(err.code || '');
-    if (c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-credential') || c.includes('invalid-login')) {
-      msg = "Sign-in failed. If you registered via Google, use the Google button. Otherwise check your password or use 'Forgot password?'.";
-    }
+    let msg = (c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-credential') || c.includes('invalid-login'))
+      ? ('Sign-in failed (' + c + '). The password is wrong OR this email has no password account — if you registered with Google use the Google button, otherwise use "Forgot password?" or register to set one.')
+      : (c + ' — ' + err.message);
     showResult('li-result', msg, false);
     try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){}
   }
@@ -1204,8 +1218,15 @@ async function doEmailSignIn() {
 async function doForgotPassword() {
   const eIn = (document.getElementById('li-email').value || '').trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(eIn)) return showResult('li-result', 'Enter your email above first, then click Forgot password.', false);
-  try { await firebase.auth().sendPasswordResetEmail(eIn); } catch (e) { /* swallow to avoid revealing whether the account exists */ }
-  showResult('li-result', '✓ If an account exists for ' + eIn + ', a password reset link has been emailed. Check inbox/spam. Google-only accounts have no password — use the Google button.', true);
+  showResult('li-result', 'Sending reset link…', true);
+  try {
+    await firebase.auth().sendPasswordResetEmail(eIn);
+    showResult('li-result', '✓ Reset link sent to ' + eIn + ' — check inbox/spam. If nothing arrives, this email has no password account yet (register again, or use Google).', true);
+  } catch (e) {
+    const c = String(e.code || '');
+    if (c.includes('user-not-found')) showResult('li-result', 'No password account exists for ' + eIn + '. Register to set a password, or use "Continue with Google".', false);
+    else showResult('li-result', 'Reset failed: ' + c + ' — ' + (e.message || ''), false);
+  }
 }
 
 // SERVER-AUTHORITATIVE profile + role load (v7.7 — bulletproof role detection)
@@ -1486,6 +1507,15 @@ function openJobDetail(jobId) {
 }
 
 // Job Seeker signup wizard
+function applyPwdVisibility() {
+  // Google-authenticated users have no password — hide the Create/Confirm Password
+  // fields on both signup forms when a Google sign-in is in effect.
+  const hide = !!googleVerifiedEmail;
+  ['js-pwd-block', 'pt-pwd-block'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = hide ? 'none' : '';
+  });
+}
 function openJobSeekerSignup() {
   document.getElementById('js-step-1').style.display = 'block';
   document.getElementById('js-step-2').style.display = 'none';
@@ -1496,6 +1526,7 @@ function openJobSeekerSignup() {
     eIn.value = googleVerifiedEmail; eIn.readOnly = true;
     document.getElementById('js-email-verified').style.display = '';
   }
+  applyPwdVisibility();
   openModal('js-modal');
   setTimeout(() => mountTS('turnstile-js'), 80);
   const cv = document.getElementById('js-cv');
@@ -1540,7 +1571,7 @@ async function jsSubmit() {
   const _isGoogleJS = !!(googleVerifiedEmail && googleVerifiedEmail === v('js-email').toLowerCase());
   if (!_isGoogleJS) {
     const _pw = document.getElementById('js-pwd').value, _pw2 = document.getElementById('js-pwd2').value;
-    if (!pwdStrong(_pw)) return showResult('js-result-3', 'Password too weak — use 8+ characters with an uppercase, lowercase, number and symbol.', false);
+    if (!pwdStrong(_pw)) { const _r = pwdReqs(_pw), _m = []; if (!_r.len) _m.push('8+ characters'); if (!_r.upper) _m.push('an uppercase letter'); if (!_r.lower) _m.push('a lowercase letter'); if (!_r.digit) _m.push('a number'); if (!_r.sym) _m.push('a symbol (!@#$%)'); return showResult('js-result-3', 'Your password is missing: ' + _m.join(', ') + '.', false); }
     if (_pw !== _pw2) return showResult('js-result-3', 'Passwords do not match.', false);
   }
   const cf = tsToken('turnstile-js');
@@ -1609,6 +1640,7 @@ function openPartnerSignup() {
     eIn.value = googleVerifiedEmail; eIn.readOnly = true;
     document.getElementById('pt-email-verified').style.display = '';
   }
+  applyPwdVisibility();
   openModal('pt-modal');
   setTimeout(() => mountTS('turnstile-pt'), 80);
 }
@@ -1638,7 +1670,7 @@ async function ptSubmit() {
   const _isGooglePT = !!(googleVerifiedEmail && googleVerifiedEmail === email);
   if (!_isGooglePT) {
     const _pw = document.getElementById('pt-pwd').value, _pw2 = document.getElementById('pt-pwd2').value;
-    if (!pwdStrong(_pw)) return showResult('pt-result', 'Password too weak — use 8+ characters with an uppercase, lowercase, number and symbol.', false);
+    if (!pwdStrong(_pw)) { const _r = pwdReqs(_pw), _m = []; if (!_r.len) _m.push('8+ characters'); if (!_r.upper) _m.push('an uppercase letter'); if (!_r.lower) _m.push('a lowercase letter'); if (!_r.digit) _m.push('a number'); if (!_r.sym) _m.push('a symbol (!@#$%)'); return showResult('pt-result', 'Your password is missing: ' + _m.join(', ') + '.', false); }
     if (_pw !== _pw2) return showResult('pt-result', 'Passwords do not match.', false);
   }
   const cf = tsToken('turnstile-pt');
