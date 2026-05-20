@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.7-linkedin
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.8-passwords
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -381,7 +381,9 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <div class="divider">or sign in with email</div>
     <div class="field"><label>Email</label><input type="email" id="li-email" autocomplete="email"></div>
     <div class="field"><label>Password</label><input type="password" id="li-pwd" autocomplete="current-password"></div>
+    <div style="margin-top:12px;display:flex;justify-content:center;"><div id="turnstile-login"></div></div>
     <button class="btn" style="width:100%;margin-top:14px;" onclick="doEmailSignIn()">Sign in with email</button>
+    <p style="text-align:center;margin-top:10px;"><a href="#" onclick="doForgotPassword();return false;" style="font-size:12px;color:var(--brand,#ea580c);font-weight:600;">Forgot password?</a></p>
     <div id="li-result" class="form-result"></div>
     <p style="margin-top:14px;font-size:11.5px;color:var(--muted);text-align:center;">If you signed up via Google originally, you don't have a password &mdash; use the Google button above.<br>New here? Use the Register tiles on the main page.</p>
   </div>
@@ -420,6 +422,15 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
           <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('js')">Verify code</button>
         </div>
         <div id="js-otp-status" class="form-result" style="font-size:12px;"></div>
+      </div>
+      <div class="field" id="js-pwd-block">
+        <label>Create Password <span class="required">*</span></label>
+        <input type="password" id="js-pwd" autocomplete="new-password" oninput="pwdMeterUpdate('js')" placeholder="Min 8 chars: upper, lower, number, symbol">
+        <div style="height:5px;background:#eee;border-radius:3px;margin-top:6px;overflow:hidden;"><div id="js-pwd-bar" style="height:100%;width:0;background:#dc2626;transition:width .2s;"></div></div>
+        <div id="js-pwd-hint" class="field-hint">Min 8 chars incl. upper, lower, number &amp; symbol.</div>
+        <label style="margin-top:8px;">Confirm Password <span class="required">*</span></label>
+        <input type="password" id="js-pwd2" autocomplete="new-password" placeholder="Re-enter password">
+        <div class="field-hint">Google sign-in users can skip this — your Google account is your login.</div>
       </div>
       <button class="btn" style="width:100%;margin-top:18px;" onclick="jsStep1to2()">Next: Professional &rarr;</button>
       <div id="js-result-1" class="form-result"></div>
@@ -527,6 +538,15 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('pt')">Verify code</button>
       </div>
       <div id="pt-otp-status" class="form-result" style="font-size:12px;"></div>
+    </div>
+    <div class="field" id="pt-pwd-block">
+      <label>Create Password <span class="required">*</span></label>
+      <input type="password" id="pt-pwd" autocomplete="new-password" oninput="pwdMeterUpdate('pt')" placeholder="Min 8 chars: upper, lower, number, symbol">
+      <div style="height:5px;background:#eee;border-radius:3px;margin-top:6px;overflow:hidden;"><div id="pt-pwd-bar" style="height:100%;width:0;background:#dc2626;transition:width .2s;"></div></div>
+      <div id="pt-pwd-hint" class="field-hint">Min 8 chars incl. upper, lower, number &amp; symbol.</div>
+      <label style="margin-top:8px;">Confirm Password <span class="required">*</span></label>
+      <input type="password" id="pt-pwd2" autocomplete="new-password" placeholder="Re-enter password">
+      <div class="field-hint">Google sign-in users can skip this — your Google account is your login.</div>
     </div>
     <div class="field-row">
       <div class="field"><label>Phone <span class="required">*</span></label><input type="tel" id="pt-phone" pattern="[0-9]{10,15}"></div>
@@ -772,7 +792,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.7-linkedin';
+const BUILD = 'opps-v2-2026-05-20-v8.8-passwords';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -961,6 +981,21 @@ function tsToken(elId) {
   return inp ? (inp.value || '') : '';
 }
 
+// v8.8 — strong-password helpers (shared by both signup forms)
+const PWD_RX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+function pwdStrong(p){ return PWD_RX.test(p || ''); }
+function pwdScore(p){ p = p || ''; let s = 0; if (p.length>=8) s++; if (/[a-z]/.test(p)) s++; if (/[A-Z]/.test(p)) s++; if (/\d/.test(p)) s++; if (/[^A-Za-z0-9]/.test(p)) s++; if (p.length>=12) s++; return s; }
+function pwdMeterUpdate(pfx){
+  const el = document.getElementById(pfx+'-pwd'); if (!el) return;
+  const p = el.value || ''; const sc = pwdScore(p);
+  const bar = document.getElementById(pfx+'-pwd-bar'); const hint = document.getElementById(pfx+'-pwd-hint');
+  const pct = Math.min(100, Math.round(sc/6*100));
+  const col = sc<=2 ? '#dc2626' : (sc<=4 ? '#f59e0b' : '#16a34a');
+  const lbl = sc<=2 ? 'Weak' : (sc<=4 ? 'Fair' : 'Strong');
+  if (bar){ bar.style.width = pct+'%'; bar.style.background = col; }
+  if (hint){ hint.textContent = p ? (lbl + ' — 8+ chars with upper, lower, number & symbol') : 'Min 8 chars incl. upper, lower, number & symbol.'; hint.style.color = p ? col : ''; }
+}
+
 async function apiFetch(url, options) {
   options = options || {};
   options.headers = options.headers || {};
@@ -1018,7 +1053,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
 });
 
 function signOut() { firebase.auth().signOut(); }
-function openLoginModal() { setLoginRole(loginRolePref || 'jobSeeker'); openModal('login-modal'); }
+function openLoginModal() { setLoginRole(loginRolePref || 'jobSeeker'); openModal('login-modal'); setTimeout(() => mountTS('turnstile-login'), 80); }
 function setLoginRole(role) {
   loginRolePref = role;
   document.getElementById('role-tab-seeker').classList.toggle('active', role === 'jobSeeker');
@@ -1145,15 +1180,32 @@ async function doEmailSignIn() {
   const eIn = (document.getElementById('li-email').value || '').trim().toLowerCase();
   const p = document.getElementById('li-pwd').value;
   if (!eIn || !p) return showResult('li-result', 'Email and password required.', false);
+  const cf = tsToken('turnstile-login');
+  if (!cf) return showResult('li-result', 'Please complete the puzzle below first.', false);
+  showResult('li-result', 'Verifying…', true);
+  try {
+    const vr = await fetch(SCRIPT_URL + '?action=verifyCaptcha&cfToken=' + encodeURIComponent(cf) + '&_t=' + Date.now());
+    const vj = await vr.json();
+    if (!vj.ok) { try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){} return showResult('li-result', 'Puzzle verification failed — please retry.', false); }
+  } catch (e) { return showResult('li-result', 'Could not verify the puzzle. Try again.', false); }
   try {
     await firebase.auth().signInWithEmailAndPassword(eIn, p);
   } catch (err) {
     let msg = err.code + ' — ' + err.message;
-    if (String(err.code || '').includes('wrong-password') || String(err.code || '').includes('user-not-found')) {
-      msg = "Email/password sign-in failed. If you originally signed up via Google, use the Google button above (you don't have a password).";
+    const c = String(err.code || '');
+    if (c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-credential') || c.includes('invalid-login')) {
+      msg = "Sign-in failed. If you registered via Google, use the Google button. Otherwise check your password or use 'Forgot password?'.";
     }
     showResult('li-result', msg, false);
+    try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){}
   }
+}
+
+async function doForgotPassword() {
+  const eIn = (document.getElementById('li-email').value || '').trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(eIn)) return showResult('li-result', 'Enter your email above first, then click Forgot password.', false);
+  try { await firebase.auth().sendPasswordResetEmail(eIn); } catch (e) { /* swallow to avoid revealing whether the account exists */ }
+  showResult('li-result', '✓ If an account exists for ' + eIn + ', a password reset link has been emailed. Check inbox/spam. Google-only accounts have no password — use the Google button.', true);
 }
 
 // SERVER-AUTHORITATIVE profile + role load (v7.7 — bulletproof role detection)
@@ -1485,6 +1537,12 @@ async function jsSubmit() {
   if (cvFile.size > CV_MAX_BYTES) return showResult('js-result-3', 'CV exceeds 5 MB.', false);
   if (!v('js-reason')) return showResult('js-result-3', 'Reason for change required.', false);
   if (!document.getElementById('js-consent').checked) return showResult('js-result-3', 'Please accept the privacy notice.', false);
+  const _isGoogleJS = !!(googleVerifiedEmail && googleVerifiedEmail === v('js-email').toLowerCase());
+  if (!_isGoogleJS) {
+    const _pw = document.getElementById('js-pwd').value, _pw2 = document.getElementById('js-pwd2').value;
+    if (!pwdStrong(_pw)) return showResult('js-result-3', 'Password too weak — use 8+ characters with an uppercase, lowercase, number and symbol.', false);
+    if (_pw !== _pw2) return showResult('js-result-3', 'Passwords do not match.', false);
+  }
   const cf = tsToken('turnstile-js');
   const email = v('js-email').toLowerCase();
   const btn = document.querySelector('#js-step-3 .btn:not(.secondary)');
@@ -1507,6 +1565,10 @@ async function jsSubmit() {
     if (j.error === 'blacklisted') return showResult('js-result-3', 'This email/phone is blocked. Contact admin@gccpros.com.', false);
     if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed — re-tick and retry.', false);
     if (j.error) throw new Error(j.error);
+    if (!_isGoogleJS) {
+      try { await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('js-pwd').value); }
+      catch (pe) { const c = String(pe.code || ''); if (!c.includes('email-already-in-use')) console.warn('[pwd setup]', pe); }
+    }
     const fr = new FileReader();
     fr.onload = async function() {
       const b64 = fr.result.split(',').pop();
@@ -1565,6 +1627,12 @@ async function ptSubmit() {
   if (!document.getElementById('pt-consent1').checked || !document.getElementById('pt-consent2').checked || !document.getElementById('pt-consent3').checked) {
     return showResult('pt-result', 'Please accept all three consents.', false);
   }
+  const _isGooglePT = !!(googleVerifiedEmail && googleVerifiedEmail === email);
+  if (!_isGooglePT) {
+    const _pw = document.getElementById('pt-pwd').value, _pw2 = document.getElementById('pt-pwd2').value;
+    if (!pwdStrong(_pw)) return showResult('pt-result', 'Password too weak — use 8+ characters with an uppercase, lowercase, number and symbol.', false);
+    if (_pw !== _pw2) return showResult('pt-result', 'Passwords do not match.', false);
+  }
   const cf = tsToken('turnstile-pt');
   const btn = document.querySelector('#pt-modal .btn.brand-orange');
   btn.disabled = true; btn.textContent = 'Submitting…';
@@ -1588,6 +1656,10 @@ async function ptSubmit() {
     if (j.error === 'captcha_failed') return showResult('pt-result', 'CAPTCHA failed - reload and retry.', false);
     if (j.error === 'email_not_verified') return showResult('pt-result', 'Please verify your email first.', false);
     if (j.error) throw new Error(j.error);
+    if (!_isGooglePT) {
+      try { await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('pt-pwd').value); }
+      catch (pe) { const c = String(pe.code || ''); if (!c.includes('email-already-in-use')) console.warn('[pwd setup]', pe); }
+    }
     showResult('pt-result', 'Uploading your CV and photo...', true);
     await uploadPartnerFile(email, cvFile, 'oppsUploadCV&context=profile');
     await uploadPartnerFile(email, photoFile, 'oppsUploadPhoto');
