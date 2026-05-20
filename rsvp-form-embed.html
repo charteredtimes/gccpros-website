@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!-- GCCPROs · Event RSVP form  (rsvp-form-embed.html)
+     Build: rsvp-form-2026-05-20-v1
+
+     A complete, self-contained RSVP form that POSTs to the Supabase Edge
+     Function (action=eventRsvp, v7.9.11+). Submissions land in the admin
+     Community > Event RSVPs tab AND mirror to the Google Sheet backup.
+
+     ── HOW TO USE ──────────────────────────────────────────────────────
+     Option A (fastest): host this file on gccpros.com and link/iframe it.
+       Preselect the event via URL params, e.g.
+         rsvp-form-embed.html?event=Hyderabad%20GCC%20Leaders%20Coffee%20Roundtable&city=Hyderabad&date=2026-06-12&source=insights-events.html%23rsvp-hyderabad
+       (or use the in-form event dropdown).
+
+     Option B (repoint your existing insights-events.html form):
+       keep your markup, and on submit POST these keys as JSON to
+         https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api?action=eventRsvp
+       Field -> param contract (all optional except fullName, workEmail, eventName):
+         fullName, designation, company, workEmail, phone, linkedin,
+         eventName, eventCity, eventDate (YYYY-MM-DD),
+         hydOfficeAddress, headcountHyd, headcountIndia, domainsHyd,
+         topics, preferredTimeSlot, confirmAttendance (Yes/No), source,
+         cfToken (optional Turnstile token)
+       A 200 with {status:"ok"} means stored. See the <script> below for a
+       reference fetch() you can copy verbatim.
+     ──────────────────────────────────────────────────────────────────── -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RSVP · GCCPROs Event</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root { --ink:#1D2226; --gold:#0A66C2; --orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); font-size:15px; line-height:1.5; padding:24px 16px; }
+.wrap { max-width:640px; margin:0 auto; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.06); }
+.head { background:var(--ink); color:#fff; padding:22px 26px; }
+.head .brand { font-family:'Playfair Display',serif; font-size:22px; }
+.head .brand b { color:var(--gold); }
+.head .tag { display:block; font-size:11px; letter-spacing:2px; color:var(--orange); margin-top:4px; font-weight:600; }
+.head h1 { font-family:'Playfair Display',serif; font-size:20px; margin-top:12px; font-weight:600; }
+.head p { color:#cbd5e1; font-size:13px; margin-top:4px; }
+form { padding:24px 26px; }
+.row { margin-bottom:16px; }
+.row.two { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+label .req { color:var(--orange); }
+input, select, textarea { width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:8px; font:inherit; font-size:15px; background:#fff; color:var(--ink); }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(10,102,194,0.12); }
+textarea { resize:vertical; min-height:64px; }
+.checks { display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; }
+.checks label { display:flex; align-items:center; gap:8px; font-weight:400; font-size:14px; margin:0; cursor:pointer; }
+.checks input { width:auto; }
+.hint { font-size:12px; color:var(--muted); margin-top:5px; }
+.btn { width:100%; margin-top:6px; background:var(--orange); color:#fff; border:none; padding:14px; border-radius:9px; font-size:16px; font-weight:600; cursor:pointer; transition:opacity .15s; }
+.btn:hover { opacity:.92; }
+.btn:disabled { opacity:.55; cursor:default; }
+.note { font-size:12px; color:var(--muted); margin-top:12px; text-align:center; }
+.result { display:none; padding:14px 16px; border-radius:9px; margin-bottom:16px; font-size:14px; font-weight:500; }
+.result.ok { display:block; background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+.result.err { display:block; background:#fef2f2; color:var(--red); border:1px solid #fecaca; }
+.done { display:none; padding:40px 26px; text-align:center; }
+.done h2 { font-family:'Playfair Display',serif; font-size:24px; color:var(--green); margin-bottom:8px; }
+.done p { color:var(--muted); }
+@media (max-width:560px){ .row.two, .checks { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="brand">GCC<b>PROs</b></span>
+    <span class="tag">INSIGHTS &amp; EVENTS</span>
+    <h1 id="evt-title">Reserve your seat</h1>
+    <p id="evt-sub">Tell us a little about you and your GCC. Seats are limited.</p>
+  </div>
+
+  <form id="rsvp-form" novalidate>
+    <div id="result" class="result"></div>
+
+    <div class="row">
+      <label for="eventName">Event <span class="req">*</span></label>
+      <select id="eventName" name="eventName" required>
+        <option value="Hyderabad GCC Leaders Coffee Roundtable">Hyderabad GCC Leaders Coffee Roundtable</option>
+        <option value="GCC Summit · Pune">GCC Summit · Pune</option>
+        <option value="GCC Summit · Bengaluru">GCC Summit · Bengaluru</option>
+        <option value="GCC Summit · Delhi NCR">GCC Summit · Delhi NCR</option>
+        <option value="GCC Summit · Hyderabad">GCC Summit · Hyderabad</option>
+      </select>
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="eventCity">Event city</label>
+        <input id="eventCity" name="eventCity" autocomplete="off">
+      </div>
+      <div>
+        <label for="eventDate">Event date</label>
+        <input id="eventDate" name="eventDate" type="date">
+      </div>
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="fullName">Full name <span class="req">*</span></label>
+        <input id="fullName" name="fullName" required autocomplete="name">
+      </div>
+      <div>
+        <label for="designation">Designation</label>
+        <input id="designation" name="designation" autocomplete="organization-title">
+      </div>
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="company">Company (GCC)</label>
+        <input id="company" name="company" autocomplete="organization">
+      </div>
+      <div>
+        <label for="workEmail">Work email <span class="req">*</span></label>
+        <input id="workEmail" name="workEmail" type="email" required autocomplete="email">
+      </div>
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="phone">Phone / WhatsApp</label>
+        <input id="phone" name="phone" inputmode="tel" autocomplete="tel">
+      </div>
+      <div>
+        <label for="linkedin">LinkedIn URL</label>
+        <input id="linkedin" name="linkedin" inputmode="url" placeholder="https://www.linkedin.com/in/…">
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="hydOfficeAddress">India / Hyderabad office address</label>
+      <input id="hydOfficeAddress" name="hydOfficeAddress" autocomplete="off">
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="headcountHyd">GCC headcount (this city)</label>
+        <input id="headcountHyd" name="headcountHyd" inputmode="numeric">
+      </div>
+      <div>
+        <label for="headcountIndia">GCC headcount (India total)</label>
+        <input id="headcountIndia" name="headcountIndia" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Domains run from this center</label>
+      <div class="checks" id="domains">
+        <label><input type="checkbox" value="Technology"> Technology</label>
+        <label><input type="checkbox" value="Engineering"> Engineering</label>
+        <label><input type="checkbox" value="Finance"> Finance</label>
+        <label><input type="checkbox" value="Operations"> Operations</label>
+        <label><input type="checkbox" value="HR / People"> HR / People</label>
+        <label><input type="checkbox" value="Analytics / Data"> Analytics / Data</label>
+        <label><input type="checkbox" value="Procurement / SCM"> Procurement / SCM</label>
+        <label><input type="checkbox" value="Legal"> Legal</label>
+        <label><input type="checkbox" value="Other"> Other</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="topics">Topics you'd like to discuss</label>
+      <textarea id="topics" name="topics" placeholder="e.g. GCC growth, talent, AI adoption…"></textarea>
+    </div>
+
+    <div class="row two">
+      <div>
+        <label for="preferredTimeSlot">Preferred time slot</label>
+        <select id="preferredTimeSlot" name="preferredTimeSlot">
+          <option value="">No preference</option>
+          <option value="Morning (9:30 – 11:00 AM)">Morning (9:30 – 11:00 AM)</option>
+          <option value="Afternoon (2:00 – 4:00 PM)">Afternoon (2:00 – 4:00 PM)</option>
+          <option value="Either works">Either works</option>
+        </select>
+      </div>
+      <div>
+        <label for="confirmAttendance">Confirm physical attendance</label>
+        <select id="confirmAttendance" name="confirmAttendance">
+          <option value="Yes">Yes, I'll attend in person</option>
+          <option value="Tentative">Tentative</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+    </div>
+
+    <input type="hidden" id="source" name="source" value="insights-events.html#rsvp">
+    <button class="btn" id="submit-btn" type="submit">Confirm my RSVP</button>
+    <p class="note">By submitting you agree to be contacted about this event. We never share your details.</p>
+  </form>
+
+  <div class="done" id="done">
+    <h2>You're in. 🎉</h2>
+    <p id="done-msg">Thanks for your RSVP — we'll be in touch with the venue and final details.</p>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ── CONFIG ────────────────────────────────────────────────────────────
+var API_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
+// ──────────────────────────────────────────────────────────────────────
+
+// Prefill from URL params so the same form can serve every event:
+//   ?event=...&city=...&date=YYYY-MM-DD&source=...
+(function prefill() {
+  var q = new URLSearchParams(location.search);
+  var hash = (location.hash || '').replace('#', '');
+  var ev = q.get('event'), city = q.get('city'), date = q.get('date'), src = q.get('source');
+  if (ev) {
+    var sel = document.getElementById('eventName');
+    if (!Array.from(sel.options).some(function (o) { return o.value === ev; })) {
+      sel.add(new Option(ev, ev), 0);
+    }
+    sel.value = ev;
+    document.getElementById('evt-title').textContent = ev;
+  }
+  if (city) document.getElementById('eventCity').value = city;
+  if (date) document.getElementById('eventDate').value = date;
+  if (src) document.getElementById('source').value = src;
+  else if (hash) document.getElementById('source').value = 'insights-events.html#' + hash;
+})();
+
+function setResult(msg, ok) {
+  var r = document.getElementById('result');
+  r.className = 'result ' + (ok ? 'ok' : 'err');
+  r.textContent = msg;
+  r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('rsvp-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var btn = document.getElementById('submit-btn');
+  var f = e.target;
+  var fullName = f.fullName.value.trim();
+  var workEmail = f.workEmail.value.trim();
+  var eventName = f.eventName.value.trim();
+  if (!fullName || !workEmail || !eventName) { setResult('Please fill name, work email and event.', false); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(workEmail)) { setResult('That work email doesn’t look right.', false); return; }
+
+  var domains = Array.from(document.querySelectorAll('#domains input:checked')).map(function (c) { return c.value; }).join(', ');
+
+  // ── reference payload (copy this fetch into any custom form) ──────────
+  var payload = {
+    fullName: fullName,
+    designation: f.designation.value.trim(),
+    company: f.company.value.trim(),
+    workEmail: workEmail,
+    phone: f.phone.value.trim(),
+    linkedin: f.linkedin.value.trim(),
+    eventName: eventName,
+    eventCity: f.eventCity.value.trim(),
+    eventDate: f.eventDate.value || '',
+    hydOfficeAddress: f.hydOfficeAddress.value.trim(),
+    headcountHyd: f.headcountHyd.value.trim(),
+    headcountIndia: f.headcountIndia.value.trim(),
+    domainsHyd: domains,
+    topics: f.topics.value.trim(),
+    preferredTimeSlot: f.preferredTimeSlot.value,
+    confirmAttendance: f.confirmAttendance.value,
+    source: f.source.value
+  };
+
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    var resp = await fetch(API_URL + '?action=eventRsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var j = await resp.json();
+    if (j.error) throw new Error(j.error === 'missing_fields' ? 'Please fill all required fields.' : j.error);
+    document.getElementById('rsvp-form').style.display = 'none';
+    var done = document.getElementById('done');
+    if (j.message) document.getElementById('done-msg').textContent = j.message;
+    done.style.display = 'block';
+    done.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    setResult('Could not submit: ' + err.message + '. Please try again.', false);
+    btn.disabled = false; btn.textContent = 'Confirm my RSVP';
+  }
+});
+</script>
+</body>
+</html>

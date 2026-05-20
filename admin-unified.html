@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v3-partner-fields
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v5-rsvps-pwa
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -8,7 +8,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1D2226">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GCCPROs Admin">
+<link rel="manifest" href="./admin-manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="robots" content="noindex,nofollow">
 <title>GCCPROs Admin Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -125,13 +132,31 @@ td.actions { white-space:nowrap; }
 .progress-box { background:#fff; border-radius:8px; padding:28px 32px; max-width:420px; width:100%; text-align:center; }
 .progress-bar-wrap { background:var(--border); border-radius:8px; height:10px; margin:14px 0; overflow:hidden; }
 .progress-bar { background:var(--gold); height:100%; width:0%; transition:width 0.2s; }
+
+/* ===== PWA / mobile responsive (v5) ===== */
+@media (max-width: 760px) {
+  .topbar { padding:10px 14px; flex-wrap:wrap; gap:8px; row-gap:8px; }
+  .topbar > div { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .container { padding:12px 14px; }
+  .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; white-space:nowrap; }
+  .filter-row { flex-wrap:wrap; gap:8px; }
+  .filter-row select, .filter-row input { flex:1 1 auto; min-width:120px; }
+  /* tables scroll sideways instead of squashing on a phone */
+  .card table { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; white-space:nowrap; }
+  .domain-card { width:100% !important; }
+  input, select, button { font-size:16px; } /* avoids iOS/Android zoom-on-focus */
+}
+@media (display-mode: standalone) {
+  /* a touch more breathing room when launched as an installed app */
+  body { padding-top: env(safe-area-inset-top); }
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div><span class="brand">GCC<span class="brand-mark">PROs</span></span><span class="tag">ADMIN CONSOLE</span></div>
-  <div><span id="admin-status" class="muted"></span> <button class="btn secondary small" id="logout-btn" onclick="forgetKey()" style="display:none;">Forget key</button></div>
+  <div><span id="admin-status" class="muted"></span> <button class="btn small" id="install-btn" onclick="promptInstall()" style="display:none;">&#10515; Install app</button> <button class="btn secondary small" id="logout-btn" onclick="forgetKey()" style="display:none;">Forget key</button></div>
 </div>
 
 <div id="gate" class="gate">
@@ -349,6 +374,7 @@ td.actions { white-space:nowrap; }
     <div class="tabs">
       <button class="tab comm active" onclick="showSubTab(event,'community','insider')">Insider Community</button>
       <button class="tab comm" onclick="showSubTab(event,'community','council')">Leadership Council</button>
+      <button class="tab comm" onclick="showSubTab(event,'community','rsvps')">Event RSVPs</button>
     </div>
 
     <div id="comm-insider" class="panel active">
@@ -388,6 +414,30 @@ td.actions { white-space:nowrap; }
         <div id="council-box"><p class="loading">Click Refresh to load.</p></div>
       </div>
     </div>
+
+    <div id="comm-rsvps" class="panel">
+      <div class="card">
+        <h3>Event RSVPs</h3>
+        <p class="muted">Live RSVPs from the website event forms (<code>eventRsvp</code>). Mirrored to Google Sheets automatically.</p>
+        <div class="filter-row">
+          <select id="f-rsvps-event" onchange="renderRsvps()"><option value="">All events</option></select>
+          <select id="f-rsvps-city" onchange="renderRsvps()"><option value="">All cities</option></select>
+          <select id="f-rsvps-status" onchange="renderRsvps()">
+            <option value="">All statuses</option>
+            <option value="New">New</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Waitlist">Waitlist</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Attended">Attended</option>
+            <option value="No-show">No-show</option>
+          </select>
+          <button class="btn" onclick="loadRsvps()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportXLSX('rsvps', RSVPS)">&#128202; Export Excel</button>
+          <span class="muted" id="rsvps-count"></span>
+        </div>
+        <div id="rsvps-box"><p class="loading">Click Refresh to load.</p></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -414,6 +464,7 @@ const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpro
 let ADMIN_KEY = '';
 let JOBS = [], APPS = [], PARTNERS = [], REFERRALS = [], USERS = [];
 let INSIDER = [], COUNCIL = [];
+let RSVPS = [], RSVPS_ALL = [];
 let CURRENT_JOB_FILTER = null;
 let CURRENT_DOMAIN = 'opportunities';
 
@@ -483,6 +534,7 @@ function showSubTab(ev, domain, sub) {
   if (domain === 'community') {
     if (sub === 'insider' && !INSIDER.length) loadCommunity('insider');
     else if (sub === 'council' && !COUNCIL.length) loadCommunity('council');
+    else if (sub === 'rsvps' && !RSVPS_ALL.length) loadRsvps();
   }
 }
 
@@ -603,6 +655,72 @@ async function decideCommApp(kind, id, decision) {
   } catch (err) { toast('Failed: ' + err.message, 'err'); }
 }
 
+
+// =========================================================
+// COMMUNITY — Event RSVPs (client-side filtered; status workflow)
+// =========================================================
+const RSVP_STATUSES = ['New','Confirmed','Waitlist','Cancelled','Attended','No-show'];
+async function loadRsvps() {
+  const box = document.getElementById('rsvps-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminListRsvps&_t=' + Date.now());
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    RSVPS_ALL = j.rows || [];
+    // populate event + city dropdowns from the full set (preserve current pick)
+    _fillRsvpFilter('f-rsvps-event', RSVPS_ALL.map(x => x.event_name));
+    _fillRsvpFilter('f-rsvps-city',  RSVPS_ALL.map(x => x.event_city));
+    renderRsvps();
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+function _fillRsvpFilter(id, vals) {
+  const sel = document.getElementById(id);
+  const cur = sel.value;
+  const uniq = Array.from(new Set(vals.filter(v => v && String(v).trim()))).sort();
+  sel.innerHTML = '<option value="">' + (id.endsWith('event') ? 'All events' : 'All cities') + '</option>'
+    + uniq.map(v => '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(v) + '</option>').join('');
+}
+function renderRsvps() {
+  const box = document.getElementById('rsvps-box');
+  const fe = document.getElementById('f-rsvps-event').value;
+  const fc = document.getElementById('f-rsvps-city').value;
+  const fs = document.getElementById('f-rsvps-status').value;
+  RSVPS = RSVPS_ALL.filter(a =>
+    (!fe || a.event_name === fe) && (!fc || a.event_city === fc) && (!fs || (a.status || 'New') === fs));
+  document.getElementById('rsvps-count').textContent = RSVPS.length + ' of ' + RSVPS_ALL.length + ' RSVPs';
+  if (!RSVPS.length) { box.innerHTML = '<p class="loading">No RSVPs match.</p>'; return; }
+  let html = '<table><thead><tr><th>When</th><th>Event</th><th>City</th><th>Name</th><th>Designation</th><th>Company</th><th>Email</th><th>Phone</th><th>LinkedIn</th><th>Status</th></tr></thead><tbody>';
+  RSVPS.forEach(a => {
+    const li = a.linkedin_url ? '<a href="' + esc(a.linkedin_url) + '" target="_blank">link &#8599;</a>' : '—';
+    const cur = a.status || 'New';
+    const opts = RSVP_STATUSES.map(st => '<option value="' + st + '"' + (st === cur ? ' selected' : '') + '>' + st + '</option>').join('');
+    html += '<tr>';
+    html += '<td>' + fmtDateTime(a.submitted_at || a.created_at) + '</td>';
+    html += '<td>' + esc(a.event_name || '') + '</td>';
+    html += '<td>' + esc(a.event_city || '') + '</td>';
+    html += '<td>' + esc(a.full_name || '') + '</td>';
+    html += '<td>' + esc(a.designation || '') + '</td>';
+    html += '<td>' + esc(a.company_gcc || '') + '</td>';
+    html += '<td class="email">' + esc(a.work_email || '') + '</td>';
+    html += '<td>' + esc(a.phone || '') + '</td>';
+    html += '<td>' + li + '</td>';
+    html += '<td><select class="rsvp-status" onchange="updateRsvpStatus(\'' + esc(a.id) + '\', this.value)">' + opts + '</select></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+async function updateRsvpStatus(id, status) {
+  toast('Setting RSVP to ' + status + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminUpdateRsvpStatus&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    const row = RSVPS_ALL.find(x => x.id === id); if (row) row.status = status;
+    toast('✓ ' + status, 'ok');
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
 
 // =========================================================
 // OPPORTUNITIES — Jobs / Apps / Partners / Referrals / Users
@@ -881,13 +999,58 @@ function renderUsers() {
   });
   document.getElementById('users-count').textContent = filtered.length + ' / ' + USERS.length + ' users';
   if (!filtered.length) { document.getElementById('users-box').innerHTML = '<p class="loading">No users match.</p>'; return; }
-  let html = '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Role</th><th>Approval</th><th>Phone</th><th>City</th><th>Domain</th><th>Company</th><th>Exp</th><th>CV</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Role</th><th>Approval</th><th>Phone</th><th>City</th><th>Domain</th><th>Company</th><th>Exp</th><th>CV</th><th>Actions</th></tr></thead><tbody>';
   filtered.forEach(u => {
-    const cv = u.cv_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(u.cv_url) + '\')">&#8595;</button>' : '—';
-    html += '<tr><td>' + fmtDate(u.signup_date || u.created_at) + '</td><td class="email">' + esc(u.email || '') + '</td><td>' + esc(u.full_name || '') + '</td><td>' + badge(u.user_type) + '</td><td>' + badge(u.approval_status) + '</td><td>' + esc(u.phone || '') + '</td><td>' + esc(u.current_city || '') + '</td><td>' + esc(u.domain || '') + '</td><td>' + esc(u.current_company || '') + '</td><td>' + esc(u.total_exp || '') + '</td><td>' + cv + '</td></tr>';
+    const cv = u.cv_url
+      ? '<button class="btn small" onclick="downloadCV(\'' + esc(u.cv_url) + '\')" title="Download CV">&#8595;</button>'
+      : '<button class="btn small secondary" onclick="findUserCV(\'' + esc(u.email || '') + '\', this)" title="Locate CV in storage">Find</button>';
+    const _susp = (u.approval_status || '').toLowerCase() === 'suspended';
+    const actions = _susp
+      ? '<button class="btn small" style="background:#16a34a;color:#fff;border-color:#16a34a;" onclick="restoreUser(\'' + esc(u.email || '') + '\')" title="Re-approve + lift blacklist">Restore</button>'
+      : '<button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626;" onclick="removeUser(\'' + esc(u.email || '') + '\')" title="Suspend + blacklist">Remove</button>';
+    html += '<tr><td>' + fmtDate(u.signup_date || u.created_at) + '</td><td class="email">' + esc(u.email || '') + '</td><td>' + esc(u.full_name || '') + '</td><td>' + badge(u.user_type) + '</td><td>' + badge(u.approval_status) + '</td><td>' + esc(u.phone || '') + '</td><td>' + esc(u.current_city || '') + '</td><td>' + esc(u.domain || '') + '</td><td>' + esc(u.current_company || '') + '</td><td>' + esc(u.total_exp || '') + '</td><td>' + cv + '</td><td style="white-space:nowrap;">' + actions + '</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('users-box').innerHTML = html;
+}
+
+// ===== v4 — User management: CV-locate fallback + remove/restore =====
+async function findUserCV(email, btn) {
+  const orig = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserCv&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error === 'no_cv_found' ? 'No CV found in storage for this user.' : j.error);
+    window.open(j.signedUrl || j.url, '_blank');
+    toast('✓ CV located' + (j.legacy ? ' (legacy link)' : ''), 'ok');
+    loadUsers(); // refresh — cv_url is now backfilled, so the direct ↓ button appears next time
+  } catch (err) {
+    toast('CV: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = orig || 'Find'; }
+  }
+}
+
+async function removeUser(email) {
+  if (!confirm('Remove ' + email + ' ?\n\nThis SUSPENDS the account and adds the email + phone to the blacklist (blocks re-registration). Reversible via Restore.')) return;
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminRemoveUser&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Removed (suspended + blacklisted): ' + email, 'ok');
+    loadUsers();
+  } catch (err) { toast('Remove failed: ' + err.message, 'err'); }
+}
+
+async function restoreUser(email) {
+  if (!confirm('Restore ' + email + ' ?\n\nThis re-approves the account and lifts any active blacklist entry.')) return;
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminRestoreUser&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Restored: ' + email, 'ok');
+    loadUsers();
+  } catch (err) { toast('Restore failed: ' + err.message, 'err'); }
 }
 
 // =========================================================
@@ -1215,6 +1378,31 @@ async function bulkPartnerDecision(status) {
   toast('✓ ' + status + ' ' + ok + ' / ' + emails.length + ' partners', ok === emails.length ? 'ok' : 'err');
   clearPartnerSelection();
   loadPartners();
+}
+
+// ===== PWA: installability + offline shell (v5) =====
+let _deferredInstall = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredInstall = e;
+  const b = document.getElementById('install-btn'); if (b) b.style.display = '';
+});
+window.addEventListener('appinstalled', () => {
+  _deferredInstall = null;
+  const b = document.getElementById('install-btn'); if (b) b.style.display = 'none';
+  try { toast('\u2713 Installed to your home screen', 'ok'); } catch (_) {}
+});
+async function promptInstall() {
+  if (!_deferredInstall) { try { toast('Use your browser menu \u2192 "Add to Home screen".'); } catch(_){} return; }
+  _deferredInstall.prompt();
+  try { await _deferredInstall.userChoice; } catch (_) {}
+  _deferredInstall = null;
+  const b = document.getElementById('install-btn'); if (b) b.style.display = 'none';
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./admin-sw.js').catch((err) => console.warn('SW register failed', err));
+  });
 }
 </script>
 </body>
