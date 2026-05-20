@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.1-agreement
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.2-cta
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -326,7 +326,8 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   <div class="container">
     <div class="section-intro">
       <h2>Active Opportunities</h2>
-      <p>Live listings from verified Global Capability Centres &middot; <span id="jobs-count-pill" style="color:var(--gold);font-weight:700;">loading&hellip;</span></p>
+      <p>Live listings from verified Global Capability Centres.</p>
+      <p id="jobs-cta" onclick="openLoginModal()" style="margin-top:8px;color:var(--brand,#ea580c);font-weight:700;cursor:pointer;display:inline-block;">&#128274; Sign in to unlock exclusive opportunities curated for you &rarr;</p>
     </div>
 
     <div class="filter-bar">
@@ -751,7 +752,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.1-agreement';
+const BUILD = 'opps-v2-2026-05-20-v8.2-cta';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -909,14 +910,17 @@ function setSignedInChrome(signedIn) {
   const hero = document.getElementById('hero-section');
   const tiles = document.getElementById('get-started');
   const h1 = document.getElementById('hero-h1');
+  const cta = document.getElementById('jobs-cta');
   if (signedIn) {
     hero.classList.add('is-signedin');
     if (h1) h1.textContent = 'Welcome back';
     tiles.style.display = 'none';
+    if (cta) cta.style.display = 'none';
   } else {
     hero.classList.remove('is-signedin');
     if (h1) h1.textContent = 'Your Career, Elevated';
     tiles.style.display = '';
+    if (cta) cta.style.display = 'inline-block';
   }
 }
 
@@ -1172,7 +1176,6 @@ async function loadJobs() {
       JOB_LIST.map(jr => '<option value="' + esc(jr.id) + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ' — ' + esc(jr.title) + (jr.location ? ' · ' + esc(jr.location) : '') + '</option>').join('');
   } catch (err) {
     document.getElementById('job-list').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--red);">Failed to load jobs: ' + esc(err.message) + '</p>';
-    document.getElementById('jobs-count-pill').textContent = 'error';
   }
 }
 
@@ -1237,8 +1240,7 @@ function renderJobs() {
   const el = document.getElementById('job-list');
   if (!el) return;
   const filtered = applyFilters(JOB_LIST);
-  document.getElementById('jobs-count-pill').textContent =
-    (filtered.length === JOB_LIST.length ? JOB_LIST.length : (filtered.length + ' of ' + JOB_LIST.length)) + ' open roles';
+  // role count intentionally hidden — replaced by a sign-in CTA (jobs-cta)
   if (!filtered.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No roles match the current filters. Try clearing them.</p>'; return; }
   el.innerHTML = filtered.map(j => renderJobCard(j)).join('');
 }
