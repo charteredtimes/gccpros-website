@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.13-googlepwd
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.14-dualview
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -792,7 +792,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.13-googlepwd';
+const BUILD = 'opps-v2-2026-05-20-v8.14-dualview';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -1250,7 +1250,7 @@ async function loadProfileAndDashboard() {
     console.log('[role] using prefetched status from Google sign-in');
   } else {
     try {
-      const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now(), { signal: ctrl.signal });
+      const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + (loginRolePref ? '&type=' + encodeURIComponent(loginRolePref) : '') + '&_t=' + Date.now(), { signal: ctrl.signal });
       sj = await sr.json();
     } catch (err) {
       console.warn('[role] checkUserStatus failed:', err && err.message);
