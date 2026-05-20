@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-19-v1
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v2-launch
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -13,6 +13,7 @@
 <title>GCCPROs Admin Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 :root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#F59E0B; --blue:#1E40AF; --purple:#7C3AED; }
 * { box-sizing:border-box; margin:0; padding:0; }
@@ -96,6 +97,34 @@ td.actions { white-space:nowrap; }
 .grant-form input, .grant-form select { padding:7px 12px; border:1px solid var(--border); border-radius:4px; font-size:13px; }
 .grant-form input[type="email"] { min-width:240px; }
 .grant-form input[type="number"] { width:120px; }
+.viewtoggle { display:inline-flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+.viewtoggle button { padding:6px 14px; background:#fff; border:none; cursor:pointer; font-size:12.5px; font-family:inherit; color:var(--muted); }
+.viewtoggle button.active { background:var(--gold); color:#fff; }
+.kanban { display:flex; gap:12px; overflow-x:auto; padding-bottom:12px; }
+.kan-col { flex:0 0 250px; background:var(--cream); border-radius:8px; padding:10px; min-height:220px; }
+.kan-col.dragover { outline:2px dashed var(--gold); outline-offset:-4px; background:#EFF6FF; }
+.kan-col h4 { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:8px; display:flex; justify-content:space-between; }
+.kan-col h4 .cnt { background:#fff; border-radius:10px; padding:1px 8px; font-size:10px; }
+.kan-card { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px; cursor:grab; font-size:12px; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+.kan-card:active { cursor:grabbing; }
+.kan-card.dragging { opacity:0.4; }
+.kan-card .kc-name { font-weight:700; font-size:13px; }
+.kan-card .kc-meta { color:var(--muted); font-size:11px; margin-top:2px; }
+.kan-card .kc-actions { margin-top:6px; display:flex; gap:4px; }
+.email-menu { position:relative; display:inline-block; }
+.email-menu-pop { position:absolute; right:0; top:100%; background:#fff; border:1px solid var(--border); border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,0.12); z-index:50; min-width:190px; display:none; }
+.email-menu-pop.open { display:block; }
+.email-menu-pop button { display:block; width:100%; text-align:left; padding:8px 12px; background:none; border:none; cursor:pointer; font-size:12.5px; font-family:inherit; }
+.email-menu-pop button:hover { background:var(--cream); }
+.bulkbar { position:fixed; bottom:0; left:0; right:0; background:var(--ink); color:#fff; padding:12px 24px; display:none; align-items:center; gap:14px; z-index:200; box-shadow:0 -4px 18px rgba(0,0,0,0.2); }
+.bulkbar.show { display:flex; }
+.bulkbar .count { font-weight:700; }
+.cb-cell { width:30px; text-align:center; }
+.progress-modal { position:fixed; inset:0; background:rgba(29,34,38,0.6); display:none; align-items:center; justify-content:center; z-index:300; }
+.progress-modal.open { display:flex; }
+.progress-box { background:#fff; border-radius:8px; padding:28px 32px; max-width:420px; width:100%; text-align:center; }
+.progress-bar-wrap { background:var(--border); border-radius:8px; height:10px; margin:14px 0; overflow:hidden; }
+.progress-bar { background:var(--gold); height:100%; width:0%; transition:width 0.2s; }
 </style>
 </head>
 <body>
@@ -225,6 +254,7 @@ td.actions { white-space:nowrap; }
           <input type="search" id="f-apps-q" placeholder="&#128269; Search candidate / company / job" oninput="renderApps()">
           <button class="btn" onclick="loadApps()">&#8635; Refresh</button>
           <button class="btn brand-orange" onclick="exportXLSXFullJoin('applications')" title="Joins applications + users + jobs + referrals into one row each. All candidate data in one file. Blank columns auto-pruned.">&#128202; Export FULL Excel (joined)</button>
+          <span class="viewtoggle"><button id="apps-view-table" class="active" onclick="setAppsView('table')">Table</button><button id="apps-view-kanban" onclick="setAppsView('kanban')">Kanban</button></span>
           <span class="muted" id="apps-count"></span>
           <span id="apps-jobfilter" style="display:none;background:#FFF4E5;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
             Filtered to job: <span id="apps-jobfilter-label"></span>
@@ -232,6 +262,7 @@ td.actions { white-space:nowrap; }
           </span>
         </div>
         <div id="apps-box"><p class="loading">Click Refresh to load.</p></div>
+        <div id="apps-kanban" style="display:none;"></div>
       </div>
     </div>
 
@@ -357,6 +388,23 @@ td.actions { white-space:nowrap; }
         <div id="council-box"><p class="loading">Click Refresh to load.</p></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Bulk action bar (Partners) -->
+<div class="bulkbar" id="bulkbar">
+  <span class="count" id="bulk-count">0 selected</span>
+  <button class="btn" style="background:var(--green);" onclick="bulkPartnerDecision('Accepted')">&#10003; Approve selected</button>
+  <button class="btn danger" onclick="bulkPartnerDecision('Rejected')">&#10007; Reject selected</button>
+  <button class="btn secondary" onclick="clearPartnerSelection()">Clear</button>
+</div>
+
+<!-- Progress modal (CV ZIP) -->
+<div class="progress-modal" id="progress-modal">
+  <div class="progress-box">
+    <h3 id="progress-title" style="font-family:'Playfair Display',serif;">Working…</h3>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <p class="muted" id="progress-msg"></p>
   </div>
 </div>
 
@@ -582,7 +630,7 @@ function renderJobs() {
   filtered.forEach(j => {
     const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
     const apps = (j.applications_count > 0)
-      ? '<button class="btn small" onclick="viewJobApplicants(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\', \'' + esc((j.title || '').replace(/'/g, "\\'")) + '\')">View ' + j.applications_count + ' &rarr;</button>'
+      ? '<button class="btn small" onclick="viewJobApplicants(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\', \'' + esc((j.title || '').replace(/'/g, "\\'")) + '\')">View ' + j.applications_count + ' &rarr;</button> <button class="btn small secondary" onclick="downloadJobCVsZip(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\')" title="Download all applicant CVs for this job as a ZIP">&#128230; CVs</button>'
       : '<span class="muted">0</span>';
     html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + fmtDate(j.posted_at) + '</td></tr>';
   });
@@ -644,6 +692,7 @@ function renderApps() {
     html += '<tr><td>' + fmtDate(a.applied_at) + '</td><td><strong>' + esc(_derivName(a)) + '</strong></td><td class="email">' + esc(a.applicant_email || '') + '</td><td class="email" title="' + esc(a.job_id || '') + '">' + _jobLabel(a.job_id) + '</td><td>' + esc(a.contact_phone || '') + '</td><td>' + esc(a.current_city || '') + '</td><td>' + esc(a.total_experience || '') + '</td><td>' + esc(a.current_ctc_inr || '') + '</td><td>' + esc(a.expected_ctc_inr || '') + '</td><td>' + esc(a.notice_period_days || '') + '</td><td>' + esc(a.work_mode_preference || '') + '</td><td>' + badge(a.application_status) + '</td><td>' + cv + '</td>';
     html += '<td style="white-space:nowrap;"><select class="btn small" onchange="if(this.value){setAppStatus(\'' + esc(a.id) + '\', this.value); this.value=\'\';}" style="padding:4px 6px;font-size:11px;">';
     html += '<option value="">Set status…</option><option value="shortlisted">→ Shortlisted</option><option value="interview">→ Interview</option><option value="offer">→ Offer</option><option value="placed">→ Placed (pays referrer)</option><option value="rejected">→ Rejected</option><option value="withdrawn">→ Withdrawn</option></select>';
+    html += '<button class="btn small secondary" onclick="openEmailMenuFor(\'' + esc(a.id) + '\', event)" title="Email candidate (template)">&#9993;</button>';
     html += '<button class="btn small secondary" onclick="toggleAppDetail(' + i + ')" title="Show all fields">&#8862;</button></td></tr>';
     html += '<tr class="detail-row" id="app-detail-' + i + '" style="display:none;"><td colspan="14"><div class="detail-grid">';
     html += '<div><label>Designation</label><strong>' + esc(a.current_designation || '') + '</strong></div>';
@@ -713,9 +762,9 @@ function renderPartners() {
   const accepted = filtered.filter(p => (p.partner_status||'').toLowerCase()==='accepted').length;
   const kycSubmitted = filtered.filter(p => p.kyc_status==='submitted').length;
   let html = '<div class="kpi-row"><div class="kpi"><div class="kpi-n">' + pending + '</div><div class="kpi-l">Pending review</div></div><div class="kpi"><div class="kpi-n">' + accepted + '</div><div class="kpi-l">Accepted</div></div><div class="kpi"><div class="kpi-n">' + kycSubmitted + '</div><div class="kpi-l">KYC submitted</div></div><div class="kpi"><div class="kpi-n">' + PARTNERS.reduce((a,p) => a + (p.total_referrals||0), 0) + '</div><div class="kpi-l">Total referrals</div></div></div>';
-  html += '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Company</th><th>Domain</th><th>Exp</th><th>Status</th><th>KYC</th><th>Refs</th><th>Placed</th><th>Balance</th><th>Action</th></tr></thead><tbody>';
+  html += '<table><thead><tr><th class="cb-cell"><input type="checkbox" id="pt-select-all" onclick="togglePartnerSelectAll(this)"></th><th>Signup</th><th>Email</th><th>Name</th><th>Company</th><th>Domain</th><th>Exp</th><th>Status</th><th>KYC</th><th>Refs</th><th>Placed</th><th>Balance</th><th>Action</th></tr></thead><tbody>';
   filtered.forEach(p => {
-    html += '<tr><td>' + fmtDate(p.signup_date || p.created_at) + '</td><td class="email">' + esc(p.email || '') + '</td><td>' + esc(p.full_name || '') + '</td><td>' + esc(p.current_company || '') + '</td><td>' + esc(p.primary_domain || '') + '</td><td>' + esc(p.total_exp || '') + 'y</td><td>' + badge(p.partner_status || 'Pending') + '</td><td>' + badge(p.kyc_status || 'not_started') + '</td><td>' + (p.total_referrals || 0) + '</td><td>' + (p.total_placements || 0) + '</td><td>' + (fmtINR(p.earnings_balance_inr) || '—') + '</td><td class="actions">';
+    html += '<tr><td class="cb-cell"><input type="checkbox" class="pt-cb" value="' + esc(p.email) + '" data-status="' + esc(p.partner_status||'') + '" onclick="updateBulkBar()"></td><td>' + fmtDate(p.signup_date || p.created_at) + '</td><td class="email">' + esc(p.email || '') + '</td><td>' + esc(p.full_name || '') + '</td><td>' + esc(p.current_company || '') + '</td><td>' + esc(p.primary_domain || '') + '</td><td>' + esc(p.total_exp || '') + 'y</td><td>' + badge(p.partner_status || 'Pending') + '</td><td>' + badge(p.kyc_status || 'not_started') + '</td><td>' + (p.total_referrals || 0) + '</td><td>' + (p.total_placements || 0) + '</td><td>' + (fmtINR(p.earnings_balance_inr) || '—') + '</td><td class="actions">';
     if ((p.partner_status||'').toLowerCase()==='pending') {
       html += '<button class="btn small" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Accepted\')">Approve</button> <button class="btn small danger" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Rejected\')">Reject</button>';
     } else {
@@ -909,15 +958,11 @@ async function exportXLSXFullJoin(name) {
   toast('Composing ' + rows.length + ' rows…');
   const L = _buildLookups();
   const composed = rows.map(r => name === 'applications' ? _composeApplicationRow(r, L) : _composeReferralRow(r, L));
-  // Union of all keys
   const colSet = new Set();
   composed.forEach(c => Object.keys(c).forEach(k => colSet.add(k)));
   let cols = Array.from(colSet);
-  // PRUNE 100%-blank columns (the key fix)
-  cols = cols.filter(c => composed.some(r => {
-    const v = r[c];
-    return v != null && v !== '' && v !== '[object Object]';
-  }));
+  // PRUNE 100%-blank columns
+  cols = cols.filter(c => composed.some(r => { const v = r[c]; return v != null && v !== '' && v !== '[object Object]'; }));
   const headerRow = cols;
   const dataRows = composed.map(row => cols.map(c => _cellValue(row[c], c)));
   const ws = XLSX.utils.aoa_to_sheet([headerRow]);
@@ -929,10 +974,7 @@ async function exportXLSXFullJoin(name) {
     dataRows.forEach(row => { const cell = row[i]; if (cell && cell.v != null) { const s = cell.v instanceof Date ? 'YYYY-MM-DD HH:MM' : String(cell.v); if (s.length > maxLen) maxLen = s.length; } });
     return { wch: Math.min(60, Math.max(14, maxLen + 2)) };
   });
-  for (let c = 0; c < cols.length; c++) {
-    const addr = XLSX.utils.encode_cell({ r: 0, c });
-    if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } };
-  }
+  for (let c = 0; c < cols.length; c++) { const addr = XLSX.utils.encode_cell({ r: 0, c }); if (ws[addr]) ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'F8F7F4' } } }; }
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, name === 'applications' ? 'Applications FULL' : 'Referrals FULL');
   XLSX.writeFile(wb, 'gccpros-' + name + '-FULL-' + new Date().toISOString().slice(0,10) + '.xlsx');
@@ -941,11 +983,9 @@ async function exportXLSXFullJoin(name) {
 function exportXLSX(name, rows) {
   if (!rows || !rows.length) { toast('No rows.', 'err'); return; }
   if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
-  // Union of all keys
   const colSet = new Set();
   rows.forEach(r => Object.keys(r).forEach(k => colSet.add(k)));
   let cols = Array.from(colSet);
-  // Prune 100% blank
   cols = cols.filter(c => rows.some(r => { const v = r[c]; return v != null && v !== '' && v !== '[object Object]'; }));
   const headerRow = cols.map(_titleCase);
   const dataRows = rows.map(r => cols.map(c => _cellValue(r[c], _titleCase(c))));
@@ -957,6 +997,204 @@ function exportXLSX(name, rows) {
   XLSX.utils.book_append_sheet(wb, ws, name.charAt(0).toUpperCase() + name.slice(1));
   XLSX.writeFile(wb, 'gccpros-' + name + '-' + new Date().toISOString().slice(0,10) + '.xlsx');
   toast('✓ Exported ' + rows.length + ' rows × ' + cols.length + ' columns', 'ok');
+}
+
+// ===== v2 FEATURE 1 — Application Kanban view (drag-drop) =====
+let APPS_VIEW = 'table';
+const KANBAN_COLS = ['submitted','shortlisted','interview','offer','placed','rejected'];
+function setAppsView(view) {
+  APPS_VIEW = view;
+  document.getElementById('apps-view-table').classList.toggle('active', view === 'table');
+  document.getElementById('apps-view-kanban').classList.toggle('active', view === 'kanban');
+  document.getElementById('apps-box').style.display = view === 'table' ? '' : 'none';
+  document.getElementById('apps-kanban').style.display = view === 'kanban' ? '' : 'none';
+  if (view === 'kanban') renderKanban();
+}
+function renderKanban() {
+  const wrap = document.getElementById('apps-kanban');
+  const q = (document.getElementById('f-apps-q').value || '').toLowerCase();
+  const rows = APPS.filter(a => !q || [a.applicant_email, a.current_company, a.job_id].join(' ').toLowerCase().includes(q));
+  const byStatus = {};
+  KANBAN_COLS.forEach(s => byStatus[s] = []);
+  rows.forEach(a => { const s = (a.application_status || 'submitted').toLowerCase(); (byStatus[s] || (byStatus[s] = [])).push(a); });
+  let html = '<div class="kanban">';
+  KANBAN_COLS.forEach(col => {
+    const cards = byStatus[col] || [];
+    html += '<div class="kan-col" data-status="' + col + '" ondragover="kanDragOver(event)" ondragleave="kanDragLeave(event)" ondrop="kanDrop(event)">';
+    html += '<h4>' + col.charAt(0).toUpperCase() + col.slice(1) + ' <span class="cnt">' + cards.length + '</span></h4>';
+    cards.forEach(a => {
+      const cv = a.cv_storage_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(a.cv_storage_url) + '\')">CV</button>' : '';
+      html += '<div class="kan-card" draggable="true" data-id="' + esc(a.id) + '" ondragstart="kanDragStart(event)" ondragend="kanDragEnd(event)">';
+      html += '<div class="kc-name">' + esc(_derivName(a)) + '</div>';
+      html += '<div class="kc-meta">' + esc(a.applicant_email || '') + '</div>';
+      html += '<div class="kc-meta">' + _jobLabel(a.job_id) + '</div>';
+      if (a.expected_ctc_inr) html += '<div class="kc-meta">Exp CTC: ' + esc(a.expected_ctc_inr) + '</div>';
+      html += '<div class="kc-actions">' + cv + ' <button class="btn small secondary" onclick="openEmailMenuFor(\'' + esc(a.id) + '\', event)">&#9993;</button></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+let _kanDragId = null;
+function kanDragStart(e) { _kanDragId = e.target.getAttribute('data-id'); e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function kanDragEnd(e) { e.target.classList.remove('dragging'); }
+function kanDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+function kanDragLeave(e) { e.currentTarget.classList.remove('dragover'); }
+async function kanDrop(e) {
+  e.preventDefault(); e.currentTarget.classList.remove('dragover');
+  const newStatus = e.currentTarget.getAttribute('data-status');
+  if (!_kanDragId || !newStatus) return;
+  const id = _kanDragId; _kanDragId = null;
+  const app = APPS.find(a => a.id === id);
+  if (app) app.application_status = newStatus;
+  renderKanban();
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminAppDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(newStatus));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Moved to ' + newStatus, 'ok');
+  } catch (err) { toast('Failed: ' + err.message + ' (reloading)', 'err'); loadApps(); }
+}
+
+// ===== v2 FEATURE 2 — One-click email templates =====
+const EMAIL_TEMPLATES = {
+  shortlist: {
+    label: '✓ Shortlisted',
+    subject: (a, job) => 'You have been shortlisted' + (job ? ' for ' + job.title : '') + ' — GCCPROs',
+    body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nGood news — your application' + (job ? ' for ' + job.title + (job.company ? ' at ' + job.company : '') : '') + ' has been shortlisted. Our team would like to take it forward.\n\nWe will be in touch shortly with next steps. If you have any questions, just reply to this email.\n\nBest regards,\nGCCPROs Talent Team\nwww.gccpros.com'
+  },
+  interview: {
+    label: '📅 Interview invite',
+    subject: (a, job) => 'Interview invitation' + (job ? ' — ' + job.title : '') + ' — GCCPROs',
+    body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nWe would like to invite you for an interview' + (job ? ' for the ' + job.title + (job.company ? ' role at ' + job.company : '') : '') + '.\n\nPlease reply with your availability over the next few days and we will coordinate a slot with the hiring team.\n\nLooking forward to speaking with you.\n\nBest regards,\nGCCPROs Talent Team\nwww.gccpros.com'
+  },
+  regret: {
+    label: '✕ Regret / not selected',
+    subject: (a, job) => 'Update on your application' + (job ? ' — ' + job.title : '') + ' — GCCPROs',
+    body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nThank you for your interest' + (job ? ' in the ' + job.title + ' role' + (job.company ? ' at ' + job.company : '') : '') + ' and for the time you invested in your application.\n\nAfter careful consideration, we have decided to proceed with other candidates whose profiles more closely match the current requirements. This is not a reflection of your capabilities, and we encourage you to apply for future roles that fit your experience.\n\nWe will keep your profile on file and reach out if a suitable opportunity arises.\n\nWith appreciation,\nGCCPROs Talent Team\nwww.gccpros.com'
+  }
+};
+function openEmailMenuFor(appId, ev) {
+  if (ev) ev.stopPropagation();
+  const a = APPS.find(x => x.id === appId);
+  if (!a) return;
+  const email = a.applicant_email || a.contact_email;
+  if (!email) { toast('No email on this application.', 'err'); return; }
+  const job = JOBS.find(j => j.id === a.job_id) || null;
+  let pop = document.getElementById('_email-pop');
+  if (pop) pop.remove();
+  pop = document.createElement('div');
+  pop.id = '_email-pop';
+  pop.className = 'email-menu-pop open';
+  pop.style.position = 'fixed';
+  pop.style.zIndex = '400';
+  const rect = ev ? ev.target.getBoundingClientRect() : { left: 200, bottom: 200 };
+  pop.style.left = Math.min(rect.left, window.innerWidth - 210) + 'px';
+  pop.style.top = (rect.bottom + 4) + 'px';
+  Object.keys(EMAIL_TEMPLATES).forEach(key => {
+    const t = EMAIL_TEMPLATES[key];
+    const btn = document.createElement('button');
+    btn.textContent = t.label;
+    btn.onclick = () => {
+      const mailto = 'mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(t.subject(a, job)) + '&body=' + encodeURIComponent(t.body(a, job));
+      window.location.href = mailto;
+      pop.remove();
+    };
+    pop.appendChild(btn);
+  });
+  document.body.appendChild(pop);
+  setTimeout(() => { document.addEventListener('click', _closeEmailPop, { once: true }); }, 50);
+}
+function _closeEmailPop() { const p = document.getElementById('_email-pop'); if (p) p.remove(); }
+
+// ===== v2 FEATURE 3 — Bulk CV ZIP per job =====
+function _showProgress(title) {
+  document.getElementById('progress-title').textContent = title;
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('progress-msg').textContent = '';
+  document.getElementById('progress-modal').classList.add('open');
+}
+function _setProgress(pct, msg) {
+  document.getElementById('progress-bar').style.width = pct + '%';
+  if (msg) document.getElementById('progress-msg').textContent = msg;
+}
+function _hideProgress() { document.getElementById('progress-modal').classList.remove('open'); }
+async function downloadJobCVsZip(jobId, jobCode) {
+  if (typeof JSZip === 'undefined') { toast('ZIP library still loading — try again in 2s.', 'err'); return; }
+  _showProgress('Preparing CV archive for ' + jobCode);
+  try {
+    _setProgress(5, 'Loading applications…');
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminListApplications&jobId=' + encodeURIComponent(jobId));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    const apps = (j.applications || j.rows || []).filter(a => a.cv_storage_url);
+    if (!apps.length) { _hideProgress(); toast('No CVs found for this job.', 'err'); return; }
+    const zip = new JSZip();
+    let done = 0, ok = 0;
+    for (const a of apps) {
+      done++;
+      _setProgress(5 + Math.round((done / apps.length) * 90), 'Fetching ' + done + ' / ' + apps.length + ' — ' + _derivName(a));
+      try {
+        const sr = await adminFetch(SCRIPT_URL + '?action=oppsAdminCvSignedUrl&path=' + encodeURIComponent(a.cv_storage_url));
+        const sj = await sr.json();
+        const url = sj.url || sj.signedUrl;
+        if (!url) continue;
+        const fileResp = await fetch(url);
+        if (!fileResp.ok) continue;
+        const blob = await fileResp.blob();
+        const ext = (a.cv_filename || a.cv_storage_url).split('.').pop().split('?')[0] || 'pdf';
+        const safeName = _derivName(a).replace(/[^a-zA-Z0-9]+/g, '_');
+        const status = (a.application_status || 'submitted');
+        zip.file(jobCode + '__' + safeName + '__' + status + '.' + ext, blob);
+        ok++;
+      } catch (e) { console.warn('CV fetch failed for', a.applicant_email, e); }
+    }
+    if (!ok) { _hideProgress(); toast('Could not fetch any CVs (check Storage signed-URL access).', 'err'); return; }
+    _setProgress(98, 'Building ZIP…');
+    const content = await zip.generateAsync({ type: 'blob' });
+    const a2 = document.createElement('a');
+    a2.href = URL.createObjectURL(content);
+    a2.download = 'gccpros-CVs-' + jobCode + '-' + new Date().toISOString().slice(0,10) + '.zip';
+    document.body.appendChild(a2); a2.click(); a2.remove();
+    _hideProgress();
+    toast('✓ Downloaded ' + ok + ' CVs for ' + jobCode, 'ok');
+  } catch (err) { _hideProgress(); toast('ZIP failed: ' + err.message, 'err'); }
+}
+
+// ===== v2 FEATURE 4 — Bulk approve/reject Partners =====
+function togglePartnerSelectAll(cb) { document.querySelectorAll('.pt-cb').forEach(c => { c.checked = cb.checked; }); updateBulkBar(); }
+function _selectedPartnerEmails() { return Array.from(document.querySelectorAll('.pt-cb:checked')).map(c => c.value); }
+function updateBulkBar() {
+  const sel = _selectedPartnerEmails();
+  document.getElementById('bulk-count').textContent = sel.length + ' selected';
+  document.getElementById('bulkbar').classList.toggle('show', sel.length > 0);
+}
+function clearPartnerSelection() {
+  document.querySelectorAll('.pt-cb').forEach(c => { c.checked = false; });
+  const sa = document.getElementById('pt-select-all'); if (sa) sa.checked = false;
+  updateBulkBar();
+}
+async function bulkPartnerDecision(status) {
+  const emails = _selectedPartnerEmails();
+  if (!emails.length) return;
+  if (!confirm(status + ' ' + emails.length + ' partner(s)?')) return;
+  _showProgress(status + ' ' + emails.length + ' partners');
+  let done = 0, ok = 0;
+  for (const email of emails) {
+    done++;
+    _setProgress(Math.round((done / emails.length) * 100), email);
+    try {
+      const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
+      const j = await r.json();
+      if (!j.error) ok++;
+    } catch (e) { console.warn('bulk decision failed for', email, e); }
+  }
+  _hideProgress();
+  toast('✓ ' + status + ' ' + ok + ' / ' + emails.length + ' partners', ok === emails.length ? 'ok' : 'err');
+  clearPartnerSelection();
+  loadPartners();
 }
 </script>
 </body>
