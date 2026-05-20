@@ -1489,7 +1489,7 @@ body.rsvp-modal-locked {
 
 <script>
 (function(){
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX307EtV6k2t1-sFuutjZrCIhIPZg5p73GDobn034LKJttOinjwuZaWjiNoVZSvoGoxQ/exec';
+  var APPS_SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api?action=eventRsvp';
   var form = document.getElementById('rsvpHydForm');
   if (!form) return;
   var btn = document.getElementById('rsvpSubmitBtn');
@@ -1821,6 +1821,7 @@ body.rsvp-modal-locked {
       phoneRaw:           val.phoneRaw,
       linkedin:           val.linkedin,
       officeAddress:      val.officeAddress,
+      headcountHyd:       val.headcountHyderabad,
       headcountHyderabad: val.headcountHyderabad,
       headcountIndia:     val.headcountIndia,
       domains:            domains,
@@ -1843,7 +1844,7 @@ body.rsvp-modal-locked {
     })
     .then(function(r){ return r.json().catch(function(){ return { success:false, error:'Bad server response' }; }); })
     .then(function(res){
-      if (res && res.success) {
+      if (res && (res.status === 'ok' || res.success)) {
         /* Hide form, show the thank-you panel with the submitter's first name. */
         var firstName = (val.fullName || '').split(/\s+/)[0] || '';
         var nameSpan = document.getElementById('rsvpThankYouName');
@@ -2201,7 +2202,7 @@ body.rsvp-modal-locked {
 <!-- ── GCC SUMMIT RSVP FORM · CONTROLLER ────────────────── -->
 <script>
 (function(){
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX307EtV6k2t1-sFuutjZrCIhIPZg5p73GDobn034LKJttOinjwuZaWjiNoVZSvoGoxQ/exec';
+  var APPS_SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api?action=eventRsvp';
   var form = document.getElementById('rsvpSummitForm');
   if (!form) return;
   var btn = document.getElementById('rsvpSummitSubmitBtn');
@@ -2483,6 +2484,7 @@ body.rsvp-modal-locked {
       phoneRaw:           val.phoneRaw,
       linkedin:           val.linkedin,
       officeAddress:      val.officeAddress,
+      headcountHyd:       val.headcountHyderabad,
       headcountHyderabad: val.headcountHyderabad,
       headcountIndia:     val.headcountIndia,
       domains:            domains,
@@ -2504,7 +2506,7 @@ body.rsvp-modal-locked {
     })
     .then(function(r){ return r.json().catch(function(){ return { success:false, error:'Bad server response' }; }); })
     .then(function(res){
-      if (res && res.success) {
+      if (res && (res.status === 'ok' || res.success)) {
         var firstName = (val.fullName || '').split(/\s+/)[0] || '';
         var nameSpan = document.getElementById('rsvpSummitThankYouName');
         if (nameSpan) nameSpan.textContent = firstName ? (', ' + firstName) : '';
