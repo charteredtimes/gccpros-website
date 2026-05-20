@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.15-prod
+<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.16-prod
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -22,13 +22,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="index,follow">
 <meta name="description" content="GCCPROs Opportunities — curated GCC jobs, referrals, and a vetted partner network for India’s Global Capability Centers. Sign in to apply or refer talent.">
-<link rel="canonical" href="https://www.gccpros.com/opportunities.html">
+<link rel="canonical" href="https://www.gccpros.com/opportunities">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E40AF'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' text-anchor='middle' fill='white'%3EG%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GCCPROs">
 <meta property="og:title" content="Opportunities | GCCPROs">
 <meta property="og:description" content="Curated GCC jobs, referrals, and a vetted partner network for India’s Global Capability Centers.">
-<meta property="og:url" content="https://www.gccpros.com/opportunities.html">
+<meta property="og:url" content="https://www.gccpros.com/opportunities">
 <meta name="twitter:card" content="summary">
 <title>Opportunities | GCCPROs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,8 +63,6 @@ html, body { font-family: 'Inter', -apple-system, sans-serif; background: var(--
 a { color: var(--gold); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.test-banner { background: #FFF4E5; border-bottom: 2px solid var(--brand-orange); padding: 8px 20px; font-size: 12px; text-align: center; color: var(--ink); }
-.test-banner b { color: var(--brand-orange); letter-spacing: 0.5px; }
 .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 0; position: sticky; top: 0; z-index: 100; }
 .topbar-inner { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .brand { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--ink); font-weight: 700; }
@@ -96,6 +94,12 @@ a:hover { text-decoration: underline; }
 .hero-subtitle { font-size: 15px; max-width: 760px; margin: 0 auto 24px; color: rgba(255,255,255,0.85); line-height: 1.65; }
 .hero-cta { background: var(--brand-orange); color: #fff; border: none; padding: 14px 32px; font-size: 15px; font-weight: 700; border-radius: 4px; cursor: pointer; font-family: inherit; }
 .hero-cta:hover { background: var(--brand-orange-dark); }
+.hero-eyebrow { font-size: 11px; letter-spacing: 3px; font-weight: 700; color: var(--gold-light); text-transform: uppercase; margin-bottom: 14px; }
+.hero.is-signedin .hero-eyebrow { display: none; }
+.trust-strip { background: var(--white); border-bottom: 1px solid var(--border); padding: 15px 0; }
+.trust-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 34px; }
+.trust-item { font-size: 13px; color: var(--ink); font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+.trust-item span { color: var(--gold); font-weight: 800; font-size: 14px; }
 .hero.is-signedin { padding: 32px 0 38px; }
 .hero.is-signedin h1 { font-size: 32px; }
 .hero.is-signedin .hero-tagline, .hero.is-signedin .hero-subtitle, .hero.is-signedin .hero-cta { display: none; }
@@ -259,9 +263,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 </head>
 <body>
 
-<div class="test-banner">
-  <b>v2 TEST PAGE</b> · runs on the new Supabase backend in parallel to the live <a href="/opportunities.html">opportunities.html</a> (Apps Script).
-</div>
+
 
 <header class="topbar">
   <div class="container topbar-inner">
@@ -287,10 +289,20 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <section class="hero" id="hero-section">
   <div class="container">
+    <div class="hero-eyebrow">The GCC Talent Network</div>
     <h1 id="hero-h1">Your Career, Elevated</h1>
     <p class="hero-tagline">By the GCC Community. For the GCC Community.</p>
     <p class="hero-subtitle">A community-led talent service for India's Global Capability Centres &mdash; built by GCC insiders, powered by trust, and delivering a very different quality of hire than the traditional talent model.</p>
     <button class="hero-cta" id="hero-cta" onclick="document.getElementById('get-started').scrollIntoView({behavior:'smooth'})">Start Your Journey</button>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="container trust-row">
+    <div class="trust-item"><span>✓</span> Verified Global Capability Centres</div>
+    <div class="trust-item"><span>✓</span> Identity-protected referrals</div>
+    <div class="trust-item"><span>✓</span> Curated, not crowdsourced</div>
+    <div class="trust-item"><span>✓</span> Built by GCC insiders</div>
   </div>
 </section>
 
@@ -801,7 +813,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-2026-05-20-v8.15-prod';
+const BUILD = 'opps-2026-05-20-v8.16-prod';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
