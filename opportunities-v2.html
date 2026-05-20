@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-19-pm-grade-v6.1
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v7-separated-models
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -247,7 +247,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <button class="btn secondary" id="signin-btn" onclick="openLoginModal()">Sign in</button>
       <span class="user-pill" id="user-pill" style="display:none;"></span>
       <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
-      <button class="btn secondary" id="role-debug-btn" onclick="alert('Role debug:\n\n' + JSON.stringify({CURRENT_EMAIL,CURRENT_USER_TYPE,CURRENT_ACTIVE_VIEW,CURRENT_APPROVAL,CURRENT_PRIMARY_DOMAIN,partnerStatus:CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus,debug:CURRENT_PROFILE && CURRENT_PROFILE.debug}, null, 2))" style="display:none;font-size:10px;padding:6px 8px;" title="Show role detection debug info">🔍</button>
+
     </div>
   </div>
 </header>
@@ -727,7 +727,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-19-pm-grade-v6.1';
+const BUILD = 'opps-v2-2026-05-20-v7-separated-models';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -901,7 +901,6 @@ firebase.auth().onAuthStateChanged(async function(user) {
     CURRENT_EMAIL = (user.email || '').toLowerCase();
     document.getElementById('signin-btn').style.display = 'none';
     document.getElementById('signout-btn').style.display = '';
-    document.getElementById('role-debug-btn').style.display = '';
     const pill = document.getElementById('user-pill');
     pill.style.display = '';
     pill.innerHTML = esc(CURRENT_EMAIL) + '<span class="role-chip" id="role-chip-pill">&hellip;</span>';
@@ -914,7 +913,6 @@ firebase.auth().onAuthStateChanged(async function(user) {
     ACTIVE_DOMAIN = '';
     document.getElementById('signin-btn').style.display = '';
     document.getElementById('signout-btn').style.display = 'none';
-    document.getElementById('role-debug-btn').style.display = 'none';
     document.getElementById('user-pill').style.display = 'none';
     document.getElementById('dashboard-section').style.display = 'none';
     setSignedInChrome(false);
@@ -1105,38 +1103,23 @@ async function loadProfileAndDashboard() {
     CURRENT_PROFILE = {};
   }
 
-  // Render role chip — driven by CURRENT_ACTIVE_VIEW (what they're CURRENTLY browsing as)
+  // Render role chip — STATIC. No in-dashboard role switching.
+  // Job Seeker and Partner are completely separate experiences. A user's
+  // view is fixed by their registered role (login tab is only a tiebreaker
+  // for the rare dual-registered account). To use the other model, sign out
+  // and sign in via that role's path.
   const chip = document.getElementById('role-chip-pill');
   if (chip) {
     chip.classList.remove('partner','both','seeker');
+    chip.onclick = null;
+    chip.style.cursor = 'default';
+    chip.title = '';
     if (CURRENT_ACTIVE_VIEW === 'partner') {
       chip.textContent = 'Partner';
       chip.classList.add('partner');
     } else {
       chip.textContent = 'Seeker';
       chip.classList.add('seeker');
-    }
-    // For 'both' users, show a small switcher
-    if (CURRENT_USER_TYPE === 'both') {
-      chip.title = 'You have both Job Seeker and Partner profiles. Click to switch.';
-      chip.style.cursor = 'pointer';
-      chip.onclick = () => {
-        CURRENT_ACTIVE_VIEW = (CURRENT_ACTIVE_VIEW === 'partner') ? 'job_seeker' : 'partner';
-        loadDashboard();
-        renderJobs();
-        // Re-render chip with new view
-        const c2 = document.getElementById('role-chip-pill');
-        if (c2) {
-          c2.classList.remove('partner','both','seeker');
-          c2.textContent = CURRENT_ACTIVE_VIEW === 'partner' ? 'Partner ⇄' : 'Seeker ⇄';
-          c2.classList.add(CURRENT_ACTIVE_VIEW === 'partner' ? 'partner' : 'seeker');
-        }
-      };
-      chip.textContent += ' ⇄';
-    } else {
-      chip.title = '';
-      chip.style.cursor = 'default';
-      chip.onclick = null;
     }
   }
 
