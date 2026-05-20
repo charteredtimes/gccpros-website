@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v7-separated-models
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.1-agreement
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -222,6 +222,30 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   .modal { padding: 22px 18px; }
   .jobs-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== Console (v8 parity port) ===== */
+.console-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border,#e5e7eb);margin-bottom:20px;}
+.console-tab{background:none;border:none;padding:10px 16px;font-family:Inter,sans-serif;font-weight:600;font-size:14px;color:var(--muted,#6b7280);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.console-tab:hover{color:var(--text,#111827);}
+.console-tab.active{color:var(--brand,#ea580c);border-bottom-color:var(--brand,#ea580c);}
+.profile-meter{margin-bottom:18px;}
+.profile-meter-label{font-size:13px;color:var(--muted,#6b7280);}
+.profile-bar{height:8px;background:#eceef1;border-radius:6px;overflow:hidden;margin-top:6px;max-width:420px;}
+.profile-bar-fill{height:100%;background:var(--brand,#ea580c);transition:width .3s;}
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:18px;}
+.profile-grid .field label{display:block;font-size:12px;font-weight:600;color:var(--muted,#6b7280);margin-bottom:4px;}
+.profile-grid .field input{width:100%;padding:9px 11px;border:1px solid var(--border,#d1d5db);border-radius:8px;font-size:14px;box-sizing:border-box;}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.comp-card{border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:18px;}
+.comp-card h4{margin:0 0 8px;font-family:Inter;font-size:15px;}
+.comp-card .btn{margin:6px 6px 0 0;}
+.set-card{border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:18px;max-width:520px;}
+.set-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border,#f1f1f3);font-size:14px;}
+.set-row:last-child{border-bottom:none;}
+.set-row .k{color:var(--muted,#6b7280);}
+.result-line{margin:10px 0;font-size:13px;}
+.rec-intro{color:var(--muted,#6b7280);font-size:13px;margin-bottom:14px;}
+.console-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
 </style>
 </head>
 <body>
@@ -727,7 +751,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v7-separated-models';
+const BUILD = 'opps-v2-2026-05-20-v8.1-agreement';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
@@ -1781,7 +1805,8 @@ async function loadDashboard() {
         if (CURRENT_USER_TYPE === 'both') {
           try { const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now()); jsData = await ar.json(); } catch(_) {}
         }
-        renderPartnerDashboard(pj, jsData);
+        DASH_DATA = { partnerRaw: pj, js: jsData };
+        buildConsole();
         return;
       }
     } catch(_) {}
@@ -1793,7 +1818,8 @@ async function loadDashboard() {
   try {
     const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now());
     const aj = await ar.json();
-    renderJobSeekerDashboard(aj || { applications: [] });
+    DASH_DATA = { js: aj || { applications: [] } };
+    buildConsole();
   } catch (err) {
     body.innerHTML = '<p style="color:var(--red);">Failed to load: ' + esc(err.message) + '</p>';
   }
@@ -1805,7 +1831,7 @@ function renderPartnerDashboard(d, jsData) {
   const jsBlock = (jsData && jsData.applications && jsData.applications.length)
     ? `<h3 style="margin:24px 0 8px;font-size:15px;font-family:Inter;font-weight:700;">Your Applications (as Job Seeker)</h3>${renderAppsTable(jsData.applications)}`
     : '';
-  document.getElementById('dashboard-body').innerHTML = `
+  document.getElementById('console-content').innerHTML = `
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-n">${fmtINR(p.earnings_balance_inr) || '₹0'}</div><div class="kpi-l">Balance</div></div>
       <div class="kpi"><div class="kpi-n">${fmtINR(p.earnings_lifetime_inr) || '₹0'}</div><div class="kpi-l">Lifetime</div></div>
@@ -1837,7 +1863,7 @@ function renderEarnTable(earn) {
 }
 function renderJobSeekerDashboard(d) {
   const apps = d.applications || [];
-  document.getElementById('dashboard-body').innerHTML = `
+  document.getElementById('console-content').innerHTML = `
     <p style="color:var(--muted);font-size:13px;margin-bottom:18px;">Job Seeker dashboard · ${esc(CURRENT_EMAIL)} · <span class="badge b-approved">approved</span></p>
     <h3 style="margin:8px 0;font-size:15px;font-family:Inter;font-weight:700;">Your Applications</h3>
     ${apps.length ? renderAppsTable(apps) : '<p style="color:var(--muted);font-size:13px;">No applications yet. Browse roles above and click <b>Apply</b>.</p>'}
@@ -1851,6 +1877,201 @@ function renderAppsTable(apps) {
       return `<tr><td>${roleLabel}</td><td>${esc(a.source || '')}</td><td><span class="badge b-${esc(a.application_status || '')}">${esc(a.application_status || '')}</span></td><td>${a.applied_at ? new Date(a.applied_at).toLocaleDateString() : ''}</td></tr>`;
     }).join('') +
     '</tbody></table>';
+}
+
+// ===== Console (v8 parity port): tabbed logged-in workspace =====
+let DASH_DATA = {};
+let CONSOLE_TAB = 'overview';
+const PROFILE_FIELDS = [
+  ['pf-fullName','Full name','fullName'],
+  ['pf-phone','Phone','phone'],
+  ['pf-altPhone','Alternate phone','altPhone'],
+  ['pf-linkedin','LinkedIn URL','linkedin'],
+  ['pf-currentCompany','Current company','currentCompany'],
+  ['pf-designation','Designation','designation'],
+  ['pf-currentCity','Current city','city'],
+  ['pf-domain','Domain','domain'],
+  ['pf-totalExp','Total experience (yrs)','totalExp'],
+  ['pf-relevantExp','Relevant experience (yrs)','relevantExp'],
+  ['pf-noticePeriod','Notice period (days)','noticePeriod'],
+  ['pf-currentCtc','Current CTC (LPA)','currentCtc'],
+  ['pf-expectedCtc','Expected CTC (LPA)','expectedCtc'],
+  ['pf-reasonForChange','Reason for change','reasonForChange']
+];
+
+function buildConsole() {
+  const isPartner = (CURRENT_ACTIVE_VIEW === 'partner');
+  const tabs = [['overview','Dashboard'],['profile','Profile'],['recommended','Recommended']];
+  if (isPartner) tabs.push(['compliance','Agreement & KYC']);
+  tabs.push(['settings','Settings']);
+  if (!tabs.find(t => t[0] === CONSOLE_TAB)) CONSOLE_TAB = 'overview';
+  const strip = tabs.map(t => '<button class="console-tab' + (t[0]===CONSOLE_TAB?' active':'') + '" id="ctab-' + t[0] + '" onclick="showConsoleTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
+  document.getElementById('dashboard-body').innerHTML = '<div class="console-tabs">' + strip + '</div><div id="console-content"></div>';
+  showConsoleTab(CONSOLE_TAB);
+}
+
+function showConsoleTab(name) {
+  CONSOLE_TAB = name;
+  document.querySelectorAll('.console-tab').forEach(b => b.classList.remove('active'));
+  const t = document.getElementById('ctab-' + name); if (t) t.classList.add('active');
+  if (name === 'profile') renderProfileTab();
+  else if (name === 'recommended') renderRecommendedTab();
+  else if (name === 'compliance') renderComplianceTab();
+  else if (name === 'settings') renderSettingsTab();
+  else renderOverview();
+}
+
+function renderOverview() {
+  if (CURRENT_ACTIVE_VIEW === 'partner') renderPartnerDashboard(DASH_DATA.partnerRaw || { partner: {} }, DASH_DATA.js);
+  else renderJobSeekerDashboard(DASH_DATA.js || { applications: [] });
+}
+
+function profileCompleteness() {
+  const p = CURRENT_PROFILE || {};
+  const keys = ['fullName','phone','linkedin','currentCompany','designation','city','domain','totalExp'];
+  const filled = keys.filter(k => String(p[k] == null ? '' : p[k]).trim()).length;
+  return Math.round(filled / keys.length * 100);
+}
+
+function renderProfileTab() {
+  const p = CURRENT_PROFILE || {};
+  const pct = profileCompleteness();
+  const rows = PROFILE_FIELDS.map(f =>
+    '<div class="field"><label>' + f[1] + '</label><input id="' + f[0] + '" type="text" value="' + esc(String(p[f[2]] == null ? '' : p[f[2]])) + '"></div>'
+  ).join('');
+  document.getElementById('console-content').innerHTML =
+    '<div class="profile-meter"><div class="profile-meter-label">Profile completeness: <b>' + pct + '%</b></div>' +
+    '<div class="profile-bar"><div class="profile-bar-fill" style="width:' + pct + '%;"></div></div></div>' +
+    '<div class="profile-grid">' + rows + '</div>' +
+    '<div id="pf-result" class="result-line"></div>' +
+    '<button class="btn brand-orange" onclick="saveProfile()">Save profile</button>';
+}
+
+async function saveProfile() {
+  if (!CURRENT_EMAIL) return showResult('pf-result', 'Not signed in.', false);
+  const g = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const params = new URLSearchParams({ action: 'oppsUpdateProfile', email: CURRENT_EMAIL });
+  const map = { fullName:'pf-fullName', phone:'pf-phone', altPhone:'pf-altPhone', linkedin:'pf-linkedin',
+    currentCompany:'pf-currentCompany', designation:'pf-designation', currentCity:'pf-currentCity', domain:'pf-domain',
+    totalExp:'pf-totalExp', relevantExp:'pf-relevantExp', noticePeriod:'pf-noticePeriod',
+    currentCtc:'pf-currentCtc', expectedCtc:'pf-expectedCtc', reasonForChange:'pf-reasonForChange' };
+  for (const k in map) { const v = g(map[k]); if (v) params.set(k, v); }
+  try {
+    const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
+    const j = await r.json();
+    if (j && j.status === 'ok') {
+      CURRENT_PROFILE = Object.assign({}, CURRENT_PROFILE, {
+        fullName:g('pf-fullName'), phone:g('pf-phone'), altPhone:g('pf-altPhone'), linkedin:g('pf-linkedin'),
+        currentCompany:g('pf-currentCompany'), designation:g('pf-designation'), city:g('pf-currentCity'), domain:g('pf-domain'),
+        totalExp:g('pf-totalExp'), relevantExp:g('pf-relevantExp'), noticePeriod:g('pf-noticePeriod'),
+        currentCtc:g('pf-currentCtc'), expectedCtc:g('pf-expectedCtc'), reasonForChange:g('pf-reasonForChange') });
+      showResult('pf-result', '✓ Profile saved.', true);
+      renderProfileTab();
+    } else {
+      showResult('pf-result', 'Save failed: ' + esc((j && (j.message || j.error)) || 'unknown'), false);
+    }
+  } catch (err) { showResult('pf-result', 'Save failed: ' + esc(err.message), false); }
+}
+
+function renderRecommendedTab() {
+  const dom = (CURRENT_PRIMARY_DOMAIN || '').toLowerCase();
+  const open = JOB_LIST.filter(j => String(j.status || '').toLowerCase() !== 'closed');
+  let rec = dom ? open.filter(j => String(j.primary_domain || j.industry || '').toLowerCase().indexOf(dom) !== -1) : [];
+  let intro;
+  if (rec.length) { intro = 'Roles matched to your domain: <b>' + esc(CURRENT_PRIMARY_DOMAIN) + '</b>'; }
+  else { rec = open.slice(0, 6); intro = 'Top open roles for you'; }
+  const cards = rec.slice(0, 12).map(renderJobCard).join('');
+  document.getElementById('console-content').innerHTML =
+    '<p class="rec-intro">' + intro + '</p><div class="console-grid">' +
+    (cards || '<p style="color:var(--muted);">No open roles right now.</p>') + '</div>';
+}
+
+function renderComplianceTab() {
+  const pr = (DASH_DATA.partnerRaw && DASH_DATA.partnerRaw.partner) || {};
+  const kyc = String(pr.kyc_status || 'not_started');
+  const agr = String(pr.agreement_status || 'pending');
+  const badge = s => '<span class="badge b-' + esc(String(s).toLowerCase().replace(/[^a-z0-9]/g,'_')) + '">' + esc(s) + '</span>';
+  const kycBtn = (kyc === 'not_started' || kyc === 'rejected')
+    ? '<button class="btn brand-orange" onclick="openKYCModal()">Submit / Update KYC</button>'
+    : '<p style="color:var(--muted);font-size:13px;">KYC on file. Contact admin@gccpros.com to update.</p>';
+  document.getElementById('console-content').innerHTML =
+    '<div class="comp-grid">' +
+      '<div class="comp-card"><h4>KYC</h4><p>Status: ' + badge(kyc) + '</p>' + kycBtn + '</div>' +
+      '<div class="comp-card"><h4>Partner Agreement</h4><p>Status: ' + badge(agr) + '</p>' +
+        '<button class="btn secondary" onclick="downloadAgreementDraft()">Download agreement draft</button>' +
+        '<div style="margin-top:10px;"><input type="file" id="agr-file" accept="application/pdf,.pdf,.doc,.docx" style="font-size:13px;">' +
+        '<button class="btn" style="margin-left:6px;" onclick="uploadSignedAgreement()">Upload signed agreement</button></div>' +
+        '<div id="agr-result" class="result-line"></div>' +
+        '<p class="field-hint" style="margin-top:6px;">Download the draft, sign it, then upload the signed PDF here.</p></div>' +
+    '</div>';
+}
+
+function downloadAgreementDraft() {
+  const name = (CURRENT_PROFILE && CURRENT_PROFILE.fullName) || CURRENT_EMAIL || 'Partner';
+  const today = new Date().toLocaleDateString();
+  const txt = 'GCCPROs PARTNER REFERRAL AGREEMENT\n\n' +
+    'This agreement is made on ' + today + ' between GCCPROs and ' + name + ' ("Partner").\n\n' +
+    '1. The Partner agrees to refer qualified candidates for open roles listed by GCCPROs.\n' +
+    '2. Referral payouts are made upon successful placement and completion of the agreed guarantee period.\n' +
+    '3. The Partner shall maintain strict confidentiality of all candidate and client information.\n' +
+    '4. This is a non-exclusive engagement and creates no employment relationship.\n' +
+    '5. The Partner confirms all referred candidate data is shared with consent (DPDP Act compliant).\n\n' +
+    'Partner name: ' + name + '\nEmail: ' + (CURRENT_EMAIL || '') + '\nDate: ' + today + '\nSignature: ____________________\n';
+  const blob = new Blob([txt], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'GCCPROs-Partner-Agreement-' + String(CURRENT_EMAIL || 'partner').replace(/[^a-z0-9]/gi, '_') + '.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function emailSignedAgreement() {
+  const subject = encodeURIComponent('Signed Partner Agreement — ' + (CURRENT_EMAIL || ''));
+  const body = encodeURIComponent('Hi Admin,\n\nPlease find my signed partner agreement attached.\n\nName: ' + ((CURRENT_PROFILE && CURRENT_PROFILE.fullName) || '') + '\nEmail: ' + (CURRENT_EMAIL || '') + '\n');
+  window.location.href = 'mailto:admin@gccpros.com?subject=' + subject + '&body=' + body;
+}
+
+async function uploadSignedAgreement() {
+  const inp = document.getElementById('agr-file');
+  const f = inp && inp.files && inp.files[0];
+  if (!f) return showResult('agr-result', 'Choose your signed PDF first.', false);
+  if (f.size > 5 * 1024 * 1024) return showResult('agr-result', 'File too large (max 5 MB).', false);
+  if (!CURRENT_EMAIL) return showResult('agr-result', 'Not signed in.', false);
+  showResult('agr-result', 'Uploading…', true);
+  const fr = new FileReader();
+  fr.onload = async function() {
+    try {
+      const b64 = fr.result.split(',').pop();
+      const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadAgreement&email=' + encodeURIComponent(CURRENT_EMAIL), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileBase64: b64, fileName: f.name, mimeType: f.type || 'application/pdf' })
+      });
+      const uj = await ur.json();
+      if (uj && uj.status === 'ok') {
+        if (DASH_DATA.partnerRaw && DASH_DATA.partnerRaw.partner) DASH_DATA.partnerRaw.partner.agreement_status = 'submitted';
+        showResult('agr-result', '✓ Signed agreement uploaded. Admin will verify it.', true);
+        renderComplianceTab();
+      } else {
+        const m = [uj && uj.error, uj && uj.hint].filter(Boolean).join(' · ');
+        showResult('agr-result', 'Upload failed: ' + esc(m || 'unknown'), false);
+      }
+    } catch (err) { showResult('agr-result', 'Upload failed: ' + esc(err.message), false); }
+  };
+  fr.readAsDataURL(f);
+}
+
+function renderSettingsTab() {
+  const p = CURRENT_PROFILE || {};
+  const role = (CURRENT_ACTIVE_VIEW === 'partner') ? 'Partner' : 'Job Seeker';
+  document.getElementById('console-content').innerHTML =
+    '<div class="set-card">' +
+      '<div class="set-row"><span class="k">Email</span><span>' + esc(CURRENT_EMAIL || '') + '</span></div>' +
+      '<div class="set-row"><span class="k">Role</span><span>' + role + '</span></div>' +
+      '<div class="set-row"><span class="k">Approval status</span><span>' + esc(String(CURRENT_APPROVAL || 'pending')) + '</span></div>' +
+      '<div class="set-row"><span class="k">Primary domain</span><span>' + esc(String(CURRENT_PRIMARY_DOMAIN || '—')) + '</span></div>' +
+      '<div class="set-row"><span class="k">Sign-in</span><span>Google / email</span></div>' +
+    '</div>' +
+    '<p style="color:var(--muted);font-size:13px;margin:14px 0;">Need to change your email or delete your account? Contact admin@gccpros.com.</p>' +
+    '<button class="btn secondary" onclick="signOut()">Sign out</button>';
 }
 
 // Bootstrap
