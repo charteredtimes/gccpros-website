@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v6-partner-cv-photo
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v7-pwd-reset
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -21,6 +21,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>try{firebase.initializeApp({apiKey:'AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w',authDomain:'gccpros-9aadb.firebaseapp.com',projectId:'gccpros-9aadb',storageBucket:'gccpros-9aadb.firebasestorage.app',messagingSenderId:'764592723192',appId:'1:764592723192:web:002a03f217b57d47f0570d'});}catch(e){console.warn('firebase init',e);}</script>
 <style>
 :root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#F59E0B; --blue:#1E40AF; --purple:#7C3AED; }
 * { box-sizing:border-box; margin:0; padding:0; }
@@ -912,6 +915,7 @@ function renderPartners() {
       html += '<button class="btn small secondary" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Pending\')">&#8617; Re-pending</button>';
     }
     if (p.kyc_status === 'submitted') html += ' <button class="btn small secondary" onclick="kycDecide(\'' + esc(p.email) + '\',\'approved\')">KYC &#10003;</button>';
+    html += ' <button class="btn small secondary" onclick="resetUserPassword(\'' + esc(p.email) + '\')" title="Email a password-reset link">Reset PW</button>';
     html += ' <button class="btn small secondary" onclick="togglePartnerDetail(this)">Details</button>';
     html += '</td></tr>';
     html += '<tr class="ptd" style="display:none;"><td></td><td colspan="12">' + partnerDetailHTML(p) + '</td></tr>';
@@ -1010,9 +1014,10 @@ function renderUsers() {
       ? '<button class="btn small" onclick="downloadCV(\'' + esc(u.cv_url) + '\')" title="Download CV">&#8595;</button>'
       : '<button class="btn small secondary" onclick="findUserCV(\'' + esc(u.email || '') + '\', this)" title="Locate CV in storage">Find</button>';
     const _susp = (u.approval_status || '').toLowerCase() === 'suspended';
-    const actions = _susp
+    const _resetBtnU = ' <button class="btn small secondary" onclick="resetUserPassword(\'' + esc(u.email || '') + '\')" title="Email a password-reset link">Reset PW</button>';
+    const actions = (_susp
       ? '<button class="btn small" style="background:#16a34a;color:#fff;border-color:#16a34a;" onclick="restoreUser(\'' + esc(u.email || '') + '\')" title="Re-approve + lift blacklist">Restore</button>'
-      : '<button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626;" onclick="removeUser(\'' + esc(u.email || '') + '\')" title="Suspend + blacklist">Remove</button>';
+      : '<button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626;" onclick="removeUser(\'' + esc(u.email || '') + '\')" title="Suspend + blacklist">Remove</button>') + _resetBtnU;
     html += '<tr><td>' + fmtDate(u.signup_date || u.created_at) + '</td><td class="email">' + esc(u.email || '') + '</td><td>' + esc(u.full_name || '') + '</td><td>' + badge(u.user_type) + '</td><td>' + badge(u.approval_status) + '</td><td>' + esc(u.phone || '') + '</td><td>' + esc(u.current_city || '') + '</td><td>' + esc(u.domain || '') + '</td><td>' + esc(u.current_company || '') + '</td><td>' + esc(u.total_exp || '') + '</td><td>' + cv + '</td><td style="white-space:nowrap;">' + actions + '</td></tr>';
   });
   html += '</tbody></table>';
@@ -1037,6 +1042,19 @@ async function findUserCV(email, btn, reload) {
   }
 }
 
+async function resetUserPassword(email) {
+  if (!email) return;
+  if (!confirm('Send a password-reset email to ' + email + ' ?\n\nThe user gets a Firebase link to set a new password. (Google-only accounts have no password to reset.)')) return;
+  try {
+    if (!window.firebase || !firebase.auth) throw new Error('Firebase SDK not loaded');
+    await firebase.auth().sendPasswordResetEmail(email);
+    toast('✓ Password-reset email sent to ' + email, 'ok');
+  } catch (e) {
+    const c = String(e.code || '');
+    if (c.includes('user-not-found')) toast('No password account for ' + email + ' (Google-only or never set one).', 'err');
+    else toast('Reset failed: ' + (e.message || c), 'err');
+  }
+}
 async function removeUser(email) {
   if (!confirm('Remove ' + email + ' ?\n\nThis SUSPENDS the account and adds the email + phone to the blacklist (blocks re-registration). Reversible via Restore.')) return;
   try {
