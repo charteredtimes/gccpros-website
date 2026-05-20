@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v5-rsvps-pwa
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v6-partner-cv-photo
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -871,18 +871,23 @@ function partnerDetailHTML(p){
   const F = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> ' + esc(String(val)) + '</div>' : '';
   const M = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> <span style="font-family:monospace;font-size:11px;">' + esc(String(val)) + '</span></div>' : '';
   const L = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> <a href="' + esc(String(val)) + '" target="_blank">open</a></div>' : '';
+  const docsBar = '<div style="margin:2px 0 10px 0;">'
+    + '<button class="btn small" style="background:#2563eb;color:#fff;border-color:#2563eb;margin:3px 8px 3px 0;" onclick="findUserCV(\'' + esc(p.email || '') + '\', this, false)" title="Locate CV in private storage">&#8595; View CV</button>'
+    + (p.photo_link ? '<button class="btn small secondary" style="margin:3px 8px 3px 0;" onclick="downloadCV(\'' + esc(p.photo_link) + '\')" title="View profile photo">&#128247; View Photo</button>' : '')
+    + (p.agreement_file_link ? '<button class="btn small secondary" style="margin:3px 8px 3px 0;" onclick="downloadCV(\'' + esc(p.agreement_file_link) + '\')" title="View signed agreement">&#128196; Agreement</button>' : '')
+    + '</div>';
   return '<div style="padding:10px 4px;font-size:12.5px;line-height:1.7;background:rgba(0,0,0,0.02);">'
+    + docsBar
     + F('Phone', p.phone) + F('Alt phone', p.alt_phone) + L('LinkedIn', p.linkedin)
     + F('Designation', p.designation) + F('City', p.location || p.current_city)
     + F('Primary domain', p.primary_domain) + F('Secondary domain', p.secondary_domain)
     + F('Industry experience', p.expertise_domains) + F('Interests', p.interests)
     + F('Total exp', p.total_exp) + F('Languages', p.languages)
-    + M('Photo path', p.photo_link)
     + F('PAN', p.kyc_pan) + F('Bank', p.kyc_bank_name) + F('IFSC', p.kyc_bank_ifsc)
     + M('Address proof path', p.kyc_address_proof_link) + M('Cancelled cheque path', p.kyc_cancelled_cheque_link)
     + F('Agreement status', p.agreement_status) + M('Agreement file path', p.agreement_file_link)
     + F('Referred by', p.referred_by_code) + F('Consent', p.consent_processing)
-    + '<div style="margin-top:6px;color:var(--muted);font-size:11px;">CV is on the Users tab / full Excel export. Storage paths are private; use the export or Storage signed URLs to download.</div></div>';
+    + '<div style="margin-top:6px;color:var(--muted);font-size:11px;">Documents open as time-limited signed links (storage is private).</div></div>';
 }
 function renderPartners() {
   const kyc = document.getElementById('f-partners-kyc').value;
@@ -917,7 +922,7 @@ function renderPartners() {
 async function setPartnerStatus(email, status) {
   toast('Setting ' + email + ' → ' + status + '…');
   try {
-    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminPartnerDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
     toast('✓ Partner ' + status, 'ok');
@@ -1015,7 +1020,8 @@ function renderUsers() {
 }
 
 // ===== v4 — User management: CV-locate fallback + remove/restore =====
-async function findUserCV(email, btn) {
+async function findUserCV(email, btn, reload) {
+  if (reload === undefined) reload = true;
   const orig = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
   try {
@@ -1024,7 +1030,7 @@ async function findUserCV(email, btn) {
     if (j.error) throw new Error(j.error === 'no_cv_found' ? 'No CV found in storage for this user.' : j.error);
     window.open(j.signedUrl || j.url, '_blank');
     toast('✓ CV located' + (j.legacy ? ' (legacy link)' : ''), 'ok');
-    loadUsers(); // refresh — cv_url is now backfilled, so the direct ↓ button appears next time
+    if (reload) loadUsers(); // refresh Users tab — cv_url backfilled, direct ↓ shows next time
   } catch (err) {
     toast('CV: ' + err.message, 'err');
     if (btn) { btn.disabled = false; btn.textContent = orig || 'Find'; }
@@ -1369,7 +1375,7 @@ async function bulkPartnerDecision(status) {
     done++;
     _setProgress(Math.round((done / emails.length) * 100), email);
     try {
-      const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
+      const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminPartnerDecision&email=' + encodeURIComponent(email) + '&partner_status=' + encodeURIComponent(status));
       const j = await r.json();
       if (!j.error) ok++;
     } catch (e) { console.warn('bulk decision failed for', email, e); }

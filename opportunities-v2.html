@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.6-forms
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.7-linkedin
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -772,7 +772,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.6-forms';
+const BUILD = 'opps-v2-2026-05-20-v8.7-linkedin';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -780,7 +780,7 @@ const CV_MAX_BYTES = 5 * 1024 * 1024;
 const PAN_RX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const IFSC_RX = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 const PHONE_RX = /^[0-9+\-\s()]{10,18}$/;
-const LINKEDIN_RX = /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/.+/i;
+const LINKEDIN_RX = /^https?:\/\/([\w-]+\.)?linkedin\.com\/(in|pub|profile)\/\S+$/i;
 document.getElementById('bld').textContent = BUILD;
 
 firebase.initializeApp({
@@ -1681,7 +1681,7 @@ async function _apSubmitInner() {
   ];
   for (const [id, lbl] of required) if (!v(id)) return showResult('ap-result', lbl + ' is required.', false);
   if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number must be 10–15 digits.', false);
-  if (!/^https?:\/\//i.test(v('ap-linkedin'))) return showResult('ap-result', 'LinkedIn URL must start with http:// or https://', false);
+  if (!LINKEDIN_RX.test(v('ap-linkedin'))) return showResult('ap-result', 'Enter a valid LinkedIn profile URL (https://linkedin.com/in/...).', false);
   if (!PAN_RX.test(v('ap-pan').toUpperCase())) return showResult('ap-result', 'PAN must be 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F).', false);
   const expN = parseFloat(v('ap-totalexp'));
   if (isNaN(expN) || expN < 0 || expN > 50) return showResult('ap-result', 'Total years experience must be between 0 and 50.', false);
@@ -1837,7 +1837,7 @@ async function refSubmit() {
   if (!v('ref-phone')) return showResult('ref-result', 'Candidate phone is required.', false);
   if (!PHONE_RX.test(v('ref-phone'))) return showResult('ref-result', 'Candidate phone must be 10–15 digits.', false);
   if (!v('ref-linkedin')) return showResult('ref-result', 'Candidate LinkedIn URL is required.', false);
-  if (!/^https?:\/\//i.test(v('ref-linkedin'))) return showResult('ref-result', 'LinkedIn URL must start with http:// or https://', false);
+  if (!LINKEDIN_RX.test(v('ref-linkedin'))) return showResult('ref-result', 'Enter a valid LinkedIn profile URL (https://linkedin.com/in/...).', false);
   const whyWords = v('ref-whyfit').split(/\s+/).filter(Boolean).length;
   if (whyWords < 15) return showResult('ref-result', '"Why a Good Fit?" needs at least 15 words (you have ' + whyWords + ').', false);
   // Skill assessment must be fully rated
