@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v2-launch
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v3-partner-fields
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -748,6 +748,24 @@ async function loadPartners() {
     renderPartners();
   } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
 }
+function togglePartnerDetail(btn){ const dr = btn.closest('tr').nextElementSibling; if (dr) dr.style.display = (dr.style.display === 'none' ? '' : 'none'); }
+function partnerDetailHTML(p){
+  const F = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> ' + esc(String(val)) + '</div>' : '';
+  const M = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> <span style="font-family:monospace;font-size:11px;">' + esc(String(val)) + '</span></div>' : '';
+  const L = (k,val) => val ? '<div style="display:inline-block;min-width:250px;margin:3px 16px 3px 0;"><span style="color:var(--muted);">' + k + ':</span> <a href="' + esc(String(val)) + '" target="_blank">open</a></div>' : '';
+  return '<div style="padding:10px 4px;font-size:12.5px;line-height:1.7;background:rgba(0,0,0,0.02);">'
+    + F('Phone', p.phone) + F('Alt phone', p.alt_phone) + L('LinkedIn', p.linkedin)
+    + F('Designation', p.designation) + F('City', p.location || p.current_city)
+    + F('Primary domain', p.primary_domain) + F('Secondary domain', p.secondary_domain)
+    + F('Industry experience', p.expertise_domains) + F('Interests', p.interests)
+    + F('Total exp', p.total_exp) + F('Languages', p.languages)
+    + M('Photo path', p.photo_link)
+    + F('PAN', p.kyc_pan) + F('Bank', p.kyc_bank_name) + F('IFSC', p.kyc_bank_ifsc)
+    + M('Address proof path', p.kyc_address_proof_link) + M('Cancelled cheque path', p.kyc_cancelled_cheque_link)
+    + F('Agreement status', p.agreement_status) + M('Agreement file path', p.agreement_file_link)
+    + F('Referred by', p.referred_by_code) + F('Consent', p.consent_processing)
+    + '<div style="margin-top:6px;color:var(--muted);font-size:11px;">CV is on the Users tab / full Excel export. Storage paths are private; use the export or Storage signed URLs to download.</div></div>';
+}
 function renderPartners() {
   const kyc = document.getElementById('f-partners-kyc').value;
   const q = (document.getElementById('f-partners-q').value || '').toLowerCase();
@@ -771,7 +789,9 @@ function renderPartners() {
       html += '<button class="btn small secondary" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Pending\')">&#8617; Re-pending</button>';
     }
     if (p.kyc_status === 'submitted') html += ' <button class="btn small secondary" onclick="kycDecide(\'' + esc(p.email) + '\',\'approved\')">KYC &#10003;</button>';
+    html += ' <button class="btn small secondary" onclick="togglePartnerDetail(this)">Details</button>';
     html += '</td></tr>';
+    html += '<tr class="ptd" style="display:none;"><td></td><td colspan="12">' + partnerDetailHTML(p) + '</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('partners-box').innerHTML = html;
