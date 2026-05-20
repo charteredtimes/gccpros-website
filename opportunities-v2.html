@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.8-passwords
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.9-pwd-errors
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -792,7 +792,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.8-passwords';
+const BUILD = 'opps-v2-2026-05-20-v8.9-pwd-errors';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -1566,8 +1566,16 @@ async function jsSubmit() {
     if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed — re-tick and retry.', false);
     if (j.error) throw new Error(j.error);
     if (!_isGoogleJS) {
-      try { await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('js-pwd').value); }
-      catch (pe) { const c = String(pe.code || ''); if (!c.includes('email-already-in-use')) console.warn('[pwd setup]', pe); }
+      try {
+        await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('js-pwd').value);
+      } catch (pe) {
+        const c = String(pe.code || '');
+        if (!c.includes('email-already-in-use')) {
+          return showResult('js-result-3', c.includes('operation-not-allowed')
+            ? 'Your details were saved, but password sign-up is not enabled on the server yet. Use "Continue with Google" for now, or contact admin@gccpros.com.'
+            : 'Your details were saved, but setting your password failed: ' + (pe.message || c) + '. Use "Continue with Google" or contact admin@gccpros.com.', false);
+        }
+      }
     }
     const fr = new FileReader();
     fr.onload = async function() {
@@ -1657,8 +1665,16 @@ async function ptSubmit() {
     if (j.error === 'email_not_verified') return showResult('pt-result', 'Please verify your email first.', false);
     if (j.error) throw new Error(j.error);
     if (!_isGooglePT) {
-      try { await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('pt-pwd').value); }
-      catch (pe) { const c = String(pe.code || ''); if (!c.includes('email-already-in-use')) console.warn('[pwd setup]', pe); }
+      try {
+        await firebase.auth().createUserWithEmailAndPassword(email, document.getElementById('pt-pwd').value);
+      } catch (pe) {
+        const c = String(pe.code || '');
+        if (!c.includes('email-already-in-use')) {
+          return showResult('pt-result', c.includes('operation-not-allowed')
+            ? 'Your details were saved, but password sign-up is not enabled on the server yet. Use "Continue with Google" for now, or contact admin@gccpros.com.'
+            : 'Your details were saved, but setting your password failed: ' + (pe.message || c) + '. Use "Continue with Google" or contact admin@gccpros.com.', false);
+        }
+      }
     }
     showResult('pt-result', 'Uploading your CV and photo...', true);
     await uploadPartnerFile(email, cvFile, 'oppsUploadCV&context=profile');
