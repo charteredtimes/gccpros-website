@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.2-cta
+<!-- GCCPROs Opportunities v2 · build: opps-v2-2026-05-20-v8.6-forms
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -315,7 +315,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
           <li>Complete identity protection guaranteed</li>
           <li>Flexible schedule, multiple earning streams</li>
         </ul>
-        <div class="tile-badge"><strong>Earn &#8377;50,000 per placement</strong> &middot; Plus &#8377;1,000 partner-referral coins</div>
+        <div class="tile-badge"><strong>Earn up to &#8377;5,00,000 per placement</strong> &middot; Plus &#8377;1,000 partner-referral coins</div>
         <button class="btn brand-orange tile-cta" onclick="openPartnerSignup()">Become a Partner</button>
       </div>
     </div>
@@ -413,6 +413,14 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <div class="field"><label>Alt Phone</label><input type="tel" id="js-altphone"></div>
       </div>
       <div class="field"><label>LinkedIn URL <span class="required">*</span></label><input type="url" id="js-linkedin" placeholder="https://linkedin.com/in/yourname"></div>
+      <div class="field" id="js-otp-block">
+        <button type="button" class="btn secondary" id="js-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('js')">Verify email &mdash; send code</button>
+        <div id="js-otp-row" style="display:none;margin-top:8px;">
+          <input type="text" id="js-otp" placeholder="6-digit code" style="max-width:150px;display:inline-block;">
+          <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('js')">Verify code</button>
+        </div>
+        <div id="js-otp-status" class="form-result" style="font-size:12px;"></div>
+      </div>
       <button class="btn" style="width:100%;margin-top:18px;" onclick="jsStep1to2()">Next: Professional &rarr;</button>
       <div id="js-result-1" class="form-result"></div>
     </div>
@@ -502,7 +510,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   <div class="modal">
     <button class="close" onclick="closeModal('pt-modal')">&times;</button>
     <h3>Become a Partner</h3>
-    <p class="modal-sub">Refer candidates, earn &#8377;50,000 per accepted placement. Requires admin approval (typically within 48 hours).</p>
+    <p class="modal-sub">Refer candidates and earn a fee for every accepted placement. Requires admin approval (typically within 48 hours).</p>
     <button class="google-btn partner-tone" onclick="initiateGoogleSignIn('partner')">
       <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
@@ -512,9 +520,17 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Full Name <span class="required">*</span></label><input type="text" id="pt-name"></div>
       <div class="field"><label>Email <span class="required">*</span><span class="field-verified" id="pt-email-verified" style="display:none;">&#10003; verified</span></label><input type="email" id="pt-email"></div>
     </div>
+    <div class="field" id="pt-otp-block">
+      <button type="button" class="btn secondary" id="pt-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('pt')">Verify email &mdash; send code</button>
+      <div id="pt-otp-row" style="display:none;margin-top:8px;">
+        <input type="text" id="pt-otp" placeholder="6-digit code" style="max-width:150px;display:inline-block;">
+        <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('pt')">Verify code</button>
+      </div>
+      <div id="pt-otp-status" class="form-result" style="font-size:12px;"></div>
+    </div>
     <div class="field-row">
       <div class="field"><label>Phone <span class="required">*</span></label><input type="tel" id="pt-phone" pattern="[0-9]{10,15}"></div>
-      <div class="field"><label>Current Location <span class="required">*</span></label><input type="text" id="pt-location"></div>
+      <div class="field"><label>Current City <span class="required">*</span></label><select id="pt-city"><option value="">Select your city</option><option>Bengaluru</option><option>Hyderabad</option><option>Pune</option><option>Mumbai</option><option>Chennai</option><option>Gurugram</option><option>Noida</option><option>Delhi NCR</option><option>Kolkata</option><option>Ahmedabad</option><option>Coimbatore</option><option>Thiruvananthapuram</option><option>Kochi (Cochin)</option><option>Indore</option><option>Jaipur</option><option>Chandigarh</option><option>Mohali</option><option>Lucknow</option><option>Bhubaneswar</option><option>Vishakhapatnam</option><option>Mysuru (Mysore)</option><option>Mangaluru</option><option>Vadodara</option><option>Surat</option><option>Nagpur</option><option>Bhopal</option><option>Faridabad</option><option>Ghaziabad</option><option>Greater Noida</option><option>Other (India)</option><option>Outside India</option></select></div>
     </div>
     <div class="field"><label>LinkedIn URL <span class="required">*</span></label><input type="url" id="pt-linkedin"></div>
     <div class="field-row">
@@ -540,12 +556,16 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         </select>
       </div>
     </div>
-    <div class="field"><label>Expertise Domains (industries)</label><input type="text" id="pt-expertise" placeholder="e.g. BFSI, Pharma, SaaS"></div>
-    <div class="field"><label>Languages</label><input type="text" id="pt-langs" placeholder="e.g. English, Hindi, Tamil"></div>
+    <div class="field"><label>Industry experience <span class="required">*</span> (select all that apply)</label><select id="pt-industry" multiple size="6" style="width:100%;"><option>BFSI</option><option>IT / Software &amp; SaaS</option><option>Pharma &amp; Healthcare</option><option>Manufacturing</option><option>Automotive</option><option>Retail &amp; E-commerce</option><option>Telecom</option><option>Energy &amp; Utilities</option><option>Consulting &amp; Professional Services</option><option>Media</option><option>Logistics</option><option>Real Estate</option><option>Aerospace &amp; Defense</option><option>Other</option></select><div class="field-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</div></div>
+    <div class="field"><label>I'm interested in <span class="required">*</span> (select all that apply)</label><select id="pt-interests" multiple size="5" style="width:100%;"><option>Job Referral</option><option>Mentorship</option><option>Training</option><option>Consulting</option><option>Speaking Opportunities</option></select></div>
+    <div class="field-row">
+      <div class="field"><label>CV / Resume <span class="required">*</span></label><input type="file" id="pt-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div>
+      <div class="field"><label>Professional Photo <span class="required">*</span></label><input type="file" id="pt-photo" accept="image/png,image/jpeg"></div>
+    </div>
     <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-pt"></div></div>
     <div style="margin-top:14px;">
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent1" style="margin-top:2px;width:auto;"><span>I consent to GCCPROs processing my data per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span></label>
-      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent2" style="margin-top:2px;width:auto;"><span>I agree to the Partner Agreement (&#8377;50,000 per placement, KYC required before payout).</span></label>
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent2" style="margin-top:2px;width:auto;"><span>I agree to the Partner Agreement (KYC required before payout).</span></label>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent3" style="margin-top:2px;width:auto;"><span>I agree to the Community Rules (no spam, quality referrals only).</span></label>
     </div>
     <button class="btn brand-orange" style="width:100%;margin-top:14px;" onclick="ptSubmit()">Submit Partner Application</button>
@@ -677,14 +697,14 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <div class="field"><label>Address Proof Type <span class="required">*</span></label>
       <select id="kyc-addrtype"><option>Aadhaar</option><option>Voter ID</option><option>Passport</option><option>Utility Bill</option><option>Other</option></select>
     </div>
-    <div class="field"><label>Address Proof Document URL <span class="required">*</span></label><input type="url" id="kyc-addrlink" placeholder="Google Drive / public link"></div>
+    <div class="field"><label>Address Proof <span class="required">*</span></label><input type="file" id="kyc-addr-file" accept="image/png,image/jpeg,application/pdf"><div class="field-hint">Aadhaar / Voter ID / Passport / utility bill (image or PDF, max 5 MB).</div></div>
     <div class="field"><label>Account Holder Name <span class="required">*</span></label><input type="text" id="kyc-holder"></div>
     <div class="field-row">
       <div class="field"><label>Bank Name <span class="required">*</span></label><input type="text" id="kyc-bankname"></div>
       <div class="field"><label>IFSC Code <span class="required">*</span></label><input type="text" id="kyc-ifsc" maxlength="11" style="text-transform:uppercase;" placeholder="HDFC0001234"></div>
     </div>
     <div class="field"><label>Bank Account &mdash; last 4 digits <span class="required">*</span></label><input type="text" id="kyc-last4" maxlength="4" inputmode="numeric"></div>
-    <div class="field"><label>Cancelled Cheque URL <span class="required">*</span></label><input type="url" id="kyc-cheque"></div>
+    <div class="field"><label>Cancelled Cheque <span class="required">*</span></label><input type="file" id="kyc-cheque-file" accept="image/png,image/jpeg,application/pdf"><div class="field-hint">Upload a photo or PDF of a cancelled cheque (max 5 MB).</div></div>
     <button class="btn brand-orange" style="width:100%;margin-top:14px;" onclick="kycSubmit()">Submit KYC</button>
     <div id="kyc-result" class="form-result"></div>
   </div>
@@ -752,14 +772,15 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-v2-2026-05-20-v8.2-cta';
+const BUILD = 'opps-v2-2026-05-20-v8.6-forms';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
-const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
 const CV_MAX_BYTES = 5 * 1024 * 1024;
 const PAN_RX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const IFSC_RX = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 const PHONE_RX = /^[0-9+\-\s()]{10,18}$/;
+const LINKEDIN_RX = /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/.+/i;
 document.getElementById('bld').textContent = BUILD;
 
 firebase.initializeApp({
@@ -877,6 +898,54 @@ window.onTurnstileReadyV2 = function() {
   (window._tsQueue || []).forEach(fn => { try { fn(); } catch(_){} });
   window._tsQueue = [];
 };
+let OTP_VERIFIED = { pt:false, js:false };
+async function sendOtp(pfx) {
+  const email = (document.getElementById(pfx+'-email').value||'').trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showResult(pfx+'-otp-status','Enter a valid email first.', false);
+  showResult(pfx+'-otp-status','Sending code\u2026', true);
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=oppsSendOtp&email=' + encodeURIComponent(email) + '&_t=' + Date.now());
+    const j = await r.json();
+    if (j.status === 'ok') { document.getElementById(pfx+'-otp-row').style.display=''; showResult(pfx+'-otp-status','Code sent to ' + email + '. Check inbox/spam.', true); }
+    else showResult(pfx+'-otp-status','Could not send code: ' + esc(j.error||'error'), false);
+  } catch(e){ showResult(pfx+'-otp-status','Could not send code. Try again.', false); }
+}
+async function verifyOtp(pfx) {
+  const email = (document.getElementById(pfx+'-email').value||'').trim().toLowerCase();
+  const code = (document.getElementById(pfx+'-otp').value||'').trim();
+  if (!code) return showResult(pfx+'-otp-status','Enter the 6-digit code.', false);
+  try {
+    const r = await fetch(SCRIPT_URL + '?action=oppsVerifyOtp&email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code) + '&_t=' + Date.now());
+    const j = await r.json();
+    if (j.verified) {
+      OTP_VERIFIED[pfx] = true;
+      const badge = document.getElementById(pfx+'-email-verified'); if (badge) badge.style.display='';
+      document.getElementById(pfx+'-otp-row').style.display='none';
+      const sendBtn = document.getElementById(pfx+'-otp-send'); if (sendBtn) sendBtn.style.display='none';
+      showResult(pfx+'-otp-status','\u2713 Email verified.', true);
+    } else showResult(pfx+'-otp-status', esc(j.message || j.error || 'Incorrect code'), false);
+  } catch(e){ showResult(pfx+'-otp-status','Verification failed. Try again.', false); }
+}
+function emailVerifiedFor(pfx, email) {
+  return (!!googleVerifiedEmail && googleVerifiedEmail === email) || !!OTP_VERIFIED[pfx];
+}
+async function uploadPartnerFile(email, file, actionQuery) {
+  return new Promise((resolve) => {
+    const fr = new FileReader();
+    fr.onload = async () => {
+      try {
+        const b64 = fr.result.split(',').pop();
+        await apiFetch(SCRIPT_URL + '?action=' + actionQuery + '&email=' + encodeURIComponent(email), {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileBase64: b64, fileName: file.name, mimeType: file.type || 'application/octet-stream' })
+        });
+      } catch(_) {}
+      resolve(true);
+    };
+    fr.onerror = () => resolve(false);
+    fr.readAsDataURL(file);
+  });
+}
 function mountTS(elId) {
   function _go() {
     const el = document.getElementById(elId); if (!el || !window.turnstile) return;
@@ -1031,12 +1100,19 @@ async function handleGoogleCredentialResponse(response) {
   } catch (_) {}
   if (blacklisted) { alert('This account has been blocked. Contact admin@gccpros.com.'); return; }
 
+  // v8.3 perf: for a known account logging in, dismiss the login screen NOW
+  // (right after the fast status prefetch) instead of waiting for the Firebase
+  // sign-in round-trip + auth-state event. The dashboard loads behind it.
+  if (googleSignInIntent === 'login' && exists) closeModal('login-modal');
+
   // v5: hide signup chrome immediately (don't wait for Firebase auth state to propagate)
   setSignedInChrome(true);
   try {
     const cred = firebase.auth.GoogleAuthProvider.credential(idToken);
     await firebase.auth().signInWithCredential(cred);
   } catch (err) {
+    openModal('login-modal');
+    setSignedInChrome(false);
     showResult('li-result', 'Google credential rejected by Firebase: ' + (err.message || err.code), false);
     return;
   }
@@ -1386,7 +1462,9 @@ function jsStep1to2() {
   if (!v('js-name') || !v('js-email') || !v('js-phone') || !v('js-linkedin')) {
     return showResult('js-result-1', 'Name, email, phone, and LinkedIn are required.', false);
   }
-  if (!PHONE_RX.test(v('js-phone'))) return showResult('js-result-1', 'Phone number looks invalid (10–15 digits).', false);
+  if (!PHONE_RX.test(v('js-phone'))) return showResult('js-result-1', 'Phone number looks invalid (10-15 digits).', false);
+  if (!LINKEDIN_RX.test(v('js-linkedin'))) return showResult('js-result-1', 'Enter a valid LinkedIn URL (https://linkedin.com/in/...).', false);
+  if (!emailVerifiedFor('js', v('js-email').toLowerCase())) return showResult('js-result-1', 'Please verify your email first (use Continue with Google, or send a verification code).', false);
   document.getElementById('js-step-1').style.display = 'none';
   document.getElementById('js-step-2').style.display = 'block';
 }
@@ -1420,7 +1498,7 @@ async function jsSubmit() {
       totalExperience: v('js-totalexp'), domain: v('js-domain'),
       noticePeriod: v('js-notice'), currentCTC: v('js-curctc'), expectedCTC: v('js-expctc'),
       reasonForChange: v('js-reason'), source: v('js-source'), referredBy: v('js-referred'),
-      termsAgree: 'true', cfToken: cf,
+      termsAgree: 'true', cfToken: cf, emailVerifiedVia: (googleVerifiedEmail && googleVerifiedEmail === email) ? 'Google' : '',
       emailVerifiedVia: (googleVerifiedEmail && googleVerifiedEmail === email) ? 'Google' : '',
       ua: navigator.userAgent || ''
     });
@@ -1467,17 +1545,27 @@ function openPartnerSignup() {
 
 async function ptSubmit() {
   const v = id => document.getElementById(id).value.trim();
-  if (!v('pt-name') || !v('pt-email') || !v('pt-phone') || !v('pt-linkedin') ||
-      !v('pt-company') || !v('pt-desig') || !v('pt-location') || !v('pt-totalexp') || !v('pt-pdomain')) {
+  const ms = id => Array.from(document.getElementById(id).selectedOptions).map(o => o.value).join(', ');
+  const email = v('pt-email').toLowerCase();
+  const cvFile = document.getElementById('pt-cv').files[0];
+  const photoFile = document.getElementById('pt-photo').files[0];
+  if (!v('pt-name') || !email || !v('pt-phone') || !v('pt-linkedin') ||
+      !v('pt-company') || !v('pt-desig') || !v('pt-city') || !v('pt-totalexp') || !v('pt-pdomain')) {
     return showResult('pt-result', 'Please fill all required fields.', false);
   }
-  if (!PHONE_RX.test(v('pt-phone'))) return showResult('pt-result', 'Phone number looks invalid.', false);
+  if (!LINKEDIN_RX.test(v('pt-linkedin'))) return showResult('pt-result', 'Enter a valid LinkedIn URL (https://linkedin.com/in/...).', false);
+  if (!PHONE_RX.test(v('pt-phone'))) return showResult('pt-result', 'Phone number looks invalid (10-15 digits).', false);
   if (parseInt(v('pt-totalexp'), 10) < 15) return showResult('pt-result', 'Partner programme requires minimum 15 years experience.', false);
+  if (!ms('pt-industry')) return showResult('pt-result', 'Select at least one industry experience.', false);
+  if (!ms('pt-interests')) return showResult('pt-result', 'Select at least one area of interest.', false);
+  if (!cvFile) return showResult('pt-result', 'CV / resume upload is mandatory.', false);
+  if (!photoFile) return showResult('pt-result', 'A professional photo is mandatory.', false);
+  if (cvFile.size > 5*1024*1024 || photoFile.size > 5*1024*1024) return showResult('pt-result', 'Each file must be under 5 MB.', false);
+  if (!emailVerifiedFor('pt', email)) return showResult('pt-result', 'Please verify your email first (Continue with Google, or send a code).', false);
   if (!document.getElementById('pt-consent1').checked || !document.getElementById('pt-consent2').checked || !document.getElementById('pt-consent3').checked) {
     return showResult('pt-result', 'Please accept all three consents.', false);
   }
   const cf = tsToken('turnstile-pt');
-  const email = v('pt-email').toLowerCase();
   const btn = document.querySelector('#pt-modal .btn.brand-orange');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try {
@@ -1486,10 +1574,10 @@ async function ptSubmit() {
       email, fullName: v('pt-name'), phone: v('pt-phone'),
       linkedin: v('pt-linkedin'),
       currentCompany: v('pt-company'), currentDesignation: v('pt-desig'),
-      location: v('pt-location'),
+      city: v('pt-city'), location: v('pt-city'),
       totalExperience: v('pt-totalexp'),
       primaryDomain: v('pt-pdomain'), secondaryDomain: v('pt-sdomain'),
-      expertiseDomains: v('pt-expertise'), languages: v('pt-langs'),
+      industryExperience: ms('pt-industry'), interests: ms('pt-interests'),
       consentProcessing: 'Yes', agreeAgreement: 'Yes', agreeRules: 'Yes',
       cfToken: cf,
       emailVerifiedVia: (googleVerifiedEmail && googleVerifiedEmail === email) ? 'Google' : ''
@@ -1497,8 +1585,12 @@ async function ptSubmit() {
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
     const j = await r.json();
     if (j.error === 'blacklisted') return showResult('pt-result', 'Blocked. Contact admin@gccpros.com.', false);
-    if (j.error === 'captcha_failed') return showResult('pt-result', 'CAPTCHA failed.', false);
+    if (j.error === 'captcha_failed') return showResult('pt-result', 'CAPTCHA failed - reload and retry.', false);
+    if (j.error === 'email_not_verified') return showResult('pt-result', 'Please verify your email first.', false);
     if (j.error) throw new Error(j.error);
+    showResult('pt-result', 'Uploading your CV and photo...', true);
+    await uploadPartnerFile(email, cvFile, 'oppsUploadCV&context=profile');
+    await uploadPartnerFile(email, photoFile, 'oppsUploadPhoto');
     showResult('pt-result', '✓ Application received. Admin will review and email you within 48 hours. Until then your dashboard will show a pending banner.', true);
     setTimeout(() => { closeModal('pt-modal'); loadProfileAndDashboard(); }, 2200);
   } catch (err) {
@@ -1666,20 +1758,45 @@ async function kycSubmit() {
   const v = id => document.getElementById(id).value.trim();
   const pan = v('kyc-pan').toUpperCase(), last4 = v('kyc-last4'), ifsc = v('kyc-ifsc').toUpperCase();
   if (!CURRENT_EMAIL) return showResult('kyc-result', 'Not signed in.', false);
-  if (!pan || !v('kyc-panname') || !v('kyc-addrtype') || !v('kyc-addrlink') ||
-      !v('kyc-holder') || !v('kyc-bankname') || !ifsc || !last4 || !v('kyc-cheque')) {
-    return showResult('kyc-result', 'All fields required.', false);
+  const chequeInput = document.getElementById('kyc-cheque-file');
+  const chequeFile = chequeInput && chequeInput.files && chequeInput.files[0];
+  const addrInput = document.getElementById('kyc-addr-file');
+  const addrFile = addrInput && addrInput.files && addrInput.files[0];
+  if (!pan || !v('kyc-panname') || !v('kyc-addrtype') || !addrFile ||
+      !v('kyc-holder') || !v('kyc-bankname') || !ifsc || !last4 || !chequeFile) {
+    return showResult('kyc-result', 'All fields required (including cancelled-cheque + address-proof files).', false);
   }
   if (!PAN_RX.test(pan)) return showResult('kyc-result', 'PAN format invalid (e.g. ABCDE1234F).', false);
   if (!IFSC_RX.test(ifsc)) return showResult('kyc-result', 'IFSC format invalid (e.g. HDFC0001234).', false);
   if (!/^\d{4}$/.test(last4)) return showResult('kyc-result', 'Last 4 digits must be numeric.', false);
+  if (chequeFile.size > 5 * 1024 * 1024) return showResult('kyc-result', 'Cheque file too large (max 5 MB).', false);
   try {
+    showResult('kyc-result', 'Uploading cancelled cheque\u2026', true);
+    const chequePath = await new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = async () => {
+        try {
+          const b64 = fr.result.split(',').pop();
+          const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCheque&email=' + encodeURIComponent(CURRENT_EMAIL), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileBase64: b64, fileName: chequeFile.name, mimeType: chequeFile.type || 'application/pdf' })
+          });
+          const uj = await ur.json();
+          if (uj && uj.status === 'ok') resolve(uj.path);
+          else reject(new Error('Cheque upload failed: ' + ((uj && (uj.hint || uj.error)) || 'unknown')));
+        } catch (e) { reject(e); }
+      };
+      fr.onerror = () => reject(new Error('Could not read the cheque file.'));
+      fr.readAsDataURL(chequeFile);
+    });
+    showResult('kyc-result', 'Uploading address proof...', true);
+    await uploadPartnerFile(CURRENT_EMAIL, addrFile, 'oppsUploadAddressProof');
     const params = new URLSearchParams({
       action: 'oppsSubmitKYC', email: CURRENT_EMAIL,
       pan, bankLast4: last4, ifsc,
       panName: v('kyc-panname'), addressType: v('kyc-addrtype'),
-      addressLink: v('kyc-addrlink'), holderName: v('kyc-holder'),
-      bankName: v('kyc-bankname'), chequeLink: v('kyc-cheque')
+      addressLink: addrFile.name, holderName: v('kyc-holder'),
+      bankName: v('kyc-bankname'), chequeLink: chequePath
     });
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
     const j = await r.json();
@@ -2009,21 +2126,48 @@ function renderComplianceTab() {
 }
 
 function downloadAgreementDraft() {
-  const name = (CURRENT_PROFILE && CURRENT_PROFILE.fullName) || CURRENT_EMAIL || 'Partner';
-  const today = new Date().toLocaleDateString();
-  const txt = 'GCCPROs PARTNER REFERRAL AGREEMENT\n\n' +
-    'This agreement is made on ' + today + ' between GCCPROs and ' + name + ' ("Partner").\n\n' +
-    '1. The Partner agrees to refer qualified candidates for open roles listed by GCCPROs.\n' +
-    '2. Referral payouts are made upon successful placement and completion of the agreed guarantee period.\n' +
-    '3. The Partner shall maintain strict confidentiality of all candidate and client information.\n' +
-    '4. This is a non-exclusive engagement and creates no employment relationship.\n' +
-    '5. The Partner confirms all referred candidate data is shared with consent (DPDP Act compliant).\n\n' +
-    'Partner name: ' + name + '\nEmail: ' + (CURRENT_EMAIL || '') + '\nDate: ' + today + '\nSignature: ____________________\n';
-  const blob = new Blob([txt], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'GCCPROs-Partner-Agreement-' + String(CURRENT_EMAIL || 'partner').replace(/[^a-z0-9]/gi, '_') + '.txt';
-  document.body.appendChild(a); a.click(); a.remove();
+  const p = CURRENT_PROFILE || {};
+  const name = p.fullName || CURRENT_EMAIL || 'Partner';
+  const company = p.currentCompany || '';
+  const desig = p.designation || '';
+  const city = p.city || '';
+  const email = CURRENT_EMAIL || '';
+  const today = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>GCCPROs Partner Referral Agreement</title>
+  <style>
+    @page { size: A4; margin: 22mm 20mm; }
+    body { font-family: Georgia, 'Times New Roman', serif; color:#111; line-height:1.55; font-size:12.5px; }
+    h1 { text-align:center; font-size:18px; margin:0 0 4px; }
+    .sub { text-align:center; color:#555; font-size:11px; margin-bottom:22px; }
+    ol { padding-left:18px; } li { margin:7px 0; }
+    .sign { margin-top:46px; display:flex; justify-content:space-between; }
+    .sign div { width:45%; } .line { border-top:1px solid #000; margin-top:42px; padding-top:4px; font-size:11px; }
+    .pb { text-align:center; margin:14px 0; } @media print { .pb { display:none; } }
+  </style></head><body>
+  <div class="pb"><button onclick="window.print()" style="padding:8px 18px;font-size:13px;cursor:pointer;">Print / Save as PDF</button></div>
+  <h1>GCCPROs Partner Referral Agreement</h1>
+  <div class="sub">GCCPROs &middot; Talent &amp; Referral Network</div>
+  <p>This Partner Referral Agreement ("Agreement") is entered into on <b>${today}</b> between <b>GCCPROs</b> ("Company") and the partner named below ("Partner").</p>
+  <p><b>Partner name:</b> ${name}<br><b>Designation:</b> ${desig}${company ? ', ' + company : ''}<br><b>City:</b> ${city}<br><b>Email:</b> ${email}</p>
+  <ol>
+    <li>The Partner agrees to refer qualified candidates for open roles listed by the Company, in good faith and with the candidate's consent.</li>
+    <li>Referral fees are payable only upon a successful placement and completion of the agreed guarantee period, per the payout schedule communicated by the Company.</li>
+    <li>The Partner shall maintain strict confidentiality of all candidate, client and Company information and shall not disclose it to any third party.</li>
+    <li>This is a non-exclusive, independent engagement and creates no employment, agency, partnership or joint-venture relationship.</li>
+    <li>The Partner confirms all referred candidate data is shared lawfully and with consent, in compliance with the Digital Personal Data Protection Act, 2023.</li>
+    <li>KYC verification (PAN, bank details, address proof, cancelled cheque) must be completed and approved before any payout.</li>
+    <li>The Company may amend role listings, fees and this Agreement with notice. Either party may end the engagement with written notice; confidentiality survives termination.</li>
+    <li>This Agreement is governed by the laws of India and subject to the jurisdiction of the courts at the Company's registered location.</li>
+  </ol>
+  <p>By signing below, the Partner confirms they have read, understood and agree to the terms above.</p>
+  <div class="sign">
+    <div><div class="line">Partner signature &amp; date</div><div style="margin-top:6px;">Name: ${name}</div></div>
+    <div><div class="line">For GCCPROs (authorised signatory)</div></div>
+  </div>
+  </body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { alert('Please allow pop-ups to open the agreement for printing.'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
 }
 
 function emailSignedAgreement() {
