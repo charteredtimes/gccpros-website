@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v7-pwd-reset
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v8-urgent-jobs
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -255,7 +255,7 @@ td.actions { white-space:nowrap; }
           <select id="f-jobs-status" onchange="loadJobs()">
             <option value="">All statuses</option>
             <option value="active" selected>Active</option><option value="draft">Draft</option>
-            <option value="urgent">Urgent</option><option value="paused">Paused</option><option value="closed">Closed</option>
+            <option value="paused">Paused</option><option value="closed">Closed</option>
           </select>
           <input type="search" id="f-jobs-q" placeholder="&#128269; Search title / company / job code" oninput="renderJobs()">
           <button class="btn" onclick="loadJobs()">&#8635; Refresh</button>
@@ -747,16 +747,28 @@ function renderJobs() {
   const filtered = JOBS.filter(j => !q || [j.title, j.company, j.job_code, j.primary_domain, j.location].join(' ').toLowerCase().includes(q));
   document.getElementById('jobs-count').textContent = filtered.length + ' / ' + JOBS.length + ' jobs';
   if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
-  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Posted</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Urgent</th><th>Posted</th></tr></thead><tbody>';
   filtered.forEach(j => {
     const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
     const apps = (j.applications_count > 0)
       ? '<button class="btn small" onclick="viewJobApplicants(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\', \'' + esc((j.title || '').replace(/'/g, "\\'")) + '\')">View ' + j.applications_count + ' &rarr;</button> <button class="btn small secondary" onclick="downloadJobCVsZip(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\')" title="Download all applicant CVs for this job as a ZIP">&#128230; CVs</button>'
       : '<span class="muted">0</span>';
-    html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + fmtDate(j.posted_at) + '</td></tr>';
+    const urg = j.is_urgent
+      ? '<span class="badge b-urgent">&#128293; Urgent</span><br><button class="btn small secondary" style="margin-top:4px;" onclick="toggleJobUrgent(\'' + esc(j.id) + '\', false)">Unmark</button>'
+      : '<button class="btn small secondary" onclick="toggleJobUrgent(\'' + esc(j.id) + '\', true)">Mark urgent</button>';
+    html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + urg + '</td><td>' + fmtDate(j.posted_at) + '</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('jobs-box').innerHTML = html;
+}
+async function toggleJobUrgent(id, makeUrgent) {
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminSetJobUrgent&id=' + encodeURIComponent(id) + '&urgent=' + (makeUrgent ? 'true' : 'false'));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast(makeUrgent ? '\u2713 Marked urgent \u2014 it will rank first on the live page' : '\u2713 Urgent flag removed', 'ok');
+    loadJobs();
+  } catch (e) { toast('Failed: ' + e.message, 'err'); }
 }
 function viewJobApplicants(jobId, jobCode, jobTitle) {
   CURRENT_JOB_FILTER = { id: jobId, code: jobCode, title: jobTitle };

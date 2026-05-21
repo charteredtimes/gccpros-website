@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.16-prod
+<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.17-prod
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -813,7 +813,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-2026-05-20-v8.16-prod';
+const BUILD = 'opps-2026-05-20-v8.17-prod';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -1432,14 +1432,15 @@ function applyFilters(jobs) {
 function renderJobs() {
   const el = document.getElementById('job-list');
   if (!el) return;
-  const filtered = applyFilters(JOB_LIST);
+  const _isUrgent = j => (j && (j.is_urgent === true || j.is_urgent === 'true' || String(j.status || '').toLowerCase() === 'urgent')) ? 1 : 0;
+  const filtered = applyFilters(JOB_LIST).slice().sort((a, b) => _isUrgent(b) - _isUrgent(a));
   // role count intentionally hidden — replaced by a sign-in CTA (jobs-cta)
   if (!filtered.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No roles match the current filters. Try clearing them.</p>'; return; }
   el.innerHTML = filtered.map(j => renderJobCard(j)).join('');
 }
 
 function renderJobCard(j) {
-  const urgent = String(j.status || '').toLowerCase() === 'urgent';
+  const urgent = (j.is_urgent === true || j.is_urgent === 'true') || String(j.status || '').toLowerCase() === 'urgent';
   const skills = splitToArr(j.skills);
   const ctcText = (j.ctc_min_inr || j.ctc_max_inr)
     ? fmtINR(j.ctc_min_inr) + ' – ' + fmtINR(j.ctc_max_inr) + ' <small>LPA</small>'
