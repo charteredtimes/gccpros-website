@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!-- GCCPROs Firebase auth action handler — build: auth-action-2026-05-20-v1
+     Handles password reset (and email verification). The password requirements
+     are read LIVE from the Firebase project policy via validatePassword(), so the
+     on-screen guidance can never disagree with what the server will accept. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Set new password | GCCPROs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1D2226; --blue:#1E40AF; --blue-dark:#1B3897; --muted:#667085; --border:#E4E7EC; --red:#D92D20; --green:#16A34A; --bg:#F2F4F7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Inter',system-ui,Arial,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
+  .wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:14px; padding:32px 30px; width:100%; max-width:440px; box-shadow:0 8px 30px rgba(16,24,40,0.06); }
+  .brand { font-size:13px; font-weight:700; letter-spacing:2px; color:var(--ink); margin-bottom:18px; }
+  .brand b { color:var(--blue); }
+  h1 { font-size:24px; margin:0 0 8px; color:var(--blue); }
+  .sub { font-size:13.5px; color:var(--muted); line-height:1.55; margin:0 0 18px; }
+  .sub b { color:var(--ink); }
+  label { display:block; font-size:12.5px; font-weight:600; color:var(--ink); margin:14px 0 6px; }
+  .field { position:relative; }
+  input[type=password], input[type=text] { width:100%; padding:12px 42px 12px 14px; font-size:15px; border:1px solid var(--border); border-radius:8px; font-family:inherit; }
+  input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(30,64,175,0.12); }
+  .toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:12px; color:var(--muted); font-weight:600; }
+  .reqs { list-style:none; padding:0; margin:10px 0 0; font-size:12.5px; }
+  .reqs li { display:flex; align-items:center; gap:8px; padding:3px 0; color:var(--muted); }
+  .reqs li.ok { color:var(--green); }
+  .reqs li .ic { width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid var(--border); display:inline-flex; align-items:center; justify-content:center; font-size:10px; }
+  .reqs li.ok .ic { border-color:var(--green); background:var(--green); color:#fff; }
+  .strength { font-size:12.5px; font-weight:600; margin-top:8px; }
+  .strength.ok { color:var(--green); }
+  .strength.bad { color:var(--muted); }
+  .alert { border-radius:8px; padding:12px 14px; font-size:13px; margin:0 0 16px; line-height:1.5; display:none; }
+  .alert.err { background:#FEF3F2; border:1px solid #FDA29B; color:var(--red); }
+  .alert.ok { background:#ECFDF3; border:1px solid #A6F4C5; color:#067647; }
+  button.primary { width:100%; margin-top:18px; padding:13px; font-size:15px; font-weight:700; color:#fff; background:var(--blue); border:none; border-radius:8px; cursor:pointer; font-family:inherit; }
+  button.primary:hover:not(:disabled) { background:var(--blue-dark); }
+  button.primary:disabled { opacity:0.55; cursor:not-allowed; }
+  .back { display:block; text-align:center; margin-top:14px; font-size:13px; color:var(--blue); text-decoration:none; }
+  .back:hover { text-decoration:underline; }
+  footer { text-align:center; padding:18px; font-size:13px; }
+  footer a { color:var(--green); font-weight:600; text-decoration:none; margin:0 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="brand">GCC<b>PROS</b></div>
+    <h1 id="title">Set new password</h1>
+    <p class="sub" id="sub">Verifying your reset link…</p>
+    <div class="alert err" id="err"></div>
+    <div class="alert ok" id="ok"></div>
+    <div id="form" style="display:none;">
+      <label for="pw">New password</label>
+      <div class="field">
+        <input type="password" id="pw" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+        <button type="button" class="toggle" id="t1">Show</button>
+      </div>
+      <ul class="reqs" id="reqs"></ul>
+      <div class="strength bad" id="strength"></div>
+      <label for="pw2">Confirm password</label>
+      <div class="field">
+        <input type="password" id="pw2" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+        <button type="button" class="toggle" id="t2">Show</button>
+      </div>
+      <button class="primary" id="submit" disabled>Set new password</button>
+    </div>
+    <a class="back" id="back" href="https://www.gccpros.com/opportunities">&larr; Back to login</a>
+  </div>
+</div>
+<footer>
+  <a href="https://www.gccpros.com" target="_blank" rel="noopener">GCC Insider Community</a>
+  <a href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener">WhatsApp Channel</a>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, verifyPasswordResetCode, confirmPasswordReset, validatePassword, applyActionCode }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth(initializeApp({
+  apiKey: "AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain: "gccpros-9aadb.firebaseapp.com",
+  projectId: "gccpros-9aadb",
+}));
+
+const $ = id => document.getElementById(id);
+const qp = new URLSearchParams(location.search);
+const mode = qp.get("mode") || "resetPassword";
+const oobCode = qp.get("oobCode") || "";
+const LOGIN_URL = "https://www.gccpros.com/opportunities";
+$("back").href = LOGIN_URL;
+
+function err(m){ const e=$("err"); e.textContent=m; e.style.display = m ? "" : "none"; }
+function ok(m){ const e=$("ok"); e.textContent=m; e.style.display = m ? "" : "none"; }
+
+// Build the requirement checklist + the validity gate straight from Firebase's policy.
+const CLASS_DEFS = [
+  ["containsUppercaseLetter",        "An uppercase letter (A–Z)",  o => o.containsUppercaseCharacter],
+  ["containsLowercaseLetter",        "A lowercase letter (a–z)",   o => o.containsLowercaseCharacter],
+  ["containsNumericCharacter",       "A number (0–9)",             o => o.containsNumericCharacter],
+  ["containsNonAlphanumericCharacter","A symbol (! @ # $ % …)",     o => o.containsNonAlphanumericCharacter],
+];
+
+async function evaluate(pw) {
+  // Returns { valid, items:[{label,ok}] } based on the SERVER policy when possible.
+  try {
+    const st = await validatePassword(auth, pw);
+    const opts = (st.passwordPolicy && st.passwordPolicy.customStrengthOptions) || {};
+    const min = opts.minPasswordLength || 6;
+    let anyClass = CLASS_DEFS.some(([,,enf]) => enf(opts));
+    const items = [{ label: `At least ${min} characters`, ok: st.meetsMinPasswordLength !== false }];
+    for (const [key, label, enf] of CLASS_DEFS) {
+      if (anyClass ? enf(opts) : true) items.push({ label, ok: st[key] !== false });
+    }
+    return { valid: !!st.isValid, items };
+  } catch (e) {
+    // Fallback (validatePassword unavailable): enforce a strong rule as a safe superset.
+    const items = [
+      { label: "At least 8 characters",      ok: pw.length >= 8 },
+      { label: "An uppercase letter (A–Z)",  ok: /[A-Z]/.test(pw) },
+      { label: "A lowercase letter (a–z)",   ok: /[a-z]/.test(pw) },
+      { label: "A number (0–9)",             ok: /\d/.test(pw) },
+      { label: "A symbol (! @ # $ % …)",      ok: /[^A-Za-z0-9]/.test(pw) },
+    ];
+    return { valid: items.every(i => i.ok), items };
+  }
+}
+
+let lastValid = false;
+async function refresh() {
+  const pw = $("pw").value, pw2 = $("pw2").value;
+  const { valid, items } = await evaluate(pw);
+  lastValid = valid;
+  $("reqs").innerHTML = items.map(i =>
+    `<li class="${i.ok ? "ok" : ""}"><span class="ic">${i.ok ? "✓" : ""}</span>${i.label}</li>`).join("");
+  const match = pw && pw === pw2;
+  const s = $("strength");
+  if (!pw) { s.textContent = ""; }
+  else if (!valid) { s.className = "strength bad"; s.textContent = "Password does not yet meet all requirements"; }
+  else if (!match) { s.className = "strength bad"; s.textContent = "Strong password ✓ — now confirm it below"; }
+  else { s.className = "strength ok"; s.textContent = "Strong password ✓ — passwords match"; }
+  $("submit").disabled = !(valid && match);
+}
+$("pw").addEventListener("input", refresh);
+$("pw2").addEventListener("input", refresh);
+$("t1").onclick = () => { const i=$("pw"); i.type = i.type==="password"?"text":"password"; $("t1").textContent = i.type==="password"?"Show":"Hide"; };
+$("t2").onclick = () => { const i=$("pw2"); i.type = i.type==="password"?"text":"password"; $("t2").textContent = i.type==="password"?"Show":"Hide"; };
+
+$("submit").addEventListener("click", async () => {
+  err(""); ok("");
+  const pw = $("pw").value;
+  if (!lastValid) { err("Your password does not meet the requirements listed below."); return; }
+  if (pw !== $("pw2").value) { err("The two passwords do not match."); return; }
+  $("submit").disabled = true; $("submit").textContent = "Saving…";
+  try {
+    await confirmPasswordReset(auth, oobCode, pw);
+    $("form").style.display = "none";
+    $("title").textContent = "Password updated";
+    $("sub").textContent = "";
+    ok("✓ Your password has been updated. You can now sign in with your new password.");
+    setTimeout(() => { location.href = LOGIN_URL; }, 2500);
+  } catch (e) {
+    const c = String(e.code || "");
+    let m;
+    if (c.includes("expired-action-code")) m = "This reset link has expired. Please request a new one from the sign-in screen.";
+    else if (c.includes("invalid-action-code")) m = "This reset link is invalid or has already been used. Please request a new one.";
+    else if (c.includes("password-does-not-meet-requirements") || c.includes("weak-password")) m = "Your password does not meet the requirements listed below. Please adjust it and try again.";
+    else if (c.includes("user-disabled")) m = "This account has been disabled. Contact admin@gccpros.com.";
+    else if (c.includes("user-not-found")) m = "No account was found for this reset link.";
+    else m = "Could not update password. Please try again.";
+    err(m + (c ? "  (" + c + ")" : ""));
+    $("submit").disabled = false; $("submit").textContent = "Set new password";
+  }
+});
+
+// ---- bootstrap by mode ----
+(async () => {
+  if (!oobCode) { $("sub").textContent = ""; err("This link is missing its reset code. Please use the link from your email."); return; }
+  if (mode === "verifyEmail") {
+    $("title").textContent = "Verify email";
+    try { await applyActionCode(auth, oobCode); $("sub").textContent = ""; ok("✓ Your email is verified. You can now sign in."); }
+    catch (e) { $("sub").textContent = ""; err("This verification link is invalid or has expired."); }
+    return;
+  }
+  // default: resetPassword
+  try {
+    const email = await verifyPasswordResetCode(auth, oobCode);
+    $("sub").innerHTML = "Setting a new password for <b>" + email.replace(/[<>&]/g, "") + "</b>. Meet every requirement below — the green ticks confirm it will be accepted.";
+    $("form").style.display = "";
+    refresh();
+    $("pw").focus();
+  } catch (e) {
+    $("sub").textContent = "";
+    const c = String(e.code || "");
+    err(c.includes("expired") ? "This reset link has expired. Please request a new one from the sign-in screen."
+        : "This reset link is invalid or has already been used. Please request a new one.");
+  }
+})();
+</script>
+</body>
+</html>
