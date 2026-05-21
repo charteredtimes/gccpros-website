@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-21-v11-comm-filter-default
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-22-v12-comm-detail-expander
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -919,16 +919,20 @@ async function loadCommunity(kind) {
     if (!rows.length) { box.innerHTML = '<p class="loading">No applications.</p>'; return; }
     let html = '<table><thead><tr><th>Created</th><th>Email</th><th>Name</th><th>LinkedIn</th><th>Company</th><th>Designation</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     rows.forEach((a, i) => {
-      const linkedinCell = a.linkedin ? '<a href="' + esc(a.linkedin) + '" target="_blank">link &#8599;</a>' : '—';
+      const linkedinCell = a.linkedin ? '<a href="' + esc(a.linkedin) + '" target="_blank">link &#8599;</a>' : '&#8212;';
+      const company = a.current_company || a.company || a.employer || '';
+      const designation = a.current_title || a.designation || a.role || a.title || '';
+      const detId = 'det-' + kind + '-' + i;
       html += '<tr>';
       html += '<td>' + fmtDate(a.created_at) + '</td>';
       html += '<td class="email">' + esc(a.email || '') + '</td>';
-      html += '<td>' + esc(a.full_name || '') + '</td>';
+      html += '<td>' + esc(a.full_name || a.name || '') + '</td>';
       html += '<td>' + linkedinCell + '</td>';
-      html += '<td>' + esc(a.company || '') + '</td>';
-      html += '<td>' + esc(a.designation || '') + '</td>';
+      html += '<td>' + esc(company) + '</td>';
+      html += '<td>' + esc(designation) + '</td>';
       html += '<td>' + badge(a.status) + '</td>';
       html += '<td class="actions">';
+      html += '<button class="btn small" onclick="toggleDet(\'' + detId + '\',this)">Details &#9656;</button> ';
       if ((a.status || '').toLowerCase() === 'pending') {
         html += '<button class="btn small" onclick="decideCommApp(\'' + kind + '\',\'' + esc(a.id) + '\',\'approved\')">Approve</button> ';
         html += '<button class="btn small danger" onclick="decideCommApp(\'' + kind + '\',\'' + esc(a.id) + '\',\'rejected\')">Reject</button>';
@@ -937,6 +941,7 @@ async function loadCommunity(kind) {
       }
       html += '</td>';
       html += '</tr>';
+      html += '<tr id="' + detId + '" class="det-row" style="display:none;"><td colspan="8" style="background:#fafafa;padding:14px 16px;border-bottom:2px solid #eee;">' + appDetailGrid(a) + '</td></tr>';
     });
     html += '</tbody></table>';
     box.innerHTML = html;
@@ -957,6 +962,42 @@ async function decideCommApp(kind, id, decision) {
 // =========================================================
 // COMMUNITY — Event RSVPs (client-side filtered; status workflow)
 // =========================================================
+// ---- Full-record detail expander for Community (Insider + Council) applications ----
+function toggleDet(id, btn) {
+  var row = document.getElementById(id);
+  if (!row) return;
+  var open = (row.style.display === 'none' || row.style.display === '');
+  row.style.display = open ? 'table-row' : 'none';
+  if (btn) btn.innerHTML = open ? 'Details &#9662;' : 'Details &#9656;';
+}
+var APP_FIELD_LABELS = {
+  full_name:'Full name', email:'Email', whatsapp:'WhatsApp', linkedin:'LinkedIn',
+  current_company:'Current company', current_title:'Current designation',
+  seniority_band:'Seniority band', years_senior:'Years of experience',
+  gccs_led_or_advised:'GCCs led or advised', nomination_type:'Nomination type',
+  nominator_name:'Nominator name', nominator_email:'Nominator email',
+  why_join:'Why join / expectations', contribution_area:'Significant contribution',
+  dpdp_consent:'DPDP consent', consent_ts:'Consent timestamp', consent_ip:'Consent IP',
+  status:'Status', decision_notes:'Decision notes', decided_by:'Decided by',
+  decided_at:'Decided at', created_at:'Created', updated_at:'Updated', id:'ID',
+  company:'Company', designation:'Designation', role:'Role', current_gcc:'Current GCC'
+};
+function prettyKey(k){ return APP_FIELD_LABELS[k] || String(k).replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); }
+function appDetailGrid(a) {
+  var rows = '';
+  Object.keys(a).forEach(function(k){
+    var v = a[k];
+    if (v === null || v === undefined || v === '') return;
+    var val = (typeof v === 'object') ? JSON.stringify(v) : String(v);
+    var disp = /^https?:\/\//i.test(val) ? '<a href="' + esc(val) + '" target="_blank">' + esc(val) + ' &#8599;</a>' : esc(val);
+    rows += '<div style="display:flex;gap:12px;padding:5px 0;border-bottom:1px solid #ececec;">'
+         +  '<div style="flex:0 0 200px;font-weight:600;color:#555;font-size:12px;">' + esc(prettyKey(k)) + '</div>'
+         +  '<div style="flex:1;font-size:13px;white-space:pre-wrap;word-break:break-word;color:#222;">' + disp + '</div>'
+         +  '</div>';
+  });
+  return '<div style="max-width:920px;">' + (rows || '<span class="muted">No additional fields.</span>') + '</div>';
+}
+
 const RSVP_STATUSES = ['New','Confirmed','Waitlist','Cancelled','Attended','No-show'];
 async function loadRsvps() {
   const box = document.getElementById('rsvps-box');
@@ -1736,5 +1777,4 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-</body>
-</html>
+</bo
