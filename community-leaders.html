@@ -287,6 +287,7 @@ textarea{resize:vertical;line-height:1.7;}
         <div class="err-field" id="err-consent"></div>
       </div>
 
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAADR4eSfrXpQVH-3f" data-theme="dark" style="margin:0 0 18px;"></div>
       <button class="submit-btn" id="submit-btn" onclick="submitForm()">
         ⚜️ Submit Expression of Interest
       </button>
@@ -333,8 +334,11 @@ textarea{resize:vertical;line-height:1.7;}
   </div>
 </footer>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6HJbg2PBAGSc-dNNTEREyk49E6c5nemgW4T4QmHVMpNMvX9GF1uCNxgmG0TwQxxa3hA/exec';
+// v2026-05-22 — dual-submit: Apps Script (Sheet backup) + Supabase councilApply (admin tab).
+const EDGE_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 
 function showErr(id, msg) {
   const el = document.getElementById(id);
@@ -422,8 +426,27 @@ async function submitForm() {
     consent:    document.querySelector('input[name="consent"]:checked').value,
   };
 
+  // Cloudflare Turnstile token for the councilApply path (the Sheet backup needs none).
+  var cfToken = '';
+  try { if (window.turnstile && turnstile.getResponse) cfToken = turnstile.getResponse() || ''; } catch(_) {}
+  if (!cfToken) { var _tr = document.querySelector('[name="cf-turnstile-response"]'); if (_tr) cfToken = _tr.value || ''; }
+
+  // Map the form fields onto the councilApply contract so the application also lands in the admin tab.
+  var councilPayload = {
+    fullName: fields.fullName, email: fields.email, whatsapp: fields.whatsapp,
+    linkedin: fields.linkedin, company: fields.company, title: fields.role,
+    gccsLed: fields.gccs, yearsSenior: fields.experience,
+    whyJoin: fields.contrib, contribution: fields.whyJoin,
+    nominationType: 'self', dpdpConsent: fields.consent, cfToken: cfToken, ua: navigator.userAgent
+  };
+
   try {
-    await fetch(SCRIPT_URL + '?' + new URLSearchParams(fields).toString(), { mode: 'no-cors' });
+    // 1) Google Sheet backup (full record incl. domain/city/interest) — always fires.
+    fetch(SCRIPT_URL + '?' + new URLSearchParams(fields).toString(), { mode: 'no-cors' }).catch(function(){});
+    // 2) Admin tab via Supabase councilApply — best-effort; requires a Turnstile token.
+    if (cfToken) {
+      fetch(EDGE_URL + '?action=councilApply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(councilPayload) }).catch(function(){});
+    }
     document.getElementById('form-body').style.display = 'none';
     document.getElementById('success-screen').style.display = 'block';
   } catch(e) {
