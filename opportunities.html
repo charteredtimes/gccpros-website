@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.18-prod
+<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.19-prod
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -100,6 +100,13 @@ a:hover { text-decoration: underline; }
 .trust-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 34px; }
 .trust-item { font-size: 13px; color: var(--ink); font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
 .trust-item span { color: var(--gold); font-weight: 800; font-size: 14px; }
+.wa-fab { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display: inline-flex; align-items: center; gap: 10px; background: #25D366; color: #fff; padding: 12px 18px; border-radius: 30px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 6px 22px rgba(0,0,0,0.28); transition: transform .15s, box-shadow .15s, background .15s; }
+.wa-fab:hover { background: #1ebe5d; color: #fff; text-decoration: none; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.32); }
+.wa-fab svg { width: 22px; height: 22px; fill: #fff; flex: none; }
+.wa-inline { display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: #fff; padding: 11px 20px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; }
+.wa-inline:hover { background: #1ebe5d; color: #fff; text-decoration: none; }
+.wa-inline svg { width: 18px; height: 18px; fill: #fff; flex: none; }
+@media (max-width: 560px) { .wa-fab .wa-label { display: none; } .wa-fab { padding: 14px; border-radius: 50%; gap: 0; } }
 .hero.is-signedin { padding: 32px 0 38px; }
 .hero.is-signedin h1 { font-size: 32px; }
 .hero.is-signedin .hero-tagline, .hero.is-signedin .hero-subtitle, .hero.is-signedin .hero-cta { display: none; }
@@ -349,6 +356,9 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <h2>Active Opportunities</h2>
       <p>Live listings from verified Global Capability Centres.</p>
       <p id="jobs-cta" onclick="openLoginModal()" style="margin-top:8px;color:var(--brand,#ea580c);font-weight:700;cursor:pointer;display:inline-block;">&#128274; Sign in to unlock exclusive opportunities curated for you &rarr;</p>
+      <p style="margin-top:14px;">
+        <a class="wa-inline" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg> Join the &ldquo;GCC Jobs&rdquo; WhatsApp group</a>
+      </p>
     </div>
 
     <div class="filter-bar">
@@ -811,9 +821,13 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   </div>
 </footer>
 
+<!-- Floating WhatsApp CTA -->
+<a class="wa-fab" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer" aria-label="Join the GCC Jobs WhatsApp group"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg><span class="wa-label">Join GCC Jobs on WhatsApp</span></a>
+
+
 <script>
 'use strict';
-const BUILD = 'opps-2026-05-20-v8.18-prod';
+const BUILD = 'opps-2026-05-20-v8.19-prod';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
