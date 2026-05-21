@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-18-edge-v6.1-phase-c · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-21-v6.2-reset-gate · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2750,6 +2750,7 @@ function showSignInState(mode) {
           '<p style="font-size:12px;max-width:440px;margin:6px auto 0;">Sign in with email and password, or with Google.</p>' +
         '</div>' +
         '<div style="max-width:380px;margin:0 auto;">' +
+          '<div style="background:#FFF8E6;border:1px solid #F2D98C;border-radius:4px;padding:10px 12px;margin-bottom:14px;font-size:11.5px;color:#7A5B00;line-height:1.5;">Returning after a while, or migrated from the old portal? If you are facing any login issues, use <a href="#" onclick="switchMode(\'reset\');return false;" style="color:var(--gold-deep);font-weight:700;text-decoration:underline;">Forgot password?</a> to set a new one.</div>' +
           googleBtn + divider + signinForm +
         '</div>' +
         '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
@@ -3146,13 +3147,21 @@ async function submitPasswordReset(ev) {
   var email = (document.getElementById('signin-email').value || '').trim().toLowerCase();
   var btn   = ev.target.querySelector('button[type="submit"]');
   if (!email || email.indexOf('@') < 1) return _showSignInErr('Please enter a valid email.');
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
 
-  // With Firebase email-enumeration protection enabled, Firebase silently
-  // sends a reset link if the account exists and silently returns success
-  // if it doesn't. So the safe UX is: ALWAYS show a generic "check your
-  // inbox" message. Real users get the link; non-registered emails get
-  // nothing but no information leaked. No pre-check needed.
+  // v6.2: only REGISTERED members may reset. A non-registered email that happens
+  // to have a Firebase login could otherwise reset and then hit the "not
+  // registered" wall at sign-in (the abhay case). Verify the users registry first.
+  try {
+    var _cr = await fetch(SCRIPT_URL + '?action=checkEmail&email=' + encodeURIComponent(email));
+    var _cd = await _cr.json();
+    if (_cd && _cd.exists === false) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send reset link'; }
+      return _showSignInErr('This email is not registered for the GCC Database. Please use "Sign up & earn 500 credits" to apply for access first - you cannot reset a password for an account that does not exist yet.');
+    }
+  } catch (_) { /* registry check failed - fall through and let Firebase handle it */ }
+
+  if (btn) { btn.textContent = 'Sending link...'; }
   try {
     await firebase.auth().sendPasswordResetEmail(email);
   } catch (e) {
