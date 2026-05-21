@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-20-v8-urgent-jobs
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-21-v10-db-full
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -196,11 +196,36 @@ td.actions { white-space:nowrap; }
   <!-- DATABASE DOMAIN -->
   <div id="domain-database" class="domain-section" style="display:none;">
     <div class="tabs">
-      <button class="tab active" onclick="showSubTab(event,'database','credits')">Grant credits</button>
+      <button class="tab active" onclick="showSubTab(event,'database','users')">User accounts</button>
+      <button class="tab" onclick="showSubTab(event,'database','credits')">Grant credits</button>
       <button class="tab" onclick="showSubTab(event,'database','history')">User history</button>
+      <button class="tab" onclick="showSubTab(event,'database','submissions')">Submissions</button>
+      <button class="tab" onclick="showSubTab(event,'database','security')">Security</button>
     </div>
 
-    <div id="db-credits" class="panel active">
+    <div id="db-users" class="panel active">
+      <div class="card">
+        <h3>Database User Accounts</h3>
+        <p class="muted">Approve / reject / suspend members, view balances &amp; lifetime spend, grant credits, and open the credit ledger. Source: <code>users</code> + <code>credit_balances</code>.</p>
+        <div id="db-stats" class="kpi-row" style="margin-bottom:14px;"></div>
+        <div class="filter-row">
+          <select id="db-status-filter" onchange="dbRenderUsers()">
+            <option value="">All statuses</option>
+            <option value="Pending" selected>Pending only</option>
+            <option value="Approved">Approved</option>
+            <option value="Suspended">Suspended</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <input type="search" id="db-search" placeholder="&#128269; Search email / name / city" oninput="dbRenderUsers()">
+          <button class="btn" onclick="dbLoadUsers()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="dbExportUsersCsv()">&#128202; Export filtered (CSV)</button>
+          <span class="muted" id="db-users-count"></span>
+        </div>
+        <div id="db-users-box"><p class="loading">Loading users&hellip;</p></div>
+      </div>
+    </div>
+
+    <div id="db-credits" class="panel">
       <div class="card">
         <h3>Grant Credits</h3>
         <p class="muted">Add credits to any user's account. Logged in the audit trail.</p>
@@ -235,6 +260,41 @@ td.actions { white-space:nowrap; }
         <div id="hist-box"><p class="loading">Enter an email and click View history.</p></div>
       </div>
     </div>
+    <div id="db-submissions" class="panel">
+      <div class="card">
+        <h3>User Submissions</h3>
+        <p class="muted">GCCs suggested via &ldquo;Add a GCC&rdquo;, field corrections proposed by users, and enterprise waitlist requests.</p>
+        <div class="filter-row">
+          <button class="btn" onclick="dbLoadSubmissions('gcc')">GCC submissions</button>
+          <button class="btn" onclick="dbLoadSubmissions('corrections')">Corrections</button>
+          <button class="btn" onclick="dbLoadSubmissions('waitlist')">Enterprise waitlist</button>
+          <button class="btn brand-orange" onclick="dbExportSubmissionsCsv()">&#128202; Export CSV</button>
+          <span class="muted" id="db-sub-count"></span>
+        </div>
+        <div id="db-sub-box"><p class="loading">Pick a category above to load submissions.</p></div>
+      </div>
+    </div>
+
+    <div id="db-security" class="panel">
+      <div class="card">
+        <h3>Data Security Posture</h3>
+        <p class="muted">Reference summary of how the GCC Database protects member and company data.</p>
+        <ul style="font-size:13px;line-height:1.75;color:var(--ink);padding-left:18px;margin-top:10px;">
+          <li><strong>Encryption at rest:</strong> Supabase Postgres on AES-256 encrypted disks (platform default).</li>
+          <li><strong>Encryption in transit:</strong> Every API call uses TLS 1.2+. No plaintext over the wire.</li>
+          <li><strong>Service-role key:</strong> Stored server-side only (Edge Function secrets) &mdash; never sent to a browser.</li>
+          <li><strong>Admin key:</strong> Required for every admin action in this console. Rotate periodically.</li>
+          <li><strong>Row-level security:</strong> Enabled on all tables; end-users read only via credit-checked proxy endpoints.</li>
+          <li><strong>Field-level filtering:</strong> Reveal returns only the locked B2C fields; other columns never leave the server.</li>
+          <li><strong>Watermarking + copy friction:</strong> Reveal pages show viewer email + timestamp; right-click/selection blocked.</li>
+          <li><strong>Audit trail:</strong> Every credit spend, reveal, search, login, and admin action is logged with metadata.</li>
+          <li><strong>Backups:</strong> Supabase daily backups (7-day retention); Pro tier adds point-in-time recovery.</li>
+          <li><strong>Rate limits:</strong> Search and reveal throttled per user; monthly reveal cap enforced.</li>
+          <li><strong>Payments:</strong> Card data is entered on Razorpay&rsquo;s checkout only &mdash; it never touches our servers.</li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 
   <!-- OPPORTUNITIES DOMAIN -->
@@ -522,6 +582,7 @@ function pickDomain(name) {
     document.getElementById('card-' + d).classList.toggle('active', d === name);
     document.getElementById('domain-' + d).style.display = (d === name) ? '' : 'none';
   });
+  if (name === 'database' && typeof DB_USERS !== 'undefined' && !DB_USERS.length) dbLoadUsers();
 }
 
 function showSubTab(ev, domain, sub) {
@@ -533,6 +594,7 @@ function showSubTab(ev, domain, sub) {
   const prefix = domain === 'database' ? 'db-' : domain === 'community' ? 'comm-' : 'opp-';
   const target = document.getElementById(prefix + sub);
   if (target) target.classList.add('active');
+  if (domain === 'database' && sub === 'users' && typeof DB_USERS !== 'undefined' && !DB_USERS.length) dbLoadUsers();
   // Lazy-loads
   if (domain === 'community') {
     if (sub === 'insider' && !INSIDER.length) loadCommunity('insider');
@@ -557,6 +619,239 @@ function toast(msg, kind) {
 // =========================================================
 // DATABASE — Credits + History
 // =========================================================
+// ===== DATABASE — Submissions (user GCC suggestions / corrections / waitlist) =====
+// Ported from legacy admin.html. Read-only; uses adminSubmissions&kind=gcc|corrections|waitlist.
+let DB_SUBMISSIONS = [];
+let DB_SUB_KIND = 'gcc';
+async function dbLoadSubmissions(kind) {
+  DB_SUB_KIND = kind;
+  const box = document.getElementById('db-sub-box');
+  if (box) box.innerHTML = '<p class="loading">Loading ' + kind + '…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminSubmissions&kind=' + encodeURIComponent(kind) + '&_t=' + Date.now());
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    DB_SUBMISSIONS = j.rows || j.submissions || [];
+    dbRenderSubmissions();
+  } catch (e) {
+    if (box) box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(e.message) + '</p>';
+  }
+}
+function dbRenderSubmissions() {
+  const box = document.getElementById('db-sub-box');
+  const rows = DB_SUBMISSIONS;
+  if (!box) return;
+  if (!rows.length) { box.innerHTML = '<p class="loading">No ' + DB_SUB_KIND + ' submissions yet.</p>'; return; }
+  let cols;
+  if (DB_SUB_KIND === 'gcc') {
+    cols = [['created_at','Submitted',1],['submitted_by','By'],['company_name','Company'],['gcc_city','City'],['hq_country','HQ Country'],['industry','Industry'],['status','Status',0,1]];
+  } else if (DB_SUB_KIND === 'corrections') {
+    cols = [['created_at','Submitted',1],['submitted_by','By'],['company_name','Company'],['field_name','Field(s)'],['notes','Note'],['status','Status',0,1]];
+  } else {
+    cols = [['created_at','Submitted',1],['email','Email'],['company','Company'],['use_case','Use case']];
+  }
+  const cnt = document.getElementById('db-sub-count'); if (cnt) cnt.textContent = rows.length + ' ' + DB_SUB_KIND;
+  let html = '<table><thead><tr>' + cols.map(c => '<th>' + esc(c[1]) + '</th>').join('') + '<th>View</th></tr></thead><tbody>';
+  rows.forEach((r, idx) => {
+    const tds = cols.map(c => {
+      let v = r[c[0]];
+      if (c[2] && v) v = fmtDate(v);
+      if (c[3]) return '<td>' + badge(v || 'pending') + '</td>';
+      return '<td>' + esc(String(v == null ? '' : v).substring(0, 120)) + '</td>';
+    }).join('');
+    html += '<tr style="cursor:pointer;" onclick="if(event.target.tagName!==\'BUTTON\')dbShowSubmissionDetails(' + idx + ')">' + tds + '<td><button class="btn small secondary" onclick="event.stopPropagation();dbShowSubmissionDetails(' + idx + ')">View</button></td></tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+function dbShowSubmissionDetails(idx) {
+  const s = DB_SUBMISSIONS[idx];
+  if (!s) return;
+  let meta = s.metadata || {};
+  if (typeof meta === 'string') { try { meta = JSON.parse(meta); } catch (_) { meta = {}; } }
+  const merged = Object.assign({}, s, meta);
+  delete merged.metadata;
+  const rowsHtml = Object.keys(merged).map(k => {
+    let v = merged[k];
+    if (/_at$|date/i.test(k) && v) { try { v = fmtDate(v); } catch (_) {} }
+    if (v && typeof v === 'object') v = JSON.stringify(v);
+    return '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:170px;padding:6px 12px;vertical-align:top;">' + esc(k.replace(/_/g, ' ')) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (v != null && v !== '' ? esc(String(v)) : '<span class="muted">—</span>') + '</td></tr>';
+  }).join('');
+  const html = '<div class="dbm" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px;" onclick="this.remove()">' +
+    '<div onclick="event.stopPropagation()" style="background:#fff;border-radius:8px;max-width:720px;width:100%;max-height:88vh;overflow-y:auto;">' +
+    '<div style="padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;"><h3 style="margin:0;">' + esc(s.company_name || s.company || s.email || 'Submission') + '</h3><button class="btn small secondary" onclick="this.closest(\'.dbm\').remove()">&times;</button></div>' +
+    '<table style="width:100%;border-collapse:collapse;">' + rowsHtml + '</table>' +
+    '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+function dbExportSubmissionsCsv() {
+  const rows = DB_SUBMISSIONS;
+  if (!rows.length) { toast('Nothing to export', 'err'); return; }
+  const keys = Array.from(rows.reduce((set, r) => { Object.keys(r).forEach(k => k !== 'metadata' && set.add(k)); return set; }, new Set()));
+  const head = keys.join(',');
+  const body = rows.map(r => keys.map(k => '"' + String(r[k] == null ? '' : (typeof r[k] === 'object' ? JSON.stringify(r[k]) : r[k])).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([head + '\n' + body], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'gcc-submissions-' + DB_SUB_KIND + '.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+// ===== DATABASE — User accounts (approve/reject/suspend, balances, ledger) =====
+// Restored from the legacy admin.html. Uses adminHealth (user list) + adminApprove/
+// adminReject/adminSuspend + adminGrant + adminUserHistory. db-prefixed names so it
+// never collides with the Opportunities Users tab (loadUsers/renderUsers).
+let DB_USERS = [];
+async function dbLoadUsers() {
+  const box = document.getElementById('db-users-box');
+  if (box) box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminHealth&_t=' + Date.now());
+    const j = await r.json();
+    if (j.error) throw new Error(j.error === 'unauthorized' ? 'Invalid admin key' : j.error);
+    DB_USERS = j.users || [];
+    dbRenderStats();
+    dbRenderUsers();
+  } catch (e) {
+    if (box) box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(e.message) + '</p>';
+  }
+}
+function dbRenderStats() {
+  const c = { Pending: 0, Approved: 0, Suspended: 0, Rejected: 0 };
+  let bal = 0, spent = 0;
+  DB_USERS.forEach(u => { c[u.status] = (c[u.status] || 0) + 1; bal += Number(u.balance) || 0; spent += Number(u.lifetimeSpent) || 0; });
+  const cells = [
+    ['Total', DB_USERS.length], ['Pending', c.Pending], ['Approved', c.Approved],
+    ['Suspended', c.Suspended], ['Rejected', c.Rejected],
+    ['Credits outstanding', bal.toLocaleString('en-IN')], ['Lifetime spent', spent.toLocaleString('en-IN')]
+  ];
+  const g = document.getElementById('db-stats');
+  if (g) g.innerHTML = cells.map(c => '<div class="kpi"><div class="kpi-n">' + c[1] + '</div><div class="kpi-l">' + c[0] + '</div></div>').join('');
+}
+function _dbFiltered() {
+  const f = (document.getElementById('db-status-filter') || {}).value || '';
+  const q = ((document.getElementById('db-search') || {}).value || '').toLowerCase();
+  let rows = f ? DB_USERS.filter(u => u.status === f) : DB_USERS.slice();
+  if (q) rows = rows.filter(u => [u.email, u.fullName, u.currentCity, u.domainExpertise, u.linkedin].filter(Boolean).join(' ').toLowerCase().indexOf(q) >= 0);
+  return rows;
+}
+function dbRenderUsers() {
+  const rows = _dbFiltered();
+  const cnt = document.getElementById('db-users-count');
+  if (cnt) cnt.textContent = rows.length + ' / ' + DB_USERS.length + ' users';
+  const box = document.getElementById('db-users-box');
+  if (!box) return;
+  if (!rows.length) { box.innerHTML = '<p class="loading">No users match.</p>'; return; }
+  let html = '<table><thead><tr><th>Email</th><th>Name</th><th>City</th><th>Status</th><th>Signup</th><th>Last login</th><th>Balance</th><th>Spent</th><th style="min-width:240px;">Actions</th></tr></thead><tbody>';
+  rows.forEach((u, i) => {
+    const acts = [
+      '<button class="btn small secondary" onclick="dbShowDetails(' + i + ')">Details</button>',
+      (u.status === 'Pending') ? '<button class="btn small" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'approve\')">Approve</button>' : '',
+      (u.status === 'Suspended') ? '<button class="btn small" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'approve\')">Reinstate</button>' : '',
+      (u.status === 'Approved') ? '<button class="btn small secondary" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'suspend\')">Suspend</button>' : '',
+      (u.status !== 'Rejected') ? '<button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626;" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'reject\')">Reject</button>' : '',
+      (u.blacklisted ? '<button class="btn small" style="background:#111;color:#fff;border-color:#111;" onclick="dbUnblacklist(\'' + esc(u.email) + '\')">Un-blacklist</button>' : '<button class="btn small" style="background:#7c2d12;color:#fff;border-color:#7c2d12;" onclick="dbBlacklist(\'' + esc(u.email) + '\')">Blacklist</button>'),
+      '<button class="btn small secondary" onclick="dbQuickGrant(\'' + esc(u.email) + '\')">+Credits</button>',
+      '<button class="btn small secondary" onclick="dbQuickHistory(\'' + esc(u.email) + '\')">Ledger</button>'
+    ].filter(Boolean).join(' ');
+    html += '<tr><td class="email">' + esc(u.email) + '</td><td>' + esc(u.fullName || '') + '</td><td>' + esc(u.currentCity || '') + '</td><td>' + badge(u.status) + (u.blacklisted ? ' <span class="badge b-rejected" title="Blacklisted">⛔ Blacklisted</span>' : '') + '</td><td>' + (u.signupDate ? fmtDate(u.signupDate) : '') + '</td><td>' + (u.lastActive ? fmtDate(u.lastActive) : '<span class="muted">never</span>') + '</td><td>' + (Number(u.balance) || 0).toLocaleString('en-IN') + '</td><td>' + (Number(u.lifetimeSpent) || 0).toLocaleString('en-IN') + '</td><td style="white-space:nowrap;">' + acts + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+async function dbSetStatus(email, action) {
+  const ep = { approve: 'adminApprove', reject: 'adminReject', suspend: 'adminSuspend' }[action];
+  if (!ep) return;
+  let reason = '';
+  if (action !== 'approve') { reason = prompt('Reason for ' + action + '? (visible to other admins)'); if (reason === null) return; }
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=' + ep + '&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason) + '&_t=' + Date.now());
+    const j = await r.json();
+    if (j.status === 'ok') { toast(j.message || (action + ' OK'), 'ok'); dbLoadUsers(); }
+    else toast(j.message || j.error || 'Failed', 'err');
+  } catch (e) { toast('Network error: ' + e.message, 'err'); }
+}
+async function dbBlacklist(email) {
+  if (!confirm('Blacklist ' + email + ' ?\n\nThis BLOCKS the account (sets it Rejected) and prevents re-registration with this email. Reversible via Un-blacklist.')) return;
+  const reason = prompt('Reason for blacklisting? (optional, visible to admins)') || '';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminBlacklist&email=' + encodeURIComponent(email) + '&reason=' + encodeURIComponent(reason));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('⛔ Blacklisted ' + email, 'ok');
+    dbLoadUsers();
+  } catch (e) { toast('Failed: ' + e.message, 'err'); }
+}
+async function dbUnblacklist(email) {
+  if (!confirm('Remove ' + email + ' from the blacklist?\n\nThey can sign in / register again once you also Approve them.')) return;
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminUnblacklist&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ Removed from blacklist: ' + email, 'ok');
+    dbLoadUsers();
+  } catch (e) { toast('Failed: ' + e.message, 'err'); }
+}
+
+function dbShowDetails(i) {
+  const u = _dbFiltered()[i];
+  if (!u) return;
+  let extra = {};
+  if (u.notes) { try { extra = JSON.parse(u.notes); } catch (_) { extra = { admin_notes: u.notes }; } }
+  const F = [
+    ['Email', u.email], ['Full name', u.fullName], ['WhatsApp', u.whatsapp], ['LinkedIn', u.linkedin], ['Current city', u.currentCity],
+    ['Years experience', u.yearsExperience], ['Domain expertise', u.domainExpertise], ['Referrer', u.referrer], ['Email domain', u.emailDomain], ['Domain class', u.domainClass], ['Source', u.source],
+    ['Status', u.status], ['Signup', u.signupDate ? fmtDate(u.signupDate) : ''], ['Approved at', u.approvedAt ? fmtDate(u.approvedAt) : ''], ['Approved by', u.approvedBy], ['Suspended reason', u.suspendedReason], ['Last login', u.lastActive ? fmtDate(u.lastActive) : 'never'], ['Login count', u.loginCount],
+    ['Balance', (Number(u.balance) || 0).toLocaleString('en-IN')], ['Monthly reveals', u.monthlyReveals], ['Lifetime spent', (Number(u.lifetimeSpent) || 0).toLocaleString('en-IN')], ['Lifetime purchased', (Number(u.lifetimePurchased) || 0).toLocaleString('en-IN')],
+    ['Signup IP', extra.signup_ip], ['GCCs worked with', extra.gccs_worked_with], ['Eligibility pitch', extra.eligibility_pitch], ['Admin notes', extra.admin_notes]
+  ];
+  const rowsHtml = F.map(p => '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:160px;padding:6px 12px;vertical-align:top;">' + esc(p[0]) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (p[1] ? esc(String(p[1])) : '<span class="muted">—</span>') + '</td></tr>').join('');
+  const btns = [
+    (u.status === 'Pending') ? '<button class="btn" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'approve\');this.closest(\'.dbm\').remove()">Approve</button>' : '',
+    (u.status === 'Approved') ? '<button class="btn secondary" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'suspend\');this.closest(\'.dbm\').remove()">Suspend</button>' : '',
+    (u.status === 'Suspended') ? '<button class="btn" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'approve\');this.closest(\'.dbm\').remove()">Reinstate</button>' : '',
+    (u.status !== 'Rejected') ? '<button class="btn" style="background:#dc2626;color:#fff;border-color:#dc2626;" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'reject\');this.closest(\'.dbm\').remove()">Reject</button>' : '',
+    '<button class="btn secondary" onclick="dbQuickGrant(\'' + esc(u.email) + '\');this.closest(\'.dbm\').remove()">Grant credits</button>',
+    '<button class="btn secondary" onclick="dbQuickHistory(\'' + esc(u.email) + '\');this.closest(\'.dbm\').remove()">View ledger</button>'
+  ].filter(Boolean).join(' ');
+  const html = '<div class="dbm" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px;" onclick="this.remove()">' +
+    '<div onclick="event.stopPropagation()" style="background:#fff;border-radius:8px;max-width:720px;width:100%;max-height:88vh;overflow-y:auto;">' +
+    '<div style="padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;"><div><h3 style="margin:0;">' + esc(u.fullName || u.email) + '</h3><div class="muted" style="font-size:12px;">' + esc(u.email) + ' &middot; ' + badge(u.status) + '</div></div><button class="btn small secondary" onclick="this.closest(\'.dbm\').remove()">&times;</button></div>' +
+    '<table style="width:100%;border-collapse:collapse;">' + rowsHtml + '</table>' +
+    '<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">' + btns + '</div>' +
+    '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+function dbShowSub(sub) {
+  const tabs = document.querySelectorAll('#domain-database .tabs .tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  const idx = sub === 'credits' ? 1 : sub === 'history' ? 2 : 0;
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  document.querySelectorAll('#domain-database .panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('db-' + sub);
+  if (panel) panel.classList.add('active');
+}
+function dbQuickGrant(email) {
+  const e = document.getElementById('grant-email'); if (e) e.value = email;
+  dbShowSub('credits');
+  const c = document.getElementById('grant-credits'); if (c) c.focus();
+}
+function dbQuickHistory(email) {
+  const e = document.getElementById('hist-email'); if (e) e.value = email;
+  dbShowSub('history');
+  if (typeof loadHistory === 'function') loadHistory();
+}
+function dbExportUsersCsv() {
+  const rows = _dbFiltered();
+  if (!rows.length) { toast('No users to export', 'err'); return; }
+  const cols = ['email', 'fullName', 'currentCity', 'status', 'signupDate', 'lastActive', 'balance', 'lifetimeSpent', 'lifetimePurchased', 'loginCount', 'linkedin', 'yearsExperience', 'domainExpertise', 'referrer', 'source'];
+  const head = cols.join(',');
+  const body = rows.map(u => cols.map(c => '"' + String(u[c] == null ? '' : u[c]).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([head + '\n' + body], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'gcc-db-users.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
 async function grantCredits() {
   const email = document.getElementById('grant-email').value.trim().toLowerCase();
   const credits = parseInt(document.getElementById('grant-credits').value, 10);
