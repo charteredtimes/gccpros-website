@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.17-prod
+<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.18-prod
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -813,7 +813,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 
 <script>
 'use strict';
-const BUILD = 'opps-2026-05-20-v8.17-prod';
+const BUILD = 'opps-2026-05-20-v8.18-prod';
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 const GOOGLE_CLIENT_ID = '764592723192-7dtp5oivkru0vfudmo6d9trt47bv0sfe.apps.googleusercontent.com';
 const TURNSTILE_SITE_KEY = '0x4AAAAAADR4eSfrXpQVH-3f';
@@ -970,22 +970,35 @@ async function verifyOtp(pfx) {
 function emailVerifiedFor(pfx, email) {
   return (!!googleVerifiedEmail && googleVerifiedEmail === email) || !!OTP_VERIFIED[pfx];
 }
+// v8.18 — read a file as base64 WITHOUT the FileReader global (absent in some iOS
+// in-app webviews, which throw "Can't find variable: FileReader"). Prefer Blob.arrayBuffer().
+async function fileToBase64(file) {
+  if (file && typeof file.arrayBuffer === 'function') {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    let binary = '';
+    const CH = 0x8000;
+    for (let i = 0; i < bytes.length; i += CH) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+    return btoa(binary);
+  }
+  if (typeof FileReader !== 'undefined') {
+    return await new Promise(function(resolve, reject) {
+      const fr = new FileReader();
+      fr.onload = function() { resolve(String(fr.result).split(',').pop()); };
+      fr.onerror = function() { reject(new Error('Could not read the file.')); };
+      fr.readAsDataURL(file);
+    });
+  }
+  throw new Error('This browser cannot read file uploads. Please open the page in Safari or Chrome (not an in-app browser) and try again.');
+}
 async function uploadPartnerFile(email, file, actionQuery) {
-  return new Promise((resolve) => {
-    const fr = new FileReader();
-    fr.onload = async () => {
-      try {
-        const b64 = fr.result.split(',').pop();
-        await apiFetch(SCRIPT_URL + '?action=' + actionQuery + '&email=' + encodeURIComponent(email), {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileBase64: b64, fileName: file.name, mimeType: file.type || 'application/octet-stream' })
-        });
-      } catch(_) {}
-      resolve(true);
-    };
-    fr.onerror = () => resolve(false);
-    fr.readAsDataURL(file);
-  });
+  try {
+    const b64 = await fileToBase64(file);
+    await apiFetch(SCRIPT_URL + '?action=' + actionQuery + '&email=' + encodeURIComponent(email), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: b64, fileName: file.name, mimeType: file.type || 'application/octet-stream' })
+    });
+    return true;
+  } catch(_) { return false; }
 }
 function mountTS(elId) {
   function _go() {
@@ -1653,23 +1666,19 @@ async function jsSubmit() {
         }
       }
     }
-    const fr = new FileReader();
-    fr.onload = async function() {
-      const b64 = fr.result.split(',').pop();
-      const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email), {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
-      });
-      const uj = await ur.json();
-      if (uj.error) {
-        const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
-        console.error('[CV upload failed]', uj);
-        showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
-      }
-      else          showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
-      setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
-    };
-    fr.readAsDataURL(cvFile);
+    const b64 = await fileToBase64(cvFile);
+    const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
+    });
+    const uj = await ur.json();
+    if (uj.error) {
+      const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      console.error('[CV upload failed]', uj);
+      showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
+    }
+    else          showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
+    setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
   } finally {
@@ -1871,9 +1880,7 @@ async function _apSubmitInner() {
   btn.disabled = true; btn.textContent = 'Uploading CV…';
   try {
     // Step 1 — upload CV with context=application (doesn't overwrite profile CV)
-    const fr = new FileReader();
-    const cvDataUrl = await new Promise((res, rej) => { fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(cvFile); });
-    const b64 = cvDataUrl.split(',').pop();
+    const b64 = await fileToBase64(cvFile);
     const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL) + '&context=application', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
@@ -1937,23 +1944,14 @@ async function kycSubmit() {
   if (chequeFile.size > 5 * 1024 * 1024) return showResult('kyc-result', 'Cheque file too large (max 5 MB).', false);
   try {
     showResult('kyc-result', 'Uploading cancelled cheque\u2026', true);
-    const chequePath = await new Promise((resolve, reject) => {
-      const fr = new FileReader();
-      fr.onload = async () => {
-        try {
-          const b64 = fr.result.split(',').pop();
-          const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCheque&email=' + encodeURIComponent(CURRENT_EMAIL), {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fileBase64: b64, fileName: chequeFile.name, mimeType: chequeFile.type || 'application/pdf' })
-          });
-          const uj = await ur.json();
-          if (uj && uj.status === 'ok') resolve(uj.path);
-          else reject(new Error('Cheque upload failed: ' + ((uj && (uj.hint || uj.error)) || 'unknown')));
-        } catch (e) { reject(e); }
-      };
-      fr.onerror = () => reject(new Error('Could not read the cheque file.'));
-      fr.readAsDataURL(chequeFile);
+    const _cb64 = await fileToBase64(chequeFile);
+    const _cur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCheque&email=' + encodeURIComponent(CURRENT_EMAIL), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: _cb64, fileName: chequeFile.name, mimeType: chequeFile.type || 'application/pdf' })
     });
+    const _cuj = await _cur.json();
+    if (!(_cuj && _cuj.status === 'ok')) throw new Error('Cheque upload failed: ' + ((_cuj && (_cuj.hint || _cuj.error)) || 'unknown'));
+    const chequePath = _cuj.path;
     showResult('kyc-result', 'Uploading address proof...', true);
     await uploadPartnerFile(CURRENT_EMAIL, addrFile, 'oppsUploadAddressProof');
     const params = new URLSearchParams({
@@ -2348,26 +2346,22 @@ async function uploadSignedAgreement() {
   if (f.size > 5 * 1024 * 1024) return showResult('agr-result', 'File too large (max 5 MB).', false);
   if (!CURRENT_EMAIL) return showResult('agr-result', 'Not signed in.', false);
   showResult('agr-result', 'Uploading…', true);
-  const fr = new FileReader();
-  fr.onload = async function() {
-    try {
-      const b64 = fr.result.split(',').pop();
-      const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadAgreement&email=' + encodeURIComponent(CURRENT_EMAIL), {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileBase64: b64, fileName: f.name, mimeType: f.type || 'application/pdf' })
-      });
-      const uj = await ur.json();
-      if (uj && uj.status === 'ok') {
-        if (DASH_DATA.partnerRaw && DASH_DATA.partnerRaw.partner) DASH_DATA.partnerRaw.partner.agreement_status = 'submitted';
-        showResult('agr-result', '✓ Signed agreement uploaded. Admin will verify it.', true);
-        renderComplianceTab();
-      } else {
-        const m = [uj && uj.error, uj && uj.hint].filter(Boolean).join(' · ');
-        showResult('agr-result', 'Upload failed: ' + esc(m || 'unknown'), false);
-      }
-    } catch (err) { showResult('agr-result', 'Upload failed: ' + esc(err.message), false); }
-  };
-  fr.readAsDataURL(f);
+  try {
+    const b64 = await fileToBase64(f);
+    const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadAgreement&email=' + encodeURIComponent(CURRENT_EMAIL), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: b64, fileName: f.name, mimeType: f.type || 'application/pdf' })
+    });
+    const uj = await ur.json();
+    if (uj && uj.status === 'ok') {
+      if (DASH_DATA.partnerRaw && DASH_DATA.partnerRaw.partner) DASH_DATA.partnerRaw.partner.agreement_status = 'submitted';
+      showResult('agr-result', '✓ Signed agreement uploaded. Admin will verify it.', true);
+      renderComplianceTab();
+    } else {
+      const m = [uj && uj.error, uj && uj.hint].filter(Boolean).join(' · ');
+      showResult('agr-result', 'Upload failed: ' + esc(m || 'unknown'), false);
+    }
+  } catch (err) { showResult('agr-result', 'Upload failed: ' + esc(err.message), false); }
 }
 
 function renderSettingsTab() {
