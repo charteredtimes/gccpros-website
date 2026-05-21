@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-21-v6.2-reset-gate · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-21-v6.3-rzp-verify · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -4011,23 +4011,41 @@ async function initiatePayment() {
     prefill: { email: token },
     theme: { color: '#0A1628' },
     handler: async function(response) {
-      // The webhook handles the credit grant server-side. The handler() here
-      // is just user feedback while the webhook fires asynchronously.
+      // v7.9.20 — credit SYNCHRONOUSLY via the HMAC-verified server endpoint.
+      // Crediting no longer depends on the async webhook; the webhook stays as an
+      // idempotent backup (deduped by payment_id) so a payment is credited exactly once.
       closeBuyCredits();
-      showToast('Payment received — credits will appear in a few seconds…', '#1e40af');
-      // Poll the server briefly to refresh the balance once the webhook lands.
+      showToast('Payment received - adding credits...', '#1e40af');
+      try {
+        const vurl = SCRIPT_URL + '?action=razorpayVerifyPayment'
+          + '&token=' + encodeURIComponent(token)
+          + '&razorpay_order_id='   + encodeURIComponent(response.razorpay_order_id || '')
+          + '&razorpay_payment_id=' + encodeURIComponent(response.razorpay_payment_id || '')
+          + '&razorpay_signature='  + encodeURIComponent(response.razorpay_signature || '');
+        const vres = await apiFetch(vurl);
+        const vj = await vres.json().catch(function(){ return {}; });
+        if (vres.ok && vj && vj.status === 'ok') {
+          await fetchCreditBalance(); // refresh _credits from the server
+          const added = (typeof vj.credited === 'number' && vj.credited > 0) ? vj.credited : _selectedCredits;
+          const balTxt = (typeof _credits === 'number') ? _credits.toLocaleString('en-IN') : (vj.balance != null ? vj.balance : '');
+          showToast('✓ ' + added + ' credits added. Balance: ' + balTxt, '#2D7A4E');
+          return;
+        }
+        // verify returned non-ok — fall through to the webhook polling fallback
+      } catch (_) { /* network hiccup — fall back to webhook polling below */ }
+
+      // Fallback: the webhook may still credit asynchronously. Poll briefly.
       for (let i = 0; i < 6; i++) {
         await new Promise(r => setTimeout(r, 1500));
         try {
-          await fetchCreditBalance(); // will update _credits + render
+          await fetchCreditBalance();
           if (typeof _credits === 'number' && _credits >= _selectedCredits) {
             showToast('✓ ' + _selectedCredits + ' credits added. Balance: ' + _credits.toLocaleString('en-IN'), '#2D7A4E');
             return;
           }
         } catch(_) {}
       }
-      // Webhook didn't land in 9s — don't silently grant; tell the user.
-      showToast('Payment captured. If balance isn’t updated in 1 minute, email admin@gccpros.com with reference ' + response.razorpay_payment_id, '#1e40af');
+      showToast('Payment captured. If your balance is not updated within a minute, email admin@gccpros.com with reference ' + response.razorpay_payment_id, '#1e40af');
     },
     modal: { ondismiss: function() {} }
   };
