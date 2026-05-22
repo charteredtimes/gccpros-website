@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCCPROS — GCC Intelligence Console (SSO)</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
+  header{background:var(--dark);color:#fff;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  header .brand{font-family:Georgia,serif;font-size:21px;font-weight:bold}
+  header .brand small{display:block;font-family:Calibri,sans-serif;font-size:12px;color:var(--ice);font-weight:normal;margin-top:2px}
+  header .gold{color:var(--gold)}
+  .who{font-size:12px;color:var(--ice);text-align:right}
+  .who b{color:#fff}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 22px 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 2px 8px rgba(40,60,110,.06);padding:16px 18px;margin-bottom:16px}
+  .card h2{font-family:Georgia,serif;font-size:16px;color:var(--navy);margin:0 0 12px}
+  label{display:block;font-size:12px;font-weight:bold;color:var(--grey);margin:0 0 4px}
+  input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:#1c2535}
+  input:focus,select:focus{outline:2px solid var(--ice)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+  button{cursor:pointer;border:none;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:bold;font-family:inherit}
+  .btn{background:var(--navy);color:#fff}.btn:hover{background:var(--steel)}
+  .btn.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}.btn.alt:hover{background:var(--pale)}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .status{font-size:12px;font-weight:bold;padding:4px 10px;border-radius:20px;display:inline-block}
+  .status.ok{background:#E4F4EA;color:var(--ok)}.status.bad{background:#FBE7E5;color:var(--bad)}.status.idle{background:#37496e;color:var(--ice)}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--grey);margin-bottom:10px}
+  .meta b{color:var(--navy)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--navy);color:#fff;text-align:left;padding:9px 10px;font-size:12px}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#FAFCFF}
+  .pill{display:inline-block;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:20px}
+  .pill.high{background:#E4F4EA;color:var(--ok)}.pill.med{background:#FFF4DC;color:#8a6d12}
+  .det-btn{background:none;border:1px solid var(--line);color:var(--steel);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:bold}
+  .det{background:var(--pale)!important}
+  .det dl{margin:0;display:grid;grid-template-columns:200px 1fr;gap:4px 14px;font-size:12.5px}
+  .det dt{font-weight:bold;color:var(--navy)}.det dd{margin:0;color:#33415c}
+  .pager{display:flex;gap:10px;align-items:center;margin-top:14px}
+  .muted{color:var(--grey);font-size:12px}
+  .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .stat{background:var(--pale);border-radius:10px;padding:12px}
+  .stat .n{font-family:Georgia,serif;font-size:22px;font-weight:bold;color:var(--steel)}.stat .l{font-size:12px;color:var(--grey)}
+  .hide{display:none}
+  .barwrap{margin-top:8px}.bar{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12.5px}
+  .bar .lab{width:150px;color:#33415c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar .track{flex:1;background:#E7EDF8;border-radius:6px;height:14px}.bar .fill{background:var(--steel);height:14px;border-radius:6px}
+  .bar .v{width:54px;text-align:right;color:var(--navy);font-weight:bold}
+  .notice{font-size:12.5px;color:var(--grey);margin-top:6px}
+  /* sign-in gate */
+  .gate{max-width:480px;margin:60px auto;text-align:center}
+  .gate .card{padding:34px 30px}
+  .gate h1{font-family:Georgia,serif;font-size:22px;color:var(--navy);margin:0 0 6px}
+  .gate p{color:var(--grey);font-size:13px;margin:0 0 22px}
+  .sso{display:flex;flex-direction:column;gap:12px}
+  .sso button{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:15px;border:1px solid var(--line);background:#fff;color:#1c2535}
+  .sso button:hover{background:var(--pale)}
+  .sso .ms{font-weight:bold}.sso .gg{font-weight:bold}
+  .glyph{width:18px;height:18px;display:inline-block}
+  .cfgwarn{background:#FBE7E5;color:#B3261E;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-bottom:16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">GCCPROS <span class="gold">·</span> GCC Intelligence Console
+    <small>Verified sign-in · powered by the Enterprise Data API</small>
+  </div>
+  <div id="topright">
+    <span id="acctBadge" class="status idle">Not signed in</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="cfgwarn" class="cfgwarn hide"></div>
+
+  <!-- SIGN-IN GATE -->
+  <div id="gate" class="gate hide">
+    <div class="card">
+      <h1>Sign in to continue</h1>
+      <p>Use your work account. Access is limited to approved company domains and to your subscription plan.</p>
+      <div class="sso">
+        <button class="ms" onclick="signIn('azure')">
+          <svg class="glyph" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>
+          Sign in with Microsoft
+        </button>
+        <button class="gg" onclick="signIn('google')">
+          <svg class="glyph" viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24c0-1.6-.1-3.1-.4-4.6H24v9h11.8c-.5 2.7-2 5-4.3 6.6v5.5h7C42.6 36.8 45 31 45 24z"/><path fill="#34A853" d="M24 46c5.8 0 10.7-1.9 14.3-5.2l-7-5.5c-1.9 1.3-4.4 2.1-7.3 2.1-5.6 0-10.3-3.8-12-8.9H4.8v5.6C8.4 41.1 15.6 46 24 46z"/><path fill="#FBBC05" d="M12 28.5c-.5-1.5-.8-3-.8-4.5s.3-3 .8-4.5v-5.6H4.8C3.3 17 2.5 20.4 2.5 24s.8 7 2.3 10.1L12 28.5z"/><path fill="#EA4335" d="M24 9.5c3.2 0 6 1.1 8.2 3.2l6.1-6.1C34.7 3.1 29.8 1 24 1 15.6 1 8.4 5.9 4.8 13.9l7.2 5.6C13.7 13.3 18.4 9.5 24 9.5z"/></svg>
+          Sign in with Google
+        </button>
+      </div>
+      <p class="notice" style="margin-top:18px">Only your name and work email are read, to confirm your identity and apply your company plan.</p>
+    </div>
+  </div>
+
+  <!-- APP (visible after sign-in) -->
+  <div id="app" class="hide">
+    <div class="card">
+      <h2>Find GCCs</h2>
+      <div class="grid">
+        <div><label>Country</label><input id="f_country" value="India"></div>
+        <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
+        <div><label>Industry contains</label><input id="f_industry" placeholder="BFSI, Retail…"></div>
+        <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI…"></div>
+        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="USA, Germany…"></div>
+        <div><label>Headcount band</label><input id="f_headcount_band" list="hcbands" placeholder="any">
+          <datalist id="hcbands"><option value="1-100"><option value="101-500"><option value="501-1000"><option value="1001-5000"><option value="5000+"></datalist></div>
+        <div><label>Confidence</label><select id="f_confidence"><option value="">Any</option><option>High</option><option>Medium</option></select></div>
+        <div><label>Search company / parent</label><input id="f_q" placeholder="name contains…"></div>
+        <div><label>Results per page</label><select id="f_limit"><option>10</option><option selected>25</option><option>50</option></select></div>
+      </div>
+      <div class="btns">
+        <button class="btn" onclick="resetPage();search()">Search</button>
+        <button class="btn alt" onclick="loadStats()">Market stats</button>
+        <button class="btn alt" onclick="loadUsage()">My usage</button>
+        <button class="btn alt" onclick="clearFilters()">Clear filters</button>
+      </div>
+    </div>
+
+    <div id="usageCard" class="card hide"><h2>My usage this month</h2><div id="usageBody" class="statgrid"></div></div>
+    <div id="statsCard" class="card hide"><h2>Market snapshot</h2><div id="statsBody"></div></div>
+
+    <div class="card">
+      <h2>Results</h2>
+      <div id="resMeta" class="meta"><span class="muted">Run a search to see GCCs.</span></div>
+      <div id="exportBar" class="btns hide" style="margin-top:0;margin-bottom:12px">
+        <button class="btn alt" onclick="exportExcel()">&#8595; Export to Excel (.xlsx)</button>
+        <button class="btn gold" onclick="exportPdf()">&#8595; Export PDF report</button>
+      </div>
+      <div id="exportNote" class="notice hide" style="margin-bottom:12px">Data export is an <b>Enterprise</b> feature. Contact your administrator to enable it.</div>
+      <div id="resTable"></div>
+      <div id="pager" class="pager hide">
+        <button class="btn alt" onclick="prevPage()">‹ Previous</button>
+        <span id="pageInfo" class="muted"></span>
+        <button class="btn alt" onclick="nextPage()">Next ›</button>
+      </div>
+    </div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v4</div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG — your developer fills these in before hosting ============ */
+const SUPABASE_URL      = "https://fufnvnvufmrhrzhcoeil.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
+const API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-data-api";
+const ENABLE_MICROSOFT  = false;   // set to true once Microsoft (Azure) is enabled in Supabase
+/* ============================================================================== */
+
+const S={limit:25,offset:0,total:0,tier:''};
+function $(id){return document.getElementById(id);}
+function badge(txt,cls){const b=$('acctBadge');b.textContent=txt;b.className='status '+(cls||'idle');}
+
+let sb=null;
+function boot(){
+  if(!ENABLE_MICROSOFT){var _ms=document.querySelector('.sso .ms'); if(_ms)_ms.style.display='none';}
+  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.indexOf('PASTE_')===0){
+    $('cfgwarn').textContent='Setup needed: paste this Supabase project’s anon public key into the CONFIG block at the top of this file before hosting.';
+    $('cfgwarn').classList.remove('hide'); $('gate').classList.remove('hide'); return;
+  }
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange((_e,session)=>{ session?showApp(session):showGate(); });
+  sb.auth.getSession().then(({data})=>{ data.session?showApp(data.session):showGate(); });
+}
+function showGate(){$('gate').classList.remove('hide');$('app').classList.add('hide');badge('Not signed in','idle');
+  $('topright').innerHTML='<span id="acctBadge" class="status idle">Not signed in</span>';}
+function showApp(session){
+  $('gate').classList.add('hide');$('app').classList.remove('hide');
+  const em=session.user&&session.user.email?session.user.email:'';
+  $('topright').innerHTML='<span class="who">Signed in as <b>'+esc(em)+'</b></span> &nbsp; <button class="btn alt" style="padding:5px 12px" onclick="signOut()">Sign out</button> &nbsp; <span id="acctBadge" class="status ok">Connected</span>';
+  loadUsage(true);
+}
+async function signIn(provider){
+  await sb.auth.signInWithOAuth({provider:provider,options:{redirectTo:location.origin+location.pathname}});
+}
+async function signOut(){ await sb.auth.signOut(); location.reload(); }
+async function token(){ const {data}=await sb.auth.getSession(); return data.session?data.session.access_token:null; }
+
+async function call(pathAndQuery){
+  const t=await token();
+  if(!t){showGate();throw new Error('not signed in');}
+  const res=await fetch(API_BASE+pathAndQuery,{headers:{Authorization:'Bearer '+t}});
+  let body; try{body=await res.json();}catch(e){body={ok:false,code:'bad_response',message:'Server did not return JSON. Check the API address and that the function is deployed.'};}
+  return body;
+}
+function friendly(code,msg){
+  const map={unauthorized:'Your sign-in expired. Please sign in again.',
+    email_required:'Could not read your email from sign-in. Try signing in again.',
+    domain_not_allowed:'Your email domain is not approved for this account. Ask your administrator to whitelist your company domain.',
+    seat_limit_reached:'All user seats on this plan are in use. Ask your administrator to add seats or free one.',
+    concurrency_limit_reached:'Too many people are using the service at once on this plan. Try again in a few minutes.',
+    user_disabled:'Your access has been disabled by the administrator.',
+    account_suspended:'This account is paused. Contact your administrator.',
+    ip_not_allowed:'You are connecting from outside the approved network/IP.',
+    rate_limited:'Too many requests — wait a few seconds and try again.',
+    quota_exceeded:'Monthly data allowance used up. Contact your administrator to raise it.',
+    backend_error:'The data service reported an error.',bad_response:msg,server_error:msg};
+  return map[code]||msg||code;
+}
+function qs(){
+  const ids=['country','gcc_city','industry','domain','hq_country','headcount_band','confidence','q'];
+  const p=new URLSearchParams();
+  ids.forEach(k=>{const v=($('f_'+k)||{}).value; if(v&&v.trim())p.set(k,v.trim());});
+  return p;
+}
+function resetPage(){S.offset=0;}
+function clearFilters(){['gcc_city','industry','domain','hq_country','headcount_band','q'].forEach(k=>$('f_'+k).value='');$('f_country').value='India';$('f_confidence').value='';}
+
+async function search(){
+  badge('Searching…','idle');
+  S.limit=parseInt($('f_limit').value,10)||25;
+  const p=qs(); p.set('limit',S.limit); p.set('offset',S.offset);
+  let r; try{r=await call('/v1/companies?'+p.toString());}catch(e){return;}
+  if(!r.ok){badge('Error','bad');$('resMeta').innerHTML='<span style="color:#B3261E">'+friendly(r.code,r.message)+'</span>';$('resTable').innerHTML='';$('pager').classList.add('hide');$('exportBar').classList.add('hide');$('exportNote').classList.add('hide');return;}
+  badge('Connected · '+(r.tier||'').toUpperCase()+' tier','ok');
+  render(r);
+}
+function render(r){
+  S.total=r.page.total; const data=r.data||[]; S.tier=(r.tier||'').toLowerCase();
+  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> matching GCCs &nbsp;·&nbsp; tier: <b>'+(r.tier||'').toUpperCase()+'</b>';
+  const canExport=(S.tier==='enterprise' && data.length>0);
+  $('exportBar').classList.toggle('hide', !canExport);
+  $('exportNote').classList.toggle('hide', !(S.tier && S.tier!=='enterprise' && data.length>0));
+  if(!data.length){$('resTable').innerHTML='<p class="muted">No GCCs match those filters. Try widening them.</p>';$('pager').classList.add('hide');return;}
+  let h='<div style="overflow-x:auto"><table><thead><tr><th>Company</th><th>Parent</th><th>HQ</th><th>City</th><th>Industry</th><th>Headcount</th><th>Conf.</th><th></th></tr></thead><tbody>';
+  data.forEach((c,i)=>{
+    const conf=(c.confidence||'').toLowerCase().startsWith('h')?'<span class="pill high">HIGH</span>':(c.confidence?'<span class="pill med">MED</span>':'');
+    h+='<tr><td><b>'+esc(c.company_name)+'</b></td><td>'+esc(c.group_company)+'</td><td>'+esc(c.hq_country)+'</td><td>'+esc(c.gcc_city)+'</td><td>'+esc(c.industry)+'</td><td>'+esc(c.headcount_band)+'</td><td>'+conf+'</td>'
+      +'<td><button class="det-btn" onclick="toggle('+i+')">Details</button></td></tr>';
+    h+='<tr id="det'+i+'" class="hide"><td colspan="8" class="det">'+details(c)+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  $('resTable').innerHTML=h; window._rows=data;
+  $('pageInfo').textContent=(S.offset+1)+'–'+(S.offset+data.length)+' of '+S.total.toLocaleString();
+  $('pager').classList.remove('hide');
+}
+const FIELD_LABELS={company_name:'Company',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',industry:'Industry',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',other_leaders:'Other leaders',leader_linkedin_urls:'LinkedIn',leader_email_verified:'Leader email',headcount_band:'Headcount',headcount:'Headcount (exact)',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',setup_model:'Setup model',setup_partner:'Setup partner',maturity_level:'Maturity',sez_stpi_peza:'SEZ / STPI',office_area_sqft:'Office area',tech_stack:'Tech stack',office_addresses:'Office addresses',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',gender_diversity_women_pct:'Women %',confidence:'Confidence',fy24_revenue_usd_mn:'FY24 revenue ($mn)',fy25_revenue_usd_mn:'FY25 revenue ($mn)',revenue_growth_yoy_pct:'Revenue growth YoY %',net_profit_local_ccy:'Net profit',transfer_pricing_markup_pct:'TP markup %',ips_registered:'IPs registered',group_global_turnover:'Group turnover',group_turnover_fy:'Group turnover FY',group_turnover_source:'Turnover source',finance_domain_active:'Finance domain',other_country_gcc_units:'Other-country units',validation_notes:'Validation notes',audit_verification_certificate:'Audit certificate'};
+const SKIP={id:1,country:1};
+function details(c){let h='<dl>';Object.keys(c).forEach(k=>{if(SKIP[k])return;const v=c[k];if(v===null||v===''||v===undefined)return;h+='<dt>'+(FIELD_LABELS[k]||k)+'</dt><dd>'+esc(String(v))+'</dd>';});return h+'</dl>';}
+function toggle(i){const el=$('det'+i);if(el)el.classList.toggle('hide');}
+function esc(s){if(s===null||s===undefined)return '';return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function nextPage(){if(S.offset+S.limit<S.total){S.offset+=S.limit;search();}}
+function prevPage(){if(S.offset>0){S.offset=Math.max(0,S.offset-S.limit);search();}}
+
+async function loadUsage(silent){
+  let r; try{r=await call('/v1/account');}catch(e){return;}
+  if(!r.ok){if(!silent)badge('Error','bad');return;}
+  S.tier=(r.tier||'').toLowerCase();
+  $('usageCard').classList.remove('hide');
+  const pct=r.monthly_row_quota?Math.round(100*r.rows_used_this_month/r.monthly_row_quota):0;
+  $('usageBody').innerHTML=
+    stat((r.tier||'').toUpperCase(),'Your access tier')+
+    stat((r.seats_used!=null?r.seats_used:'–')+' / '+(r.seat_limit!=null?r.seat_limit:'–'),'Seats used (plan)')+
+    stat((r.concurrent_active_now!=null?r.concurrent_active_now:'–')+' / '+(r.concurrent_limit!=null?r.concurrent_limit:'–'),'Users active now (max)')+
+    stat(r.rows_used_this_month.toLocaleString(),'Records pulled this month')+
+    stat(r.rows_remaining.toLocaleString(),'Records remaining ('+pct+'% used)')+
+    stat(r.rate_limit_per_min+'/min','Request speed limit');
+}
+function stat(n,l){return '<div class="stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
+async function loadStats(){
+  badge('Loading stats…','idle');
+  const p=qs(); ['gcc_city','domain','headcount_band','confidence','q'].forEach(k=>p.delete(k));
+  let r; try{r=await call('/v1/stats?'+p.toString());}catch(e){return;}
+  if(!r.ok){badge('Error','bad');$('statsCard').classList.remove('hide');$('statsBody').innerHTML='<span style="color:#B3261E">'+friendly(r.code,r.message)+'</span>';return;}
+  badge('Connected','ok');$('statsCard').classList.remove('hide');
+  let h='<div class="meta">Total matching GCCs: <b>'+(r.total||0).toLocaleString()+'</b></div>';
+  h+=barBlock('Top cities',r.by_city,'gcc_city')+barBlock('Top industries',r.by_industry,'industry')+barBlock('Top HQ countries',r.by_hq_country,'hq_country');
+  $('statsBody').innerHTML=h;
+}
+function barBlock(title,arr,key){
+  if(!arr||!arr.length)return '';
+  const max=Math.max.apply(null,arr.map(x=>x.count));
+  let h='<div class="barwrap"><div style="font-weight:bold;color:var(--navy);margin:10px 0 4px">'+title+'</div>';
+  arr.slice(0,10).forEach(x=>{const w=max?Math.round(100*x.count/max):0;
+    h+='<div class="bar"><div class="lab">'+esc(x[key])+'</div><div class="track"><div class="fill" style="width:'+w+'%"></div></div><div class="v">'+x.count.toLocaleString()+'</div></div>';});
+  return h+'</div>';
+}
+
+/* ===== Export (Enterprise tier only) ===== */
+const CSV_ORDER=["company_name","group_company","hq_country","gcc_city","state_province","industry","gcc_domains","sub_domains","headcount_band","headcount","site_head","other_leaders","leader_linkedin_urls","leader_email_verified","year_established","legal_structure","cin_reg_id","setup_model","setup_partner","maturity_level","sez_stpi_peza","office_area_sqft","tech_stack","office_addresses","glassdoor_rating","gptw_certified","recent_press_6mo","strategic_initiatives","gender_diversity_women_pct","fy24_revenue_usd_mn","fy25_revenue_usd_mn","revenue_growth_yoy_pct","net_profit_local_ccy","transfer_pricing_markup_pct","group_global_turnover","group_turnover_fy","group_turnover_source","finance_domain_active","ips_registered","other_country_gcc_units","confidence","validation_notes","audit_verification_certificate"];
+const PDF_COLS=[["company_name","Company"],["group_company","Parent"],["hq_country","HQ"],["gcc_city","City"],["industry","Industry"],["gcc_domains","Domains"],["headcount_band","Headcount"],["site_head","India site head"],["confidence","Conf."]];
+function today(){return new Date().toISOString().slice(0,10);}
+function filterSummary(){const p=qs();const parts=[];for(const e of p.entries())parts.push(e[0]+': '+e[1]);return parts.length?parts.join('   ·   '):'All India GCCs';}
+function exportCols(rows){const keys=CSV_ORDER.filter(k=>rows.some(r=>k in r));rows.forEach(r=>Object.keys(r).forEach(k=>{if(k!=='id'&&keys.indexOf(k)<0)keys.push(k);}));return keys;}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);}
+function enterpriseOnly(){if(S.tier!=='enterprise'){alert('Data export is available on the Enterprise tier only.');return false;}return true;}
+async function gatherAll(){
+  const p=qs();
+  let probe; try{probe=await call('/v1/companies?'+(new URLSearchParams(p)).toString()+'&limit=1&offset=0');}catch(e){return null;}
+  if(!probe.ok){alert(friendly(probe.code,probe.message));return null;}
+  const total=probe.page.total,CAP=10000;
+  if(!total){alert('No rows match these filters.');return null;}
+  const planned=Math.min(total,CAP);
+  if(!confirm('Export '+planned+' record(s)? This uses about '+planned+' of your monthly allowance.'+(total>CAP?(' Capped at '+CAP+' of '+total+'.'):''))) return null;
+  badge('Preparing export… 0 / '+planned,'idle');
+  let all=[],offset=0;
+  while(offset<total && all.length<CAP){
+    const pp=new URLSearchParams(p);pp.set('limit',1000);pp.set('offset',offset);
+    let r;try{r=await call('/v1/companies?'+pp.toString());}catch(e){return null;}
+    if(!r.ok){badge('Error','bad');alert(friendly(r.code,r.message));return null;}
+    const got=r.data||[];if(!got.length)break;
+    all=all.concat(got);offset+=r.page.returned;
+    badge('Preparing export… '+all.length+' / '+planned,'idle');
+  }
+  badge('Connected · '+S.tier.toUpperCase()+' tier','ok');
+  return all;
+}
+async function exportExcel(){
+  if(!enterpriseOnly())return;
+  if(typeof ExcelJS==='undefined'){alert('The Excel library is still loading. Try again in a moment.');return;}
+  const rows=await gatherAll(); if(!rows||!rows.length)return;
+  const keys=exportCols(rows);
+  const NAVY='FF1F3864',PALE='FFEEF3FB',WHITE='FFFFFFFF',GREY='FF5B6472',BORDC='FFD9E1F2';
+  const wb=new ExcelJS.Workbook(); wb.creator='GCCPROS'; wb.created=new Date();
+  const ws=wb.addWorksheet('GCC Export',{views:[{state:'frozen',ySplit:3}]});
+  const n=keys.length;
+  ws.mergeCells(1,1,1,n); const t=ws.getCell(1,1); t.value='GCCPROS — GCC Intelligence Export'; t.font={name:'Calibri',size:16,bold:true,color:{argb:NAVY}}; ws.getRow(1).height=24;
+  ws.mergeCells(2,1,2,n); const sub=ws.getCell(2,1);
+  sub.value='Filters:  '+filterSummary()+'      |      '+rows.length+' records      |      '+today()+'      |      Confidential';
+  sub.font={name:'Calibri',size:10,italic:true,color:{argb:GREY}};
+  const border={top:{style:'thin',color:{argb:BORDC}},left:{style:'thin',color:{argb:BORDC}},right:{style:'thin',color:{argb:BORDC}},bottom:{style:'thin',color:{argb:BORDC}}};
+  const hdr=ws.getRow(3); hdr.height=22;
+  keys.forEach((k,i)=>{const c=hdr.getCell(i+1);c.value=(FIELD_LABELS[k]||k);c.fill={type:'pattern',pattern:'solid',fgColor:{argb:NAVY}};c.font={name:'Calibri',size:10,bold:true,color:{argb:WHITE}};c.alignment={vertical:'middle',horizontal:'left',wrapText:true};c.border=border;});
+  rows.forEach((r,ri)=>{const row=ws.getRow(4+ri);keys.forEach((k,ci)=>{const c=row.getCell(ci+1);const v=r[k];c.value=(v===null||v===undefined)?'':(typeof v==='number'?v:String(v));c.font={name:'Calibri',size:10};c.alignment={vertical:'top'};c.border=border;if(ri%2===1)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:PALE}};});});
+  keys.forEach((k,i)=>{let w=Math.max((FIELD_LABELS[k]||k).length+2,12);rows.slice(0,300).forEach(r=>{const L=r[k]?String(r[k]).length:0;if(L>w)w=L;});ws.getColumn(i+1).width=Math.min(w+1,55);});
+  ws.autoFilter={from:{row:3,column:1},to:{row:3,column:n}};
+  const buf=await wb.xlsx.writeBuffer();
+  downloadBlob(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'GCCPROS_GCC_Export_'+today()+'.xlsx');
+}
+async function exportPdf(){
+  if(!enterpriseOnly())return;
+  if(!window.jspdf||!window.jspdf.jsPDF){alert('The PDF library is still loading. Try again in a moment.');return;}
+  const rows=await gatherAll(); if(!rows||!rows.length)return;
+  const jsPDF=window.jspdf.jsPDF; const doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+  const W=doc.internal.pageSize.getWidth(),Hh=doc.internal.pageSize.getHeight();
+  doc.setFillColor(20,33,61);doc.rect(0,0,W,66,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('GCCPROS — GCC Intelligence Report',40,30);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(202,220,252);doc.text('Filters:  '+filterSummary(),40,50);
+  doc.setTextColor(201,162,39);doc.text(rows.length+' records   ·   '+today()+'   ·   Confidential',W-40,50,{align:'right'});
+  const head=[PDF_COLS.map(c=>c[1])];
+  const body=rows.map(r=>PDF_COLS.map(c=>{let v=r[c[0]];v=(v===null||v===undefined)?'':String(v);if(v.length>70)v=v.slice(0,67)+'…';return v;}));
+  doc.autoTable({head:head,body:body,startY:80,
+    styles:{font:'helvetica',fontSize:7.5,cellPadding:3,overflow:'linebreak',valign:'top',lineColor:[217,225,242],lineWidth:0.4},
+    headStyles:{fillColor:[31,56,100],textColor:255,fontStyle:'bold',fontSize:8},
+    alternateRowStyles:{fillColor:[238,243,251]},
+    columnStyles:{0:{fontStyle:'bold',cellWidth:120},5:{cellWidth:150},7:{cellWidth:120}},
+    margin:{left:40,right:40,top:80,bottom:34},
+    didDrawPage:function(){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text('GCCPROS · Confidential 
