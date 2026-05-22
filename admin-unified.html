@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-22-v12-comm-detail-expander
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-22-v13-history-fix
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -878,11 +878,22 @@ async function loadHistory() {
     const r = await adminFetch(SCRIPT_URL + '?action=adminUserHistory&email=' + encodeURIComponent(email));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
-    HIST_ROWS = j.history || j.rows || [];
+    HIST_ROWS = j.transactions || j.history || j.rows || [];
     if (!HIST_ROWS.length) { box.innerHTML = '<p class="loading">No history found for ' + esc(email) + '.</p>'; return; }
-    let html = '<table><thead><tr><th>When</th><th>Event</th><th>Delta</th><th>Balance</th><th>Note</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>When</th><th>Type</th><th>Amount</th><th>Details</th></tr></thead><tbody>';
     HIST_ROWS.forEach(h => {
-      html += '<tr><td>' + fmtDateTime(h.created_at || h.ts) + '</td><td>' + esc(h.event_type || h.type || '') + '</td><td>' + esc(h.amount != null ? h.amount : (h.delta != null ? h.delta : '')) + '</td><td>' + esc(h.balance_after != null ? h.balance_after : '') + '</td><td>' + esc(h.note || h.description || '') + '</td></tr>';
+      var meta = h.metadata, details = '';
+      if (meta && typeof meta === 'object') {
+        var parts = [];
+        if (meta.payment_id) parts.push('payment ' + meta.payment_id);
+        if (meta.currency) parts.push(meta.currency);
+        if (meta.paid_amount != null) parts.push('paid ' + meta.paid_amount);
+        if (meta.granted_by) parts.push('by ' + meta.granted_by);
+        details = parts.length ? parts.join(' \u00b7 ') : JSON.stringify(meta);
+      } else if (meta != null) { details = String(meta); }
+      if (!details) details = h.note || h.description || '';
+      var amt = (h.amount != null) ? h.amount : (h.delta != null ? h.delta : '');
+      html += '<tr><td>' + fmtDateTime(h.ts || h.created_at) + '</td><td>' + esc(h.reason || h.event_type || h.type || '') + '</td><td>' + esc(String(amt)) + '</td><td>' + esc(details) + '</td></tr>';
     });
     html += '</tbody></table>';
     box.innerHTML = html;
@@ -891,9 +902,9 @@ async function loadHistory() {
 function exportHistory() {
   if (!HIST_ROWS.length) { toast('Load a history first.', 'err'); return; }
   if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
-  const cols = ['created_at','event_type','amount','balance_after','description'];
-  const headerRow = cols.map(_titleCase);
-  const dataRows = HIST_ROWS.map(h => cols.map(c => h[c] != null ? h[c] : ''));
+  const cols = [['When','ts'],['Type','reason'],['Amount','amount'],['Details','metadata']];
+  const headerRow = cols.map(c => c[0]);
+  const dataRows = HIST_ROWS.map(h => cols.map(function(c){ var v = h[c[1]]; if (v == null) return ''; return (typeof v === 'object') ? JSON.stringify(v) : v; }));
   const ws = XLSX.utils.aoa_to_sheet([headerRow].concat(dataRows));
   ws['!freeze'] = { xSplit: 0, ySplit: 1 };
   const wb = XLSX.utils.book_new();
