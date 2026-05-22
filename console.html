@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GCCPROS — GCC Intelligence Console (SSO)</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -160,14 +160,23 @@ function badge(txt,cls){const b=$('acctBadge');b.textContent=txt;b.className='st
 
 let sb=null;
 function boot(){
-  if(!ENABLE_MICROSOFT){var _ms=document.querySelector('.sso .ms'); if(_ms)_ms.style.display='none';}
-  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.indexOf('PASTE_')===0){
-    $('cfgwarn').textContent='Setup needed: paste this Supabase project’s anon public key into the CONFIG block at the top of this file before hosting.';
-    $('cfgwarn').classList.remove('hide'); $('gate').classList.remove('hide'); return;
+  try{
+    if(!ENABLE_MICROSOFT){var _ms=document.querySelector('.sso .ms'); if(_ms)_ms.style.display='none';}
+    $('gate').classList.remove('hide');   // always show the sign-in screen by default
+    if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.indexOf('PASTE_')===0){
+      $('cfgwarn').textContent='Setup needed: paste your Supabase anon/publishable key into the CONFIG block.';
+      $('cfgwarn').classList.remove('hide'); return;
+    }
+    if(typeof supabase==='undefined' || !supabase.createClient){
+      $('cfgwarn').textContent='Could not load the sign-in library. Check your internet connection, or that your site is not blocking scripts from jsdelivr.net and cdnjs.cloudflare.com.';
+      $('cfgwarn').classList.remove('hide'); return;
+    }
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    sb.auth.onAuthStateChange((_e,session)=>{ session?showApp(session):showGate(); });
+    sb.auth.getSession().then(({data})=>{ if(data && data.session) showApp(data.session); }).catch(function(){});
+  }catch(err){
+    try{ $('gate').classList.remove('hide'); $('cfgwarn').textContent='Startup error: '+((err&&err.message)?err.message:err); $('cfgwarn').classList.remove('hide'); }catch(e){}
   }
-  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  sb.auth.onAuthStateChange((_e,session)=>{ session?showApp(session):showGate(); });
-  sb.auth.getSession().then(({data})=>{ data.session?showApp(data.session):showGate(); });
 }
 function showGate(){$('gate').classList.remove('hide');$('app').classList.add('hide');badge('Not signed in','idle');
   $('topright').innerHTML='<span id="acctBadge" class="status idle">Not signed in</span>';}
@@ -345,11 +354,4 @@ async function exportPdf(){
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(202,220,252);doc.text('Filters:  '+filterSummary(),40,50);
   doc.setTextColor(201,162,39);doc.text(rows.length+' records   ·   '+today()+'   ·   Confidential',W-40,50,{align:'right'});
   const head=[PDF_COLS.map(c=>c[1])];
-  const body=rows.map(r=>PDF_COLS.map(c=>{let v=r[c[0]];v=(v===null||v===undefined)?'':String(v);if(v.length>70)v=v.slice(0,67)+'…';return v;}));
-  doc.autoTable({head:head,body:body,startY:80,
-    styles:{font:'helvetica',fontSize:7.5,cellPadding:3,overflow:'linebreak',valign:'top',lineColor:[217,225,242],lineWidth:0.4},
-    headStyles:{fillColor:[31,56,100],textColor:255,fontStyle:'bold',fontSize:8},
-    alternateRowStyles:{fillColor:[238,243,251]},
-    columnStyles:{0:{fontStyle:'bold',cellWidth:120},5:{cellWidth:150},7:{cellWidth:120}},
-    margin:{left:40,right:40,top:80,bottom:34},
-    didDrawPage:function(){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text('GCCPROS · Confidential 
+  const body=rows.map(r=>PDF_COLS.map(c=>{let v=r[c[0]];v=(v===null||v===undefined)?'':String(v);if(v.length>70)v=v.slice(0,67)+'
