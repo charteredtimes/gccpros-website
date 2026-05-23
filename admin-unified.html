@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-22-v13-history-fix
+<!-- GCCPROs Unified Admin Console · build: admin-unified-2026-05-22-v14-feedback-moderation
      One page for everything: Database (credits + history), Opportunities
      (jobs / apps / partners / referrals / users with smart-merge + Excel),
      Community (insider + council applications). Three large domain cards;
@@ -201,6 +201,7 @@ td.actions { white-space:nowrap; }
       <button class="tab" onclick="showSubTab(event,'database','history')">User history</button>
       <button class="tab" onclick="showSubTab(event,'database','submissions')">Submissions</button>
       <button class="tab" onclick="showSubTab(event,'database','security')">Security</button>
+      <button class="tab" onclick="showSubTab(event,'database','feedback')">Feedback</button>
     </div>
 
     <div id="db-users" class="panel active">
@@ -272,6 +273,25 @@ td.actions { white-space:nowrap; }
           <span class="muted" id="db-sub-count"></span>
         </div>
         <div id="db-sub-box"><p class="loading">Pick a category above to load submissions.</p></div>
+      </div>
+    </div>
+
+    <div id="db-feedback" class="panel">
+      <div class="card">
+        <h3>Database Feedback</h3>
+        <p class="muted">Data-quality &amp; coverage ratings submitted by logged-in users via <code>submitFeedback</code>. Approve to make a rating eligible for the on-site banner.</p>
+        <div class="filter-row">
+          <select id="f-feedback-status" onchange="loadFeedback()">
+            <option value="" selected>All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btn" onclick="loadFeedback()">&#8635; Refresh</button>
+          <button class="btn brand-orange" onclick="exportFeedbackCsv()">&#128202; Export CSV</button>
+          <span class="muted" id="feedback-count"></span>
+        </div>
+        <div id="feedback-box"><p class="loading">Click Refresh to load.</p></div>
       </div>
     </div>
 
@@ -595,6 +615,7 @@ function showSubTab(ev, domain, sub) {
   const target = document.getElementById(prefix + sub);
   if (target) target.classList.add('active');
   if (domain === 'database' && sub === 'users' && typeof DB_USERS !== 'undefined' && !DB_USERS.length) dbLoadUsers();
+  if (domain === 'database' && sub === 'feedback' && (typeof FEEDBACK_ROWS === 'undefined' || !FEEDBACK_ROWS.length)) loadFeedback();
   // Lazy-loads
   if (domain === 'community') {
     if (sub === 'insider' && !INSIDER.length) loadCommunity('insider');
@@ -1007,6 +1028,62 @@ function appDetailGrid(a) {
          +  '</div>';
   });
   return '<div style="max-width:920px;">' + (rows || '<span class="muted">No additional fields.</span>') + '</div>';
+}
+
+// ===== DATABASE FEEDBACK moderation — added 2026-05-22 =====
+let FEEDBACK_ROWS = [];
+function fbStarStr(n) { n = parseInt(n, 10) || 0; var s = ''; for (var i = 1; i <= 5; i++) { s += (i <= n) ? '★' : '☆'; } return s + ' (' + n + ')'; }
+async function loadFeedback() {
+  const status = (document.getElementById('f-feedback-status') || {}).value || '';
+  const box = document.getElementById('feedback-box');
+  box.innerHTML = '<p class="loading">Loading…</p>';
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminFeedbackList' + (status ? '&status=' + encodeURIComponent(status) : '') + '&_t=' + Date.now());
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    FEEDBACK_ROWS = j.rows || [];
+    document.getElementById('feedback-count').textContent = FEEDBACK_ROWS.length + ' feedback';
+    if (!FEEDBACK_ROWS.length) { box.innerHTML = '<p class="loading">No feedback.</p>'; return; }
+    let html = '<table><thead><tr><th>Created</th><th>Email</th><th>Name</th><th>Data quality</th><th>Coverage</th><th>Comment</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    FEEDBACK_ROWS.forEach(f => {
+      html += '<tr>';
+      html += '<td>' + fmtDate(f.created_at) + '</td>';
+      html += '<td class="email">' + esc(f.email || '') + '</td>';
+      html += '<td>' + esc(f.full_name || '') + '</td>';
+      html += '<td title="' + (f.data_quality_rating || 0) + ' of 5">' + fbStarStr(f.data_quality_rating) + '</td>';
+      html += '<td title="' + (f.coverage_rating || 0) + ' of 5">' + fbStarStr(f.coverage_rating) + '</td>';
+      html += '<td style="max-width:340px;white-space:pre-wrap;word-break:break-word;">' + esc(f.comment || '') + '</td>';
+      html += '<td>' + badge(f.status) + '</td>';
+      html += '<td class="actions">';
+      if ((f.status || '').toLowerCase() !== 'approved') html += '<button class="btn small" onclick="decideFeedback(\'' + esc(f.id) + '\',\'approved\')">Approve</button> ';
+      if ((f.status || '').toLowerCase() !== 'rejected') html += '<button class="btn small danger" onclick="decideFeedback(\'' + esc(f.id) + '\',\'rejected\')">Reject</button>';
+      html += '</td></tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+  } catch (err) { box.innerHTML = '<p class="loading" style="color:var(--red);">Failed: ' + esc(err.message) + '</p>'; }
+}
+async function decideFeedback(id, decision) {
+  toast('Setting ' + String(id).substring(0, 8) + ' to ' + decision + '…');
+  try {
+    const r = await adminFetch(SCRIPT_URL + '?action=adminFeedbackDecision&id=' + encodeURIComponent(id) + '&decision=' + encodeURIComponent(decision));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    toast('✓ ' + decision, 'ok');
+    loadFeedback();
+  } catch (err) { toast('Failed: ' + err.message, 'err'); }
+}
+function exportFeedbackCsv() {
+  if (!FEEDBACK_ROWS.length) { toast('Load feedback first.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading.', 'err'); return; }
+  const cols = [['Created', 'created_at'], ['Email', 'email'], ['Name', 'full_name'], ['Data quality', 'data_quality_rating'], ['Coverage', 'coverage_rating'], ['Comment', 'comment'], ['Status', 'status']];
+  const headerRow = cols.map(c => c[0]);
+  const dataRows = FEEDBACK_ROWS.map(f => cols.map(c => f[c[1]] != null ? f[c[1]] : ''));
+  const ws = XLSX.utils.aoa_to_sheet([headerRow].concat(dataRows));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Feedback');
+  XLSX.writeFile(wb, 'gccpros-feedback-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  toast('✓ Exported feedback', 'ok');
 }
 
 const RSVP_STATUSES = ['New','Confirmed','Waitlist','Cancelled','Attended','No-show'];

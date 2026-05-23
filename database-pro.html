@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-21-v6.3-rzp-verify · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.4-feedback · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -76,6 +76,12 @@ body:not(.is-authed) .panel-sub-auth {
 }
 /* Kill the nav "Password" button pre-login */
 body:not(.is-authed) .btn-ghost[onclick*="openPwdModal"] { display: none !important; }
+/* Feedback feature — added 2026-05-22 */
+body:not(.is-authed) .btn-ghost[onclick*="openFeedbackModal"] { display: none !important; }
+.fb-stars { display: flex; gap: 6px; font-size: 30px; line-height: 1; user-select: none; }
+.fb-stars span { color: #d8dbe0; cursor: pointer; transition: color .12s, transform .12s; }
+.fb-stars span:hover { transform: scale(1.12); }
+.fb-stars span.on { color: #F5B301; }
 
 /* Hide the "Sign in to access" sub-line once authed */
 body.is-authed .panel-sub-public { display: none; }
@@ -1663,6 +1669,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     </button>
     <button class="btn-ghost" onclick="openStatement()" id="topbar-statement-btn" title="View credit statement">Statement</button>
     <button class="btn-ghost" onclick="openPwdModal()" title="Change password">Password</button>
+    <button class="btn-ghost" onclick="openFeedbackModal()" title="Rate the GCC database">Feedback</button>
     <button class="user-pill" id="user-pill" onclick="onUserPillClick()" title="Sign in or sign out">Sign in</button>
   </div>
 </nav>
@@ -4590,6 +4597,35 @@ function dprRequest(kind){
 </div>
 
 <!-- LEADERSHIP COUNCIL APPLICATION MODAL -->
+<!-- ===== Database feedback modal (logged-in users) — added 2026-05-22 ===== -->
+<div class="modal-overlay" id="feedback-modal" onclick="if(event.target===this)closeFeedbackModal()" style="display:none;">
+  <div class="modal" style="max-width:520px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeFeedbackModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
+    <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Share your feedback</h3>
+    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">Help us improve the GCC database. Approved feedback may be featured on the site.</p>
+    <div id="feedback-result" style="display:none;padding:12px 14px;border-radius:3px;margin-bottom:14px;font-size:13px;"></div>
+    <form id="feedback-form" onsubmit="submitFeedbackForm(event)" style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label class="field-label">Data quality *</label>
+        <div class="fb-stars" id="fb-quality" data-val="0" role="radiogroup" aria-label="Data quality rating">
+          <span data-v="1" role="radio" tabindex="0">&#9733;</span><span data-v="2" role="radio" tabindex="0">&#9733;</span><span data-v="3" role="radio" tabindex="0">&#9733;</span><span data-v="4" role="radio" tabindex="0">&#9733;</span><span data-v="5" role="radio" tabindex="0">&#9733;</span>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Volume / coverage *</label>
+        <div class="fb-stars" id="fb-coverage" data-val="0" role="radiogroup" aria-label="Volume and coverage rating">
+          <span data-v="1" role="radio" tabindex="0">&#9733;</span><span data-v="2" role="radio" tabindex="0">&#9733;</span><span data-v="3" role="radio" tabindex="0">&#9733;</span><span data-v="4" role="radio" tabindex="0">&#9733;</span><span data-v="5" role="radio" tabindex="0">&#9733;</span>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Comments (optional)</label>
+        <textarea id="fb-comment" class="search-input" rows="4" maxlength="2000" placeholder="What's working well, and what could be better?"></textarea>
+      </div>
+      <button type="submit" class="search-btn" id="fb-submit-btn" style="justify-content:center;">Submit feedback</button>
+    </form>
+  </div>
+</div>
+
 <div class="modal-overlay" id="council-modal" onclick="if(event.target===this)closeCouncilModal()" style="display:none;">
   <div class="modal" style="max-width:680px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
     <button onclick="closeCouncilModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
@@ -4663,6 +4699,81 @@ function dprRequest(kind){
 </div>
 
 <script>
+// ===== Database feedback (logged-in users) — added 2026-05-22 =====
+function fbSetStars(groupId, v) {
+  var g = document.getElementById(groupId); if (!g) return;
+  v = Math.max(0, Math.min(5, parseInt(v, 10) || 0));
+  g.setAttribute('data-val', String(v));
+  Array.prototype.forEach.call(g.querySelectorAll('span'), function (sp) {
+    sp.classList.toggle('on', parseInt(sp.getAttribute('data-v'), 10) <= v);
+  });
+}
+function fbBindStars(groupId) {
+  var g = document.getElementById(groupId); if (!g || g._bound) return; g._bound = true;
+  Array.prototype.forEach.call(g.querySelectorAll('span'), function (sp) {
+    sp.addEventListener('click', function () { fbSetStars(groupId, sp.getAttribute('data-v')); });
+    sp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fbSetStars(groupId, sp.getAttribute('data-v')); } });
+  });
+}
+async function openFeedbackModal() {
+  var token = getToken();
+  if (!token) { if (typeof openSignInModal === 'function') openSignInModal(); return; }
+  var m = document.getElementById('feedback-modal'); if (!m) return;
+  fbBindStars('fb-quality'); fbBindStars('fb-coverage');
+  fbSetStars('fb-quality', 0); fbSetStars('fb-coverage', 0);
+  var c = document.getElementById('fb-comment'); if (c) c.value = '';
+  var res = document.getElementById('feedback-result'); res.style.display = 'none';
+  m.style.display = 'flex'; m.classList.add('open');
+  // Prefill existing feedback (one editable entry per user).
+  try {
+    var r = await apiFetch(SCRIPT_URL + '?action=getMyFeedback&token=' + encodeURIComponent(token) + '&_t=' + Date.now());
+    var j = await r.json();
+    if (j && j.feedback) {
+      fbSetStars('fb-quality', j.feedback.data_quality_rating);
+      fbSetStars('fb-coverage', j.feedback.coverage_rating);
+      if (c) c.value = j.feedback.comment || '';
+      if (j.feedback.status) {
+        res.style.display = 'block'; res.style.background = '#eef2ff'; res.style.color = '#3730a3';
+        res.textContent = 'Your current feedback status: ' + j.feedback.status + '. Saving will resubmit it for review.';
+      }
+    }
+  } catch (_) {}
+}
+function closeFeedbackModal() { var m = document.getElementById('feedback-modal'); if (m) { m.classList.remove('open'); m.style.display = 'none'; } }
+async function submitFeedbackForm(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  var token = getToken();
+  if (!token) { if (typeof openSignInModal === 'function') openSignInModal(); return; }
+  var quality  = parseInt((document.getElementById('fb-quality')  || {}).getAttribute && document.getElementById('fb-quality').getAttribute('data-val'), 10) || 0;
+  var coverage = parseInt((document.getElementById('fb-coverage') || {}).getAttribute && document.getElementById('fb-coverage').getAttribute('data-val'), 10) || 0;
+  var comment  = (document.getElementById('fb-comment') || {}).value || '';
+  comment = comment.trim();
+  var res = document.getElementById('feedback-result');
+  if (quality < 1 || coverage < 1) {
+    res.style.display = 'block'; res.style.background = '#fef2f2'; res.style.color = '#b91c1c';
+    res.textContent = 'Please rate both data quality and coverage (1–5 stars).';
+    return;
+  }
+  var btn = document.getElementById('fb-submit-btn'); var oldTxt = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  try {
+    var url = SCRIPT_URL + '?action=submitFeedback&token=' + encodeURIComponent(token)
+            + '&quality=' + quality + '&coverage=' + coverage
+            + '&comment=' + encodeURIComponent(comment);
+    var r = await apiFetch(url);
+    var j = await r.json();
+    if (j.error) throw new Error(j.message || j.error);
+    res.style.display = 'block'; res.style.background = '#ecfdf5'; res.style.color = '#065f46';
+    res.textContent = 'Thank you! Your feedback was submitted and will appear once approved.';
+    setTimeout(closeFeedbackModal, 1600);
+  } catch (err) {
+    res.style.display = 'block'; res.style.background = '#fef2f2'; res.style.color = '#b91c1c';
+    res.textContent = 'Could not submit: ' + (err.message || 'error') + '. Please try again or email admin@gccpros.com.';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = oldTxt; }
+  }
+}
+
 function openInsiderModal(){
   var m=document.getElementById('insider-modal'); if(!m) return;
   m.style.display='flex'; m.classList.add('open');
