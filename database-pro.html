@@ -1745,6 +1745,33 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   <div id="wl-msg" style="max-width:1200px;margin:14px auto 0;font-size:13px;color:var(--gold-soft);display:none;text-align:center;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:3px;"></div>
 </section>
 
+<!-- ── FULL REPORT (paid product) — v7.9.24 ─────────────────────────────── -->
+<section id="full-report" style="background:#0A1628;padding:52px 20px;border-bottom:1px solid var(--gold-soft);">
+  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;">
+    <div>
+      <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Comprehensive Edition</div>
+      <h2 style="font-size:30px;color:#fff;margin:10px 0 14px;font-family:'Playfair Display',serif;line-height:1.2;">GCCPROs India GCC Report 2026</h2>
+      <p style="font-size:15px;color:#C7D2E2;line-height:1.65;margin:0 0 20px;">The full intelligence map &mdash; 30+ first-time launches and 20+ expansions, each profiled with leadership, headcount, footprint, operating model and a cited source for every line. 45 pages, print-ready.</p>
+      <ul style="list-style:none;margin:0;padding:0;color:#E6ECF5;font-size:14px;line-height:1.5;">
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">60+ foreign-HQ companies, each profiled in full</li>
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">City, HQ-origin &amp; industry trend analysis</li>
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">Watermarked to you &middot; a source for every data point</li>
+      </ul>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:30px;text-align:center;box-shadow:0 24px 60px -24px rgba(0,0,0,.55);">
+      <div style="font-size:12.5px;color:var(--graphite);letter-spacing:.4px;">One-time purchase &middot; instant download</div>
+      <div style="font-family:'Playfair Display',serif;font-weight:800;color:var(--ink);font-size:42px;margin:6px 0 0;">&#8377;4,999</div>
+      <div style="font-size:12.5px;color:var(--graphite);margin-bottom:4px;">or 4,999 research credits from your wallet</div>
+      <button onclick="buyReport()" style="width:100%;background:#0A1628;color:#fff;border:0;border-radius:4px;padding:15px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;letter-spacing:.3px;margin-top:14px;">Buy &amp; download &middot; &#8377;4,999</button>
+      <div style="font-size:11px;color:var(--graphite);letter-spacing:1px;margin:12px 0 10px;">&mdash; OR &mdash;</div>
+      <button onclick="redeemReportWithCredits()" style="width:100%;background:#fff;color:#0A1628;border:1.5px solid #0A1628;border-radius:4px;padding:13px;font-weight:700;font-size:14.5px;cursor:pointer;font-family:inherit;letter-spacing:.3px;">Pay with 4,999 credits</button>
+      <div id="report-purchase-msg" style="font-size:12px;color:var(--graphite);margin-top:12px;min-height:16px;line-height:1.4;"></div>
+      <div style="font-size:11px;color:var(--graphite);margin-top:8px;">Secured by Razorpay &middot; Invoiced by Chartered Times LLP</div>
+    </div>
+  </div>
+</section>
+
+
 <main class="main">
   <div class="grid">
 
@@ -1916,30 +1943,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <!-- ════════════════════════════════════════════════════════════════
      SAMPLE REPORTS — what a full GCC profile looks like
      ════════════════════════════════════════════════════════════════ -->
-<!-- ── FULL REPORT (paid product) — v7.9.23 ─────────────────────────────── -->
-<section id="full-report" style="background:#0A1628;padding:56px 20px;border-top:1px solid var(--gold-soft);">
-  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;">
-    <div>
-      <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Comprehensive Edition</div>
-      <h2 style="font-size:30px;color:#fff;margin:10px 0 14px;font-family:'Playfair Display',serif;line-height:1.2;">GCCPROs India GCC Report 2026</h2>
-      <p style="font-size:15px;color:#C7D2E2;line-height:1.65;margin:0 0 20px;">The full intelligence map &mdash; 30+ first-time launches and 20+ expansions, each profiled with leadership, headcount, footprint, operating model and a cited source for every line. 45 pages, print-ready.</p>
-      <ul style="list-style:none;margin:0;padding:0;color:#E6ECF5;font-size:14px;line-height:1.5;">
-        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">60+ foreign-HQ companies, each profiled in full</li>
-        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">City, HQ-origin &amp; industry trend analysis</li>
-        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">Watermarked to you &middot; a source for every data point</li>
-      </ul>
-    </div>
-    <div style="background:#fff;border-radius:8px;padding:32px 30px;text-align:center;box-shadow:0 24px 60px -24px rgba(0,0,0,.55);">
-      <div style="font-size:12.5px;color:var(--graphite);letter-spacing:.4px;">One-time purchase &middot; instant download</div>
-      <div style="font-family:'Playfair Display',serif;font-weight:800;color:var(--ink);font-size:42px;margin:6px 0 0;">&#8377;4,999</div>
-      <div style="font-size:12.5px;color:var(--graphite);margin-bottom:4px;">includes 4,999 research credits</div>
-      <button onclick="buyReport()" style="width:100%;background:#0A1628;color:#fff;border:0;border-radius:4px;padding:15px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;letter-spacing:.3px;margin-top:14px;">Buy &amp; download the report</button>
-      <div id="report-purchase-msg" style="font-size:12px;color:var(--graphite);margin-top:12px;min-height:16px;line-height:1.4;"></div>
-      <div style="font-size:11px;color:var(--graphite);margin-top:8px;">Secured by Razorpay &middot; Invoiced by Chartered Times LLP</div>
-    </div>
-  </div>
-</section>
-
 <section id="sample-reports" style="background:var(--ivory);padding:48px 20px;border-top:1px solid var(--gold-soft);">
   <div style="max-width:1200px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:30px;">
@@ -5081,6 +5084,22 @@ async function buyReport(){
   });
   rzp.on('payment.failed',function(resp){ _rptMsg('Payment failed: '+((resp.error&&resp.error.description)||'please retry')); });
   rzp.open();
+}
+
+async function redeemReportWithCredits(){
+  var token=(typeof getToken==='function')?getToken():null;
+  if(!token){ if(typeof showToast==='function') showToast('Please sign in to use credits.','#92400E'); _rptMsg('Please sign in to use credits.'); return; }
+  if(typeof _accountStatus!=='undefined' && _accountStatus && _accountStatus!=='Approved'){ if(typeof showToast==='function') showToast('Your account must be approved first.','#92400E'); return; }
+  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading — please retry in a moment.'); return; }
+  _rptMsg('Redeeming 4,999 credits…');
+  try{
+    var res=await apiFetch(SCRIPT_URL+'?action=redeemReport&token='+encodeURIComponent(token));
+    var j=await res.json().catch(function(){return {};});
+    if(j.error==='insufficient_credits'){ _rptMsg('You have '+(j.balance!=null?j.balance:'0')+' credits — the report costs 4,999. Use “Buy & download” to pay directly, or top up.'); return; }
+    if(!(res.ok && j.status==='ok')){ _rptMsg('Could not redeem credits ('+(j.error||j.message||'server error')+'). Please use “Buy & download” instead.'); return; }
+    try{ if(typeof fetchCreditBalance==='function') await fetchCreditBalance(); }catch(_){}
+    await _rptDeliver('credits:'+(j.spent||4999));
+  }catch(e){ _rptMsg('Could not redeem credits: '+(e.message||e)); }
 }
 </script>
 

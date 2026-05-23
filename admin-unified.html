@@ -914,15 +914,18 @@ async function loadHistory() {
       } else if (meta != null) { details = String(meta); }
       if (!details) details = h.note || h.description || '';
       var amt = (h.amount != null) ? h.amount : (h.delta != null ? h.delta : '');
-      // v7.9.23 — flag the India GCC Report 2026 purchase. The report is sold as a
-      // 4,999-credit pack at Rs 4,999 — a value no standard top-up pack uses — so a
-      // paid amount (or credit delta) of 4999 uniquely identifies a report purchase.
+      // v7.9.24 — flag India GCC Report 2026 activity. The report is a 4,999-credit
+      // item (Rs 4,999) — a value no standard top-up pack uses — so |amount| == 4999
+      // or paid_amount == 4999 uniquely identifies it. A positive amount is a paid
+      // purchase; a negative amount is a redemption from wallet credits.
       var _paid = (h.metadata && h.metadata.paid_amount != null) ? Number(h.metadata.paid_amount) : null;
-      var _isReport = (_paid === 4999) || (Number(amt) === 4999);
+      var _na = Number(amt);
+      var _isReport = (Math.abs(_na) === 4999) || (_paid === 4999);
       var typeLabel = h.reason || h.event_type || h.type || '';
       if (_isReport) {
-        typeLabel = 'India GCC Report 2026 \u2014 purchase';
-        details = details ? ('Report + 4,999 credits \u00b7 ' + details) : 'Report + 4,999 credits';
+        typeLabel = (_na < 0) ? 'India GCC Report 2026 \u2014 redeemed (credits)' : 'India GCC Report 2026 \u2014 purchase';
+        var _tag = (_na < 0) ? 'Report unlocked with 4,999 credits' : 'Report + 4,999 credits';
+        details = details ? (_tag + ' \u00b7 ' + details) : _tag;
       }
       html += '<tr' + (_isReport ? ' style="background:#FFF8E8;"' : '') + '><td>' + fmtDateTime(h.ts || h.created_at) + '</td><td>' + esc(typeLabel) + '</td><td>' + esc(String(amt)) + '</td><td>' + esc(details) + '</td></tr>';
     });
