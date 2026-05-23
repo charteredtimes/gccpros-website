@@ -1635,6 +1635,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
@@ -1915,6 +1916,30 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <!-- ════════════════════════════════════════════════════════════════
      SAMPLE REPORTS — what a full GCC profile looks like
      ════════════════════════════════════════════════════════════════ -->
+<!-- ── FULL REPORT (paid product) — v7.9.23 ─────────────────────────────── -->
+<section id="full-report" style="background:#0A1628;padding:56px 20px;border-top:1px solid var(--gold-soft);">
+  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;">
+    <div>
+      <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Comprehensive Edition</div>
+      <h2 style="font-size:30px;color:#fff;margin:10px 0 14px;font-family:'Playfair Display',serif;line-height:1.2;">GCCPROs India GCC Report 2026</h2>
+      <p style="font-size:15px;color:#C7D2E2;line-height:1.65;margin:0 0 20px;">The full intelligence map &mdash; 30+ first-time launches and 20+ expansions, each profiled with leadership, headcount, footprint, operating model and a cited source for every line. 45 pages, print-ready.</p>
+      <ul style="list-style:none;margin:0;padding:0;color:#E6ECF5;font-size:14px;line-height:1.5;">
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">60+ foreign-HQ companies, each profiled in full</li>
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">City, HQ-origin &amp; industry trend analysis</li>
+        <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">Watermarked to you &middot; a source for every data point</li>
+      </ul>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:32px 30px;text-align:center;box-shadow:0 24px 60px -24px rgba(0,0,0,.55);">
+      <div style="font-size:12.5px;color:var(--graphite);letter-spacing:.4px;">One-time purchase &middot; instant download</div>
+      <div style="font-family:'Playfair Display',serif;font-weight:800;color:var(--ink);font-size:42px;margin:6px 0 0;">&#8377;4,999</div>
+      <div style="font-size:12.5px;color:var(--graphite);margin-bottom:4px;">includes 4,999 research credits</div>
+      <button onclick="buyReport()" style="width:100%;background:#0A1628;color:#fff;border:0;border-radius:4px;padding:15px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;letter-spacing:.3px;margin-top:14px;">Buy &amp; download the report</button>
+      <div id="report-purchase-msg" style="font-size:12px;color:var(--graphite);margin-top:12px;min-height:16px;line-height:1.4;"></div>
+      <div style="font-size:11px;color:var(--graphite);margin-top:8px;">Secured by Razorpay &middot; Invoiced by Chartered Times LLP</div>
+    </div>
+  </div>
+</section>
+
 <section id="sample-reports" style="background:var(--ivory);padding:48px 20px;border-top:1px solid var(--gold-soft);">
   <div style="max-width:1200px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:30px;">
@@ -4908,6 +4933,155 @@ async function submitCouncil(ev){
 <script>
 function openCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); if(m){m.style.display='flex';m.classList.add('open');} }
 function closeCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
+</script>
+
+<!-- ── FULL REPORT purchase + client-side watermark + invoice — v7.9.23 ──── -->
+<script>
+/* Reuses the existing, HMAC-verified Razorpay create-order + verify-payment
+   flow (pack="report"). On a verified ₹4,999 payment the buyer is granted
+   4,999 credits AND the report is unlocked: fetched, watermarked to the buyer,
+   downloaded, with a Chartered Times LLP tax invoice. No existing function is
+   modified — all names are namespaced _rpt*. */
+var REPORT_CFG = {
+  PACK:        'report',
+  PRICE_INR:   4999,
+  CREDITS:     4999,
+  // Host the report PDF on the SAME origin as this page (so fetch() is allowed),
+  // then point REPORT_URL at it. Default assumes it sits next to this page.
+  REPORT_URL:  'GCCPROs_India_GCC_Report_2026.pdf',
+  FILENAME:    'GCCPROs_India_GCC_Report_2026.pdf'
+};
+var RPT_SELLER = {
+  name:"Chartered Times LLP", tag:"Market Intelligence & Talent Solutions",
+  a1:"B 101, Marvel Citrine, Rakshak Nagar", a2:"Kharadi, Pune – 411 014, Maharashtra",
+  gstin:"27AAPFC1327B1ZT", pan:"AAPFC1327B", email:"admin@gccpros.com",
+  phone:"+91 85069 76700", state:"27 — Maharashtra"
+};
+function _rptMsg(m){ var el=document.getElementById('report-purchase-msg'); if(el) el.innerHTML=m||''; }
+function _rptDownload(bytes, filename){
+  var blob=new Blob([bytes],{type:'application/pdf'}); var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+}
+function _rptInvNo(){
+  var n=new Date();
+  var fy=(n.getMonth()>=3)?(n.getFullYear()%100)+''+((n.getFullYear()+1)%100):((n.getFullYear()-1)%100)+''+(n.getFullYear()%100);
+  var seq=String(Math.floor(n.getTime()/1000)%100000).padStart(5,'0');
+  return 'CT/INV/'+fy+'/'+seq;
+}
+function _rptToday(){ var d=new Date(); return d.getDate()+' '+d.toLocaleString('en-GB',{month:'short'})+' '+d.getFullYear(); }
+
+async function _rptWatermark(bytes, name){
+  var L=PDFLib, doc=await L.PDFDocument.load(bytes), font=await doc.embedFont(L.StandardFonts.HelveticaBold);
+  var text="Licensed to "+name;
+  doc.getPages().forEach(function(pg){
+    var s=pg.getSize();
+    for(var y=-40;y<s.height+120;y+=104) for(var x=-60;x<s.width+200;x+=270)
+      pg.drawText(text,{x:x,y:y,size:15,font:font,color:L.rgb(0.42,0.48,0.58),opacity:0.09,rotate:L.degrees(33)});
+  });
+  return await doc.save();
+}
+async function _rptInvoice(o){
+  var L=PDFLib, MM=2.834645669, W=595.276, H=841.890;
+  var NAVY=L.rgb(0.039,0.086,0.157),SKY=L.rgb(0.357,0.639,0.839),INK=L.rgb(0.125,0.161,0.239),
+      MUTE=L.rgb(0.420,0.478,0.600),HAIR=L.rgb(0.863,0.890,0.925),GREEN=L.rgb(0.122,0.478,0.200),WHITE=L.rgb(1,1,1);
+  var doc=await L.PDFDocument.create(), pg=doc.addPage([W,H]);
+  var reg=await doc.embedFont(L.StandardFonts.Helvetica), bold=await doc.embedFont(L.StandardFonts.HelveticaBold);
+  var mm=function(v){return v*MM;};
+  var T=function(t,x,y,s,f,c){pg.drawText(String(t),{x:x,y:y,size:s,font:f,color:c});};
+  var TR=function(t,x,y,s,f,c){var w=f.widthOfTextAtSize(String(t),s);pg.drawText(String(t),{x:x-w,y:y,size:s,font:f,color:c});};
+  var LN=function(x1,y1,x2,y2,c,w){pg.drawLine({start:{x:x1,y:y1},end:{x:x2,y:y2},color:c,thickness:w});};
+  var intra=String(o.b_state_code)==="27";
+  T(RPT_SELLER.name,mm(18),H-mm(22),20,bold,NAVY); T(RPT_SELLER.tag,mm(18),H-mm(27),8.5,reg,MUTE);
+  TR("TAX INVOICE",W-mm(18),H-mm(22),17,bold,NAVY);
+  TR("Invoice No: "+o.invno,W-mm(18),H-mm(28),8.5,reg,MUTE);
+  TR("Invoice Date: "+o.date,W-mm(18),H-mm(32.5),8.5,reg,MUTE);
+  TR("Payment: Razorpay  ·  "+o.orderid,W-mm(18),H-mm(37),8.5,reg,MUTE);
+  LN(mm(18),H-mm(41),W-mm(18),H-mm(41),SKY,1.4);
+  var y=H-mm(50);
+  T("BILL FROM",mm(18),y,8,bold,MUTE); T("BILL TO",mm(108),y,8,bold,MUTE);
+  T(RPT_SELLER.name,mm(18),y-mm(6),10,bold,INK); T(o.b_name,mm(108),y-mm(6),10,bold,INK);
+  var fl=[RPT_SELLER.a1,RPT_SELLER.a2,"GSTIN: "+RPT_SELLER.gstin+"  ·  PAN: "+RPT_SELLER.pan,"State Code: "+RPT_SELLER.state,RPT_SELLER.email+"  ·  "+RPT_SELLER.phone];
+  var tl=[o.b_email,"State Code: "+o.b_state_code,"Place of Supply: "+(intra?"Maharashtra":"Other State"),"Supply Type: "+(intra?"Intra-State":"Inter-State"),"Tax: "+(intra?"CGST + SGST":"IGST")];
+  fl.forEach(function(t,i){T(t,mm(18),y-mm(11)-i*mm(4.6),8.5,reg,MUTE);});
+  tl.forEach(function(t,i){T(t,mm(108),y-mm(11)-i*mm(4.6),8.5,reg,MUTE);});
+  var ty=y-mm(40);
+  pg.drawRectangle({x:mm(18),y:ty,width:W-mm(36),height:mm(8),color:NAVY});
+  T("DESCRIPTION",mm(21),ty+mm(2.5),8.5,bold,WHITE);T("SAC",mm(120),ty+mm(2.5),8.5,bold,WHITE);
+  T("QTY",mm(140),ty+mm(2.5),8.5,bold,WHITE);TR("AMOUNT (INR)",W-mm(21),ty+mm(2.5),8.5,bold,WHITE);
+  T("GCCPROs Database-Pro — credit top-up",mm(21),ty-mm(8),10,reg,INK);
+  T("Prepaid research credits for the Database-Pro portal. 1 credit = Rs 1.",mm(21),ty-mm(12.5),8,reg,MUTE);
+  T("998431",mm(120),ty-mm(8),9,reg,INK);T(o.credits+" cr",mm(140),ty-mm(8),9,reg,INK);
+  TR(o.amount.toFixed(2),W-mm(21),ty-mm(8),10,reg,INK);
+  LN(mm(18),ty-mm(16),W-mm(18),ty-mm(16),HAIR,1);
+  var taxable=Math.round((o.amount/1.18)*100)/100, gst=Math.round((o.amount-taxable)*100)/100,
+      cg=Math.round((gst/2)*100)/100, sg=Math.round((gst-cg)*100)/100;
+  var row=function(lbl,val,yy,b){var f=b?bold:reg,sz=b?10:9,col=b?NAVY:MUTE;TR(lbl,W-mm(52),yy,sz,f,col);TR(val,W-mm(21),yy,sz,f,INK);};
+  var ry=ty-mm(23); row("Taxable value",taxable.toFixed(2),ry,false); var nb;
+  if(intra){row("CGST 9%",cg.toFixed(2),ry-mm(5),false);row("SGST 9%",sg.toFixed(2),ry-mm(10),false);nb=ry-mm(13);}
+  else{row("IGST 18%",gst.toFixed(2),ry-mm(5),false);nb=ry-mm(8);}
+  LN(W-mm(92),nb,W-mm(18),nb,HAIR,1); row("TOTAL (INR)",o.amount.toFixed(2),nb-mm(6),true);
+  TR("PAID",W-mm(21),nb-mm(13),10,bold,GREEN);
+  T("Amount is the credit top-up paid via Razorpay and is treated as inclusive of GST. Credits are non-refundable and non-transferable.",mm(18),mm(40),8,reg,MUTE);
+  T("Reverse charge: No.  ·  This is a computer-generated tax invoice and does not require a signature.",mm(18),mm(36),8,reg,MUTE);
+  LN(mm(18),mm(30),W-mm(18),mm(30),SKY,1);
+  T(RPT_SELLER.name+"  ·  "+RPT_SELLER.email+"  ·  gccpros.com",mm(18),mm(25),8,reg,MUTE);
+  TR("GCCPROs is a brand of "+RPT_SELLER.name,W-mm(18),mm(25),8,reg,MUTE);
+  return await doc.save();
+}
+
+async function _rptDeliver(orderId){
+  var cu=(typeof currentUser!=='undefined' && currentUser)?currentUser:null;
+  var email=(cu&&cu.email)||(typeof getToken==='function'&&getToken())||'member@gccpros.com';
+  var name=(cu&&cu.displayName)|| (email.split('@')[0]) || email;
+  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading — please retry in a moment.'); return; }
+  _rptMsg('Preparing your watermarked report and invoice…');
+  var resp=await fetch(REPORT_CFG.REPORT_URL,{cache:'no-store'});
+  if(!resp.ok) throw new Error('report fetch '+resp.status);
+  var reportBytes=new Uint8Array(await resp.arrayBuffer());
+  var wm=await _rptWatermark(reportBytes, name);
+  _rptDownload(wm, REPORT_CFG.FILENAME);
+  var inv=await _rptInvoice({b_name:name,b_email:email,b_state_code:'27',invno:_rptInvNo(),date:_rptToday(),orderid:orderId,amount:REPORT_CFG.PRICE_INR,credits:REPORT_CFG.CREDITS});
+  _rptDownload(inv,'GCCPROs_TaxInvoice.pdf');
+  _rptMsg('✓ Done — your report and invoice have downloaded. Keep them safe; the report is licensed to you.');
+}
+
+async function buyReport(){
+  var token=(typeof getToken==='function')?getToken():null;
+  if(!token){ if(typeof showToast==='function') showToast('Please sign in to buy the report.','#92400E'); _rptMsg('Please sign in to buy the report.'); return; }
+  if(typeof _accountStatus!=='undefined' && _accountStatus && _accountStatus!=='Approved'){ if(typeof showToast==='function') showToast('Your account must be approved before purchase.','#92400E'); return; }
+  if(typeof Razorpay==='undefined'){ _rptMsg('Payment gateway is loading — please try again in a moment.'); return; }
+  _rptMsg('Starting secure checkout…');
+  var order;
+  try{
+    var orderRes=await apiFetch(SCRIPT_URL+'?action=razorpayCreateOrder&token='+encodeURIComponent(token)+'&pack='+encodeURIComponent(REPORT_CFG.PACK));
+    order=await orderRes.json();
+    if(order.error) throw new Error(order.message||order.error);
+  }catch(err){ _rptMsg('Could not start payment ('+(err.message||'server error')+'). Please retry, or WhatsApp +91-85069-76700.'); return; }
+  var rzp=new Razorpay({
+    key:order.key_id, order_id:order.order_id, amount:order.amount, currency:order.currency,
+    name:'GCCPROs', description:'India GCC Report 2026 — Comprehensive Edition',
+    prefill:{ email:token }, theme:{ color:'#0A1628' },
+    handler:async function(response){
+      _rptMsg('Payment received — verifying…');
+      try{
+        var vurl=SCRIPT_URL+'?action=razorpayVerifyPayment&token='+encodeURIComponent(token)
+          +'&razorpay_order_id='+encodeURIComponent(response.razorpay_order_id||'')
+          +'&razorpay_payment_id='+encodeURIComponent(response.razorpay_payment_id||'')
+          +'&razorpay_signature='+encodeURIComponent(response.razorpay_signature||'');
+        var vres=await apiFetch(vurl); var vj=await vres.json().catch(function(){return {};});
+        if(!(vres.ok && vj && vj.status==='ok')){
+          _rptMsg('Payment captured. If your download does not start, email admin@gccpros.com with reference '+(response.razorpay_payment_id||''));
+        }
+        try{ if(typeof fetchCreditBalance==='function') await fetchCreditBalance(); }catch(_){}
+        await _rptDeliver(response.razorpay_payment_id||response.razorpay_order_id||'order');
+      }catch(e){ _rptMsg('Verification issue: '+(e.message||e)+'. Email admin@gccpros.com with your payment reference.'); }
+    },
+    modal:{ ondismiss:function(){ _rptMsg(''); } }
+  });
+  rzp.on('payment.failed',function(resp){ _rptMsg('Payment failed: '+((resp.error&&resp.error.description)||'please retry')); });
+  rzp.open();
+}
 </script>
 
 </body>
