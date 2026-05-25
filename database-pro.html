@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.6-dedup-msg · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.7-google-reregister · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2744,6 +2744,8 @@ function showSignInState(mode) {
           '<h3 style="font-size:19px;">Sign up &amp; earn 500 credits today</h3>' +
           '<p style="font-size:12px;max-width:440px;margin:6px auto 0;">Apply for individual access. New members are manually approved within one business day. 500 credits are granted automatically on approval.</p>' +
         '</div>' +
+        '<button type="button" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid var(--line-2);border-radius:2px;padding:12px 20px;font-size:13px;font-weight:500;font-family:Inter,sans-serif;cursor:pointer;width:100%;transition:all 0.15s;"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Sign up with Google</button>' +
+        '<div style="display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;"><span style="flex:1;height:1px;background:var(--line);"></span><span>or sign up with email</span><span style="flex:1;height:1px;background:var(--line);"></span></div>' +
         signupForm +
         '<div id="signin-err" class="modal-err" style="margin-top:10px;"></div>' +
         '<div id="signin-ok" class="modal-ok" style="margin-top:10px;"></div>' +
@@ -3112,30 +3114,40 @@ async function submitOTP(ev) {
     return;
   }
 
-  // 2. Create Firebase user
+  // 2. Create (or reuse) the Firebase user.
   if (btn) btn.textContent = 'Creating account...';
+  var _authReady = false;
   try {
     await firebase.auth().createUserWithEmailAndPassword(p.email, p.pwd);
+    _authReady = true;
   } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
-    // Special-case: email already has a Firebase login. Auto-trigger a
-    // reset email so the user can recover in one click.
     if (e.code === 'auth/email-already-in-use') {
-      try { await firebase.auth().sendPasswordResetEmail(p.email); } catch(_) {}
-      _showSignInOk('This email already has a login on file. We have just emailed you a sign-in link to ' + p.email + '. Check your inbox to set a new password and sign in.');
-      window._pendingSignup = null;
-      window._signupInProgress = false;
-      setTimeout(function(){ switchMode('signin'); }, 7000);
+      // Email already has a Firebase login (e.g. a user previously deleted from our DB
+      // re-registering). Reuse it by signing in with the entered password, then continue
+      // below so the account row is rebuilt. If the password no longer matches, email a
+      // reset link instead.
+      try { await firebase.auth().signInWithEmailAndPassword(p.email, p.pwd); _authReady = true; } catch (_e2) {}
+      if (!_authReady) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
+        try { await firebase.auth().sendPasswordResetEmail(p.email); } catch(_) {}
+        _showSignInOk('This email already has a login. Use your previous password to continue, or we have emailed a reset link to ' + p.email + ' so you can set a new one and sign in.');
+        window._pendingSignup = null;
+        window._signupInProgress = false;
+        setTimeout(function(){ switchMode('signin'); }, 8000);
+        return;
+      }
+    } else {
+      if (btn) { btn.disabled = false; btn.textContent = 'Verify & create account'; }
+      var msg;
+      if (e.code === 'auth/invalid-email')               msg = 'That email does not look valid.';
+      else if (e.code === 'auth/weak-password')          msg = 'Password is too weak.';
+      else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
+      else msg = 'Sign-up failed (' + (e.code || 'unknown') + '). Please try again.';
+      _showSignInErr(msg);
       return;
     }
-    var msg;
-    if (e.code === 'auth/invalid-email')               msg = 'That email does not look valid.';
-    else if (e.code === 'auth/weak-password')          msg = 'Password is too weak.';
-    else if (e.code === 'auth/network-request-failed') msg = 'Network issue. Check your connection and retry.';
-    else msg = 'Sign-up failed (' + (e.code || 'unknown') + '). Please try again.';
-    _showSignInErr(msg);
-    return;
   }
+  if (!_authReady) return;
 
   // 3. Submit profile + signupToken to backend (this creates the users row)
   //    The Turnstile token captured at sign-up time is forwarded here so the
