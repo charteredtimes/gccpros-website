@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.4-feedback · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.6-dedup-msg · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2644,7 +2644,7 @@ function showSignInState(mode) {
       '<div style="display:flex;flex-direction:column;gap:18px;">' +
         // Sign UP card
         '<div class="state-box" style="border-top:3px solid var(--gold);padding:34px 28px;text-align:left;cursor:pointer;transition:transform 0.1s,box-shadow 0.1s;" ' +
-              'onclick="switchMode(\'signup\')" ' +
+              'onclick="goToInlineSignup()" ' +
               'onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 24px rgba(10,22,40,0.08)\';" ' +
               'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\';">' +
           '<div style="display:flex;align-items:center;gap:14px;">' +
@@ -3141,7 +3141,7 @@ async function submitOTP(ev) {
   //    The Turnstile token captured at sign-up time is forwarded here so the
   //    Edge Function can server-side verify before writing to the DB.
   try {
-    await fetch(SCRIPT_URL + '?action=requestApproval'
+    var _raRes = await fetch(SCRIPT_URL + '?action=requestApproval'
       + '&token='     + encodeURIComponent(p.email)
       + '&signupToken=' + encodeURIComponent(signupToken)
       + '&cfToken='   + encodeURIComponent(p.cfToken || '')
@@ -3159,6 +3159,18 @@ async function submitOTP(ev) {
       + '&dpdpConsent=' + encodeURIComponent(p.dpdpConsent || 'Yes')
       + '&dpdpConsentTs=' + encodeURIComponent(p.dpdpConsentTs || new Date().toISOString())
       + '&dpdpPolicyVersion=' + encodeURIComponent(p.dpdpPolicyVersion || '2026-05-18'));
+    var _raJson = {}; try { _raJson = await _raRes.json(); } catch (_) {}
+    if (_raJson && _raJson.error) {
+      var _rmsg = _raJson.message || (_raJson.error === 'duplicate_identity'
+        ? 'This LinkedIn profile or phone number is already registered to another account. Each member may hold only one account.'
+        : ('Registration could not be completed (' + _raJson.error + '). Please contact admin@gccpros.com.'));
+      // remove the just-created Firebase account so no orphan login remains
+      try { var _cu = firebase.auth().currentUser; if (_cu) { await _cu.delete(); } } catch (_) { try { await firebase.auth().signOut(); } catch (_) {} }
+      window._pendingSignup = null;
+      switchMode('signin');
+      _showSignInErr(_rmsg);
+      return;
+    }
   } catch (_) {}
 
   window._pendingSignup = null;
@@ -4214,6 +4226,15 @@ function openSignInModal() {
 function closeSignInModal() {
   var m = document.getElementById('signin-modal');
   if (m) m.classList.remove('open');
+}
+// Top-right modal "Sign up" routes to the single working inline form (results-wrap)
+// instead of rendering a duplicate signup form in the modal (which collided on ids
+// like su-email/f-name and made the modal signup do nothing).
+function goToInlineSignup() {
+  closeSignInModal();
+  switchMode('signup');
+  var el = document.getElementById('results-wrap');
+  if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // TOAST

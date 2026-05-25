@@ -205,6 +205,7 @@ textarea{resize:vertical;line-height:1.7;}
         <div id="err-consent" style="color:#dc2626;font-size:12px;margin-top:4px;"></div>
       </div>
 
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAADR4eSfrXpQVH-3f" style="margin:0 0 16px;"></div>
       <button class="submit-btn" id="submit-btn" onclick="submitForm()">
         Submit Application →
       </button>
@@ -259,9 +260,12 @@ textarea{resize:vertical;line-height:1.7;}
   </div>
 </footer>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6HJbg2PBAGSc-dNNTEREyk49E6c5nemgW4T4QmHVMpNMvX9GF1uCNxgmG0TwQxxa3hA/exec';
 const WA_INSIDER = 'https://chat.whatsapp.com/ID1ZVJQAArnKOmR1c7NqhA';
+// 2026-05-22 — dual-submit: Apps Script (Sheet) + Supabase insiderApply (admin tab).
+const EDGE_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
 
 
 // ── Shared validators ──────────────────────────────────────────────────────
@@ -397,8 +401,27 @@ async function submitForm() {
     consent:    document.querySelector('input[name="consent"]:checked').value,
   };
 
+  // Cloudflare Turnstile token for the insiderApply path (the Sheet backup needs none).
+  var cfToken = '';
+  try { if (window.turnstile && turnstile.getResponse) cfToken = turnstile.getResponse() || ''; } catch(_) {}
+  if (!cfToken) { var _tr = document.querySelector('[name="cf-turnstile-response"]'); if (_tr) cfToken = _tr.value || ''; }
+
+  // Map the form onto insiderApply so the application also lands in the admin Insider tab.
+  var insiderPayload = {
+    fullName: fields.fullName, email: fields.email, whatsapp: fields.whatsapp,
+    linkedin: fields.linkedin, company: fields.company, role: fields.role,
+    city: fields.city, yearsInGcc: fields.experience, domain: fields.domain,
+    contribute: fields.whyJoin, source: 'community-insider',
+    dpdpConsent: fields.consent, cfToken: cfToken, ua: navigator.userAgent
+  };
+
   try {
-    await fetch(SCRIPT_URL + '?' + new URLSearchParams(fields).toString(), { mode: 'no-cors' });
+    // 1) Google Sheet backup (full record incl. gccs) — always fires.
+    fetch(SCRIPT_URL + '?' + new URLSearchParams(fields).toString(), { mode: 'no-cors' }).catch(function(){});
+    // 2) Admin tab via Supabase insiderApply — best-effort; requires a Turnstile token.
+    if (cfToken) {
+      fetch(EDGE_URL + '?action=insiderApply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(insiderPayload) }).catch(function(){});
+    }
     document.getElementById('form-body').style.display = 'none';
     document.getElementById('success-screen').style.display = 'block';
   } catch(e) {
