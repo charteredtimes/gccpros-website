@@ -167,7 +167,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.1 SSO (audit hidden)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.2 SSO (city reconcile)</div>
   </div>
 </div>
 
@@ -335,15 +335,20 @@ function loadStats(){
   call('/v1/stats?'+p.toString()).then(function(r){
     if(!r.ok){badge('Error','bad');$('statsCard').classList.remove('hide');$('statsBody').innerHTML='<span style="color:#B3261E">'+friendly(r.code,r.message)+'</span>';return;}
     badge('Connected','ok');$('statsCard').classList.remove('hide');
-    var h='<div class="meta">Total matching GCCs: <b>'+(r.total||0).toLocaleString()+'</b></div>';
-    h+=barBlock('Top cities',r.by_city,'gcc_city')+barBlock('Top industries',r.by_industry,'industry')+barBlock('Top HQ countries',r.by_hq_country,'hq_country');
+    var h='<div class="meta">'
+      +'Total unique GCCs: <b>'+(r.total||0).toLocaleString()+'</b>'
+      +(r.city_presences?'  &nbsp;|&nbsp;  Total city presences: <b>'+r.city_presences.toLocaleString()+'</b>':'')
+      +'</div>';
+    h+=barBlock('Top cities',r.by_city,'gcc_city',r.city_presences,'A company in multiple Indian cities is counted once per city.')+barBlock('Top industries',r.by_industry,'industry',r.total,'One industry per company; sums to total.')+barBlock('Top HQ countries',r.by_hq_country,'hq_country',r.total,'One HQ country per company; sums to total.');
     $('statsBody').innerHTML=h;
   }).catch(function(){});
 }
-function barBlock(title,arr,key){
+function barBlock(title,arr,key,subtotal,note){
   if(!arr||!arr.length)return '';
   var max=Math.max.apply(null,arr.map(function(x){return x.count;}));
-  var h='<div class="barwrap"><div style="font-weight:bold;color:var(--navy);margin:10px 0 4px">'+title+'</div>';
+  var sub = subtotal ? ' &nbsp;<span style="color:#6B7A8F;font-weight:500;font-size:12px">('+subtotal.toLocaleString()+' total)</span>' : '';
+  var h='<div class="barwrap"><div style="font-weight:bold;color:var(--navy);margin:10px 0 4px">'+title+sub+'</div>';
+  if(note){h+='<div style="font-size:11px;color:#6B7A8F;margin:-2px 0 6px">'+note+'</div>';}
   arr.slice(0,10).forEach(function(x){var w=max?Math.round(100*x.count/max):0;
     h+='<div class="bar"><div class="lab">'+esc(x[key])+'</div><div class="track"><div class="fill" style="width:'+w+'%"></div></div><div class="v">'+x.count.toLocaleString()+'</div></div>';});
   return h+'</div>';
