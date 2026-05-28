@@ -167,7 +167,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6 SSO (chips + grouped order + icons)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.1 SSO (audit hidden)</div>
   </div>
 </div>
 
@@ -292,7 +292,7 @@ var ICN={
   cur:'<svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="#1B7C3B"><text x="12" y="17" font-size="15" font-family="Georgia,serif" font-weight="bold" text-anchor="middle">$</text></svg>',
   cal:'<svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="#5A6B82"><path d="M7 2v2H4v18h16V4h-3V2h-2v2H9V2H7zm-1 8h12v10H6V10z"/></svg>'
 };
-var ICN_FIELD={office_addresses:'pin',gcc_city:'pin',state_province:'pin',hq_country:'glb',company_name:'bld',group_company:'bld',leader_linkedin_urls:'lk',site_head:'lk',glassdoor_rating:'star',gptw_certified:'gptw',audit_verification_certificate:'tick',fy24_revenue_usd_mn:'cur',fy25_revenue_usd_mn:'cur',group_global_turnover:'cur',year_established:'cal'};
+var ICN_FIELD={office_addresses:'pin',gcc_city:'pin',state_province:'pin',hq_country:'glb',company_name:'bld',group_company:'bld',leader_linkedin_urls:'lk',site_head:'lk',glassdoor_rating:'star',gptw_certified:'gptw',fy24_revenue_usd_mn:'cur',fy25_revenue_usd_mn:'cur',group_global_turnover:'cur',year_established:'cal'};
 function fmtVal(k,v){
   var s=String(v);
   if(k==='leader_linkedin_urls'){
@@ -302,13 +302,12 @@ function fmtVal(k,v){
     }).join('<br>');
   }
   if(k==='gptw_certified' && /^(y|yes|true|1)/i.test(s)) return ICN.gptw+'GPTW Certified';
-  if(k==='audit_verification_certificate') return ICN.tick+esc(s);
   if(/^https?:\/\//i.test(s)) return '<a class="lk" href="'+esc(s)+'" target="_blank" rel="noopener">'+esc(s)+'</a>';
   return esc(s);
 }
-var FIELD_ORDER=['company_name','group_company','hq_country','gcc_city','state_province','office_addresses','sez_stpi_peza','office_area_sqft','other_country_gcc_units','industry','gcc_domains','sub_domains','finance_domain_active','ips_registered','site_head','other_leaders','leader_linkedin_urls','leader_email_verified','headcount','headcount_band','headcount_notes','gender_diversity_women_pct','year_established','legal_structure','cin_reg_id','maturity_level','setup_model','setup_partner','fy24_revenue_usd_mn','fy25_revenue_usd_mn','revenue_growth_yoy_pct','net_profit_local_ccy','transfer_pricing_markup_pct','group_global_turnover','group_turnover_fy','group_turnover_source','tech_stack','recent_press_6mo','strategic_initiatives','glassdoor_rating','gptw_certified','confidence','validation_notes','audit_verification_certificate'];
+var FIELD_ORDER=['company_name','group_company','hq_country','gcc_city','state_province','office_addresses','sez_stpi_peza','office_area_sqft','other_country_gcc_units','industry','gcc_domains','sub_domains','finance_domain_active','ips_registered','site_head','other_leaders','leader_linkedin_urls','leader_email_verified','headcount','headcount_band','headcount_notes','gender_diversity_women_pct','year_established','legal_structure','cin_reg_id','maturity_level','setup_model','setup_partner','fy24_revenue_usd_mn','fy25_revenue_usd_mn','revenue_growth_yoy_pct','net_profit_local_ccy','transfer_pricing_markup_pct','group_global_turnover','group_turnover_fy','group_turnover_source','tech_stack','recent_press_6mo','strategic_initiatives','glassdoor_rating','gptw_certified','confidence'];
 var FIELD_LABELS={company_name:'Company',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',industry:'Industry',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',other_leaders:'Other leaders',leader_linkedin_urls:'LinkedIn',leader_email_verified:'Leader email',headcount_band:'Headcount',headcount:'Headcount (exact)',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',setup_model:'Setup model',setup_partner:'Setup partner',maturity_level:'Maturity',sez_stpi_peza:'SEZ / STPI',office_area_sqft:'Office area',tech_stack:'Tech stack',office_addresses:'Office addresses',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',gender_diversity_women_pct:'Women %',confidence:'Confidence',fy24_revenue_usd_mn:'FY24 revenue ($mn)',fy25_revenue_usd_mn:'FY25 revenue ($mn)',revenue_growth_yoy_pct:'Revenue growth YoY %',net_profit_local_ccy:'Net profit',transfer_pricing_markup_pct:'TP markup %',ips_registered:'IPs registered',group_global_turnover:'Group turnover',group_turnover_fy:'Group turnover FY',group_turnover_source:'Turnover source',finance_domain_active:'Finance domain',other_country_gcc_units:'Other-country units',validation_notes:'Validation notes',audit_verification_certificate:'Audit certificate'};
-var SKIP={id:1,country:1};
+var SKIP={id:1,country:1,validation_notes:1,audit_verification_certificate:1};
 function details(c){var h='<dl>';var seen={};function row(k){if(SKIP[k]||seen[k])return;var v=c[k];if(v===null||v===''||v===undefined)return;seen[k]=1;var ic=ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'';h+='<dt>'+(FIELD_LABELS[k]||k)+'</dt><dd>'+ic+fmtVal(k,v)+'</dd>';}FIELD_ORDER.forEach(row);Object.keys(c).forEach(row);return h+'</dl>';}
 function toggle(i){var el=$('det'+i);if(el)el.classList.toggle('hide');}
 function nextPage(){if(S.offset+S.limit<S.total){S.offset+=S.limit;search();}}
@@ -351,7 +350,7 @@ function barBlock(title,arr,key){
 }
 
 /* ===== Export (Enterprise tier only) ===== */
-var CSV_ORDER=["company_name","group_company","hq_country","gcc_city","state_province","office_addresses","sez_stpi_peza","office_area_sqft","other_country_gcc_units","industry","gcc_domains","sub_domains","finance_domain_active","ips_registered","site_head","other_leaders","leader_linkedin_urls","leader_email_verified","headcount","headcount_band","headcount_notes","gender_diversity_women_pct","year_established","legal_structure","cin_reg_id","maturity_level","setup_model","setup_partner","fy24_revenue_usd_mn","fy25_revenue_usd_mn","revenue_growth_yoy_pct","net_profit_local_ccy","transfer_pricing_markup_pct","group_global_turnover","group_turnover_fy","group_turnover_source","tech_stack","recent_press_6mo","strategic_initiatives","glassdoor_rating","gptw_certified","confidence","validation_notes","audit_verification_certificate"];
+var CSV_ORDER=["company_name","group_company","hq_country","gcc_city","state_province","office_addresses","sez_stpi_peza","office_area_sqft","other_country_gcc_units","industry","gcc_domains","sub_domains","finance_domain_active","ips_registered","site_head","other_leaders","leader_linkedin_urls","leader_email_verified","headcount","headcount_band","headcount_notes","gender_diversity_women_pct","year_established","legal_structure","cin_reg_id","maturity_level","setup_model","setup_partner","fy24_revenue_usd_mn","fy25_revenue_usd_mn","revenue_growth_yoy_pct","net_profit_local_ccy","transfer_pricing_markup_pct","group_global_turnover","group_turnover_fy","group_turnover_source","tech_stack","recent_press_6mo","strategic_initiatives","glassdoor_rating","gptw_certified","confidence"];
 var PDF_COLS=[["company_name","Company"],["group_company","Parent"],["hq_country","HQ"],["gcc_city","City"],["industry","Industry"],["gcc_domains","Domains"],["headcount_band","Headcount"],["site_head","India site head"],["confidence","Conf."]];
 function today(){return new Date().toISOString().slice(0,10);}
 function filterSummary(){var p=qs();var parts=[];p.forEach(function(v,k){parts.push(k+': '+v);});return parts.length?parts.join('   ·   '):'All India GCCs';}
