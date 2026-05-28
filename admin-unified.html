@@ -1329,7 +1329,7 @@ function renderJobs() {
   const filtered = JOBS.filter(j => !q || [j.title, j.company, j.job_code, j.primary_domain, j.location].join(' ').toLowerCase().includes(q));
   document.getElementById('jobs-count').textContent = filtered.length + ' / ' + JOBS.length + ' jobs';
   if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
-  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Urgent</th><th>Posted</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Urgent</th><th>Posted</th><th>Edit</th></tr></thead><tbody>';
   filtered.forEach(j => {
     const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
     const apps = (j.applications_count > 0)
@@ -1338,7 +1338,8 @@ function renderJobs() {
     const urg = j.is_urgent
       ? '<span class="badge b-urgent">&#128293; Urgent</span><br><button class="btn small secondary" style="margin-top:4px;" onclick="toggleJobUrgent(\'' + esc(j.id) + '\', false)">Unmark</button>'
       : '<button class="btn small secondary" onclick="toggleJobUrgent(\'' + esc(j.id) + '\', true)">Mark urgent</button>';
-    html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + urg + '</td><td>' + fmtDate(j.posted_at) + '</td></tr>';
+    var editBtn = '<button class="btn small" onclick="editJob(\'' + esc(j.id) + '\')">&#9998; Edit</button>';
+    html += '<tr><td><b>' + esc(j.job_code || '') + '</b></td><td>' + esc(j.title || '') + '</td><td>' + esc(j.company || '') + '</td><td>' + esc(j.primary_domain || '') + '</td><td>' + esc(j.location || '') + '</td><td>' + esc(j.mode || '') + '</td><td>' + ctc + '</td><td>' + esc(j.experience_band || '') + '</td><td>' + apps + '</td><td>' + badge(j.status) + '</td><td>' + urg + '</td><td>' + fmtDate(j.posted_at) + '</td><td>' + editBtn + '</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('jobs-box').innerHTML = html;
@@ -1355,38 +1356,50 @@ async function toggleJobUrgent(id, makeUrgent) {
 // ===== Add-new-job modal (v7.10) =====
 // Posts to edge action `oppsAdminUpsertJob` with no `id` -> INSERT.
 // Server merges JSON body into URLSearchParams, so long text is fine over POST.
-function openNewJobModal() {
+function openNewJobModal(jobObj) {
   // Remove any prior instance so the modal is always fresh
   document.querySelectorAll('.new-job-modal').forEach(function(n) { n.remove(); });
+  var j = jobObj || {};
+  var isEdit = !!j.id;
+  var titleLbl = isEdit ? ('✎ Edit job — ' + (j.job_code || j.id.slice(0,8))) : '✚ Post a new job';
+  var submitLbl = isEdit ? 'Save changes' : 'Post job';
   var html = ''
     + '<div class="new-job-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:flex-start;justify-content:center;z-index:9998;padding:24px;overflow-y:auto;" onclick="if(event.target===this)this.remove()">'
     +   '<div onclick="event.stopPropagation()" style="background:#fff;border-radius:8px;max-width:760px;width:100%;max-height:92vh;overflow-y:auto;">'
-    +     '<div style="padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><h3 style="margin:0;">&#10010; Post a new job</h3><button type="button" class="btn small secondary" onclick="this.closest(\'.new-job-modal\').remove()">&times;</button></div>'
-    +     '<form id="new-job-form" onsubmit="event.preventDefault();submitNewJob(this);" style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;">'
-    +       _njField('job_code', 'Job code (unique short ID)', 'text', true, '', '', 'e.g. GCC-2026-101')
-    +       _njField('title', 'Title', 'text', true)
-    +       _njField('company', 'Company / GCC', 'text', true)
-    +       _njField('industry', 'Industry', 'text', false, '', '', 'e.g. BFSI, SaaS')
-    +       _njField('primary_domain', 'Primary domain', 'text', false, '', '', 'e.g. Finance, Engineering')
-    +       _njField('location', 'Location', 'text', false, '', '', 'e.g. Bengaluru')
-    +       _njField('experience_band', 'Experience band', 'text', false, '', '', 'e.g. 5-8 yrs')
-    +       _njSelect('job_type', 'Job type', ['','full_time','part_time','contract','internship'])
-    +       _njField('ctc_min_inr', 'CTC min (INR, optional)', 'number', false)
-    +       _njField('ctc_max_inr', 'CTC max (INR, optional)', 'number', false)
-    +       _njField('referral_amount_inr', 'Partner referral fee (INR)', 'number', false, '', '', 'paid on placement')
-    +       _njSelect('status', 'Status', ['active','draft','paused','closed'], 'active')
-    +       _njTextarea('description', 'Description', 4, 'Role overview, responsibilities, what success looks like…')
-    +       _njTextarea('requirements', 'Requirements', 3, 'Must-have skills / qualifications')
-    +       _njTextarea('benefits', 'Benefits', 2, 'Optional')
+    +     '<div style="padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><h3 style="margin:0;">' + esc(titleLbl) + '</h3><button type="button" class="btn small secondary" onclick="this.closest(\'.new-job-modal\').remove()">&times;</button></div>'
+    +     '<form id="new-job-form" data-job-id="' + esc(j.id || '') + '" onsubmit="event.preventDefault();submitNewJob(this);" style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;">'
+    +       _njField('job_code', 'Job code (unique short ID)', 'text', true, _njV(j,'job_code'), '', 'e.g. GCC-2026-101')
+    +       _njField('title', 'Title', 'text', true, _njV(j,'title'))
+    +       _njField('company', 'Company / GCC', 'text', true, _njV(j,'company'))
+    +       _njField('industry', 'Industry', 'text', false, _njV(j,'industry'), '', 'e.g. BFSI, SaaS')
+    +       _njField('primary_domain', 'Primary domain', 'text', false, _njV(j,'primary_domain'), '', 'e.g. Finance, Engineering')
+    +       _njField('location', 'Location', 'text', false, _njV(j,'location'), '', 'e.g. Bengaluru')
+    +       _njField('experience_band', 'Experience band', 'text', false, _njV(j,'experience_band'), '', 'e.g. 5-8 yrs')
+    +       _njSelect('job_type', 'Job type', ['','full_time','part_time','contract','internship'], _njSel(j,'job_type'))
+    +       _njField('ctc_min_inr', 'CTC min (INR, optional)', 'number', false, _njV(j,'ctc_min_inr'))
+    +       _njField('ctc_max_inr', 'CTC max (INR, optional)', 'number', false, _njV(j,'ctc_max_inr'))
+    +       _njField('referral_amount_inr', 'Partner referral fee (INR)', 'number', false, _njV(j,'referral_amount_inr'), '', 'paid on placement')
+    +       _njSelect('status', 'Status', ['active','draft','paused','closed'], _njSel(j,'status','active'))
+    +       _njSelect('mode', 'Work mode', ['','Remote','Hybrid','Onsite'], _njSel(j,'mode'))
+    +       _njSelect('level', 'Seniority', ['','Junior','Mid','Senior','Lead','Director','Other'], _njSel(j,'level'))
+    +       _njField('budget_text', 'Budget text (shown only if CTC empty)', 'text', false, _njV(j,'budget_text'), '', 'e.g. Competitive')
+    +       _njField('qualification', 'Min. qualification', 'text', false, _njV(j,'qualification'), '', 'e.g. Graduate')
+    +       _njTextarea('skills', 'Skills (REQUIRED — comma-separated, 3+ recommended)', 2, 'e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX', _njV(j,'skills'))
+    +       _njTextarea('responsibilities', 'Responsibilities', 3, 'What the person will own day-to-day', _njV(j,'responsibilities'))
+    +       _njTextarea('description', 'Description', 4, 'Role overview, responsibilities, what success looks like…', _njV(j,'description'))
+    +       _njTextarea('requirements', 'Requirements', 3, 'Must-have skills / qualifications', _njV(j,'requirements'))
+    +       _njTextarea('benefits', 'Benefits', 2, 'Optional', _njV(j,'benefits'))
     +       '<div style="grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border);">'
     +         '<button type="button" class="btn secondary" onclick="this.closest(\'.new-job-modal\').remove()">Cancel</button>'
-    +         '<button type="submit" class="btn" id="new-job-submit" style="background:#1B7C3B;color:#fff;border-color:#1B7C3B;">Post job</button>'
+    +         '<button type="submit" class="btn" id="new-job-submit" style="background:#1B7C3B;color:#fff;border-color:#1B7C3B;">' + esc(submitLbl) + '</button>'
     +       '</div>'
     +     '</form>'
     +   '</div>'
     + '</div>';
   document.body.insertAdjacentHTML('beforeend', html);
 }
+function _njV(j, k) { return (j && j[k] != null) ? String(j[k]) : ''; }
+function _njSel(j, k, def) { return (j && j[k] != null && j[k] !== '') ? String(j[k]) : (def || ''); }
 function _njField(name, label, type, required, value, half, ph) {
   var span = (half === 'full') ? 'grid-column:1/-1;' : '';
   var phattr = ph ? (' placeholder="' + esc(ph) + '"') : '';
@@ -1407,15 +1420,21 @@ function _njSelect(name, label, opts, defaultVal) {
     + '<select name="' + name + '" style="padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--ink);background:#fff;">' + optsHtml + '</select>'
     + '</label>';
 }
-function _njTextarea(name, label, rows, ph) {
+function _njTextarea(name, label, rows, ph, defVal) {
   var phattr = ph ? (' placeholder="' + esc(ph) + '"') : '';
   return '<label style="grid-column:1/-1;display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);">' + esc(label)
     + '<textarea name="' + name + '" rows="' + rows + '"' + phattr
-    + ' style="padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--ink);background:#fff;resize:vertical;"></textarea>'
+    + ' style="padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--ink);background:#fff;resize:vertical;">' + (defVal != null ? esc(String(defVal)) : '') + '</textarea>'
     + '</label>';
+}
+function editJob(id) {
+  var j = (window.JOBS || []).find(function(x){ return x.id === id; });
+  if (!j) { toast('Job not found — refresh the list', 'err'); return; }
+  openNewJobModal(j);
 }
 async function submitNewJob(form) {
   var btn = form.querySelector('#new-job-submit');
+  var editingId = form.getAttribute('data-job-id') || '';
   if (btn) { btn.disabled = true; btn.textContent = 'Posting…'; }
   var fd = new FormData(form);
   var payload = {};
@@ -1424,8 +1443,16 @@ async function submitNewJob(form) {
     if (t === '' || t == null) return;
     payload[k] = t;
   });
+  if (editingId) { payload.id = editingId; }
   if (!payload.title || !payload.company || !payload.job_code) {
     toast('Title, company and job code are required', 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Post job'; }
+    return;
+  }
+  // v7.11: skills are required — without them, candidates can't apply
+  var sk = (payload.skills || '').split(/[,;|\n]/).map(function(x){return x.trim();}).filter(Boolean);
+  if (sk.length < 3) {
+    toast('Please list at least 3 skills (comma-separated). Candidates need them to apply.', 'err');
     if (btn) { btn.disabled = false; btn.textContent = 'Post job'; }
     return;
   }
@@ -1437,13 +1464,13 @@ async function submitNewJob(form) {
     });
     var j = await r.json();
     if (j.error) throw new Error(j.error);
-    toast('✓ Job posted — ' + (j.job && j.job.title ? j.job.title : payload.title), 'ok');
+    toast((payload.id ? '✓ Job updated — ' : '✓ Job posted — ') + (j.job && j.job.title ? j.job.title : payload.title), 'ok');
     // Close modal + refresh list
     var m = form.closest('.new-job-modal'); if (m) m.remove();
     loadJobs();
   } catch (err) {
     toast('Failed to post job: ' + err.message, 'err');
-    if (btn) { btn.disabled = false; btn.textContent = 'Post job'; }
+    if (btn) { btn.disabled = false; btn.textContent = (form.getAttribute('data-job-id') ? 'Save changes' : 'Post job'); }
   }
 }
 
