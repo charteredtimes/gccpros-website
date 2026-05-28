@@ -1428,7 +1428,9 @@ function _njTextarea(name, label, rows, ph, defVal) {
     + '</label>';
 }
 function editJob(id) {
-  var j = (window.JOBS || []).find(function(x){ return x.id === id; });
+  // JOBS is a top-level `let` so it does NOT attach to window — refer to it directly
+  var list = (typeof JOBS !== 'undefined' && Array.isArray(JOBS)) ? JOBS : [];
+  var j = list.find(function(x){ return String(x.id) === String(id); });
   if (!j) { toast('Job not found — refresh the list', 'err'); return; }
   openNewJobModal(j);
 }
