@@ -303,9 +303,11 @@ async function init() {
 
 $("#btnGoogle").onclick = async () => {
   $("#gateErr").textContent = "";
+  // Always redirect to a CLEAN URL so OAuth tokens don't pile up in the hash.
+  const cleanUrl = location.origin + location.pathname;
   const { error } = await sb.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: location.href }
+    options: { redirectTo: cleanUrl }
   });
   if (error) $("#gateErr").textContent = error.message;
 };
@@ -320,14 +322,25 @@ sb.auth.onAuthStateChange(async (event, session) => {
 });
 
 async function onSignedIn(session) {
+  // Strip the OAuth fragment so subsequent sign-ins don't pile up tokens in the hash.
+  if (location.hash && location.hash.indexOf("access_token") !== -1) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
   // Check admin allowlist
   const { data: isAdmin, error } = await sb.rpc("is_b2b_admin");
   if (error || !isAdmin) {
     $("#gate").style.display = "flex";
     $("#app").style.display  = "none";
-    $("#gateErr").textContent = "Your email is not on the admin allowlist. Ask the Managing Partner to add you.";
-    await sb.auth.signOut();
-    return;
+    const email = session && session.user ? session.user.email : "(unknown)";
+    const msg = error
+      ? "Could not check admin status: " + error.message
+      : "Signed in as " + email + ", but this email is not on the admin allowlist. The three seeded admins are admin@gccpros.com, sp@gccpros.com and cashammiprabhakar@gmail.com. Sign out and use one of those, or ask an existing admin to add this email via the Admins tab.";
+    $("#gateErr").innerHTML =
+      '<div style="margin-bottom:12px;text-align:left;line-height:1.5">' + esc(msg) + '</div>' +
+      '<button id="btnSwitchAccount" style="padding:9px 16px;background:#fff;color:#222;border:none;border-radius:8px;font-weight:600;cursor:pointer">Sign out and try a different account</button>';
+    const sw = document.getElementById("btnSwitchAccount");
+    if (sw) sw.onclick = async () => { await sb.auth.signOut(); location.replace(location.origin + location.pathname); };
+    return;  // do NOT auto-signOut: let the user read the message and choose
   }
   $("#gate").style.display = "none";
   $("#app").style.display  = "block";
