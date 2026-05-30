@@ -111,6 +111,27 @@
   .row-actions{display:flex;gap:6px;flex-wrap:wrap}
   details.json summary{cursor:pointer;color:var(--steel);font-size:12px}
   details.json pre{background:var(--pale);padding:10px;border-radius:6px;font-size:11px;overflow-x:auto}
+  /* ----- Dashboard ----- */
+  .dash-grid{display:grid;grid-template-columns:repeat(12, 1fr);gap:16px;margin-top:8px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+  .card h4{margin:0 0 4px;font-size:11px;letter-spacing:1.5px;color:var(--grey);font-weight:700;text-transform:uppercase}
+  .card .big{font-size:28px;font-weight:bold;color:var(--navy);line-height:1.1}
+  .card .delta{font-size:12px;margin-top:6px;font-weight:600}
+  .card .delta.up{color:var(--green)}
+  .card .delta.down{color:var(--red)}
+  .card .delta.flat{color:var(--grey)}
+  .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-6{grid-column:span 6}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
+  .chart-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);min-height:300px;display:flex;flex-direction:column}
+  .chart-card h4{margin:0 0 12px;font-size:13px;color:var(--navy);font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gold);padding-bottom:8px;display:inline-block}
+  .chart-card canvas{flex:1;max-height:280px}
+  .topbar-rows{font-size:13px}
+  .topbar-rows .r{display:grid;grid-template-columns:1fr auto;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .topbar-rows .r:last-child{border:none}
+  .topbar-rows .r .b{background:linear-gradient(to right, #E5EBF6 var(--pct,0%), transparent var(--pct,0%));border-radius:4px;padding:4px 8px;color:var(--navy);font-weight:600;font-size:13px}
+  .topbar-rows .r .n{font-weight:700;color:var(--navy);text-align:right;padding:4px 0}
+  @media (max-width: 980px){
+    .span-3,.span-4,.span-6,.span-8{grid-column:span 12}
+  }
 </style>
 </head>
 <body>
@@ -141,7 +162,9 @@
   </div>
 
   <div class="tabs">
-    <div class="tab active" data-tab="customers">Customers</div>
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="customers">Customers</div>
+    <div class="tab" data-tab="users">Users</div>
     <div class="tab" data-tab="audit">Audit log</div>
     <div class="tab" data-tab="plans">Plans catalog</div>
     <div class="tab" data-tab="admins">Admins</div>
@@ -149,8 +172,43 @@
 
   <div class="wrap">
 
+    <!-- ========== DASHBOARD PANEL ========== -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="toolbar">
+        <select id="dashWindow">
+          <option value="7">Last 7 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+        <button class="btn ghost" id="btnDashRefresh">Refresh</button>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card span-3"><h4>Requests</h4><div class="big" id="dkReq">—</div><div class="delta flat" id="dkReqD"></div></div>
+        <div class="card span-3"><h4>Rows returned</h4><div class="big" id="dkRows">—</div><div class="delta flat" id="dkRowsD"></div></div>
+        <div class="card span-3"><h4>Active customers</h4><div class="big" id="dkAct">—</div><div class="delta flat" id="dkActD"></div></div>
+        <div class="card span-3"><h4>Unique users</h4><div class="big" id="dkUsers">—</div><div class="delta flat" id="dkUsersD"></div></div>
+
+        <div class="card span-3"><h4>Customers total</h4><div class="big" id="dkTotalCust">—</div></div>
+        <div class="card span-3"><h4>Suspended</h4><div class="big" id="dkSus">—</div></div>
+        <div class="card span-3"><h4>Idle 30 days</h4><div class="big" id="dkIdle">—</div></div>
+        <div class="card span-3"><h4>Errors in window</h4><div class="big" id="dkErr">—</div></div>
+
+        <div class="chart-card span-8"><h4>Requests per day</h4><canvas id="chartDaily"></canvas></div>
+        <div class="chart-card span-4"><h4>Plan distribution</h4><canvas id="chartPlans"></canvas></div>
+
+        <div class="chart-card span-6"><h4>Top customers by requests</h4><div class="topbar-rows" id="dashTopCust"></div></div>
+        <div class="chart-card span-6"><h4>Top users by requests</h4><div class="topbar-rows" id="dashTopUsers"></div></div>
+
+        <div class="chart-card span-6"><h4>Requests by hour of day</h4><canvas id="chartHourly"></canvas></div>
+        <div class="chart-card span-6"><h4>Top endpoints</h4><div class="topbar-rows" id="dashTopEnd"></div></div>
+
+        <div class="chart-card span-12"><h4>HTTP status code distribution</h4><div class="topbar-rows" id="dashStatus"></div></div>
+      </div>
+    </div>
+
     <!-- ========== CUSTOMERS PANEL ========== -->
-    <div class="panel active" id="panel-customers">
+    <div class="panel" id="panel-customers">
 
       <div class="kpis" id="kpis">
         <div class="kpi"><div class="lbl">Customers</div><div class="v" id="kpiTotal">—</div></div>
@@ -182,6 +240,24 @@
         <tbody id="tbodyCustomers">
           <tr><td colspan="8" class="empty">Loading...</td></tr>
         </tbody>
+      </table>
+    </div>
+
+    <!-- ========== USERS PANEL ========== -->
+    <div class="panel" id="panel-users">
+      <div class="toolbar">
+        <input type="text" id="userSearch" placeholder="Search by user email or customer name">
+        <button class="btn ghost" id="btnUsersRefresh">Refresh</button>
+      </div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>User</th><th>Customer</th><th>Status</th>
+            <th>Requests (30d)</th><th>Total requests</th><th>Rows pulled</th>
+            <th>Last activity</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tbodyUsers"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
       </table>
     </div>
 
@@ -254,6 +330,7 @@
 
 <!-- ========== SUPABASE JS ========== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 
 <script>
 // =========================================================================
@@ -356,9 +433,12 @@ $$(".tab").forEach(t => t.onclick = () => {
   $$(".panel").forEach(x => x.classList.remove("active"));
   t.classList.add("active");
   $("#panel-" + t.dataset.tab).classList.add("active");
-  if (t.dataset.tab === "audit")  loadAudit();
-  if (t.dataset.tab === "plans")  loadPlans();
-  if (t.dataset.tab === "admins") loadAdmins();
+  if (t.dataset.tab === "dashboard") loadDashboard();
+  if (t.dataset.tab === "customers") loadCustomers();
+  if (t.dataset.tab === "users")     loadUsers();
+  if (t.dataset.tab === "audit")     loadAudit();
+  if (t.dataset.tab === "plans")     loadPlans();
+  if (t.dataset.tab === "admins")    loadAdmins();
 });
 
 // =========================================================================
@@ -369,7 +449,7 @@ let PLANS = [];
 
 async function loadAll() {
   await loadPlans();
-  await loadCustomers();
+  await loadDashboard();
 }
 
 async function loadCustomers() {
@@ -839,6 +919,265 @@ function openModal({ title, desc, fields = [], danger = false, onOk }) {
 $("#mCancel").onclick = $("#modalMask").onclick = (e) => {
   if (e.target.id === "modalMask" || e.target.id === "mCancel") $("#modalMask").classList.remove("open");
 };
+
+// =========================================================================
+// DASHBOARD
+// =========================================================================
+let CHARTS = {};  // keep Chart.js instances so we can destroy on re-render
+
+$("#dashWindow").onchange = loadDashboard;
+$("#btnDashRefresh").onclick = loadDashboard;
+
+async function loadDashboard() {
+  const days = parseInt($("#dashWindow").value) || 30;
+  const { data, error } = await sb.rpc("admin_b2b_dashboard", { p_days: days });
+  if (error) { toast(error.message, true); return; }
+  renderDashboard(data);
+}
+
+function pctDelta(now, prev) {
+  if (!prev || prev === 0) return { label: now > 0 ? "new" : "—", cls: "flat" };
+  const d = ((now - prev) / prev) * 100;
+  const cls = d > 1 ? "up" : (d < -1 ? "down" : "flat");
+  const sign = d > 0 ? "+" : "";
+  return { label: sign + d.toFixed(1) + "% vs prior period", cls };
+}
+
+function setDelta(elId, nowVal, prevVal) {
+  const el = $(elId);
+  const d = pctDelta(nowVal, prevVal);
+  el.textContent = d.label;
+  el.className = "delta " + d.cls;
+}
+
+function renderDashboard(d) {
+  // KPI cards
+  $("#dkReq").textContent   = fmtNum(d.totals.requests);
+  $("#dkRows").textContent  = fmtNum(d.totals.rows);
+  $("#dkAct").textContent   = fmtNum(d.totals.active_customers);
+  $("#dkUsers").textContent = fmtNum(d.totals.unique_users);
+  setDelta("#dkReqD",   d.totals.requests,         d.totals_prev.requests);
+  setDelta("#dkRowsD",  d.totals.rows,             d.totals_prev.rows);
+  setDelta("#dkActD",   d.totals.active_customers, d.totals_prev.active_customers);
+  setDelta("#dkUsersD", d.totals.unique_users,     d.totals_prev.unique_users);
+
+  $("#dkTotalCust").textContent = fmtNum(d.customers_overview.total);
+  $("#dkSus").textContent       = fmtNum(d.customers_overview.suspended);
+  $("#dkIdle").textContent      = fmtNum(d.customers_overview.idle_30d);
+  $("#dkErr").textContent       = fmtNum(d.totals.errors);
+
+  // Daily line chart
+  drawChart("chartDaily", "line", {
+    labels: (d.daily || []).map(r => r.day),
+    datasets: [{
+      label: "Requests",
+      data: (d.daily || []).map(r => r.requests),
+      borderColor: "#1F3864",
+      backgroundColor: "rgba(31,56,100,.10)",
+      tension: 0.25,
+      fill: true,
+      pointRadius: 2
+    }]
+  }, { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } });
+
+  // Plan distribution doughnut
+  const plans = d.plan_distribution || [];
+  drawChart("chartPlans", "doughnut", {
+    labels: plans.map(p => p.plan),
+    datasets: [{
+      data: plans.map(p => p.customers),
+      backgroundColor: ["#1F3864", "#2E5496", "#BF9000", "#5B7AB0", "#9CAFCE", "#D9D9D9"]
+    }]
+  }, { plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } } }, cutout: "55%" });
+
+  // Top customers (horizontal bar via topbar-rows)
+  renderTopRows("#dashTopCust",
+    (d.top_customers || []).map(r => ({ label: r.name + " (" + r.plan + ")", value: r.requests })));
+
+  // Top users
+  renderTopRows("#dashTopUsers",
+    (d.top_users || []).map(r => ({ label: r.email, value: r.requests })));
+
+  // Hourly bar chart
+  const hourly = d.hourly_pattern || [];
+  const hourlyByHr = {};
+  hourly.forEach(h => { hourlyByHr[h.hour] = h.requests; });
+  const labels24 = Array.from({length: 24}, (_, i) => String(i).padStart(2, "0") + ":00");
+  const data24   = labels24.map((_, i) => hourlyByHr[i] || 0);
+  drawChart("chartHourly", "bar", {
+    labels: labels24,
+    datasets: [{ label: "Requests", data: data24, backgroundColor: "#2E5496" }]
+  }, { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } });
+
+  // Top endpoints
+  renderTopRows("#dashTopEnd",
+    (d.top_endpoints || []).map(r => ({ label: r.endpoint, value: r.requests })));
+
+  // HTTP status
+  renderTopRows("#dashStatus",
+    (d.http_status || []).map(r => ({ label: r.status ? String(r.status) : "(none)", value: r.requests })));
+}
+
+function drawChart(canvasId, type, data, options) {
+  if (CHARTS[canvasId]) { CHARTS[canvasId].destroy(); }
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  CHARTS[canvasId] = new Chart(ctx, { type, data, options: Object.assign({ responsive: true, maintainAspectRatio: false }, options || {}) });
+}
+
+function renderTopRows(selector, rows) {
+  const el = $(selector);
+  if (!rows.length) { el.innerHTML = `<div class="empty" style="padding:14px">No data in this window.</div>`; return; }
+  const max = Math.max(...rows.map(r => r.value), 1);
+  el.innerHTML = rows.map(r => {
+    const pct = Math.max(8, Math.round((r.value / max) * 100));
+    return `<div class="r"><div class="b" style="--pct:${pct}%">${esc(r.label)}</div><div class="n">${fmtNum(r.value)}</div></div>`;
+  }).join("");
+}
+
+// =========================================================================
+// USERS
+// =========================================================================
+let USERS = [];
+
+$("#userSearch").oninput = () => renderUsers();
+$("#btnUsersRefresh").onclick = loadUsers;
+
+async function loadUsers() {
+  $("#tbodyUsers").innerHTML = `<tr><td colspan="8" class="empty">Loading...</td></tr>`;
+  const { data, error } = await sb.rpc("admin_b2b_list_users", { p_search: null });
+  if (error) { toast(error.message, true); return; }
+  USERS = data || [];
+  renderUsers();
+}
+
+function renderUsers() {
+  const q = $("#userSearch").value.trim().toLowerCase();
+  const rows = USERS.filter(u => {
+    if (!q) return true;
+    const hay = `${u.email} ${u.client_name || ""}`.toLowerCase();
+    return hay.includes(q);
+  });
+  if (!rows.length) {
+    $("#tbodyUsers").innerHTML = `<tr><td colspan="8" class="empty">No users match.</td></tr>`;
+    return;
+  }
+  $("#tbodyUsers").innerHTML = rows.map(u => `
+    <tr data-uemail="${esc(u.email)}" data-uclient="${esc(u.client_id)}">
+      <td><div class="name">${esc(u.email)}</div></td>
+      <td>${esc(u.client_name || "")}</td>
+      <td><span class="pill ${u.status === "active" ? "active" : "suspended"}">${esc(u.status || "active")}</span></td>
+      <td>${fmtNum(u.requests_30d)}</td>
+      <td>${fmtNum(u.total_requests)}</td>
+      <td>${fmtNum(u.total_rows)}</td>
+      <td class="muted">${fmtDate(u.last_request_at || u.last_seen_at)}</td>
+      <td><button class="btn ghost">Open →</button></td>
+    </tr>
+  `).join("");
+  $$("#tbodyUsers tr[data-uemail]").forEach(tr => tr.onclick = () => openUserDrawer(tr.dataset.uclient, tr.dataset.uemail));
+}
+
+async function openUserDrawer(client_id, email) {
+  $("#drawerMask").classList.add("open");
+  $("#drawer").classList.add("open");
+  $("#drBody").innerHTML = `<div class="empty">Loading...</div>`;
+  $("#drName").textContent = email;
+  $("#drStatus").textContent = "";
+  $("#drStatus").className = "pill navy";
+  $("#drPlan").textContent = "";
+  const { data, error } = await sb.rpc("admin_b2b_user_audit", { p_client: client_id, p_email: email });
+  if (error) { toast(error.message, true); return; }
+  renderUserDrawer(data);
+}
+
+function renderUserDrawer(d) {
+  const u = d.user; const t = d.totals;
+  $("#drName").textContent = u.email;
+  $("#drStatus").textContent = u.status || "active";
+  $("#drStatus").className = "pill " + (u.status === "inactive" ? "suspended" : "active");
+  $("#drPlan").textContent = u.plan || "";
+
+  $("#drBody").innerHTML = `
+    <div class="grid2">
+      <div class="sec">
+        <h3>User</h3>
+        <div class="kv"><span class="k">Email</span><span class="v">${esc(u.email)}</span></div>
+        <div class="kv"><span class="k">Customer</span><span class="v">${esc(u.client_name || "")}</span></div>
+        <div class="kv"><span class="k">Plan</span><span class="v">${esc(u.plan || "")}</span></div>
+        <div class="kv"><span class="k">Status</span><span class="v">${esc(u.status || "active")}</span></div>
+        <div class="kv"><span class="k">First seen</span><span class="v">${fmtDate(u.first_seen_at)}</span></div>
+        <div class="kv"><span class="k">Last seen</span><span class="v">${fmtDate(u.last_seen_at)}</span></div>
+      </div>
+      <div class="sec">
+        <h3>Usage</h3>
+        <div class="kv"><span class="k">Requests (7d)</span><span class="v">${fmtNum(t.requests_7d)}</span></div>
+        <div class="kv"><span class="k">Requests (30d)</span><span class="v">${fmtNum(t.requests_30d)}</span></div>
+        <div class="kv"><span class="k">Requests (total)</span><span class="v">${fmtNum(t.requests)}</span></div>
+        <div class="kv"><span class="k">Rows pulled</span><span class="v">${fmtNum(t.rows)}</span></div>
+        <div class="kv"><span class="k">Errors</span><span class="v">${fmtNum(t.errors)}</span></div>
+        <div class="kv"><span class="k">First request</span><span class="v">${fmtDate(t.first_request)}</span></div>
+        <div class="kv"><span class="k">Last request</span><span class="v">${fmtDate(t.last_request)}</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Daily activity (last 90 days)</h3>
+      <div style="height:240px"><canvas id="chartUserDaily"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="sec">
+        <h3>Endpoints used</h3>
+        <table><thead><tr><th>Endpoint</th><th>Requests</th><th>Rows</th></tr></thead><tbody>
+          ${(d.endpoints || []).map(e => `<tr><td>${esc(e.endpoint)}</td><td>${fmtNum(e.requests)}</td><td>${fmtNum(e.rows)}</td></tr>`).join("") || `<tr><td colspan="3" class="empty">No endpoints recorded.</td></tr>`}
+        </tbody></table>
+      </div>
+      <div class="sec">
+        <h3>HTTP status breakdown</h3>
+        <table><thead><tr><th>Status</th><th>Requests</th></tr></thead><tbody>
+          ${(d.http_status || []).map(h => `<tr><td><span class="pill ${(h.status >= 200 && h.status < 300) ? "active" : "suspended"}">${esc(String(h.status))}</span></td><td>${fmtNum(h.requests)}</td></tr>`).join("") || `<tr><td colspan="2" class="empty">No status data.</td></tr>`}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Recent requests (last 200)</h3>
+      <table><thead><tr><th>When</th><th>Endpoint</th><th>Status</th><th>Rows</th><th>OK</th><th>Error</th></tr></thead><tbody>
+        ${(d.recent_requests || []).map(r => `
+          <tr>
+            <td class="muted">${fmtDate(r.ts)}</td>
+            <td>${esc(r.endpoint || "")}</td>
+            <td>${esc(String(r.status || ""))}</td>
+            <td>${fmtNum(r.rows)}</td>
+            <td>${r.ok ? "✓" : "✗"}</td>
+            <td class="muted">${esc(r.error || "")}</td>
+          </tr>
+        `).join("") || `<tr><td colspan="6" class="empty">No requests yet.</td></tr>`}
+      </tbody></table>
+    </div>
+
+    <div class="sec">
+      <h3>Admin actions affecting this user</h3>
+      <table><thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Reason</th></tr></thead><tbody>
+        ${(d.admin_actions || []).map(a => `<tr><td class="muted">${fmtDate(a.ts)}</td><td>${esc(a.actor)}</td><td><span class="pill navy">${esc(a.action)}</span></td><td>${esc(a.reason || "")}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">No admin actions logged.</td></tr>`}
+      </tbody></table>
+    </div>
+  `;
+
+  // Render daily chart now that canvas exists
+  const daily = d.daily || [];
+  drawChart("chartUserDaily", "line", {
+    labels: daily.map(r => r.day),
+    datasets: [{
+      label: "Requests",
+      data: daily.map(r => r.requests),
+      borderColor: "#BF9000",
+      backgroundColor: "rgba(191,144,0,.15)",
+      tension: 0.25,
+      fill: true,
+      pointRadius: 2
+    }]
+  }, { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } });
+}
 
 // =========================================================================
 // BOOT
