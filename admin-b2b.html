@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCCPROs Admin · B2B Customers</title>
+<style>
+  :root {
+    --navy:#1F3864; --steel:#2E5496; --gold:#BF9000; --dark:#14213D;
+    --grey:#595959; --line:#E2E8F2; --pale:#F4F7FC; --ink:#1f2733;
+    --green:#2E7D32; --amber:#B7791F; --red:#B71C1C; --shadow:0 6px 24px rgba(20,33,61,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:Calibri,"Segoe UI",Arial,sans-serif;color:var(--ink);background:#F7F9FD}
+  a{color:var(--steel);text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  /* ----- Top bar ----- */
+  .bar{background:var(--dark);color:#fff;padding:14px 28px;display:flex;align-items:center;gap:24px;border-bottom:3px solid var(--gold)}
+  .bar .brand{font-family:Georgia,serif;font-size:20px;font-weight:bold;letter-spacing:.5px}
+  .bar .brand span{color:var(--gold)}
+  .bar .sub{color:#CADCFC;font-size:13px}
+  .bar .who{margin-left:auto;font-size:13px;color:#CADCFC;display:flex;gap:14px;align-items:center}
+  .bar .who button{background:transparent;border:1px solid #4a587a;color:#CADCFC;border-radius:6px;padding:5px 10px;font-size:12px}
+  /* ----- Tabs ----- */
+  .tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 28px;display:flex;gap:0}
+  .tab{padding:14px 18px;font-size:14px;color:var(--grey);border-bottom:3px solid transparent;cursor:pointer;font-weight:600}
+  .tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+  .tab:hover{background:var(--pale)}
+  /* ----- Layout ----- */
+  .wrap{padding:24px 28px;max-width:1500px;margin:0 auto}
+  .panel{display:none}
+  .panel.active{display:block}
+  /* ----- Toolbar ----- */
+  .toolbar{display:flex;gap:12px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+  .toolbar input[type=text],.toolbar select{padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;min-width:220px}
+  .btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--navy);transition:all .15s}
+  .btn:hover{background:var(--pale)}
+  .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .btn.primary:hover{background:var(--steel)}
+  .btn.danger{background:#fff;color:var(--red);border-color:#f3c5c5}
+  .btn.danger:hover{background:#fdf1f1}
+  .btn.ghost{background:transparent;border:none;color:var(--steel);padding:6px 10px}
+  .btn.ghost:hover{background:var(--pale)}
+  /* ----- Cards / kpis ----- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grey);font-weight:700}
+  .kpi .v{font-size:26px;font-weight:bold;color:var(--navy);margin-top:6px}
+  /* ----- Table ----- */
+  .tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+  .tbl thead th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+  .tbl tbody td{padding:12px;border-top:1px solid var(--line);font-size:13.5px;vertical-align:top}
+  .tbl tbody tr{cursor:pointer;transition:background .12s}
+  .tbl tbody tr:hover{background:var(--pale)}
+  .tbl .name{font-weight:700;color:var(--navy)}
+  .tbl .muted{color:var(--grey);font-size:12px}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.5px}
+  .pill.active{background:#E4F4E6;color:var(--green)}
+  .pill.suspended{background:#FDEAEA;color:var(--red)}
+  .pill.gold{background:#FBF1D6;color:var(--amber)}
+  .pill.navy{background:#E5EBF6;color:var(--navy)}
+  .bar-mini{height:6px;background:var(--pale);border-radius:3px;overflow:hidden;width:120px;display:inline-block;vertical-align:middle}
+  .bar-mini > span{display:block;height:100%;background:var(--navy)}
+  .bar-mini.warn > span{background:var(--amber)}
+  .bar-mini.over > span{background:var(--red)}
+  /* ----- Drawer ----- */
+  .drawer-mask{position:fixed;inset:0;background:rgba(20,33,61,.45);display:none;z-index:50}
+  .drawer-mask.open{display:block}
+  .drawer{position:fixed;top:0;right:0;width:820px;max-width:96vw;height:100vh;background:#fff;box-shadow:-10px 0 30px rgba(20,33,61,.18);overflow-y:auto;z-index:51;transform:translateX(100%);transition:transform .22s}
+  .drawer.open{transform:translateX(0)}
+  .drawer .dh{position:sticky;top:0;background:var(--navy);color:#fff;padding:18px 22px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--gold)}
+  .drawer .dh h2{margin:0;font-size:18px}
+  .drawer .dh .x{margin-left:auto;background:transparent;border:1px solid #4a587a;color:#CADCFC;border-radius:6px;padding:5px 10px;font-size:12px}
+  .drawer .body{padding:22px}
+  .sec{border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px;background:#fff}
+  .sec h3{margin:0 0 12px 0;font-size:14px;text-transform:uppercase;letter-spacing:1.2px;color:var(--steel)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .kv:last-child{border:none}
+  .kv .k{color:var(--grey)}
+  .kv .v{font-weight:600;color:var(--navy)}
+  .sec table{width:100%;border-collapse:collapse;font-size:13px}
+  .sec table td,.sec table th{padding:7px;border-bottom:1px solid var(--pale);text-align:left}
+  .sec table th{color:var(--grey);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .empty{padding:14px;text-align:center;color:var(--grey);font-style:italic;font-size:13px}
+  /* ----- Modal ----- */
+  .modal-mask{position:fixed;inset:0;background:rgba(20,33,61,.55);display:none;z-index:80;align-items:center;justify-content:center}
+  .modal-mask.open{display:flex}
+  .modal{background:#fff;border-radius:12px;width:500px;max-width:92vw;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.30)}
+  .modal h3{margin:0 0 8px;color:var(--navy)}
+  .modal .desc{color:var(--grey);font-size:13px;margin-bottom:14px;line-height:1.5}
+  .modal label{display:block;font-size:12px;font-weight:700;color:var(--steel);margin-top:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.8px}
+  .modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+  .modal textarea{resize:vertical;min-height:80px}
+  .modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+  .modal.danger h3{color:var(--red)}
+  /* ----- Auth gate ----- */
+  .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--dark) 0%, var(--navy) 100%);color:#fff}
+  .gate .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:34px 40px;width:440px;max-width:92vw;text-align:center}
+  .gate h1{margin:0 0 6px;font-family:Georgia,serif;font-size:30px}
+  .gate h1 span{color:var(--gold)}
+  .gate p{color:#CADCFC;font-size:14px}
+  .gate .gbtn{margin-top:18px;padding:11px 22px;background:#fff;color:#222;border:none;border-radius:8px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+  .gate .err{color:#FFB4B4;font-size:13px;margin-top:14px;min-height:18px}
+  /* ----- Toast ----- */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:8px;font-size:13.5px;box-shadow:var(--shadow);z-index:200;display:none}
+  #toast.show{display:block;animation:fadein .25s}
+  #toast.err{background:var(--red)}
+  @keyframes fadein{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+  /* ----- Small ----- */
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+  details.json summary{cursor:pointer;color:var(--steel);font-size:12px}
+  details.json pre{background:var(--pale);padding:10px;border-radius:6px;font-size:11px;overflow-x:auto}
+</style>
+</head>
+<body>
+
+<!-- ========== AUTH GATE ========== -->
+<div id="gate" class="gate">
+  <div class="card">
+    <h1>GCC<span>PROs</span></h1>
+    <p>B2B Customer Administration</p>
+    <button class="gbtn" id="btnGoogle">Sign in with Google</button>
+    <div class="err" id="gateErr"></div>
+    <p style="font-size:11px;margin-top:24px;opacity:.6">Access restricted to allowlisted admins. Every action is logged.</p>
+  </div>
+</div>
+
+<!-- ========== APP SHELL ========== -->
+<div id="app" style="display:none">
+
+  <div class="bar">
+    <div>
+      <div class="brand">GCC<span>PROs</span></div>
+      <div class="sub">B2B Customer Administration</div>
+    </div>
+    <div class="who">
+      <span id="meEmail"></span>
+      <button id="btnSignOut">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="customers">Customers</div>
+    <div class="tab" data-tab="audit">Audit log</div>
+    <div class="tab" data-tab="plans">Plans catalog</div>
+    <div class="tab" data-tab="admins">Admins</div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ========== CUSTOMERS PANEL ========== -->
+    <div class="panel active" id="panel-customers">
+
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="lbl">Customers</div><div class="v" id="kpiTotal">—</div></div>
+        <div class="kpi"><div class="lbl">Active</div><div class="v" id="kpiActive">—</div></div>
+        <div class="kpi"><div class="lbl">Suspended</div><div class="v" id="kpiSuspended">—</div></div>
+        <div class="kpi"><div class="lbl">Requests (MTD)</div><div class="v" id="kpiReq">—</div></div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="search" placeholder="Search by name, domain or plan">
+        <select id="filterPlan"><option value="">All plans</option></select>
+        <select id="filterStatus">
+          <option value="">All status</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <button class="btn primary" id="btnNew">+ New customer</button>
+        <button class="btn ghost" id="btnRefresh">Refresh</button>
+      </div>
+
+      <table class="tbl" id="tblCustomers">
+        <thead>
+          <tr>
+            <th>Customer</th><th>Plan</th><th>Status</th>
+            <th>Seats</th><th>Reveals YTD</th><th>Domains</th>
+            <th>Last activity</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tbodyCustomers">
+          <tr><td colspan="8" class="empty">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ========== AUDIT LOG PANEL ========== -->
+    <div class="panel" id="panel-audit">
+      <div class="toolbar">
+        <input type="text" id="auditSearch" placeholder="Filter by actor, action, target, reason">
+        <button class="btn ghost" id="btnAuditRefresh">Refresh</button>
+      </div>
+      <table class="tbl">
+        <thead>
+          <tr><th>When</th><th>Actor</th><th>Action</th><th>Customer</th><th>Target</th><th>Reason</th><th>Details</th></tr>
+        </thead>
+        <tbody id="tbodyAudit"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- ========== PLANS CATALOG PANEL ========== -->
+    <div class="panel" id="panel-plans">
+      <p style="color:var(--grey);font-size:13px;margin:0 0 12px">Locked catalog of the 5 B2B plans. These templates feed every plan-change action. Update the underlying SQL to change defaults; the admin tab is read only here.</p>
+      <table class="tbl">
+        <thead><tr><th>Plan</th><th>Reveals / yr</th><th>Seats</th><th>Concurrent</th><th>Geography</th><th>Bulk export</th><th>API</th><th>Field tier</th></tr></thead>
+        <tbody id="tbodyPlans"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- ========== ADMINS PANEL ========== -->
+    <div class="panel" id="panel-admins">
+      <div class="toolbar">
+        <button class="btn primary" id="btnAddAdmin">+ Add admin</button>
+        <button class="btn ghost" id="btnAdminRefresh">Refresh</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Email</th><th>Added by</th><th>Added at</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="tbodyAdmins"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== DRAWER (customer detail) ========== -->
+<div class="drawer-mask" id="drawerMask"></div>
+<div class="drawer" id="drawer">
+  <div class="dh">
+    <h2 id="drName">Customer</h2>
+    <span class="pill" id="drStatus">active</span>
+    <span class="pill navy" id="drPlan">plan</span>
+    <button class="x" id="drClose">Close</button>
+  </div>
+  <div class="body" id="drBody"></div>
+</div>
+
+<!-- ========== MODAL ========== -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modal">
+    <h3 id="mTitle">Confirm</h3>
+    <p class="desc" id="mDesc"></p>
+    <div id="mFields"></div>
+    <label>Reason (required, will be logged)</label>
+    <textarea id="mReason" placeholder="Why are you making this change? Visible to everyone in the audit log."></textarea>
+    <div class="actions">
+      <button class="btn ghost" id="mCancel">Cancel</button>
+      <button class="btn primary" id="mOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ========== SUPABASE JS ========== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script>
+// =========================================================================
+// CONFIG
+// =========================================================================
+const SUPABASE_URL  = "https://fufnvnvufmrhrzhcoeil.supabase.co";
+const SUPABASE_ANON = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+// =========================================================================
+// HELPERS
+// =========================================================================
+const $ = (q) => document.querySelector(q);
+const $$ = (q) => document.querySelectorAll(q);
+
+function toast(msg, isErr) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.className = "show" + (isErr ? " err" : "");
+  setTimeout(() => el.className = "", 3000);
+}
+function fmtDate(d) { if (!d) return "—"; const t = new Date(d); return t.toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }); }
+function fmtNum(n)  { return (n == null ? "—" : Number(n).toLocaleString()); }
+function bar(used, lim) {
+  if (!lim || lim <= 0) return "";
+  const pct = Math.min(100, Math.round((used / lim) * 100));
+  const cls = pct >= 100 ? "over" : (pct >= 80 ? "warn" : "");
+  return `<span class="bar-mini ${cls}"><span style="width:${pct}%"></span></span> ${used}/${lim}`;
+}
+function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+
+// =========================================================================
+// AUTH
+// =========================================================================
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await onSignedIn(session);
+  } else {
+    $("#gate").style.display = "flex";
+    $("#app").style.display  = "none";
+  }
+}
+
+$("#btnGoogle").onclick = async () => {
+  $("#gateErr").textContent = "";
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: location.href }
+  });
+  if (error) $("#gateErr").textContent = error.message;
+};
+
+$("#btnSignOut").onclick = async () => {
+  await sb.auth.signOut();
+  location.reload();
+};
+
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === "SIGNED_IN" && session) await onSignedIn(session);
+});
+
+async function onSignedIn(session) {
+  // Check admin allowlist
+  const { data: isAdmin, error } = await sb.rpc("is_b2b_admin");
+  if (error || !isAdmin) {
+    $("#gate").style.display = "flex";
+    $("#app").style.display  = "none";
+    $("#gateErr").textContent = "Your email is not on the admin allowlist. Ask the Managing Partner to add you.";
+    await sb.auth.signOut();
+    return;
+  }
+  $("#gate").style.display = "none";
+  $("#app").style.display  = "block";
+  $("#meEmail").textContent = session.user.email;
+  await loadAll();
+}
+
+// =========================================================================
+// TABS
+// =========================================================================
+$$(".tab").forEach(t => t.onclick = () => {
+  $$(".tab").forEach(x => x.classList.remove("active"));
+  $$(".panel").forEach(x => x.classList.remove("active"));
+  t.classList.add("active");
+  $("#panel-" + t.dataset.tab).classList.add("active");
+  if (t.dataset.tab === "audit")  loadAudit();
+  if (t.dataset.tab === "plans")  loadPlans();
+  if (t.dataset.tab === "admins") loadAdmins();
+});
+
+// =========================================================================
+// DATA LOADERS
+// =========================================================================
+let CUSTOMERS = [];
+let PLANS = [];
+
+async function loadAll() {
+  await loadPlans();
+  await loadCustomers();
+}
+
+async function loadCustomers() {
+  $("#tbodyCustomers").innerHTML = `<tr><td colspan="8" class="empty">Loading...</td></tr>`;
+  const { data, error } = await sb.rpc("admin_b2b_list_customers");
+  if (error) { toast(error.message, true); return; }
+  CUSTOMERS = data || [];
+  renderCustomers();
+  renderKpis();
+}
+
+function renderKpis() {
+  const total = CUSTOMERS.length;
+  const active = CUSTOMERS.filter(c => c.status === "active").length;
+  const suspended = CUSTOMERS.filter(c => c.status === "suspended").length;
+  const req = CUSTOMERS.reduce((s, c) => s + (c.reveals_used_ytd || 0), 0);
+  $("#kpiTotal").textContent = fmtNum(total);
+  $("#kpiActive").textContent = fmtNum(active);
+  $("#kpiSuspended").textContent = fmtNum(suspended);
+  $("#kpiReq").textContent = fmtNum(req);
+}
+
+function renderCustomers() {
+  const q = $("#search").value.trim().toLowerCase();
+  const fp = $("#filterPlan").value;
+  const fs = $("#filterStatus").value;
+  const rows = CUSTOMERS.filter(c => {
+    if (fp && c.plan_code !== fp) return false;
+    if (fs && c.status !== fs)   return false;
+    if (!q) return true;
+    const hay = `${c.client_name} ${c.plan_code} ${(c.domains || []).join(" ")}`.toLowerCase();
+    return hay.includes(q);
+  });
+  if (!rows.length) {
+    $("#tbodyCustomers").innerHTML = `<tr><td colspan="8" class="empty">No customers match.</td></tr>`;
+    return;
+  }
+  $("#tbodyCustomers").innerHTML = rows.map(c => `
+    <tr data-id="${c.client_id}">
+      <td><div class="name">${esc(c.client_name)}</div><div class="muted">${esc((c.domains || [])[0] || "")}</div></td>
+      <td><span class="pill navy">${esc(c.plan_display)}</span></td>
+      <td><span class="pill ${c.status === "suspended" ? "suspended" : "active"}">${esc(c.status)}</span></td>
+      <td>${bar(c.seats_used || 0, c.seat_limit)}</td>
+      <td>${bar(c.reveals_used_ytd || 0, c.reveal_quota_yr)}</td>
+      <td class="muted">${esc((c.domains || []).slice(0, 2).join(", "))}${(c.domains || []).length > 2 ? ` +${c.domains.length - 2}` : ""}</td>
+      <td class="muted">${fmtDate(c.last_request_at)}</td>
+      <td><button class="btn ghost">Open →</button></td>
+    </tr>
+  `).join("");
+  $$("#tbodyCustomers tr[data-id]").forEach(tr => tr.onclick = () => openDrawer(tr.dataset.id));
+}
+
+$("#search").oninput      = () => renderCustomers();
+$("#filterPlan").onchange = () => renderCustomers();
+$("#filterStatus").onchange = () => renderCustomers();
+$("#btnRefresh").onclick  = loadCustomers;
+
+async function loadPlans() {
+  const { data, error } = await sb.rpc("admin_b2b_list_plans");
+  if (error) { toast(error.message, true); return; }
+  PLANS = data || [];
+  // Fill the dropdown filter
+  $("#filterPlan").innerHTML = `<option value="">All plans</option>` + PLANS.map(p => `<option value="${p.plan_code}">${esc(p.display_name)}</option>`).join("");
+  // Fill the catalog tab
+  $("#tbodyPlans").innerHTML = PLANS.map(p => `
+    <tr>
+      <td><div class="name">${esc(p.display_name)}</div><div class="muted">${esc(p.tagline || "")}</div></td>
+      <td>${p.reveal_quota_yr === 0 ? "Custom" : fmtNum(p.reveal_quota_yr)}</td>
+      <td>${fmtNum(p.seat_limit)}</td>
+      <td>${fmtNum(p.concurrent_limit)}</td>
+      <td>${(p.allowed_countries && p.allowed_countries.length) ? esc(p.allowed_countries.join(", ")) : "Global"}</td>
+      <td>${p.bulk_export ? "✓" : "—"}</td>
+      <td>${p.api_access ? "✓" : "—"}</td>
+      <td><span class="pill gold">${esc(p.field_tier)}</span></td>
+    </tr>
+  `).join("");
+}
+
+async function loadAudit() {
+  $("#tbodyAudit").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+  const { data, error } = await sb.rpc("admin_b2b_recent_audit", { p_limit: 300 });
+  if (error) { toast(error.message, true); return; }
+  const q = $("#auditSearch").value.trim().toLowerCase();
+  const rows = (data || []).filter(r => {
+    if (!q) return true;
+    const hay = `${r.actor_email} ${r.action} ${r.target_email || ""} ${r.reason || ""}`.toLowerCase();
+    return hay.includes(q);
+  });
+  const lookup = Object.fromEntries(CUSTOMERS.map(c => [c.client_id, c.client_name]));
+  $("#tbodyAudit").innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td class="muted">${fmtDate(r.ts)}</td>
+      <td>${esc(r.actor_email)}</td>
+      <td><span class="pill navy">${esc(r.action)}</span></td>
+      <td>${esc(lookup[r.client_id] || "—")}</td>
+      <td>${esc(r.target_email || "—")}</td>
+      <td>${esc(r.reason || "")}</td>
+      <td><details class="json"><summary>view</summary><pre>${esc(JSON.stringify(r.details, null, 2))}</pre></details></td>
+    </tr>
+  `).join("") : `<tr><td colspan="7" class="empty">No audit entries match.</td></tr>`;
+}
+$("#btnAuditRefresh").onclick = loadAudit;
+$("#auditSearch").oninput     = loadAudit;
+
+async function loadAdmins() {
+  $("#tbodyAdmins").innerHTML = `<tr><td colspan="5" class="empty">Loading...</td></tr>`;
+  const { data, error } = await sb.from("admin_b2b_admins").select("*").order("added_at");
+  if (error) { toast(error.message, true); return; }
+  $("#tbodyAdmins").innerHTML = (data || []).map(a => `
+    <tr>
+      <td><strong>${esc(a.email)}</strong></td>
+      <td>${esc(a.added_by || "")}</td>
+      <td class="muted">${fmtDate(a.added_at)}</td>
+      <td>${esc(a.notes || "")}</td>
+      <td><button class="btn danger" data-rm="${esc(a.email)}">Remove</button></td>
+    </tr>
+  `).join("") || `<tr><td colspan="5" class="empty">No admins.</td></tr>`;
+  $$("#tbodyAdmins button[data-rm]").forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    openModal({
+      title: "Remove admin",
+      desc: `Removing ${b.dataset.rm} from the admin allowlist. They lose access immediately on next sign in.`,
+      onOk: async (reason) => {
+        const { error } = await sb.rpc("admin_b2b_remove_admin", { p_email: b.dataset.rm, p_reason: reason });
+        if (error) throw error;
+        toast("Admin removed.");
+        loadAdmins();
+      }
+    });
+  });
+}
+$("#btnAdminRefresh").onclick = loadAdmins;
+
+$("#btnAddAdmin").onclick = () => openModal({
+  title: "Add admin",
+  desc: "Anyone added here gets the same powers you have. They must sign in with the same email.",
+  fields: [{ name: "email", label: "Email", type: "email", required: true }],
+  onOk: async (reason, vals) => {
+    const { error } = await sb.rpc("admin_b2b_add_admin", { p_email: vals.email, p_reason: reason });
+    if (error) throw error;
+    toast("Admin added.");
+    loadAdmins();
+  }
+});
+
+// =========================================================================
+// DRAWER (customer detail)
+// =========================================================================
+let CURRENT = null;
+
+async function openDrawer(id) {
+  $("#drawerMask").classList.add("open");
+  $("#drawer").classList.add("open");
+  $("#drBody").innerHTML = `<div class="empty">Loading...</div>`;
+  const { data, error } = await sb.rpc("admin_b2b_get_customer", { p_client: id });
+  if (error) { toast(error.message, true); return; }
+  CURRENT = data;
+  renderDrawer();
+}
+
+$("#drClose").onclick = $("#drawerMask").onclick = () => {
+  $("#drawer").classList.remove("open");
+  $("#drawerMask").classList.remove("open");
+  CURRENT = null;
+};
+
+function renderDrawer() {
+  const d = CURRENT;
+  const c = d.client;
+  const p = d.plan || {};
+  $("#drName").textContent = c.name || "(unnamed)";
+  $("#drStatus").textContent = c.status || "active";
+  $("#drStatus").className = "pill " + (c.status === "suspended" ? "suspended" : "active");
+  $("#drPlan").textContent = p.display_name || c.plan;
+
+  const planChoices = PLANS.map(pl => `<option value="${pl.plan_code}" ${pl.plan_code === c.plan ? "selected" : ""}>${esc(pl.display_name)}</option>`).join("");
+
+  $("#drBody").innerHTML = `
+    <!-- ACTION BUTTONS -->
+    <div class="sec">
+      <h3>Actions</h3>
+      <div class="row-actions">
+        <button class="btn primary" id="aChangePlan">Change plan</button>
+        ${c.status === "suspended"
+          ? `<button class="btn primary" id="aActivate">Activate customer</button>`
+          : `<button class="btn danger" id="aSuspend">Suspend customer</button>`}
+        <button class="btn" id="aAdjust">Adjust quota</button>
+        <button class="btn" id="aMintKey">Mint API key</button>
+      </div>
+    </div>
+
+    <!-- PLAN & USAGE -->
+    <div class="grid2">
+      <div class="sec">
+        <h3>Plan & limits</h3>
+        <div class="kv"><span class="k">Plan</span><span class="v">${esc(p.display_name || c.plan)}</span></div>
+        <div class="kv"><span class="k">Seats</span><span class="v">${fmtNum(c.seat_limit)}</span></div>
+        <div class="kv"><span class="k">Concurrent</span><span class="v">${fmtNum(c.concurrent_limit)}</span></div>
+        <div class="kv"><span class="k">Geography</span><span class="v">${(c.allowed_countries && c.allowed_countries.length) ? esc(c.allowed_countries.join(", ")) : "Global"}</span></div>
+        <div class="kv"><span class="k">Reveal quota / yr</span><span class="v">${fmtNum(p.reveal_quota_yr)} ${c.quota_override_yr ? `(+${c.quota_override_yr} override)` : ""}</span></div>
+        <div class="kv"><span class="k">Plan changed</span><span class="v">${fmtDate(c.plan_changed_at)}</span></div>
+      </div>
+      <div class="sec">
+        <h3>Usage</h3>
+        <div class="kv"><span class="k">Requests (MTD)</span><span class="v">${fmtNum(d.usage_mtd.requests)}</span></div>
+        <div class="kv"><span class="k">Rows returned (MTD)</span><span class="v">${fmtNum(d.usage_mtd.rows)}</span></div>
+        <div class="kv"><span class="k">Unique users (MTD)</span><span class="v">${fmtNum(d.usage_mtd.unique_users)}</span></div>
+        <div class="kv"><span class="k">Requests (YTD)</span><span class="v">${fmtNum(d.usage_ytd.requests)}</span></div>
+        <div class="kv"><span class="k">Rows returned (YTD)</span><span class="v">${fmtNum(d.usage_ytd.rows)}</span></div>
+      </div>
+    </div>
+
+    <!-- DOMAINS -->
+    <div class="sec">
+      <h3>Domains <span style="float:right"><button class="btn" id="aAddDomain">+ Add domain</button></span></h3>
+      <table><thead><tr><th>Domain</th><th></th></tr></thead><tbody>
+        ${(d.domains || []).map(dom => `
+          <tr><td>${esc(dom.domain)}</td><td><button class="btn danger" data-rm-domain="${esc(dom.domain)}">Remove</button></td></tr>
+        `).join("") || `<tr><td colspan="2" class="empty">No domains. Add one to enable SSO sign-in.</td></tr>`}
+      </tbody></table>
+    </div>
+
+    <!-- USERS -->
+    <div class="sec">
+      <h3>Users <span style="float:right"><button class="btn" id="aAddUser">+ Approve user</button></span></h3>
+      <table><thead><tr><th>Email</th><th>Status</th><th>Approved</th><th></th></tr></thead><tbody>
+        ${(d.users || []).map(u => `
+          <tr>
+            <td>${esc(u.email)}</td>
+            <td><span class="pill ${u.active ? "active" : "suspended"}">${u.active ? "active" : "suspended"}</span></td>
+            <td class="muted">${fmtDate(u.approved_at)}</td>
+            <td>${u.active
+              ? `<button class="btn danger" data-suspend-user="${esc(u.email)}">Suspend</button>`
+              : `<button class="btn" data-activate-user="${esc(u.email)}">Activate</button>`}</td>
+          </tr>
+        `).join("") || `<tr><td colspan="4" class="empty">No users approved yet.</td></tr>`}
+      </tbody></table>
+    </div>
+
+    <!-- KEYS -->
+    <div class="sec">
+      <h3>API keys</h3>
+      <table><thead><tr><th>Label</th><th>Last 4</th><th>Created</th><th>Status</th><th></th></tr></thead><tbody>
+        ${(d.keys || []).map(k => `
+          <tr>
+            <td>${esc(k.label || "")}</td>
+            <td><code>...${esc(k.last4 || "")}</code></td>
+            <td class="muted">${fmtDate(k.created_at)}</td>
+            <td>${k.revoked_at ? `<span class="pill suspended">revoked</span>` : `<span class="pill active">live</span>`}</td>
+            <td>${k.revoked_at ? "" : `<button class="btn danger" data-revoke-key="${esc(k.id)}">Revoke</button>`}</td>
+          </tr>
+        `).join("") || `<tr><td colspan="5" class="empty">No keys minted. Customer is using SSO only.</td></tr>`}
+      </tbody></table>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="sec">
+      <h3>Recent activity (last 50 requests)</h3>
+      <table><thead><tr><th>When</th><th>User</th><th>Endpoint</th><th>Status</th><th>Rows</th></tr></thead><tbody>
+        ${(d.recent_log || []).map(r => `
+          <tr><td class="muted">${fmtDate(r.ts)}</td><td>${esc(r.email || "")}</td><td>${esc(r.endpoint || "")}</td><td>${esc(r.status || "")}</td><td>${fmtNum(r.rows)}</td></tr>
+        `).join("") || `<tr><td colspan="5" class="empty">No requests yet.</td></tr>`}
+      </tbody></table>
+    </div>
+
+    <!-- AUDIT FOR THIS CUSTOMER -->
+    <div class="sec">
+      <h3>Audit (this customer)</h3>
+      <table><thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Target</th><th>Reason</th></tr></thead><tbody>
+        ${(d.audit || []).map(a => `
+          <tr><td class="muted">${fmtDate(a.ts)}</td><td>${esc(a.actor)}</td><td><span class="pill navy">${esc(a.action)}</span></td><td>${esc(a.target || "")}</td><td>${esc(a.reason || "")}</td></tr>
+        `).join("") || `<tr><td colspan="5" class="empty">No actions yet.</td></tr>`}
+      </tbody></table>
+    </div>
+  `;
+
+  // Wire actions
+  $("#aChangePlan").onclick = () => openModal({
+    title: "Change plan",
+    desc: `Moving ${c.name} to a different plan. Seats, concurrency, geography and field depth update immediately.`,
+    fields: [{ name: "plan", label: "New plan", type: "select", options: PLANS.map(p => ({ value: p.plan_code, label: p.display_name })), required: true, value: c.plan }],
+    onOk: async (reason, vals) => {
+      const { error } = await sb.rpc("admin_b2b_change_plan", { p_client: c.id, p_new_plan: vals.plan, p_reason: reason });
+      if (error) throw error;
+      toast("Plan changed.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  });
+
+  const aSus = $("#aSuspend"); if (aSus) aSus.onclick = () => openModal({
+    title: "Suspend customer", danger: true,
+    desc: `${c.name} will lose all API and console access immediately. All users are deactivated until you re-activate the customer.`,
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_suspend_customer", { p_client: c.id, p_reason: reason });
+      if (error) throw error;
+      toast("Customer suspended.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  });
+  const aAct = $("#aActivate"); if (aAct) aAct.onclick = () => openModal({
+    title: "Activate customer",
+    desc: `${c.name} will regain API and console access. Existing users remain suspended; approve them individually below.`,
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_activate_customer", { p_client: c.id, p_reason: reason });
+      if (error) throw error;
+      toast("Customer activated.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  });
+
+  $("#aAdjust").onclick = () => openModal({
+    title: "Adjust reveal quota (one-off)",
+    desc: "Use a positive number to add reveals (e.g. 200) or negative to claw back (e.g. -100). This is layered on top of the plan quota.",
+    fields: [{ name: "delta", label: "Delta", type: "number", required: true }],
+    onOk: async (reason, vals) => {
+      const { error } = await sb.rpc("admin_b2b_adjust_quota", { p_client: c.id, p_delta: parseInt(vals.delta), p_reason: reason });
+      if (error) throw error;
+      toast("Quota adjusted.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  });
+
+  $("#aMintKey").onclick = () => openModal({
+    title: "Mint a new API key",
+    desc: "Generates a fresh API key. The secret is shown once, only here. Send it to the customer via a secure channel.",
+    fields: [{ name: "label", label: "Label (e.g. CRM integration)", required: true }],
+    onOk: async (reason, vals) => {
+      const { data, error } = await sb.rpc("admin_b2b_mint_key", { p_client: c.id, p_label: vals.label, p_reason: reason });
+      if (error) throw error;
+      const sec = data.secret;
+      prompt("Copy this key NOW. It will not be shown again.", sec);
+      await openDrawer(c.id);
+    }
+  });
+
+  $("#aAddDomain").onclick = () => openModal({
+    title: "Add domain",
+    desc: "Users with this email domain become eligible to sign in via SSO (after individual approval).",
+    fields: [{ name: "domain", label: "Domain (e.g. accenture.com)", required: true }],
+    onOk: async (reason, vals) => {
+      const { error } = await sb.rpc("admin_b2b_add_domain", { p_client: c.id, p_domain: vals.domain, p_reason: reason });
+      if (error) throw error;
+      toast("Domain added.");
+      await openDrawer(c.id);
+    }
+  });
+
+  $("#aAddUser").onclick = () => openModal({
+    title: "Approve user",
+    desc: "Grants this user access. The email must already match an allowed domain (above), otherwise SSO sign-in will still fail.",
+    fields: [{ name: "email", label: "Email", type: "email", required: true }],
+    onOk: async (reason, vals) => {
+      const { error } = await sb.rpc("admin_b2b_activate_user", { p_client: c.id, p_email: vals.email, p_reason: reason });
+      if (error) throw error;
+      toast("User approved.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  });
+
+  $$("#drBody [data-rm-domain]").forEach(b => b.onclick = () => openModal({
+    title: "Remove domain", danger: true,
+    desc: `Users on ${b.dataset.rmDomain} will be locked out of SSO immediately.`,
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_remove_domain", { p_client: c.id, p_domain: b.dataset.rmDomain, p_reason: reason });
+      if (error) throw error;
+      toast("Domain removed.");
+      await openDrawer(c.id);
+    }
+  }));
+
+  $$("#drBody [data-suspend-user]").forEach(b => b.onclick = () => openModal({
+    title: "Suspend user", danger: true,
+    desc: `${b.dataset.suspendUser} will be locked out immediately.`,
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_suspend_user", { p_client: c.id, p_email: b.dataset.suspendUser, p_reason: reason });
+      if (error) throw error;
+      toast("User suspended.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  }));
+
+  $$("#drBody [data-activate-user]").forEach(b => b.onclick = () => openModal({
+    title: "Activate user",
+    desc: `${b.dataset.activateUser} will regain access immediately.`,
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_activate_user", { p_client: c.id, p_email: b.dataset.activateUser, p_reason: reason });
+      if (error) throw error;
+      toast("User activated.");
+      await openDrawer(c.id); loadCustomers();
+    }
+  }));
+
+  $$("#drBody [data-revoke-key]").forEach(b => b.onclick = () => openModal({
+    title: "Revoke API key", danger: true,
+    desc: "All requests using this key will fail immediately.",
+    onOk: async (reason) => {
+      const { error } = await sb.rpc("admin_b2b_revoke_key", { p_client: c.id, p_key_id: b.dataset.revokeKey, p_reason: reason });
+      if (error) throw error;
+      toast("Key revoked.");
+      await openDrawer(c.id);
+    }
+  }));
+}
+
+// =========================================================================
+// NEW CUSTOMER
+// =========================================================================
+$("#btnNew").onclick = () => openModal({
+  title: "Create a new B2B customer",
+  desc: "Provisions a customer at the chosen plan. The plan template seeds the seat, concurrency and quota defaults. You can refine later.",
+  fields: [
+    { name: "name",            label: "Customer name (e.g. KPMG Assurance and Consulting Services LLP)", required: true },
+    { name: "plan",            label: "Plan", type: "select", options: () => PLANS.map(p => ({ value: p.plan_code, label: p.display_name })), required: true },
+    { name: "primary_domain",  label: "Primary email domain (e.g. kpmg.com)", required: false },
+    { name: "signatory_email", label: "Signatory / first user (optional)", type: "email", required: false }
+  ],
+  onOk: async (reason, vals) => {
+    const { data, error } = await sb.rpc("admin_b2b_create_customer", {
+      p_name: vals.name, p_plan: vals.plan, p_primary_domain: vals.primary_domain || "", p_signatory_email: vals.signatory_email || "", p_reason: reason
+    });
+    if (error) throw error;
+    toast("Customer created.");
+    await loadCustomers();
+    if (data && data.client_id) openDrawer(data.client_id);
+  }
+});
+
+// =========================================================================
+// MODAL (generic)
+// =========================================================================
+function openModal({ title, desc, fields = [], danger = false, onOk }) {
+  $("#mTitle").textContent = title;
+  $("#mDesc").textContent = desc || "";
+  $("#modal").className = "modal" + (danger ? " danger" : "");
+  $("#mReason").value = "";
+  const wrap = $("#mFields"); wrap.innerHTML = "";
+  fields.forEach(f => {
+    const lbl = document.createElement("label"); lbl.textContent = f.label + (f.required ? " *" : "");
+    wrap.appendChild(lbl);
+    let el;
+    if (f.type === "select") {
+      el = document.createElement("select");
+      const opts = typeof f.options === "function" ? f.options() : f.options;
+      opts.forEach(o => { const opt = document.createElement("option"); opt.value = o.value; opt.textContent = o.label; if (o.value === f.value) opt.selected = true; el.appendChild(opt); });
+    } else if (f.type === "number") {
+      el = document.createElement("input"); el.type = "number";
+    } else {
+      el = document.createElement("input"); el.type = f.type || "text";
+    }
+    el.name = f.name; el.id = "f_" + f.name; if (f.value) el.value = f.value;
+    wrap.appendChild(el);
+  });
+  $("#modalMask").classList.add("open");
+  $("#mOk").onclick = async () => {
+    const reason = $("#mReason").value.trim();
+    if (!reason) { toast("Reason is required.", true); return; }
+    const vals = {};
+    fields.forEach(f => { vals[f.name] = $("#f_" + f.name).value.trim(); if (f.required && !vals[f.name]) { /* validate */ } });
+    const missing = fields.filter(f => f.required && !vals[f.name]).map(f => f.label);
+    if (missing.length) { toast("Required: " + missing.join(", "), true); return; }
+    $("#mOk").disabled = true;
+    try { await onOk(reason, vals); $("#modalMask").classList.remove("open"); }
+    catch (e) { toast(e.message || String(e), true); }
+    finally { $("#mOk").disabled = false; }
+  };
+}
+$("#mCancel").onclick = $("#modalMask").onclick = (e) => {
+  if (e.target.id === "modalMask" || e.target.id === "mCancel") $("#modalMask").classList.remove("open");
+};
+
+// =========================================================================
+// BOOT
+// =========================================================================
+init();
+</script>
+</body>
+</html>
