@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-22-v6.7-google-reregister · Phase C + waitlist CAPTCHA removed (replaced by server-side IP rate limit 3/hour) -->
+<!-- GCCPROs Database Pro · build: supabase-2026-05-28-v6.8-enterprise-talk-to-us · removed launch countdown + waitlist form; replaced with mailto Enterprise CTA -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1675,26 +1675,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </nav>
 
-<!-- ENTERPRISE LAUNCH COUNTDOWN · 1 June 2026 -->
-<div id="enterpriseCountdownBanner" class="enterprise-countdown-banner" role="region" aria-label="Enterprise Edition launch countdown">
-  <div class="ecb-inner">
-    <div class="ecb-headline">
-      <span class="ecb-eyebrow">Launching Soon</span>
-      <span class="ecb-title"><strong>Enterprise Edition</strong> goes live on <strong>1 June 2026</strong> · Full dataset access · Verified leader contacts</span>
-    </div>
-    <div class="ecb-timer" aria-live="polite" aria-atomic="true">
-      <div class="ecb-unit"><span class="ecb-num" id="ecb-days">--</span><span class="ecb-lbl">Days</span></div>
-      <div class="ecb-colon">:</div>
-      <div class="ecb-unit"><span class="ecb-num" id="ecb-hours">--</span><span class="ecb-lbl">Hours</span></div>
-      <div class="ecb-colon">:</div>
-      <div class="ecb-unit"><span class="ecb-num" id="ecb-mins">--</span><span class="ecb-lbl">Mins</span></div>
-      <div class="ecb-colon">:</div>
-      <div class="ecb-unit"><span class="ecb-num" id="ecb-secs">--</span><span class="ecb-lbl">Secs</span></div>
-    </div>
-    
-    
-  </div>
-</div>
+<!-- ENTERPRISE COUNTDOWN — removed 2026-05-28 (Enterprise plans now available; see CTA below). JS retained behind `if(!banner)return;` guard. -->
 
 <header class="hero">
   <div class="hero-inner">
@@ -1724,25 +1705,23 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">A Big 4 leader</span>
     <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">Top global talent firm</span>
     <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">A sovereign government</span>
-    <span style="padding:5px 11px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:2px;">17+ enterprises on waitlist</span>
+    <span style="padding:5px 11px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:2px;">17+ enterprise conversations underway</span>
   </div>
 </section>
 
-<!-- ENTERPRISE WAITLIST INLINE BANNER — FEATURED -->
-<section id="enterprise-waitlist" style="background:linear-gradient(135deg,#0A1628 0%,#14213D 100%);color:#fff;padding:26px 20px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);position:relative;">
-  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;">
-    <div style="flex:1 1 360px;min-width:280px;">
-      <div style="display:inline-block;padding:4px 12px;background:var(--gold);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px;margin-bottom:10px;">★ Enterprise Edition · Early access</div>
-      <h2 style="margin:0 0 6px;font-family:'Playfair Display',serif;font-size:22px;line-height:1.2;color:#fff;">Build a corporate license for your team.</h2>
-      <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;">Annual license · team seats · API access · audit-grade governance · launching <strong style="color:var(--gold-soft);">June 2026</strong>. Early-access partners get founder pricing and direct input into the roadmap.</p>
+<!-- ENTERPRISE CTA · "Talk to us" (replaces June-2026 waitlist banner — 2026-05-28) -->
+<section id="enterprise-waitlist" style="background:linear-gradient(135deg,#0A1628 0%,#14213D 100%);color:#fff;padding:30px 20px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);position:relative;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between;">
+    <div style="flex:1 1 480px;min-width:280px;">
+      <div style="display:inline-block;padding:4px 12px;background:var(--gold);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px;margin-bottom:10px;">★ Enterprise Edition · Available now</div>
+      <h2 style="margin:0 0 6px;font-family:'Playfair Display',serif;font-size:24px;line-height:1.25;color:#fff;">Looking for an Enterprise plan?</h2>
+      <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.88);line-height:1.55;">Annual licence &middot; team seats &middot; secure API access &middot; custom fields &middot; audit-grade governance. We tailor scope, geos and contract terms to your organisation. Talk to our team for pricing, a guided walkthrough and a sample data extract.</p>
     </div>
-    <form id="ent-waitlist-form" onsubmit="joinWaitlist(event)" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1 1 420px;min-width:300px;justify-content:flex-end;">
-      <input type="email" id="wl-email" placeholder="Work email" required style="padding:12px 14px;border:1px solid var(--gold-soft);border-radius:3px;background:#fff;color:var(--ink);font-size:14px;width:200px;flex:1 1 180px;min-width:160px;">
-      <input type="text" id="wl-company" placeholder="Company" required style="padding:12px 14px;border:1px solid var(--gold-soft);border-radius:3px;background:#fff;color:var(--ink);font-size:14px;width:160px;flex:1 1 140px;min-width:140px;">
-      <button type="submit" style="padding:12px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:3px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;box-shadow:0 2px 8px rgba(201,151,58,0.35);">Join Enterprise waitlist →</button>
-    </form>
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+      <a href="mailto:admin@gccpros.com?subject=Enterprise%20plan%20enquiry%20%E2%80%94%20GCCPROs%20Database%20Pro&amp;body=Hi%20GCCPROs%20team%2C%0A%0AWe%27d%20like%20to%20explore%20an%20Enterprise%20plan%20for%20our%20organisation.%0A%0AOrganisation%3A%20%0ARole%2FTeam%3A%20%0AUse%20case%3A%20%0APriority%20geographies%2Findustries%3A%20%0AEstimated%20seats%3A%20%0A%0APlease%20share%20pricing%2C%20a%20guided%20walkthrough%20and%20a%20sample%20data%20extract.%0A%0AThanks%2C" style="display:inline-flex;align-items:center;gap:8px;padding:14px 26px;background:var(--gold);color:var(--ink);border:none;border-radius:3px;font-weight:800;font-size:14px;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;box-shadow:0 2px 8px rgba(201,151,58,0.35);">Talk to our Enterprise team &rarr;</a>
+      <span style="font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.4px;">Replies within 1 working day &middot; admin@gccpros.com</span>
+    </div>
   </div>
-  <div id="wl-msg" style="max-width:1200px;margin:14px auto 0;font-size:13px;color:var(--gold-soft);display:none;text-align:center;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:3px;"></div>
 </section>
 
 <!-- ── FULL REPORT (paid product) — v7.9.24 ─────────────────────────────── -->
@@ -4960,7 +4939,7 @@ async function submitCouncil(ev){
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can I get a refund?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Credits are non-refundable once added. For billing errors or service failures on our side, email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do I earn credits for anything?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes — accepted corrections earn 20 credits. Submit via the "Suggest a correction" button on any reveal card. Suggesting a new GCC can also earn credits (variable).</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Is my activity logged and watermarked?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes. Every reveal is watermarked diagonally with your email + timestamp. Every spend is logged in your account transaction history (Statement button in the top bar).</p></details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can my team share one account?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. For multi-seat access, see the Enterprise waitlist at the top of the page.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can my team share one account?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. For multi-seat / API access, write to <a href="mailto:admin@gccpros.com?subject=Enterprise%20plan%20enquiry%20%E2%80%94%20GCCPROs%20Database%20Pro" style="color:var(--gold-deep);">admin@gccpros.com</a> to discuss an Enterprise plan.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Still have questions?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> — usually responds within 1 working day.</p></details>
     </div>
   </div>
