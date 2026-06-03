@@ -484,6 +484,7 @@ td.actions { white-space:nowrap; }
           <input type="search" id="f-users-q" placeholder="&#128269; Search email / name / city" oninput="renderUsers()">
           <button class="btn" onclick="loadUsers()">&#8635; Refresh</button>
           <button class="btn brand-orange" onclick="exportXLSX('users', USERS)">&#128202; Export Excel</button>
+          <button class="btn" style="background:#1B7C3B;color:#fff;border-color:#1B7C3B;" onclick="downloadAllUserCVsZip()" title="Bulk-download every user CV in opps-cvs as a single ZIP">&#128230; All CVs (ZIP)</button>
           <span class="muted" id="users-count"></span>
         </div>
         <div id="users-box"><p class="loading">Click Refresh to load.</p></div>
@@ -2086,6 +2087,101 @@ async function downloadJobCVsZip(jobId, jobCode) {
     _hideProgress();
     toast('✓ Downloaded ' + ok + ' CVs for ' + jobCode, 'ok');
   } catch (err) { _hideProgress(); toast('ZIP failed: ' + err.message, 'err'); }
+}
+
+
+// ===== Bulk download ALL user CVs as one ZIP (added 2026-06-02) =====
+// Uses the EXISTING per-user signed-URL endpoint (oppsAdminUserCv) so the
+// edge function is unchanged. If a CV is missing or returns an error, it's
+// skipped and counted — never throws. Progress modal reuses _showProgress.
+async function downloadAllUserCVsZip() {
+  if (typeof JSZip === 'undefined') { toast('ZIP library still loading - try again in 2s.', 'err'); return; }
+  // Ensure we have a USERS list — if not, load it first
+  if (!Array.isArray(USERS) || USERS.length === 0) {
+    try { await loadUsers(); } catch (e) { toast('Could not load users.', 'err'); return; }
+  }
+  var pool = (USERS || []).filter(function(u){ return !!(u && u.email); });
+  if (!pool.length) { toast('No users found.', 'err'); return; }
+  // Confirm — this can take a while for hundreds of CVs
+  if (!confirm('Download CVs for ' + pool.length + ' users as a single ZIP? This may take a few minutes.')) return;
+
+  _showProgress('Preparing CV archive (' + pool.length + ' users)');
+  var zip = new JSZip();
+  var done = 0, ok = 0, skipped = 0, errored = 0;
+
+  for (var i = 0; i < pool.length; i++) {
+    var u = pool[i];
+    done++;
+    var name = (u.full_name || u.email).replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 40);
+    _setProgress(2 + Math.round((done / pool.length) * 94),
+      'Fetching ' + done + ' / ' + pool.length + ' - ' + (u.email || ''));
+    try {
+      var sr = await adminFetch(SCRIPT_URL + '?action=oppsAdminUserCv&email=' + encodeURIComponent(u.email));
+      var sj = await sr.json();
+      var url = sj.signedUrl || sj.url;
+      if (!url || sj.error) {
+        if (sj.error === 'no_cv_found' || sj.error === 'cv_not_found') skipped++;
+        else errored++;
+        continue;
+      }
+      // legacy external link (e.g. Google Drive) — can't fetch cross-origin reliably; record as text pointer
+      if (sj.legacy) {
+        zip.file('_LEGACY_LINKS/' + name + '__' + u.email + '.url.txt',
+          '[InternetShortcut]\nURL=' + url + '\n');
+        ok++;
+        continue;
+      }
+      var fileResp = await fetch(url);
+      if (!fileResp.ok) { errored++; continue; }
+      var blob = await fileResp.blob();
+      // Derive extension from cv_url / cv_filename / Content-Type
+      var ext = '';
+      var srcName = (u.cv_filename || u.cv_url || '').toString();
+      var m = srcName.match(/\.([a-zA-Z0-9]{1,5})(?:\?|$)/);
+      if (m) ext = m[1].toLowerCase();
+      if (!ext) {
+        var ct = (fileResp.headers.get('content-type') || '').toLowerCase();
+        if (ct.indexOf('pdf') !== -1) ext = 'pdf';
+        else if (ct.indexOf('word') !== -1 || ct.indexOf('officedocument.wordprocessingml') !== -1) ext = 'docx';
+        else if (ct.indexOf('msword') !== -1) ext = 'doc';
+        else ext = 'bin';
+      }
+      var role = (u.user_type || 'user');
+      var status = (u.approval_status || 'na');
+      var fname = name + '__' + role + '__' + status + '__' + (u.email || '').replace(/[^a-zA-Z0-9]+/g, '_') + '.' + ext;
+      zip.file(fname, blob);
+      ok++;
+    } catch (e) {
+      console.warn('CV fetch failed for', u.email, e);
+      errored++;
+    }
+  }
+
+  if (!ok) {
+    _hideProgress();
+    toast('No CVs could be downloaded (' + skipped + ' missing, ' + errored + ' errors).', 'err');
+    return;
+  }
+  _setProgress(98, 'Building ZIP...');
+  // Also add a small README index so the recipient knows what's in the archive
+  var idx = 'GCCPROs - opps-cvs bulk download\n'
+          + 'Generated: ' + new Date().toISOString() + '\n'
+          + 'Total users scanned: ' + pool.length + '\n'
+          + 'CVs included: ' + ok + '\n'
+          + 'Users without CV (skipped): ' + skipped + '\n'
+          + 'Fetch errors: ' + errored + '\n\n'
+          + 'Filename format: <name>__<role>__<approval>__<email>.<ext>\n'
+          + 'Legacy external links land under _LEGACY_LINKS/ as .url.txt shortcuts.\n';
+  zip.file('_README.txt', idx);
+
+  var content = await zip.generateAsync({ type: 'blob' });
+  var a2 = document.createElement('a');
+  a2.href = URL.createObjectURL(content);
+  a2.download = 'gccpros-ALL-CVs-' + new Date().toISOString().slice(0,10) + '.zip';
+  document.body.appendChild(a2); a2.click(); a2.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a2.href); }, 4000);
+  _hideProgress();
+  toast('Downloaded ' + ok + ' CVs (' + skipped + ' missing, ' + errored + ' errors).', 'ok');
 }
 
 // ===== v2 FEATURE 4 — Bulk approve/reject Partners =====
