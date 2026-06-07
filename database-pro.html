@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-05-28-v6.8-enterprise-talk-to-us · removed launch countdown + waitlist form; replaced with mailto Enterprise CTA -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.0-two-clear-sections · Individual + Enterprise restructure; new contact form; slim Report 2026 at bottom -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1684,7 +1684,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <h1 class="hero-title">The only comprehensive <em>Global Capability Center</em> database.</h1>
       <p class="hero-sub">4,800+ verified GCCs across 50+ countries — including 2,500+ in India. 46 fields per company spanning entity, leadership, financials, IP, maturity and tech stack. Continuously audited. Used by GCC heads, consulting firms, investors, academics and governments to make sharper decisions about the global capability economy.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
-        <button type="button" onclick="document.getElementById('signup-cta').scrollIntoView({behavior:'smooth'})" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--ink);padding:14px 22px;border-radius:3px;font-weight:700;font-size:13px;border:none;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">Get 500 free credits →</button>
+        <button type="button" onclick="document.getElementById('individual-section').scrollIntoView({behavior:'smooth'})" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--ink);padding:14px 22px;border-radius:3px;font-weight:700;font-size:13px;border:none;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">Get 500 free credits →</button>
         <button type="button" onclick="document.getElementById('sample-reports').scrollIntoView({behavior:'smooth'})" style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--gold-soft);padding:14px 22px;border:1px solid var(--gold-soft);border-radius:3px;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">See a sample report ↓</button>
       </div>
     </div>
@@ -1700,17 +1700,35 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <!-- PRE-LAUNCH WAITLIST PROOF STRIP + ENTERPRISE CTA -->
 <section style="background:var(--ivory);border-bottom:1px solid var(--gold-soft);padding:14px 18px;">
   <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;font-size:10.5px;letter-spacing:0.7px;text-transform:uppercase;color:var(--graphite);font-weight:600;">
-    <span style="color:var(--ink);font-weight:700;">Early-access conversations with:</span>
-    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">World's #1 tech employer</span>
-    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">A Big 4 leader</span>
-    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">Top global talent firm</span>
-    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">A sovereign government</span>
-    <span style="padding:5px 11px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:2px;">17+ enterprise conversations underway</span>
+    <span style="color:var(--ink);font-weight:700;">Early access &amp; partnership conversations with:</span>
+    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">2 of the world's largest tech giants</span>
+    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">2 Big 4 leaders</span>
+    <span style="padding:5px 11px;background:#fff;border:1px solid var(--gold-soft);border-radius:2px;">2 state governments</span>
+    <span style="padding:5px 11px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:2px;">28+ other enterprises</span>
   </div>
 </section>
 
-<!-- ENTERPRISE CTA · "Talk to us" (replaces June-2026 waitlist banner — 2026-05-28) -->
-<section id="enterprise-waitlist" style="background:linear-gradient(135deg,#0A1628 0%,#14213D 100%);color:#fff;padding:30px 20px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);position:relative;">
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 1 — INDIVIDUAL ACCESS (v7.0)
+     Personal-use signup CTA → existing search portal (<main> below, unchanged).
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section id="individual-section" style="background:var(--cream);border-bottom:1px solid var(--gold-soft);padding:36px 36px 8px;">
+  <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;justify-content:space-between;">
+    <div style="flex:1 1 480px;min-width:280px;">
+      <div style="display:inline-block;font-size:10px;letter-spacing:2px;color:var(--gold-deep);font-weight:700;text-transform:uppercase;border:1px solid var(--gold-soft);background:#fff;padding:4px 10px;border-radius:2px;margin-bottom:10px;">★ Individual access · for personal use</div>
+      <h2 style="font-family:var(--serif);font-size:26px;color:var(--ink);line-height:1.2;margin:0 0 6px;">Start with <em style="color:var(--gold-deep);font-style:italic;">500 free credits</em>. Pay only as you reveal.</h2>
+      <p style="font-size:13.5px;color:var(--graphite);line-height:1.55;max-width:640px;margin:0;">Sign up to unlock the search portal. Browse every GCC by city, country, industry, headcount band, maturity, leadership and more. Reveal a company's full record for 100 credits. Researchers, consultants, and candidates use this tier.</p>
+    </div>
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <span style="font-size:11px;color:var(--graphite);letter-spacing:0.3px;">Use the search portal below ↓</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     OLD ENTERPRISE WAITLIST MOVED TO BOTTOM AS Enterprise SECTION (v7.0)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section id="enterprise-waitlist-removed" style="display:none;">
   <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between;">
     <div style="flex:1 1 480px;min-width:280px;">
       <div style="display:inline-block;padding:4px 12px;background:var(--gold);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px;margin-bottom:10px;">★ Enterprise Edition · Available now</div>
@@ -1724,8 +1742,8 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
-<!-- ── FULL REPORT (paid product) — v7.9.24 ─────────────────────────────── -->
-<section id="full-report" style="background:#0A1628;padding:52px 20px;border-bottom:1px solid var(--gold-soft);">
+<!-- ── OLD FULL REPORT moved to slim strip at bottom (v7.0) ── -->
+<section id="full-report-old-hidden" style="display:none;">
   <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;">
     <div>
       <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Comprehensive Edition</div>
@@ -1912,12 +1930,91 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         <div style="font-size:11px;color:var(--gold-soft);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Welcome bonus</div>
         <div style="font-size:22px;color:#fff;font-weight:700;font-family:var(--mono),monospace;margin-bottom:4px;">500 credits free</div>
         <div style="font-size:11px;color:var(--gold-soft);">Enough for 5 full reveals or 10 search pages</div>
-        <button onclick="document.getElementById('signup-cta').scrollIntoView({behavior:'smooth'})" style="margin-top:12px;background:var(--gold);color:var(--ink);border:none;padding:11px 22px;border-radius:2px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">Sign up & claim →</button>
+        <button onclick="document.getElementById('individual-section').scrollIntoView({behavior:'smooth'})" style="margin-top:12px;background:var(--gold);color:var(--ink);border:none;padding:11px 22px;border-radius:2px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">Sign up & claim →</button>
       </div>
     </aside>
 
   </div>
 </main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 2 — ENTERPRISE (v7.0)
+     8-tile data-coverage grid + 3 audience use-case columns + inline contact form.
+     Form posts to edge action `enterpriseInquiry`; on failure falls back to mailto.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section id="enterprise-section" style="background:linear-gradient(135deg,#0A1628 0%,#14213D 100%);color:#fff;padding:56px 24px 60px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <span style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;">Enterprise · for organisations</span>
+      <span style="height:1px;flex:1;background:rgba(203,228,254,0.18);"></span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">GCCs · service providers · government</span>
+    </div>
+    <h2 style="font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.2;letter-spacing:-0.5px;margin:0 0 8px;color:#fff;">Full dataset, custom geos, secure API, audit-grade governance.</h2>
+    <p style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.6;max-width:780px;margin:0 0 26px;">We license annual seats, deliver continuously audited data, and tailor scope, contract and integration to your organisation. Talk to us for pricing, a guided walkthrough and a sample data extract.</p>
+
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:6px;padding:18px 20px 16px;margin-bottom:24px;">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:12px;">What we have captured · 46 fields per company</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Identity</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">Company · parent · HQ country · India entity</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Location</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">GCC city · address · SEZ/STPI · area sq ft</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Capabilities</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">Domains · sub-domains · tech stack</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Leadership</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">Site head · CXOs · LinkedIn · verified email</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Headcount</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">Band · exact · women % · maturity</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Financials</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">FY revenue · TP markup · group turnover</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Legal</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">CIN · legal structure · setup model</div></div>
+        <div style="background:rgba(255,255,255,0.04);border-left:2px solid var(--gold);padding:10px 12px;border-radius:0 4px 4px 0;"><div style="font-size:9.5px;letter-spacing:1.5px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:3px;">Ratings &amp; IP</div><div style="font-size:11.5px;color:rgba(255,255,255,0.85);line-height:1.45;">Glassdoor · GPTW · IPs registered</div></div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:12px;">Top 3 use cases by audience</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;">
+      <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
+        <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For GCC leaders</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Peer benchmarking</strong> — headcount, TP markup, maturity level</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Talent &amp; leadership intel</strong> — who is hiring, leadership moves, women %</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Site &amp; setup decisions</strong> — city economics, SEZ/STPI, setup partner</li>
+        </ul>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
+        <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For service providers</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account targeting</strong> — buyer signals: hiring, expansion, IP filings</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account-based prospecting</strong> — named decision-makers with verified email</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Market sizing</strong> — by city, domain, headcount band, industry</li>
+        </ul>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
+        <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For government &amp; policy</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Investment attraction</strong> — foreign-HQ companies expanding in India</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">SEZ &amp; policy impact</strong> — outcomes by zone, scheme, geography</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Industry concentration</strong> — geo &amp; sector mapping for strategy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:rgba(203,228,254,0.06);border:1px solid rgba(203,228,254,0.30);border-radius:8px;padding:22px 24px;">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:6px;">★ Talk to our Enterprise team</div>
+      <h3 style="font-family:var(--serif);font-size:19px;color:#fff;line-height:1.3;font-weight:500;margin:0 0 4px;">Tell us what you need. We will reply within 1 working day.</h3>
+      <form id="ent-inquiry-form" style="margin-top:14px;" onsubmit="return submitEnterpriseInquiry(event)" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <input type="text"  name="fullName"     id="ent-fullName"     required maxlength="120" placeholder="Your name *"          style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="text"  name="organization" id="ent-organization" required maxlength="160" placeholder="Organisation *"        style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="email" name="email"        id="ent-email"        required maxlength="200" placeholder="Work email *"          style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="tel"   name="phone"        id="ent-phone"                 maxlength="40"  placeholder="Phone (optional)"     style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+        </div>
+        <textarea name="useCase" id="ent-useCase" required maxlength="2000" rows="3" placeholder="What are you looking for? · geos · use case · seats · timeline *" style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;resize:vertical;min-height:80px;"></textarea>
+        <div id="ent-msg" style="display:none;font-size:12px;border-radius:3px;padding:10px 14px;line-height:1.5;"></div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+          <button id="ent-submit-btn" type="submit" style="background:var(--gold);color:var(--ink);border:none;border-radius:3px;padding:13px 26px;font-size:13.5px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(91,163,214,0.28);">Send to Enterprise team →</button>
+          <span style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">Reply within 1 working day · admin@gccpros.com</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 
 <!-- ════════════════════════════════════════════════════════════════
      SAMPLE REPORTS — what a full GCC profile looks like
@@ -1988,15 +2085,13 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       </div>
     </div>
     <div style="text-align:center;margin-top:30px;">
-      <button onclick="document.getElementById('signup-cta').scrollIntoView({behavior:'smooth'})" style="background:var(--ink);color:#fff;padding:14px 28px;border-radius:3px;font-weight:700;font-size:13px;border:none;cursor:pointer;letter-spacing:0.5px;font-family:inherit;">Get 500 free credits to explore the database →</button>
+      <button onclick="document.getElementById('individual-section').scrollIntoView({behavior:'smooth'})" style="background:var(--ink);color:#fff;padding:14px 28px;border-radius:3px;font-weight:700;font-size:13px;border:none;cursor:pointer;letter-spacing:0.5px;font-family:inherit;">Get 500 free credits to explore the database →</button>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════
-     USE CASES — by persona
-     ════════════════════════════════════════════════════════════════ -->
-<section id="use-cases" style="padding:48px 20px;background:#fff;">
+<!-- OLD use-cases / signup-cta / dp-cta-section hidden in v7.0 — replaced by Enterprise section above -->
+<section id="use-cases-old-hidden" style="display:none;">
   <div style="max-width:1200px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:30px;">
       <div style="font-size:11px;color:var(--gold-deep);letter-spacing:2px;text-transform:uppercase;font-weight:700;">Built for these decisions</div>
@@ -2115,11 +2210,29 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 </style>
 
-<!-- ─────────────────────────────────────────────────
-     CONSULTING / ADVISORY CTA · BEYOND THE DATABASE
-     Premium full-width section, navy hero treatment.
-     ───────────────────────────────────────────────── -->
-<section class="dp-cta-section" aria-labelledby="dp-cta-title">
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 3 — SLIM REPORT 2026 STRIP (was full #full-report) (v7.0)
+     Compact horizontal band. Preserves buyReport() + redeemReportWithCredits().
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section id="full-report" style="background:#0A1628;padding:34px 20px;border-top:1px solid var(--gold-soft);">
+  <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:22px;">
+    <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:64px;height:84px;background:linear-gradient(160deg,#152338,#1C2D4A);border:1px solid rgba(203,228,254,0.18);border-radius:4px;font-size:8.5px;letter-spacing:1px;color:var(--gold-soft);text-align:center;line-height:1.4;font-weight:600;">REPORT<br>2026<br>COVER</div>
+    <div style="flex:1 1 320px;min-width:240px;">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;">The Comprehensive Edition</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:#fff;line-height:1.25;margin:2px 0 4px;font-weight:600;">GCCPROs India GCC Report 2026</h3>
+      <p style="font-size:12px;color:#C7D2E2;line-height:1.5;margin:0;">60+ foreign-HQ companies profiled in full · city, HQ-origin &amp; industry trends · watermarked &amp; sourced. 45 pages, print-ready.</p>
+    </div>
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <button onclick="buyReport()" style="background:#fff;color:#0A1628;border:0;border-radius:3px;padding:11px 22px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;letter-spacing:0.3px;white-space:nowrap;">Buy &amp; download &middot; &#8377;4,999</button>
+      <button onclick="redeemReportWithCredits()" style="background:transparent;color:var(--gold-soft);border:1px solid rgba(203,228,254,0.40);border-radius:3px;padding:9px 18px;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:0.3px;white-space:nowrap;">Pay with 4,999 credits</button>
+      <span id="report-purchase-msg" style="font-size:11px;color:#C7D2E2;line-height:1.4;text-align:right;max-width:240px;display:block;min-height:14px;"></span>
+    </div>
+  </div>
+  <div style="max-width:1080px;margin:8px auto 0;text-align:center;font-size:10.5px;color:rgba(255,255,255,0.45);letter-spacing:0.4px;">Secured by Razorpay &middot; Invoiced by Chartered Times LLP</div>
+</section>
+
+<!-- OLD dp-cta-section hidden in v7.0 (duplicate Enterprise CTA) -->
+<section class="dp-cta-section-old-hidden" style="display:none;" aria-labelledby="dp-cta-title">
   <div class="dp-cta-grid">
 
     <!-- LEFT: text + CTA -->
@@ -5115,5 +5228,95 @@ async function redeemReportWithCredits(){
 }
 </script>
 
+
+<script>
+/* Enterprise Inquiry form — v7.0 (2026-06-08) */
+async function submitEnterpriseInquiry(ev) {
+  if (ev && ev.preventDefault) ev.preventDefault();
+  var btn  = document.getElementById('ent-submit-btn');
+  var data = {
+    fullName:     (document.getElementById('ent-fullName')     || {}).value || '',
+    organization: (document.getElementById('ent-organization') || {}).value || '',
+    email:        (document.getElementById('ent-email')        || {}).value || '',
+    phone:        (document.getElementById('ent-phone')        || {}).value || '',
+    useCase:      (document.getElementById('ent-useCase')      || {}).value || '',
+    sourceUrl:    location.href.split('?')[0]
+  };
+  if (!data.fullName.trim() || !data.organization.trim() || !data.email.trim() || !data.useCase.trim()) {
+    _entMsgShow('err', 'Name, organisation, email and use case are required.');
+    return false;
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email.trim())) {
+    _entMsgShow('err', 'That email does not look valid.');
+    return false;
+  }
+  // Business-email guard. Reuses the existing personal-domain blocklist on this page.
+  try {
+    if (typeof _isPersonalEmail === 'function' && _isPersonalEmail(data.email.trim().toLowerCase())) {
+      _entMsgShow('err', 'Please use your work email — personal addresses (Gmail, Yahoo, Outlook, etc.) cannot be processed for Enterprise enquiries.');
+      return false;
+    }
+  } catch (_) { /* if helper is missing, fall through */ }
+  // Phone validation — optional, but if entered must look like a real number
+  // (10–15 digits after stripping +, spaces, hyphens, parentheses).
+  var _phoneRaw = (data.phone || '').trim();
+  if (_phoneRaw) {
+    var _phoneDigits = _phoneRaw.replace(/[^\d]/g, '');
+    if (_phoneDigits.length < 10 || _phoneDigits.length > 15) {
+      _entMsgShow('err', 'Phone number looks off — please enter 10 to 15 digits (country code optional).');
+      return false;
+    }
+    if (!/^[+\d][\d\s\-().]*$/.test(_phoneRaw)) {
+      _entMsgShow('err', 'Phone number contains invalid characters. Use digits, spaces, +, -, ( ) only.');
+      return false;
+    }
+  }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  var qs = Object.keys(data).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(data[k]); }).join('&');
+  var url = (typeof SCRIPT_URL === 'string' ? SCRIPT_URL : '') + '?action=enterpriseInquiry&' + qs;
+  try {
+    var r = await fetch(url, { method: 'GET', cache: 'no-store' });
+    var j = await r.json().catch(function(){ return {}; });
+    if (j && j.status === 'ok') {
+      _entMsgShow('ok', j.message || 'Thanks. Our Enterprise team will reach out within 1 working day.');
+      document.getElementById('ent-inquiry-form').reset();
+      btn.textContent = 'Sent ✓';
+      return false;
+    }
+    throw new Error((j && (j.message || j.error)) || ('HTTP ' + r.status));
+  } catch (e) {
+    var subj = encodeURIComponent('Enterprise plan enquiry — ' + data.organization);
+    var body = encodeURIComponent(
+      'Hi GCCPROs team,\n\n' +
+      'Name: ' + data.fullName + '\n' +
+      'Organisation: ' + data.organization + '\n' +
+      'Email: ' + data.email + '\n' +
+      (data.phone ? ('Phone: ' + data.phone + '\n') : '') +
+      '\nUse case:\n' + data.useCase + '\n\nThanks.'
+    );
+    window.location.href = 'mailto:admin@gccpros.com?subject=' + subj + '&body=' + body;
+    _entMsgShow('ok', 'Opening your email client. If nothing opens, write to admin@gccpros.com directly.');
+    btn.disabled = false;
+    btn.textContent = 'Send to Enterprise team →';
+    return false;
+  }
+}
+function _entMsgShow(kind, text) {
+  var msg = document.getElementById('ent-msg');
+  if (!msg) return;
+  msg.textContent = text;
+  msg.style.display = 'block';
+  if (kind === 'ok') {
+    msg.style.background = 'rgba(45,122,78,0.18)';
+    msg.style.border     = '1px solid rgba(45,122,78,0.55)';
+    msg.style.color      = '#B6DFC0';
+  } else {
+    msg.style.background = 'rgba(178,59,59,0.18)';
+    msg.style.border     = '1px solid rgba(178,59,59,0.55)';
+    msg.style.color      = '#F2C0C0';
+  }
+}
+</script>
 </body>
 </html>
