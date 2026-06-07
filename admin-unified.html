@@ -266,11 +266,11 @@ td.actions { white-space:nowrap; }
     <div id="db-submissions" class="panel">
       <div class="card">
         <h3>User Submissions</h3>
-        <p class="muted">GCCs suggested via &ldquo;Add a GCC&rdquo;, field corrections proposed by users, and enterprise waitlist requests.</p>
+        <p class="muted">GCCs suggested via &ldquo;Add a GCC&rdquo;, field corrections proposed by users, and Enterprise Enquiries submitted from database-pro.</p>
         <div class="filter-row">
           <button class="btn" onclick="dbLoadSubmissions('gcc')">GCC submissions</button>
           <button class="btn" onclick="dbLoadSubmissions('corrections')">Corrections</button>
-          <button class="btn" onclick="dbLoadSubmissions('waitlist')">Enterprise waitlist</button>
+          <button class="btn" onclick="dbLoadSubmissions('waitlist')">Enterprise Enquiry</button>
           <button class="btn brand-orange" onclick="dbExportSubmissionsCsv()">&#128202; Export CSV</button>
           <span class="muted" id="db-sub-count"></span>
         </div>
@@ -711,7 +711,7 @@ function dbRenderSubmissions() {
   } else if (DB_SUB_KIND === 'corrections') {
     cols = [['created_at','Submitted',1],['submitted_by','By'],['company_name','Company'],['field_name','Field(s)'],['notes','Note'],['status','Status',0,1]];
   } else {
-    cols = [['created_at','Submitted',1],['email','Email'],['company','Company'],['use_case','Use case']];
+    cols = [['created_at','Submitted',1],['full_name','Name'],['company','Organisation'],['email','Email'],['phone','Phone'],['use_case','Use case'],['status','Status',0,1]];
   }
   const cnt = document.getElementById('db-sub-count'); if (cnt) cnt.textContent = rows.length + ' ' + DB_SUB_KIND;
   let html = '<table><thead><tr>' + cols.map(c => '<th>' + esc(c[1]) + '</th>').join('') + '<th>View</th></tr></thead><tbody>';

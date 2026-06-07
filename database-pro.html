@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.3-form-breathing-room -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.5-enterprise-cta-no-mailto -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -24,11 +24,11 @@
   --ink-soft:   #152338;
   --navy:       #14365B;
   --navy-soft:  #1E4A78;
-  --gold:       #1A7878;
-  --gold-deep:  #0F5757;
-  --gold-soft:  #C8E2E2;
-  --cream:      #F4F5F2;
-  --ivory:      #E8F0EE;
+  --gold:       #E07A1F;
+  --gold-deep:  #A24E08;
+  --gold-soft:  #FFE2C2;
+  --cream:      #FAF6F0;
+  --ivory:      #F4ECE0;
   --paper:      #FFFFFF;
   --graphite:   #4A5568;
   --muted:      #6B7A99;
@@ -5297,17 +5297,14 @@ async function submitEnterpriseInquiry(ev) {
     }
     throw new Error((j && (j.message || j.error)) || ('HTTP ' + r.status));
   } catch (e) {
-    var subj = encodeURIComponent('Enterprise plan enquiry:' + data.organization);
-    var body = encodeURIComponent(
-      'Hi GCCPROs team,\n\n' +
-      'Name: ' + data.fullName + '\n' +
-      'Organisation: ' + data.organization + '\n' +
-      'Email: ' + data.email + '\n' +
-      (data.phone ? ('Phone: ' + data.phone + '\n') : '') +
-      '\nUse case:\n' + data.useCase + '\n\nThanks.'
-    );
-    window.location.href = 'mailto:admin@gccpros.com?subject=' + subj + '&body=' + body;
-    _entMsgShow('ok', 'Opening your email client. If nothing opens, write to admin@gccpros.com directly.');
+    // No mailto fallback — submission goes straight to the admin inbox
+    // (enterprise_waitlist table + admin@gccpros.com email copy via the
+    // enterpriseInquiry edge action). If that fails we surface a clean
+    // error and ask the user to retry or write to admin directly.
+    _entMsgShow('err',
+      'We could not submit your enquiry just now. Please try again in a moment. ' +
+      'If the problem persists, write to admin@gccpros.com. (Reference: ' +
+      ((e && e.message) ? String(e.message).slice(0, 80) : 'network') + ')');
     btn.disabled = false;
     btn.textContent = 'Send to Enterprise team →';
     return false;
