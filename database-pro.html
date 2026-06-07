@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.5-enterprise-cta-no-mailto -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.6-mailto-only -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -5283,32 +5283,28 @@ async function submitEnterpriseInquiry(ev) {
     }
   }
   btn.disabled = true;
-  btn.textContent = 'Sending…';
-  var qs = Object.keys(data).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(data[k]); }).join('&');
-  var url = (typeof SCRIPT_URL === 'string' ? SCRIPT_URL : '') + '?action=enterpriseInquiry&' + qs;
-  try {
-    var r = await fetch(url, { method: 'GET', cache: 'no-store' });
-    var j = await r.json().catch(function(){ return {}; });
-    if (j && j.status === 'ok') {
-      _entMsgShow('ok', j.message || 'Thanks. Our Enterprise team will reach out within 1 working day.');
-      document.getElementById('ent-inquiry-form').reset();
-      btn.textContent = 'Sent ✓';
-      return false;
-    }
-    throw new Error((j && (j.message || j.error)) || ('HTTP ' + r.status));
-  } catch (e) {
-    // No mailto fallback — submission goes straight to the admin inbox
-    // (enterprise_waitlist table + admin@gccpros.com email copy via the
-    // enterpriseInquiry edge action). If that fails we surface a clean
-    // error and ask the user to retry or write to admin directly.
-    _entMsgShow('err',
-      'We could not submit your enquiry just now. Please try again in a moment. ' +
-      'If the problem persists, write to admin@gccpros.com. (Reference: ' +
-      ((e && e.message) ? String(e.message).slice(0, 80) : 'network') + ')');
+  btn.textContent = 'Opening email…';
+  // Pure mailto — opens the user's email client with a prefilled draft to
+  // admin@gccpros.com. No backend call. No Supabase. No edge function. No
+  // failure modes beyond "no email client installed", which is rare.
+  var subj = encodeURIComponent('Enterprise plan enquiry - ' + data.organization);
+  var body = encodeURIComponent(
+    'Hi GCCPROs team,\n\n' +
+    'Name: ' + data.fullName + '\n' +
+    'Organisation: ' + data.organization + '\n' +
+    'Email: ' + data.email + '\n' +
+    (data.phone ? ('Phone: ' + data.phone + '\n') : '') +
+    '\nUse case:\n' + data.useCase + '\n\nThanks.'
+  );
+  window.location.href = 'mailto:admin@gccpros.com?subject=' + subj + '&body=' + body;
+  _entMsgShow('ok',
+    'Your email client is opening with a prefilled message. Please review and click Send to deliver it to admin@gccpros.com. ' +
+    'If nothing opens, copy this address (admin@gccpros.com) into your usual email tool and paste the same details.');
+  setTimeout(function(){
     btn.disabled = false;
     btn.textContent = 'Send to Enterprise team →';
-    return false;
-  }
+  }, 1500);
+  return false;
 }
 function entClearFieldError(el) {
   if (!el) return;
