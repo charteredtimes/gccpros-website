@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.2-teal-accent-no-emdash · removed em-dashes, AI-tell words, switched gold to teal accent -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.3-form-breathing-room -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2006,16 +2006,16 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <div style="background:rgba(203,228,254,0.06);border:1px solid rgba(203,228,254,0.30);border-radius:8px;padding:22px 24px;">
       <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;margin-bottom:6px;">★ Talk to our Enterprise team</div>
       <h3 style="font-family:var(--serif);font-size:19px;color:#fff;line-height:1.3;font-weight:500;margin:0 0 4px;">Tell us what you need. We will reply within 1 working day.</h3>
-      <form id="ent-inquiry-form" style="margin-top:14px;" onsubmit="return submitEnterpriseInquiry(event)" style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <input type="text"  name="fullName"     id="ent-fullName"     required maxlength="120" placeholder="Your name *"          style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="text"  name="organization" id="ent-organization" required maxlength="160" placeholder="Organisation *"        style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="email" name="email"        id="ent-email"        required maxlength="200" placeholder="Work email *"          onblur="entValidateEmail(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="tel"   name="phone"        id="ent-phone"                 maxlength="40"  placeholder="Phone (optional · +country code)" onblur="entValidatePhone(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+      <form id="ent-inquiry-form" onsubmit="return submitEnterpriseInquiry(event)" style="margin-top:18px;display:flex;flex-direction:column;gap:18px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px 18px;">
+          <input type="text"  name="fullName"     id="ent-fullName"     required maxlength="120" placeholder="Your name *"          style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:4px;padding:14px 16px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="text"  name="organization" id="ent-organization" required maxlength="160" placeholder="Organisation *"        style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:4px;padding:14px 16px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="email" name="email"        id="ent-email"        required maxlength="200" placeholder="Work email *"          onblur="entValidateEmail(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:4px;padding:14px 16px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="tel"   name="phone"        id="ent-phone"                 maxlength="40"  placeholder="Phone (optional · +country code)" onblur="entValidatePhone(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:4px;padding:14px 16px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;">
         </div>
-        <textarea name="useCase" id="ent-useCase" required maxlength="2000" rows="3" placeholder="What are you looking for? · geos · use case · seats · timeline *" style="width:100%;box-sizing:border-box;display:block;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;resize:vertical;min-height:96px;"></textarea>
-        <div id="ent-msg" style="display:none;font-size:12px;border-radius:3px;padding:10px 14px;line-height:1.5;"></div>
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+        <textarea name="useCase" id="ent-useCase" required maxlength="2000" rows="3" placeholder="What are you looking for? · geos · use case · seats · timeline *" style="width:100%;box-sizing:border-box;display:block;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:4px;padding:14px 16px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;resize:vertical;min-height:110px;"></textarea>
+        <div id="ent-msg" style="display:none;font-size:12px;border-radius:4px;padding:12px 14px;line-height:1.5;"></div>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px;">
           <button id="ent-submit-btn" type="submit" style="background:var(--gold);color:var(--ink);border:none;border-radius:3px;padding:13px 26px;font-size:13.5px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(91,163,214,0.28);">Send to Enterprise team →</button>
           <span style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">Reply within 1 working day · admin@gccpros.com</span>
         </div>
