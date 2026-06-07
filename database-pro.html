@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.0-two-clear-sections · Individual + Enterprise restructure; new contact form; slim Report 2026 at bottom -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.2-teal-accent-no-emdash · removed em-dashes, AI-tell words, switched gold to teal accent -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -22,13 +22,13 @@
 :root {
   --ink:        #0A1628;
   --ink-soft:   #152338;
-  --navy:       #0A66C2;
-  --navy-soft:  #0077B5;
-  --gold:       #0A66C2;
-  --gold-deep:  #004182;
-  --gold-soft:  #CBE4FE;
-  --cream:      #F3F2EF;
-  --ivory:      #EAF4FF;
+  --navy:       #14365B;
+  --navy-soft:  #1E4A78;
+  --gold:       #1A7878;
+  --gold-deep:  #0F5757;
+  --gold-soft:  #C8E2E2;
+  --cream:      #F4F5F2;
+  --ivory:      #E8F0EE;
   --paper:      #FFFFFF;
   --graphite:   #4A5568;
   --muted:      #6B7A99;
@@ -76,7 +76,7 @@ body:not(.is-authed) .panel-sub-auth {
 }
 /* Kill the nav "Password" button pre-login */
 body:not(.is-authed) .btn-ghost[onclick*="openPwdModal"] { display: none !important; }
-/* Feedback feature — added 2026-05-22 */
+/* Feedback feature:added 2026-05-22 */
 body:not(.is-authed) .btn-ghost[onclick*="openFeedbackModal"] { display: none !important; }
 .fb-stars { display: flex; gap: 6px; font-size: 30px; line-height: 1; user-select: none; }
 .fb-stars span { color: #d8dbe0; cursor: pointer; transition: color .12s, transform .12s; }
@@ -1642,7 +1642,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <!-- Cloudflare Turnstile (visible CAPTCHA on signup + enterprise waitlist).
      Replace TURNSTILE_SITE_KEY constant below with your real key from
      dash.cloudflare.com → Turnstile → Add Site. The default value is
-     Cloudflare's official test key that always passes — fine for staging. -->
+     Cloudflare's official test key that always passes:fine for staging. -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileReady" async defer></script>
 </head>
 <body>
@@ -1675,14 +1675,14 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </nav>
 
-<!-- ENTERPRISE COUNTDOWN — removed 2026-05-28 (Enterprise plans now available; see CTA below). JS retained behind `if(!banner)return;` guard. -->
+<!-- ENTERPRISE COUNTDOWN:removed 2026-05-28 (Enterprise plans now available; see CTA below). JS retained behind `if(!banner)return;` guard. -->
 
 <header class="hero">
   <div class="hero-inner">
     <div>
       <div class="hero-breadcrumb">GCCPROs · Database Pro · Global GCC Intelligence</div>
-      <h1 class="hero-title">The only comprehensive <em>Global Capability Center</em> database.</h1>
-      <p class="hero-sub">4,800+ verified GCCs across 50+ countries — including 2,500+ in India. 46 fields per company spanning entity, leadership, financials, IP, maturity and tech stack. Continuously audited. Used by GCC heads, consulting firms, investors, academics and governments to make sharper decisions about the global capability economy.</p>
+      <h1 class="hero-title">The only complete <em>Global Capability Center</em> database.</h1>
+      <p class="hero-sub">4,800+ verified GCCs across 50+ countries, including 2,500+ in India. 46 fields per company spanning entity, leadership, financials, IP, maturity and tech stack. Continuously audited. Used by GCC heads, consulting firms, investors, academics and governments to make sharper decisions about the global capability economy.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
         <button type="button" onclick="document.getElementById('individual-section').scrollIntoView({behavior:'smooth'})" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--ink);padding:14px 22px;border-radius:3px;font-weight:700;font-size:13px;border:none;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">Get 500 free credits →</button>
         <button type="button" onclick="document.getElementById('sample-reports').scrollIntoView({behavior:'smooth'})" style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--gold-soft);padding:14px 22px;border:1px solid var(--gold-soft);border-radius:3px;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:0.4px;font-family:inherit;">See a sample report ↓</button>
@@ -1708,8 +1708,16 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
+<!-- v7.1:wrapper that lets Enterprise render before Individual via flex order -->
+<div class="section-order-wrap" style="display:flex;flex-direction:column;">
+<style>
+  #enterprise-section { order: -1; }
+  #individual-section { order: 0; }
+  .section-order-wrap > main.main { order: 1; }
+</style>
+
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     SECTION 1 — INDIVIDUAL ACCESS (v7.0)
+     SECTION 1:INDIVIDUAL ACCESS (v7.0)
      Personal-use signup CTA → existing search portal (<main> below, unchanged).
      ═══════════════════════════════════════════════════════════════════════════ -->
 <section id="individual-section" style="background:var(--cream);border-bottom:1px solid var(--gold-soft);padding:36px 36px 8px;">
@@ -1717,7 +1725,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     <div style="flex:1 1 480px;min-width:280px;">
       <div style="display:inline-block;font-size:10px;letter-spacing:2px;color:var(--gold-deep);font-weight:700;text-transform:uppercase;border:1px solid var(--gold-soft);background:#fff;padding:4px 10px;border-radius:2px;margin-bottom:10px;">★ Individual access · for personal use</div>
       <h2 style="font-family:var(--serif);font-size:26px;color:var(--ink);line-height:1.2;margin:0 0 6px;">Start with <em style="color:var(--gold-deep);font-style:italic;">500 free credits</em>. Pay only as you reveal.</h2>
-      <p style="font-size:13.5px;color:var(--graphite);line-height:1.55;max-width:640px;margin:0;">Sign up to unlock the search portal. Browse every GCC by city, country, industry, headcount band, maturity, leadership and more. Reveal a company's full record for 100 credits. Researchers, consultants, and candidates use this tier.</p>
+      <p style="font-size:13.5px;color:var(--graphite);line-height:1.55;max-width:640px;margin:0;">Sign up to open the search portal. Browse every GCC by city, country, industry, headcount band, maturity, leadership and more. Reveal a company's full record for 100 credits. Researchers, consultants, and candidates use this tier.</p>
     </div>
     <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
       <span style="font-size:11px;color:var(--graphite);letter-spacing:0.3px;">Use the search portal below ↓</span>
@@ -1746,9 +1754,9 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <section id="full-report-old-hidden" style="display:none;">
   <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;">
     <div>
-      <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Comprehensive Edition</div>
+      <div style="font-size:11px;color:var(--gold-soft);letter-spacing:2px;text-transform:uppercase;font-weight:700;">The Definitive Edition</div>
       <h2 style="font-size:30px;color:#fff;margin:10px 0 14px;font-family:'Playfair Display',serif;line-height:1.2;">GCCPROs India GCC Report 2026</h2>
-      <p style="font-size:15px;color:#C7D2E2;line-height:1.65;margin:0 0 20px;">The full intelligence map &mdash; 30+ first-time launches and 20+ expansions, each profiled with leadership, headcount, footprint, operating model and a cited source for every line. 45 pages, print-ready.</p>
+      <p style="font-size:15px;color:#C7D2E2;line-height:1.65;margin:0 0 20px;">The full intelligence map. 30+ first-time launches and 20+ expansions, each profiled with leadership, headcount, footprint, operating model and a cited source for every line. 45 pages, print-ready.</p>
       <ul style="list-style:none;margin:0;padding:0;color:#E6ECF5;font-size:14px;line-height:1.5;">
         <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">60+ foreign-HQ companies, each profiled in full</li>
         <li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.09);">City, HQ-origin &amp; industry trend analysis</li>
@@ -1760,7 +1768,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <div style="font-family:'Playfair Display',serif;font-weight:800;color:var(--ink);font-size:42px;margin:6px 0 0;">&#8377;4,999</div>
       <div style="font-size:12.5px;color:var(--graphite);margin-bottom:4px;">or 4,999 research credits from your wallet</div>
       <button onclick="buyReport()" style="width:100%;background:#0A1628;color:#fff;border:0;border-radius:4px;padding:15px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;letter-spacing:.3px;margin-top:14px;">Buy &amp; download &middot; &#8377;4,999</button>
-      <div style="font-size:11px;color:var(--graphite);letter-spacing:1px;margin:12px 0 10px;">&mdash; OR &mdash;</div>
+      <div style="font-size:11px;color:var(--graphite);letter-spacing:1px;margin:12px 0 10px;">OR</div>
       <button onclick="redeemReportWithCredits()" style="width:100%;background:#fff;color:#0A1628;border:1.5px solid #0A1628;border-radius:4px;padding:13px;font-weight:700;font-size:14.5px;cursor:pointer;font-family:inherit;letter-spacing:.3px;">Pay with 4,999 credits</button>
       <div id="report-purchase-msg" style="font-size:12px;color:var(--graphite);margin-top:12px;min-height:16px;line-height:1.4;"></div>
       <div style="font-size:11px;color:var(--graphite);margin-top:8px;">Secured by Razorpay &middot; Invoiced by Chartered Times LLP</div>
@@ -1914,7 +1922,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         </div>
         <div style="padding:13px 16px;background:rgba(201,151,58,0.06);border-left:3px solid var(--gold);border-radius:3px;">
           <div style="font-size:12px;font-weight:700;color:var(--gold-soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Continuous updates</div>
-          <div style="font-size:12.5px;color:#fff;line-height:1.55;">Not yearly snapshots. Refreshed by a dedicated research team — new GCCs added, headcounts updated, leadership changes tracked monthly.</div>
+          <div style="font-size:12.5px;color:#fff;line-height:1.55;">Not yearly snapshots. Refreshed by a dedicated research team. New GCCs added, headcounts updated, leadership changes tracked monthly.</div>
         </div>
         <div style="padding:13px 16px;background:rgba(201,151,58,0.06);border-left:3px solid var(--gold);border-radius:3px;">
           <div style="font-size:12px;font-weight:700;color:var(--gold-soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Built-in protections</div>
@@ -1938,7 +1946,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     SECTION 2 — ENTERPRISE (v7.0)
+     SECTION 2:ENTERPRISE (v7.0)
      8-tile data-coverage grid + 3 audience use-case columns + inline contact form.
      Form posts to edge action `enterpriseInquiry`; on failure falls back to mailto.
      ═══════════════════════════════════════════════════════════════════════════ -->
@@ -1972,25 +1980,25 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
         <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For GCC leaders</div>
         <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Peer benchmarking</strong> — headcount, TP markup, maturity level</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Talent &amp; leadership intel</strong> — who is hiring, leadership moves, women %</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Site &amp; setup decisions</strong> — city economics, SEZ/STPI, setup partner</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Peer benchmarking</strong> · headcount, TP markup, maturity level</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Talent &amp; leadership intel</strong>&nbsp;-&nbsp;who is hiring, leadership moves, women %</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Site &amp; setup decisions</strong>&nbsp;-&nbsp;city economics, SEZ/STPI, setup partner</li>
         </ul>
       </div>
       <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
         <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For service providers</div>
         <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account targeting</strong> — buyer signals: hiring, expansion, IP filings</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account-based prospecting</strong> — named decision-makers with verified email</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Market sizing</strong> — by city, domain, headcount band, industry</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account targeting</strong>&nbsp;-&nbsp;buyer signals: hiring, expansion, IP filings</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Account-based prospecting</strong>&nbsp;-&nbsp;named decision-makers with verified email</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Market sizing</strong>&nbsp;-&nbsp;by city, domain, headcount band, industry</li>
         </ul>
       </div>
       <div style="background:rgba(255,255,255,0.05);border-top:2px solid var(--gold);border-radius:0 0 4px 4px;padding:18px 18px 16px;">
         <div style="font-family:var(--serif);font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;">For government &amp; policy</div>
         <ul style="list-style:none;padding:0;margin:0;font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.65;">
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Investment attraction</strong> — foreign-HQ companies expanding in India</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">SEZ &amp; policy impact</strong> — outcomes by zone, scheme, geography</li>
-          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Industry concentration</strong> — geo &amp; sector mapping for strategy</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Investment attraction</strong>&nbsp;-&nbsp;foreign-HQ companies expanding in India</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">SEZ &amp; policy impact</strong>&nbsp;-&nbsp;outcomes by zone, scheme, geography</li>
+          <li style="padding:5px 0;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:var(--gold-soft);font-weight:600;">Industry concentration</strong>&nbsp;-&nbsp;geo &amp; sector mapping for strategy</li>
         </ul>
       </div>
     </div>
@@ -2000,12 +2008,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <h3 style="font-family:var(--serif);font-size:19px;color:#fff;line-height:1.3;font-weight:500;margin:0 0 4px;">Tell us what you need. We will reply within 1 working day.</h3>
       <form id="ent-inquiry-form" style="margin-top:14px;" onsubmit="return submitEnterpriseInquiry(event)" style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <input type="text"  name="fullName"     id="ent-fullName"     required maxlength="120" placeholder="Your name *"          style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="text"  name="organization" id="ent-organization" required maxlength="160" placeholder="Organisation *"        style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="email" name="email"        id="ent-email"        required maxlength="200" placeholder="Work email *"          style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
-          <input type="tel"   name="phone"        id="ent-phone"                 maxlength="40"  placeholder="Phone (optional)"     style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="text"  name="fullName"     id="ent-fullName"     required maxlength="120" placeholder="Your name *"          style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="text"  name="organization" id="ent-organization" required maxlength="160" placeholder="Organisation *"        style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="email" name="email"        id="ent-email"        required maxlength="200" placeholder="Work email *"          onblur="entValidateEmail(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
+          <input type="tel"   name="phone"        id="ent-phone"                 maxlength="40"  placeholder="Phone (optional · +country code)" onblur="entValidatePhone(this)" oninput="entClearFieldError(this)" style="width:100%;box-sizing:border-box;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;">
         </div>
-        <textarea name="useCase" id="ent-useCase" required maxlength="2000" rows="3" placeholder="What are you looking for? · geos · use case · seats · timeline *" style="background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;resize:vertical;min-height:80px;"></textarea>
+        <textarea name="useCase" id="ent-useCase" required maxlength="2000" rows="3" placeholder="What are you looking for? · geos · use case · seats · timeline *" style="width:100%;box-sizing:border-box;display:block;background:#fff;border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:11px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;resize:vertical;min-height:96px;"></textarea>
         <div id="ent-msg" style="display:none;font-size:12px;border-radius:3px;padding:10px 14px;line-height:1.5;"></div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px;">
           <button id="ent-submit-btn" type="submit" style="background:var(--gold);color:var(--ink);border:none;border-radius:3px;padding:13px 26px;font-size:13.5px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(91,163,214,0.28);">Send to Enterprise team →</button>
@@ -2016,8 +2024,11 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
+</div>
+<!-- end v7.1 section-order-wrap -->
+
 <!-- ════════════════════════════════════════════════════════════════
-     SAMPLE REPORTS — what a full GCC profile looks like
+     SAMPLE REPORTS:what a full GCC profile looks like
      ════════════════════════════════════════════════════════════════ -->
 <section id="sample-reports" style="background:var(--ivory);padding:48px 20px;border-top:1px solid var(--gold-soft);">
   <div style="max-width:1200px;margin:0 auto;">
@@ -2041,12 +2052,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">GCC Cities</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Noida · Bengaluru · Hyderabad · Mumbai</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Headcount</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">8,500+ FTE (May 2025)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Year Established</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">1997</div></div>
-          <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Maturity Gen</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Gen 1 — Legacy mega-GCC</div></div>
+          <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Maturity Gen</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Gen 1:Legacy mega-GCC</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Setup Model</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Captive (Wholly Owned)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">FY25 India Revenue</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">USD 1,034 M (+11 % YoY)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Glassdoor / GPTW</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">★ 4.0 · GPTW Certified</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">IPs Registered</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">1,000+ band (≈ 100/year)</div></div>
-          <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">India Site Head</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Prativa Mohapatra — Vice President &amp; Managing Director, Adobe India</div></div>
+          <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">India Site Head</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Prativa Mohapatra:Vice President &amp; Managing Director, Adobe India</div></div>
           <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">GCC Domains</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Technology · Engineering R&amp;D · Data &amp; Analytics · Product Management · AI/ML (Firefly, Sensei)</div></div>
           <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Group Global Turnover</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">USD 21.51 Bn (Adobe FY2024 10-K)</div></div>
         </div>
@@ -2069,12 +2080,12 @@ body:not(.is-authed) .ent-pre-auth-teaser {
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">GCC City</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Warsaw, Masovian Voivodeship</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Headcount</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">≈ 800 (Apr 2026)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Year Established</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">2011</div></div>
-          <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Maturity Gen</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Gen 4 — Innovation Center</div></div>
+          <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Maturity Gen</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Gen 4:Innovation Center</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Setup Model</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Captive (Wholly Owned)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">FY25 Revenue</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">USD 165 M (+11.5 % YoY)</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Transfer-Pricing Markup</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">6 – 8 %</div></div>
           <div><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Glassdoor / GPTW</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">★ 3.9 · GPTW Certified</div></div>
-          <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Site Head</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Vikramjit Singh Chima — Managing Director</div></div>
+          <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Site Head</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Vikramjit Singh Chima:Managing Director</div></div>
           <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">GCC Domains</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Engineering · Operations · Finance · Risk · Human Capital · Quant Research</div></div>
           <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Sister Captives</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">Bengaluru 9,000+ · Hyderabad 2,000+ · Salt Lake City 2,500+</div></div>
           <div style="grid-column:1/-1;"><div style="color:var(--gold-deep);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Group Global Turnover</div><div style="color:var(--ink);font-weight:600;line-height:1.4;">USD 58.3 Bn (Goldman Sachs FY 2024)</div></div>
@@ -2090,7 +2101,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 
-<!-- OLD use-cases / signup-cta / dp-cta-section hidden in v7.0 — replaced by Enterprise section above -->
+<!-- OLD use-cases / signup-cta / dp-cta-section hidden in v7.0:replaced by Enterprise section above -->
 <section id="use-cases-old-hidden" style="display:none;">
   <div style="max-width:1200px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:30px;">
@@ -2102,66 +2113,66 @@ body:not(.is-authed) .ent-pre-auth-teaser {
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For the GCC Head / India CEO</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Benchmark your maturity, footprint and capability mix against direct peers.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Peer benchmarking</strong> — find every GCC in your industry × headcount band × city; isolate direct comparables with verified Site Heads and headcount notes</li>
-          <li><strong>Competitor watch</strong> — track new GCCs setting up in your hubs with year established, maturity Gen, recent press and strategic initiatives</li>
-          <li><strong>Capability comparison</strong> — compare GCC Domains, sub-domains, tech stacks and AI/ML investments against your own across 4,800+ peers</li>
-          <li><strong>Workplace sentiment</strong> — Glassdoor ratings and GPTW certification by city × industry; headcount-trajectory signals from recent press</li>
-          <li><strong>Output benchmarks</strong> — FY24 → FY25 revenue growth, IP output, transfer-pricing markup and gender-diversity ratio of peer captives</li>
+          <li><strong>Peer benchmarking</strong>&nbsp;-&nbsp;find every GCC in your industry × headcount band × city; isolate direct comparables with verified Site Heads and headcount notes</li>
+          <li><strong>Competitor watch</strong>&nbsp;-&nbsp;track new GCCs setting up in your hubs with year established, maturity Gen, recent press and strategic initiatives</li>
+          <li><strong>Capability comparison</strong>&nbsp;-&nbsp;compare GCC Domains, sub-domains, tech stacks and AI/ML investments against your own across 4,800+ peers</li>
+          <li><strong>Workplace sentiment</strong>&nbsp;-&nbsp;Glassdoor ratings and GPTW certification by city × industry; headcount-trajectory signals from recent press</li>
+          <li><strong>Output benchmarks</strong>&nbsp;-&nbsp;FY24 → FY25 revenue growth, IP output, transfer-pricing markup and gender-diversity ratio of peer captives</li>
         </ul>
       </div>
       <div style="border-left:3px solid var(--gold);padding:16px 20px;background:var(--ivory);border-radius:2px;">
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For HQ Evaluating a New GCC</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Build a strategic capability arm. Decide where to go, who to put in charge, what to build.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Leadership intelligence</strong> — see who runs your peer GCCs (named Site Heads, Engineering Heads, Finance Heads) and their LinkedIn footprints; benchmark reporting structures</li>
-          <li><strong>Location strategy</strong> — compare 50+ markets and 200+ cities by GCC concentration, industry mix, headcount footprint, SEZ/STPI uptake, average maturity generation and recent expansion press</li>
-          <li><strong>Talent strategy</strong> — validate headcount bands, growth trajectories, Glassdoor sentiment and GPTW certification rates per city × industry × maturity generation</li>
-          <li><strong>Technology &amp; capability architecture</strong> — see which tech stacks, AI/ML investments and IP portfolios your peer GCCs are actually building, before you pick yours</li>
-          <li><strong>Maturity roadmap</strong> — Gen 1 → Gen 4 evolution paths from companies that scaled successfully; pattern-match to your own ambition</li>
+          <li><strong>Leadership intelligence</strong>&nbsp;-&nbsp;see who runs your peer GCCs (named Site Heads, Engineering Heads, Finance Heads) and their LinkedIn footprints; benchmark reporting structures</li>
+          <li><strong>Location strategy</strong>&nbsp;-&nbsp;compare 50+ markets and 200+ cities by GCC concentration, industry mix, headcount footprint, SEZ/STPI uptake, average maturity generation and recent expansion press</li>
+          <li><strong>Talent strategy</strong>&nbsp;-&nbsp;validate headcount bands, growth trajectories, Glassdoor sentiment and GPTW certification rates per city × industry × maturity generation</li>
+          <li><strong>Technology &amp; capability architecture</strong>&nbsp;-&nbsp;see which tech stacks, AI/ML investments and IP portfolios your peer GCCs are actually building, before you pick yours</li>
+          <li><strong>Maturity roadmap</strong>&nbsp;-&nbsp;Gen 1 → Gen 4 evolution paths from companies that scaled successfully; pattern-match to your own ambition</li>
         </ul>
       </div>
       <div style="border-left:3px solid var(--gold);padding:16px 20px;background:var(--ivory);border-radius:2px;">
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For GCC Service Providers</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Build a qualified target pipeline with surgical precision.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Qualified target accounts</strong> — 4,800+ verified GCCs with named Site Heads, Other Leaders, LinkedIn URLs and entity-level CIN / legal identifiers</li>
-          <li><strong>Maturity-based pipelines</strong> — identify Gen 1 GCCs ready to evolve into Gen 3–4 innovation centers; surface Gen 4 leaders as reference customers</li>
-          <li><strong>Setup-model targeting</strong> — segment Captive vs BOT vs JV setups; track Setup Partner names where disclosed and recent transition press</li>
-          <li><strong>Vertical &amp; geo intelligence</strong> — filter 4,800+ accounts by industry, sub-domain, tech stack, SEZ/STPI status, headcount band and city cluster</li>
-          <li><strong>Expansion signals</strong> — recent press, strategic initiatives, FY revenue growth and IP output flag GCCs in active scale mode</li>
+          <li><strong>Qualified target accounts</strong>&nbsp;-&nbsp;4,800+ verified GCCs with named Site Heads, Other Leaders, LinkedIn URLs and entity-level CIN / legal identifiers</li>
+          <li><strong>Maturity-based pipelines</strong>&nbsp;-&nbsp;identify Gen 1 GCCs ready to evolve into Gen 3–4 innovation centers; surface Gen 4 leaders as reference customers</li>
+          <li><strong>Setup-model targeting</strong>&nbsp;-&nbsp;segment Captive vs BOT vs JV setups; track Setup Partner names where disclosed and recent transition press</li>
+          <li><strong>Vertical &amp; geo intelligence</strong>&nbsp;-&nbsp;filter 4,800+ accounts by industry, sub-domain, tech stack, SEZ/STPI status, headcount band and city cluster</li>
+          <li><strong>Expansion signals</strong>&nbsp;-&nbsp;recent press, strategic initiatives, FY revenue growth and IP output flag GCCs in active scale mode</li>
         </ul>
       </div>
       <div style="border-left:3px solid var(--gold);padding:16px 20px;background:var(--ivory);border-radius:2px;">
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For Academics &amp; Researchers</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Citation-grade data for longitudinal studies on the global capability economy.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Longitudinal maturity datasets</strong> — Gen 1 → Gen 4 evolution patterns mapped per geography, industry and parent HQ country</li>
-          <li><strong>Geographic clustering</strong> — analyze city × industry × parent HQ concentration; cross-state and cross-country comparisons</li>
-          <li><strong>Financial intelligence</strong> — FY24 / FY25 revenue, transfer-pricing markup, group global turnover with cited source URLs per record</li>
-          <li><strong>Capability typology</strong> — domain × sub-domain × tech stack × IP-output classification across 50+ countries</li>
-          <li><strong>Citation-grade sourcing</strong> — every field carries an audit verification certificate; validation notes and confidence rating per record</li>
+          <li><strong>Longitudinal maturity datasets</strong>&nbsp;-&nbsp;Gen 1 → Gen 4 evolution patterns mapped per geography, industry and parent HQ country</li>
+          <li><strong>Geographic clustering</strong>&nbsp;-&nbsp;analyze city × industry × parent HQ concentration; cross-state and cross-country comparisons</li>
+          <li><strong>Financial intelligence</strong>&nbsp;-&nbsp;FY24 / FY25 revenue, transfer-pricing markup, group global turnover with cited source URLs per record</li>
+          <li><strong>Capability typology</strong>&nbsp;-&nbsp;domain × sub-domain × tech stack × IP-output classification across 50+ countries</li>
+          <li><strong>Citation-grade sourcing</strong>&nbsp;-&nbsp;every field carries an audit verification certificate; validation notes and confidence rating per record</li>
         </ul>
       </div>
       <div style="border-left:3px solid var(--gold);padding:16px 20px;background:var(--ivory);border-radius:2px;">
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For Governments &amp; Policy Teams</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Win new GCC investments. Plan multi-dimensional growth. Build evidence-based policy.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Investment attraction</strong> — identify foreign-HQ enterprises in your priority industries actively expanding capability footprints, with named decision-makers; your next investor pipeline</li>
-          <li><strong>Multi-dimensional GCC strategy</strong> — which industries are concentrating where, which cities are pulling ahead, which incentive structures are converting (SEZ / STPI / state schemes)</li>
-          <li><strong>Job creation insights</strong> — quantify direct and indirect employment per GCC by city × industry × headcount band; feed your state employment and skilling plan</li>
-          <li><strong>Talent strategy</strong> — map skill clusters per city (Tech, BFSI, R&amp;D, AI, Pharma, Engineering); design vocational and university programs against actual GCC demand signals</li>
-          <li><strong>Benchmarking &amp; ROI</strong> — compare state-on-state GCC concentration, FY24 → FY25 revenue and headcount growth, and competitive position against peer states</li>
+          <li><strong>Investment attraction</strong>&nbsp;-&nbsp;identify foreign-HQ enterprises in your priority industries actively expanding capability footprints, with named decision-makers; your next investor pipeline</li>
+          <li><strong>Multi-dimensional GCC strategy</strong>&nbsp;-&nbsp;which industries are concentrating where, which cities are pulling ahead, which incentive structures are converting (SEZ / STPI / state schemes)</li>
+          <li><strong>Job creation insights</strong>&nbsp;-&nbsp;quantify direct and indirect employment per GCC by city × industry × headcount band; feed your state employment and skilling plan</li>
+          <li><strong>Talent strategy</strong>&nbsp;-&nbsp;map skill clusters per city (Tech, BFSI, R&amp;D, AI, Pharma, Engineering); design vocational and university programs against actual GCC demand signals</li>
+          <li><strong>Benchmarking &amp; ROI</strong>&nbsp;-&nbsp;compare state-on-state GCC concentration, FY24 → FY25 revenue and headcount growth, and competitive position against peer states</li>
         </ul>
       </div>
       <div style="border-left:3px solid var(--gold);padding:16px 20px;background:var(--ivory);border-radius:2px;">
         <div style="font-size:13px;color:var(--gold-deep);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">For GCC Employees</div>
         <div style="font-size:16px;color:var(--ink);font-weight:600;margin:8px 0 10px;line-height:1.35;">Find your next opportunity. Understand the ecosystem you work in.</div>
         <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--graphite);line-height:1.7;">
-          <li><strong>Find your next role</strong> — explore 4,800+ verified GCCs filtered by industry, GCC Domains, sub-domains, tech stack and maturity Gen to discover where your skills fit</li>
-          <li><strong>Domain depth tracking</strong> — see which centers are scaling specific capabilities (AI/ML, FinOps, Cyber, Product Engineering, Quant) — go where your domain is winning</li>
-          <li><strong>Workplace intelligence</strong> — Glassdoor ratings and GPTW certification per company × city; compare environments before you switch</li>
-          <li><strong>City &amp; industry trends</strong> — which cities are pulling ahead in your domain, which industries are concentrating where, which GCCs are in active expansion</li>
-          <li><strong>Insights &amp; signals</strong> — recent press, strategic initiatives, IP output and headcount-growth signals so you know who's growing, who's investing, who's hiring</li>
+          <li><strong>Find your next role</strong>&nbsp;-&nbsp;explore 4,800+ verified GCCs filtered by industry, GCC Domains, sub-domains, tech stack and maturity Gen to discover where your skills fit</li>
+          <li><strong>Domain depth tracking</strong>&nbsp;-&nbsp;see which centers are scaling specific capabilities (AI/ML, FinOps, Cyber, Product Engineering, Quant):go where your domain is winning</li>
+          <li><strong>Workplace intelligence</strong>&nbsp;-&nbsp;Glassdoor ratings and GPTW certification per company × city; compare environments before you switch</li>
+          <li><strong>City &amp; industry trends</strong>&nbsp;-&nbsp;which cities are pulling ahead in your domain, which industries are concentrating where, which GCCs are in active expansion</li>
+          <li><strong>Insights &amp; signals</strong>&nbsp;-&nbsp;recent press, strategic initiatives, IP output and headcount-growth signals so you know who's growing, who's investing, who's hiring</li>
         </ul>
       </div>
     </div>
@@ -2188,7 +2199,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 <section id="signup-cta" style="padding:48px 20px;background:var(--ivory);text-align:center;">
   <div style="max-width:720px;margin:0 auto;">
     <h2 style="font-size:28px;color:var(--ink);margin:0 0 12px;font-family:'Playfair Display',serif;line-height:1.25;">Start exploring. 500 credits on us.</h2>
-    <p style="font-size:14px;color:var(--graphite);line-height:1.6;margin:0 0 22px;max-width:600px;margin-left:auto;margin-right:auto;">Sign up takes 60 seconds. Manual approval within one business day. New members get 500 credits — enough for 5 full reveals or 10 search pages — so you can verify the data quality yourself before paying anything.</p>
+    <p style="font-size:14px;color:var(--graphite);line-height:1.6;margin:0 0 22px;max-width:600px;margin-left:auto;margin-right:auto;">Sign up takes 60 seconds. Manual approval within one business day. New members get 500 credits, enough for 5 full reveals or 10 search pages, so you can verify the data quality yourself before paying anything.</p>
     <button onclick="openSignInModal()" style="background:var(--ink);color:#fff;border:none;padding:16px 32px;border-radius:3px;font-weight:700;font-size:14px;letter-spacing:0.5px;cursor:pointer;font-family:inherit;">Sign up &amp; earn 500 credits →</button>
     <div style="font-size:11px;color:var(--muted);margin-top:14px;">No credit card · No commitment · Cancel anytime</div>
   </div>
@@ -2211,14 +2222,14 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </style>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     SECTION 3 — SLIM REPORT 2026 STRIP (was full #full-report) (v7.0)
+     SECTION 3:SLIM REPORT 2026 STRIP (was full #full-report) (v7.0)
      Compact horizontal band. Preserves buyReport() + redeemReportWithCredits().
      ═══════════════════════════════════════════════════════════════════════════ -->
 <section id="full-report" style="background:#0A1628;padding:34px 20px;border-top:1px solid var(--gold-soft);">
   <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:22px;">
     <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:64px;height:84px;background:linear-gradient(160deg,#152338,#1C2D4A);border:1px solid rgba(203,228,254,0.18);border-radius:4px;font-size:8.5px;letter-spacing:1px;color:var(--gold-soft);text-align:center;line-height:1.4;font-weight:600;">REPORT<br>2026<br>COVER</div>
     <div style="flex:1 1 320px;min-width:240px;">
-      <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;">The Comprehensive Edition</div>
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gold-soft);font-weight:700;text-transform:uppercase;">The Definitive Edition</div>
       <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:#fff;line-height:1.25;margin:2px 0 4px;font-weight:600;">GCCPROs India GCC Report 2026</h3>
       <p style="font-size:12px;color:#C7D2E2;line-height:1.5;margin:0;">60+ foreign-HQ companies profiled in full · city, HQ-origin &amp; industry trends · watermarked &amp; sourced. 45 pages, print-ready.</p>
     </div>
@@ -2241,7 +2252,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       <h2 id="dp-cta-title" class="dp-cta-title">Data is the foundation.<br><em>Strategy</em> is the conversation.</h2>
       <p class="dp-cta-desc">
         The GCCPROs database tells you <em>what</em> the global GCC ecosystem looks like. Our advisory practice tells you <em>what to do about it</em>.
-        Peer-benchmarked setup roadmaps, headcount &amp; location strategies, leadership maturity diagnostics, and global expansion plans — calibrated against 5,000+ verified centres worldwide.
+        Peer-benchmarked setup roadmaps, headcount &amp; location strategies, leadership maturity diagnostics, and global expansion plans, calibrated against 5,000+ verified centres worldwide.
       </p>
 
       <div class="dp-cta-actions">
@@ -2501,7 +2512,7 @@ window.onTurnstileReady = function() {
 };
 
 // Mount a Turnstile widget into the element with id `elId`. Safe to call
-// before the script is loaded — the call is queued.
+// before the script is loaded:the call is queued.
 function mountTurnstile(elId, opts) {
   function _mount(){
     var el = document.getElementById(elId);
@@ -2546,7 +2557,7 @@ function resetTurnstile(elId) {
   } catch(_){}
 }
 
-// ── apiFetch — wraps fetch() to auto-attach Firebase ID token in
+// ── apiFetch:wraps fetch() to auto-attach Firebase ID token in
 //    Authorization: Bearer header. Closes the H2 IDOR finding.
 //    The Edge Function runs in observation mode until IDOR_ENFORCE=true,
 //    so adding the header doesn't break unauthenticated paths.
@@ -2814,7 +2825,7 @@ function showSignInState(mode) {
           '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="Yes"> Yes, I consent</label>' +
           '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="consent" value="No"> No, not now</label>' +
         '</div>' +
-        // DPDP Act 2023 — express consent block. Separate from the marketing
+        // DPDP Act 2023:express consent block. Separate from the marketing
         // consent above. Mandatory for account creation.
         '<div style="margin-top:14px;padding:12px 14px;background:#FBF7ED;border:1px solid var(--gold-soft);border-radius:3px;">' +
           '<label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45;">' +
@@ -2844,7 +2855,7 @@ function showSignInState(mode) {
       '</div>' +
       backToChoose;
     // Mount Cloudflare Turnstile inside the signup card. Safe to call before
-    // the script loads — mountTurnstile queues until onTurnstileReady fires.
+    // the script loads:mountTurnstile queues until onTurnstileReady fires.
     setTimeout(function(){ mountTurnstile('turnstile-signup', { action: 'signup' }); }, 50);
     return;
   }
@@ -3097,7 +3108,7 @@ async function submitPasswordSignUp(ev) {
   if (pwd !== pwd2)                      return _showSignInErr('Passwords do not match.');
 
   // CAPTCHA token (Cloudflare Turnstile). Block submit if the user did not
-  // complete the challenge — guards the requestApproval endpoint downstream.
+  // complete the challenge:guards the requestApproval endpoint downstream.
   var cfToken = readTurnstileToken('turnstile-signup');
   if (!cfToken) {
     return _showSignInErr('Please complete the "I’m human" verification just above the Apply button, then try again.');
@@ -3126,7 +3137,7 @@ async function submitPasswordSignUp(ev) {
 
   // 2. Stash the form so we can resubmit after OTP verifies.
   //    dpdpConsentTs records the exact moment the Data Principal ticked the
-  //    consent box — auditable proof for DPDP Act compliance.
+  //    consent box:auditable proof for DPDP Act compliance.
   window._pendingSignup = {
     email: email, pwd: pwd,
     fullName: fullName, whatsapp: whatsapp, linkedin: linkedin,
@@ -3973,7 +3984,7 @@ function renderDetail(data) {
   const ts = now.toLocaleDateString('en-IN') + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   const wmText = escHtml(memberEmail) + ' · ' + ts + ' · GCCPROs Confidential';
   // Watermark on TOP layer (z-index:99), click-through (pointer-events:none).
-  // Tuned subtle: opacity 0.06, weight 500, size 10 — readable through but not loud.
+  // Tuned subtle: opacity 0.06, weight 500, size 10:readable through but not loud.
   const watermark = `<div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:2px;z-index:99;">
     ${Array.from({length:7},(_,i)=>`<div style="position:absolute;left:-20%;width:140%;transform:rotate(-28deg);top:${6+i*14}%;white-space:nowrap;font-size:10px;font-weight:500;color:rgba(10,22,40,0.06);letter-spacing:1.4px;user-select:none;-webkit-user-select:none;">${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${wmText}</div>`).join('')}
   </div>`;
@@ -4047,7 +4058,7 @@ function showLoading() {
     <div class="state-box"><div class="loading-dots"><span></span><span></span><span></span></div><p>Retrieving matches from the GCC database…</p></div>`;
 }
 function showState(title, msg) {
-  // H4 audit fix — escape both arguments before injecting into innerHTML.
+  // H4 audit fix:escape both arguments before injecting into innerHTML.
   // Callers occasionally pass server-controlled strings (Edge Function error
   // text); without escHtml, a malicious or accidental error containing HTML
   // would be rendered as live DOM.
@@ -4130,7 +4141,7 @@ async function initiatePayment() {
     return;
   }
 
-  // C1 fix — server creates the Razorpay Order first. We never trust the
+  // C1 fix:server creates the Razorpay Order first. We never trust the
   // client to declare what was paid; the webhook (with HMAC signature) is
   // the authoritative source of "credits should be added".
   const packMap = { 200: '200', 500: '500', 1000: '1000', 2500: '2500' };
@@ -4162,7 +4173,7 @@ async function initiatePayment() {
     prefill: { email: token },
     theme: { color: '#0A1628' },
     handler: async function(response) {
-      // v7.9.20 — credit SYNCHRONOUSLY via the HMAC-verified server endpoint.
+      // v7.9.20:credit SYNCHRONOUSLY via the HMAC-verified server endpoint.
       // Crediting no longer depends on the async webhook; the webhook stays as an
       // idempotent backup (deduped by payment_id) so a payment is credited exactly once.
       closeBuyCredits();
@@ -4182,8 +4193,8 @@ async function initiatePayment() {
           showToast('✓ ' + added + ' credits added. Balance: ' + balTxt, '#2D7A4E');
           return;
         }
-        // verify returned non-ok — fall through to the webhook polling fallback
-      } catch (_) { /* network hiccup — fall back to webhook polling below */ }
+        // verify returned non-ok:fall through to the webhook polling fallback
+      } catch (_) { /* network hiccup:fall back to webhook polling below */ }
 
       // Fallback: the webhook may still credit asynchronously. Poll briefly.
       for (let i = 0; i < 6; i++) {
@@ -4244,7 +4255,7 @@ async function openStatement() {
     rows = (data && data.statement) || [];
   } catch (err) {
     rows = _ledgerRead() || [];
-    document.getElementById('stmt-err').textContent = 'Showing offline copy — could not reach server: ' + (err && err.message || err);
+    document.getElementById('stmt-err').textContent = 'Showing offline copy:could not reach server: ' + (err && err.message || err);
     document.getElementById('stmt-err').style.display = 'block';
   }
 
@@ -4524,7 +4535,7 @@ async function joinWaitlist(ev) {
   msg.style.color = 'inherit';
   try {
     // No CAPTCHA on this form by design (low-risk endpoint). Server-side
-    // rate-limits this to 3 submissions/hour/IP — see Edge Function.
+    // rate-limits this to 3 submissions/hour/IP:see Edge Function.
     const url = SCRIPT_URL + '?action=enterpriseWaitlist&email=' + encodeURIComponent(email)
       + '&company=' + encodeURIComponent(company)
       + '&_t=' + Date.now();
@@ -4535,24 +4546,24 @@ async function joinWaitlist(ev) {
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
-      // (no widget on this form — nothing to reset)
+      // (no widget on this form:nothing to reset)
     } else if (data && data.error === 'missing_fields') {
       msg.textContent = 'Please enter both your work email and company.';
       msg.style.color = '#FF6B6B';
     } else if (data && data.error === 'captcha_failed') {
       msg.textContent = 'CAPTCHA verification failed. Please re-tick the box and submit again.';
       msg.style.color = '#FF6B6B';
-      // (no widget on this form — nothing to reset)
+      // (no widget on this form:nothing to reset)
     } else if (data && data.error) {
       msg.textContent = 'Could not submit (' + data.error + '). Please email admin@gccpros.com directly.';
       msg.style.color = '#FF6B6B';
-      // (no widget on this form — nothing to reset)
+      // (no widget on this form:nothing to reset)
     } else {
       msg.textContent = '✓ Submission received. If you do not hear back in 3 days, email admin@gccpros.com.';
       msg.style.color = '#34D399';
       document.getElementById('wl-email').value = '';
       document.getElementById('wl-company').value = '';
-      // (no widget on this form — nothing to reset)
+      // (no widget on this form:nothing to reset)
     }
   } catch(e) {
     msg.textContent = 'Network error. Please email admin@gccpros.com with your details.';
@@ -4593,7 +4604,7 @@ async function joinWaitlist(ev) {
     if ($m) $m.textContent = pad(mins);
     if ($s) $s.textContent = pad(secs);
   }
-  // (ecb-close removed — countdown banner is now persistent)
+  // (ecb-close removed:countdown banner is now persistent)
   tick();
   timer = setInterval(tick, 1000);
 })();
@@ -4632,7 +4643,7 @@ async function joinWaitlist(ev) {
   </div>
 </div>
 
-<!-- MANAGE MY DATA MODAL — DPDP Act Section 11-14 Data Principal Rights -->
+<!-- MANAGE MY DATA MODAL:DPDP Act Section 11-14 Data Principal Rights -->
 <div class="modal-overlay" id="manage-data-modal" onclick="if(event.target===this)closeManageDataModal()" style="display:none;">
   <div class="modal" style="max-width:560px;padding-bottom:14px;position:relative;max-height:88vh;overflow-y:auto;">
     <button onclick="closeManageDataModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
@@ -4645,7 +4656,7 @@ async function joinWaitlist(ev) {
       </button>
       <button onclick="dprRequest('correction')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
         <div style="font-weight:700;color:var(--ink);font-size:14px;">Correct or update my data</div>
-        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to correction (Sec. 12). Opens an email pre-filled with your account ID — describe what to change.</div>
+        <div style="font-size:12px;color:var(--graphite);margin-top:3px;">Right to correction (Sec. 12). Opens an email pre-filled with your account ID:describe what to change.</div>
       </button>
       <button onclick="dprRequest('withdraw')" style="text-align:left;padding:14px 16px;background:var(--ivory);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:2px;cursor:pointer;font-family:Inter,sans-serif;">
         <div style="font-weight:700;color:var(--ink);font-size:14px;">Withdraw marketing consent</div>
@@ -4677,10 +4688,10 @@ function closeManageDataModal(){ var m=document.getElementById('manage-data-moda
 function dprRequest(kind){
   var who = (window._currentEmail || (typeof getToken === 'function' ? getToken() : '') || 'unknown@unknown').toLowerCase();
   var subjects = {
-    access:    'DPDP Access Request — email me my data',
+    access:    'DPDP Access Request:email me my data',
     correction:'DPDP Correction Request',
     withdraw:  'DPDP Withdraw Marketing Consent',
-    erasure:   'DPDP Erasure Request — delete my account',
+    erasure:   'DPDP Erasure Request:delete my account',
     nominate:  'DPDP Nomination Request',
     grievance: 'DPDP Grievance'
   };
@@ -4750,7 +4761,7 @@ function dprRequest(kind){
 </div>
 
 <!-- LEADERSHIP COUNCIL APPLICATION MODAL -->
-<!-- ===== Database feedback modal (logged-in users) — added 2026-05-22 ===== -->
+<!-- ===== Database feedback modal (logged-in users):added 2026-05-22 ===== -->
 <div class="modal-overlay" id="feedback-modal" onclick="if(event.target===this)closeFeedbackModal()" style="display:none;">
   <div class="modal" style="max-width:520px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
     <button onclick="closeFeedbackModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
@@ -4783,7 +4794,7 @@ function dprRequest(kind){
   <div class="modal" style="max-width:680px;padding-bottom:14px;position:relative;max-height:90vh;overflow-y:auto;">
     <button onclick="closeCouncilModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;z-index:2;" title="Close">&times;</button>
     <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Leadership Council</h3>
-    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">A small, curated advisory body of senior GCC operators — Heads of GCC, Country MDs, ex-CXOs, board advisors. Founder reviews each application personally. Self-nomination welcome; we also accept named nominations.</p>
+    <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">A small, curated advisory body of senior GCC operators:Heads of GCC, Country MDs, ex-CXOs, board advisors. Founder reviews each application personally. Self-nomination welcome; we also accept named nominations.</p>
     <div id="council-result" style="display:none;padding:12px 14px;border-radius:3px;margin-bottom:14px;font-size:13px;"></div>
     <form id="council-form" onsubmit="submitCouncil(event)" style="display:flex;flex-direction:column;gap:8px;">
       <label class="field-label">Full name *</label>
@@ -4852,7 +4863,7 @@ function dprRequest(kind){
 </div>
 
 <script>
-// ===== Database feedback (logged-in users) — added 2026-05-22 =====
+// ===== Database feedback (logged-in users):added 2026-05-22 =====
 function fbSetStars(groupId, v) {
   var g = document.getElementById(groupId); if (!g) return;
   v = Math.max(0, Math.min(5, parseInt(v, 10) || 0));
@@ -5044,16 +5055,16 @@ async function submitCouncil(ev){
     <h3 style="margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);">Individual Credits FAQ</h3>
     <p class="modal-sub" style="margin:0 0 16px;color:var(--muted);font-size:13px;">No subscription. Pay-as-you-go credits.</p>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What do I get for free when I sign up?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">500 credits on approval — enough for 5 full company reveals (100 credits each) or 10 search pages (50 credits each, 5 results per page).</p></details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What does a search cost vs a reveal?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;"><strong>Search:</strong> 50 credits per page of 5 results. <strong>Reveal:</strong> 100 credits per company — unlocks the full 12-field profile.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What do I get for free when I sign up?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">500 credits on approval:enough for 5 full company reveals (100 credits each) or 10 search pages (50 credits each, 5 results per page).</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What does a search cost vs a reveal?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;"><strong>Search:</strong> 50 credits per page of 5 results. <strong>Reveal:</strong> 100 credits per company:unlocks the full 12-field profile.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">What's the monthly reveal cap?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">50 unique companies per calendar month (Asia/Kolkata). Re-viewing an already-revealed company is free. Counter resets the 1st of each month.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do credits expire?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No. Credits don't expire and roll over indefinitely while your account stays active.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">How do I buy more credits?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Click <strong>Top up</strong> in the top bar. 4 INR packs (₹200 / ₹500 / ₹950 / ₹2,250) and 4 USD packs ($2.50 / $6 / $11.50 / $27) for 200 / 500 / 1,000 / 2,500 credits. Processed by Razorpay. Credits land instantly.</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can I get a refund?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Credits are non-refundable once added. For billing errors or service failures on our side, email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>.</p></details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do I earn credits for anything?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes — accepted corrections earn 20 credits. Submit via the "Suggest a correction" button on any reveal card. Suggesting a new GCC can also earn credits (variable).</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Do I earn credits for anything?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes:accepted corrections earn 20 credits. Submit via the "Suggest a correction" button on any reveal card. Suggesting a new GCC can also earn credits (variable).</p></details>
       <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Is my activity logged and watermarked?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Yes. Every reveal is watermarked diagonally with your email + timestamp. Every spend is logged in your account transaction history (Statement button in the top bar).</p></details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can my team share one account?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No — Individual access is licensed per named person. For multi-seat / API access, write to <a href="mailto:admin@gccpros.com?subject=Enterprise%20plan%20enquiry%20%E2%80%94%20GCCPROs%20Database%20Pro" style="color:var(--gold-deep);">admin@gccpros.com</a> to discuss an Enterprise plan.</p></details>
-      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Still have questions?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a> — usually responds within 1 working day.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Can my team share one account?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">No:Individual access is licensed per named person. For multi-seat / API access, write to <a href="mailto:admin@gccpros.com?subject=Enterprise%20plan%20enquiry%20%E2%80%94%20GCCPROs%20Database%20Pro" style="color:var(--gold-deep);">admin@gccpros.com</a> to discuss an Enterprise plan.</p></details>
+      <details style="background:var(--ivory);border-left:3px solid var(--gold);padding:13px 16px;border-radius:2px;"><summary style="font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;">Still have questions?</summary><p style="margin:8px 0 0;font-size:13px;color:var(--graphite);line-height:1.6;">Email <a href="mailto:admin@gccpros.com" style="color:var(--gold-deep);">admin@gccpros.com</a>:usually responds within 1 working day.</p></details>
     </div>
   </div>
 </div>
@@ -5063,13 +5074,13 @@ function openCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); i
 function closeCreditsFaq(){ var m=document.getElementById('credits-faq-modal'); if(m){m.classList.remove('open');m.style.display='none';} }
 </script>
 
-<!-- ── FULL REPORT purchase + client-side watermark + invoice — v7.9.23 ──── -->
+<!-- ── FULL REPORT purchase + client-side watermark + invoice:v7.9.23 ──── -->
 <script>
 /* Reuses the existing, HMAC-verified Razorpay create-order + verify-payment
    flow (pack="report"). On a verified ₹4,999 payment the buyer is granted
    4,999 credits AND the report is unlocked: fetched, watermarked to the buyer,
    downloaded, with a Chartered Times LLP tax invoice. No existing function is
-   modified — all names are namespaced _rpt*. */
+   modified:all names are namespaced _rpt*. */
 var REPORT_CFG = {
   PACK:        'report',
   PRICE_INR:   4999,
@@ -5083,7 +5094,7 @@ var RPT_SELLER = {
   name:"Chartered Times LLP", tag:"Market Intelligence & Talent Solutions",
   a1:"B 101, Marvel Citrine, Rakshak Nagar", a2:"Kharadi, Pune – 411 014, Maharashtra",
   gstin:"27AAPFC1327B1ZT", pan:"AAPFC1327B", email:"admin@gccpros.com",
-  phone:"+91 85069 76700", state:"27 — Maharashtra"
+  phone:"+91 85069 76700", state:"27:Maharashtra"
 };
 function _rptMsg(m){ var el=document.getElementById('report-purchase-msg'); if(el) el.innerHTML=m||''; }
 function _rptDownload(bytes, filename){
@@ -5137,7 +5148,7 @@ async function _rptInvoice(o){
   pg.drawRectangle({x:mm(18),y:ty,width:W-mm(36),height:mm(8),color:NAVY});
   T("DESCRIPTION",mm(21),ty+mm(2.5),8.5,bold,WHITE);T("SAC",mm(120),ty+mm(2.5),8.5,bold,WHITE);
   T("QTY",mm(140),ty+mm(2.5),8.5,bold,WHITE);TR("AMOUNT (INR)",W-mm(21),ty+mm(2.5),8.5,bold,WHITE);
-  T("GCCPROs Database-Pro — credit top-up",mm(21),ty-mm(8),10,reg,INK);
+  T("GCCPROs Database-Pro:credit top-up",mm(21),ty-mm(8),10,reg,INK);
   T("Prepaid research credits for the Database-Pro portal. 1 credit = Rs 1.",mm(21),ty-mm(12.5),8,reg,MUTE);
   T("998431",mm(120),ty-mm(8),9,reg,INK);T(o.credits+" cr",mm(140),ty-mm(8),9,reg,INK);
   TR(o.amount.toFixed(2),W-mm(21),ty-mm(8),10,reg,INK);
@@ -5162,7 +5173,7 @@ async function _rptDeliver(orderId){
   var cu=(typeof currentUser!=='undefined' && currentUser)?currentUser:null;
   var email=(cu&&cu.email)||(typeof getToken==='function'&&getToken())||'member@gccpros.com';
   var name=(cu&&cu.displayName)|| (email.split('@')[0]) || email;
-  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading — please retry in a moment.'); return; }
+  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading:please retry in a moment.'); return; }
   _rptMsg('Preparing your watermarked report and invoice…');
   var resp=await fetch(REPORT_CFG.REPORT_URL,{cache:'no-store'});
   if(!resp.ok) throw new Error('report fetch '+resp.status);
@@ -5171,14 +5182,14 @@ async function _rptDeliver(orderId){
   _rptDownload(wm, REPORT_CFG.FILENAME);
   var inv=await _rptInvoice({b_name:name,b_email:email,b_state_code:'27',invno:_rptInvNo(),date:_rptToday(),orderid:orderId,amount:REPORT_CFG.PRICE_INR,credits:REPORT_CFG.CREDITS});
   _rptDownload(inv,'GCCPROs_TaxInvoice.pdf');
-  _rptMsg('✓ Done — your report and invoice have downloaded. Keep them safe; the report is licensed to you.');
+  _rptMsg('✓ Done:your report and invoice have downloaded. Keep them safe; the report is licensed to you.');
 }
 
 async function buyReport(){
   var token=(typeof getToken==='function')?getToken():null;
   if(!token){ if(typeof showToast==='function') showToast('Please sign in to buy the report.','#92400E'); _rptMsg('Please sign in to buy the report.'); return; }
   if(typeof _accountStatus!=='undefined' && _accountStatus && _accountStatus!=='Approved'){ if(typeof showToast==='function') showToast('Your account must be approved before purchase.','#92400E'); return; }
-  if(typeof Razorpay==='undefined'){ _rptMsg('Payment gateway is loading — please try again in a moment.'); return; }
+  if(typeof Razorpay==='undefined'){ _rptMsg('Payment gateway is loading:please try again in a moment.'); return; }
   _rptMsg('Starting secure checkout…');
   var order;
   try{
@@ -5188,10 +5199,10 @@ async function buyReport(){
   }catch(err){ _rptMsg('Could not start payment ('+(err.message||'server error')+'). Please retry, or WhatsApp +91-85069-76700.'); return; }
   var rzp=new Razorpay({
     key:order.key_id, order_id:order.order_id, amount:order.amount, currency:order.currency,
-    name:'GCCPROs', description:'India GCC Report 2026 — Comprehensive Edition',
+    name:'GCCPROs', description:'India GCC Report 2026:Definitive Edition',
     prefill:{ email:token }, theme:{ color:'#0A1628' },
     handler:async function(response){
-      _rptMsg('Payment received — verifying…');
+      _rptMsg('Payment received:verifying…');
       try{
         var vurl=SCRIPT_URL+'?action=razorpayVerifyPayment&token='+encodeURIComponent(token)
           +'&razorpay_order_id='+encodeURIComponent(response.razorpay_order_id||'')
@@ -5215,12 +5226,12 @@ async function redeemReportWithCredits(){
   var token=(typeof getToken==='function')?getToken():null;
   if(!token){ if(typeof showToast==='function') showToast('Please sign in to use credits.','#92400E'); _rptMsg('Please sign in to use credits.'); return; }
   if(typeof _accountStatus!=='undefined' && _accountStatus && _accountStatus!=='Approved'){ if(typeof showToast==='function') showToast('Your account must be approved first.','#92400E'); return; }
-  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading — please retry in a moment.'); return; }
+  if(typeof PDFLib==='undefined'){ _rptMsg('Download engine still loading:please retry in a moment.'); return; }
   _rptMsg('Redeeming 4,999 credits…');
   try{
     var res=await apiFetch(SCRIPT_URL+'?action=redeemReport&token='+encodeURIComponent(token));
     var j=await res.json().catch(function(){return {};});
-    if(j.error==='insufficient_credits'){ _rptMsg('You have '+(j.balance!=null?j.balance:'0')+' credits — the report costs 4,999. Use “Buy & download” to pay directly, or top up.'); return; }
+    if(j.error==='insufficient_credits'){ _rptMsg('You have '+(j.balance!=null?j.balance:'0')+' credits:the report costs 4,999. Use “Buy & download” to pay directly, or top up.'); return; }
     if(!(res.ok && j.status==='ok')){ _rptMsg('Could not redeem credits ('+(j.error||j.message||'server error')+'). Please use “Buy & download” instead.'); return; }
     try{ if(typeof fetchCreditBalance==='function') await fetchCreditBalance(); }catch(_){}
     await _rptDeliver('credits:'+(j.spent||4999));
@@ -5230,7 +5241,7 @@ async function redeemReportWithCredits(){
 
 
 <script>
-/* Enterprise Inquiry form — v7.0 (2026-06-08) */
+/* Enterprise Inquiry form:v7.0 (2026-06-08) */
 async function submitEnterpriseInquiry(ev) {
   if (ev && ev.preventDefault) ev.preventDefault();
   var btn  = document.getElementById('ent-submit-btn');
@@ -5253,17 +5264,17 @@ async function submitEnterpriseInquiry(ev) {
   // Business-email guard. Reuses the existing personal-domain blocklist on this page.
   try {
     if (typeof _isPersonalEmail === 'function' && _isPersonalEmail(data.email.trim().toLowerCase())) {
-      _entMsgShow('err', 'Please use your work email — personal addresses (Gmail, Yahoo, Outlook, etc.) cannot be processed for Enterprise enquiries.');
+      _entMsgShow('err', 'Please use your work email:personal addresses (Gmail, Yahoo, Outlook, etc.) cannot be processed for Enterprise enquiries.');
       return false;
     }
   } catch (_) { /* if helper is missing, fall through */ }
-  // Phone validation — optional, but if entered must look like a real number
+  // Phone validation:optional, but if entered must look like a real number
   // (10–15 digits after stripping +, spaces, hyphens, parentheses).
   var _phoneRaw = (data.phone || '').trim();
   if (_phoneRaw) {
     var _phoneDigits = _phoneRaw.replace(/[^\d]/g, '');
     if (_phoneDigits.length < 10 || _phoneDigits.length > 15) {
-      _entMsgShow('err', 'Phone number looks off — please enter 10 to 15 digits (country code optional).');
+      _entMsgShow('err', 'Phone number looks off:please enter 10 to 15 digits (country code optional).');
       return false;
     }
     if (!/^[+\d][\d\s\-().]*$/.test(_phoneRaw)) {
@@ -5286,7 +5297,7 @@ async function submitEnterpriseInquiry(ev) {
     }
     throw new Error((j && (j.message || j.error)) || ('HTTP ' + r.status));
   } catch (e) {
-    var subj = encodeURIComponent('Enterprise plan enquiry — ' + data.organization);
+    var subj = encodeURIComponent('Enterprise plan enquiry:' + data.organization);
     var body = encodeURIComponent(
       'Hi GCCPROs team,\n\n' +
       'Name: ' + data.fullName + '\n' +
@@ -5301,6 +5312,59 @@ async function submitEnterpriseInquiry(ev) {
     btn.textContent = 'Send to Enterprise team →';
     return false;
   }
+}
+function entClearFieldError(el) {
+  if (!el) return;
+  el.style.border = '1px solid rgba(255,255,255,0.20)';
+  var hint = document.getElementById(el.id + '-hint');
+  if (hint) hint.remove();
+  var msg = document.getElementById('ent-msg');
+  if (msg && msg.style.display === 'block' && /email|phone/i.test(msg.textContent || '')) msg.style.display = 'none';
+}
+function _entMarkFieldErr(el, hintText) {
+  if (!el) return;
+  el.style.border = '1.5px solid #F2A0A0';
+  var hint = document.getElementById(el.id + '-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = el.id + '-hint';
+    hint.style.cssText = 'grid-column:1/-1;font-size:11.5px;color:#F2C0C0;background:rgba(178,59,59,0.15);border:1px solid rgba(178,59,59,0.45);border-radius:3px;padding:6px 10px;margin-top:-4px;line-height:1.4;';
+    el.parentNode.insertBefore(hint, el.nextSibling);
+  }
+  hint.textContent = hintText;
+}
+function entValidateEmail(el) {
+  if (!el) return true;
+  var v = (el.value || '').trim().toLowerCase();
+  if (!v) { entClearFieldError(el); return true; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) {
+    _entMarkFieldErr(el, 'That email does not look valid:please double-check.');
+    return false;
+  }
+  try {
+    if (typeof _isPersonalEmail === 'function' && _isPersonalEmail(v)) {
+      _entMarkFieldErr(el, 'Please use a work email:personal addresses (Gmail, Yahoo, Outlook, etc.) cannot be accepted for Enterprise enquiries.');
+      return false;
+    }
+  } catch (_) {}
+  entClearFieldError(el);
+  return true;
+}
+function entValidatePhone(el) {
+  if (!el) return true;
+  var v = (el.value || '').trim();
+  if (!v) { entClearFieldError(el); return true; }
+  if (!/^[+\d][\d\s\-().]*$/.test(v)) {
+    _entMarkFieldErr(el, 'Phone may contain digits, spaces, +, -, ( ) only.');
+    return false;
+  }
+  var digits = v.replace(/[^\d]/g, '');
+  if (digits.length < 10 || digits.length > 15) {
+    _entMarkFieldErr(el, 'Phone must have 10 to 15 digits (country code optional).');
+    return false;
+  }
+  entClearFieldError(el);
+  return true;
 }
 function _entMsgShow(kind, text) {
   var msg = document.getElementById('ent-msg');
