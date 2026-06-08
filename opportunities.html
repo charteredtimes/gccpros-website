@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.19-prod
+<!-- GCCPROs Opportunities v2 · build: opps-2026-05-20-v8.19-prod · patched v8.19-fix
      Fixes 13 issues from user audit pass #3 (2026-05-19):
        1. Role pill now reads server-authoritative type (not inferred from dashboard 200s).
        2. Hero CTA + two-track tiles hidden post-login.
@@ -14,6 +14,13 @@
       11. Apply modal: direct CV file upload (Supabase Storage signed) — no Google Drive link.
       12. Apply modal: phone/email/LinkedIn prefilled from profile, override allowed, posted to admin.
       13. Jobs grid auto-filtered to seeker's domain with All Domains pill always available.
+     v8.19-fix patches (2026-06-08):
+      F1. showResult: scrollIntoView so error messages are visible regardless of modal scroll position.
+      F2. renderJobCard: replaced esc()+replace() with jsSafe() for onclick params — fixes Apply button
+          for any job whose title/company contains an apostrophe (e.g. "McDonald's", "O'Brien").
+      F3. openJobDetail: same jsSafe() fix as F2.
+      F4. openApplyModal: designation prefill now tries pf.designation || pf.current_designation || pf.currentDesignation.
+      F5. _apSubmitInner: mimeType fallback to 'application/octet-stream' if cvFile.type is empty.
 -->
 <html lang="en">
 <head>
@@ -21,13 +28,13 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="index,follow">
-<meta name="description" content="GCCPROs Opportunities — curated GCC jobs, referrals, and a vetted partner network for India’s Global Capability Centers. Sign in to apply or refer talent.">
+<meta name="description" content="GCCPROs Opportunities — curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centers. Sign in to apply or refer talent.">
 <link rel="canonical" href="https://www.gccpros.com/opportunities">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E40AF'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' text-anchor='middle' fill='white'%3EG%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GCCPROs">
 <meta property="og:title" content="Opportunities | GCCPROs">
-<meta property="og:description" content="Curated GCC jobs, referrals, and a vetted partner network for India’s Global Capability Centers.">
+<meta property="og:description" content="Curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centers.">
 <meta property="og:url" content="https://www.gccpros.com/opportunities">
 <meta name="twitter:card" content="summary">
 <title>Opportunities | GCCPROs</title>
@@ -270,8 +277,6 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 </head>
 <body>
 
-
-
 <header class="topbar">
   <div class="container topbar-inner">
     <div>
@@ -289,7 +294,6 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <button class="btn secondary" id="signin-btn" onclick="openLoginModal()">Sign in</button>
       <span class="user-pill" id="user-pill" style="display:none;"></span>
       <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
-
     </div>
   </div>
 </header>
@@ -360,7 +364,6 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <a class="wa-inline" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg> Join the &ldquo;GCC Jobs&rdquo; WhatsApp group</a>
       </p>
     </div>
-
     <div class="filter-bar">
       <input type="search" id="f-search" placeholder="&#128269; Search title, company, or skill&hellip;" oninput="renderJobs()">
       <select id="f-location" onchange="renderJobs()"><option value="">All locations</option></select>
@@ -374,11 +377,9 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       </select>
       <button class="btn secondary" onclick="resetFilters()" style="padding:8px 14px;">Reset</button>
     </div>
-
     <div class="filter-pills" id="domain-pills">
       <button class="filter-pill active" data-domain="">All domains</button>
     </div>
-
     <div id="job-list" class="jobs-grid">
       <p style="grid-column: 1/-1; text-align: center; color: var(--muted);">Loading roles&hellip;</p>
     </div>
@@ -669,8 +670,8 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Current Designation <span class="required">*</span></label><input type="text" id="ap-curdesig"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label>Current CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-curctc" placeholder="e.g. 18"><div class="field-hint">In ₹ lakhs per annum. Fixed + variable.</div></div>
-      <div class="field"><label>Expected CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-expctc" placeholder="e.g. 26"><div class="field-hint">Realistic ask. Wide gaps from current → fewer callbacks.</div></div>
+      <div class="field"><label>Current CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-curctc" placeholder="e.g. 18"><div class="field-hint">In &#8377; lakhs per annum. Fixed + variable.</div></div>
+      <div class="field"><label>Expected CTC (LPA) <span class="required">*</span></label><input type="number" step="0.1" min="0" max="500" id="ap-expctc" placeholder="e.g. 26"><div class="field-hint">Realistic ask. Wide gaps from current &rarr; fewer callbacks.</div></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Notice Period <span class="required">*</span></label>
@@ -821,9 +822,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   </div>
 </footer>
 
-<!-- Floating WhatsApp CTA -->
 <a class="wa-fab" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer" aria-label="Join the GCC Jobs WhatsApp group"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg><span class="wa-label">Join GCC Jobs on WhatsApp</span></a>
-
 
 <script>
 'use strict';
@@ -847,13 +846,13 @@ firebase.initializeApp({
   appId: '1:764592723192:web:002a03f217b57d47f0570d'
 });
 
-// State (all authoritative reads come from oppsCheckUserStatus AFTER sign-in)
+// State
 let CURRENT_EMAIL = null;
-let CURRENT_USER_TYPE = null;         // 'job_seeker' | 'partner' | 'both' | null — the user's ACTUAL role per DB
-let CURRENT_ACTIVE_VIEW = 'job_seeker'; // 'job_seeker' | 'partner' — which view a 'both' user is currently looking at
-let CURRENT_PROFILE = null;            // full payload from oppsCheckUserStatus + partner row
-let CURRENT_APPROVAL = null;           // 'approved' | 'pending' | 'rejected'
-let CURRENT_PRIMARY_DOMAIN = '';       // for auto-filter
+let CURRENT_USER_TYPE = null;
+let CURRENT_ACTIVE_VIEW = 'job_seeker';
+let CURRENT_PROFILE = null;
+let CURRENT_APPROVAL = null;
+let CURRENT_PRIMARY_DOMAIN = '';
 let JOB_LIST = [];
 let ACTIVE_DOMAIN = '';
 let googleSignInIntent = 'login';
@@ -869,6 +868,8 @@ function showResult(id, msg, level) {
   e.style.display = 'block';
   e.className = 'form-result ' + (level === true || level === 'ok' ? 'ok' : level === 'warn' ? 'warn' : 'err');
   e.textContent = msg;
+  // v8.19-fix F1: scroll error into view so users see it even when the modal is scrolled up
+  try { e.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(_) {}
 }
 function relTime(iso) {
   if (!iso) return '';
@@ -882,7 +883,6 @@ function relTime(iso) {
 }
 function splitToArr(s) { if (!s) return []; return String(s).split(/[,;|\n]/).map(x => x.trim()).filter(Boolean); }
 
-// v5: live word-count hint for required-min-length textareas
 function updateWordCount(ta, hintId, min) {
   const words = (ta.value || '').trim().split(/\s+/).filter(Boolean);
   const n = ta.value.trim() ? words.length : 0;
@@ -892,7 +892,6 @@ function updateWordCount(ta, hintId, min) {
   h.className = 'field-hint ' + (n >= min ? 'ok' : (n > 0 ? 'err' : ''));
 }
 
-// v6: render skill-CHECKBOX grid in the Apply modal (candidate ticks ≥3 from the role's listed skills)
 function renderApplySkillGrid(jobId) {
   const j = JOB_LIST.find(x => x.id === jobId);
   const skills = j ? splitToArr(j.skills) : [];
@@ -916,7 +915,6 @@ function collectApplySkills() {
   return ticked.concat(other);
 }
 
-// v5: render mandatory skill-rating grid in the Refer modal for the selected job
 function renderReferSkillAssessment(jobId) {
   const j = JOB_LIST.find(x => x.id === jobId);
   const skills = j ? splitToArr(j.skills).slice(0, 8) : [];
@@ -957,7 +955,7 @@ let OTP_VERIFIED = { pt:false, js:false };
 async function sendOtp(pfx) {
   const email = (document.getElementById(pfx+'-email').value||'').trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showResult(pfx+'-otp-status','Enter a valid email first.', false);
-  showResult(pfx+'-otp-status','Sending code\u2026', true);
+  showResult(pfx+'-otp-status','Sending code…', true);
   try {
     const r = await fetch(SCRIPT_URL + '?action=oppsSendOtp&email=' + encodeURIComponent(email) + '&_t=' + Date.now());
     const j = await r.json();
@@ -977,15 +975,13 @@ async function verifyOtp(pfx) {
       const badge = document.getElementById(pfx+'-email-verified'); if (badge) badge.style.display='';
       document.getElementById(pfx+'-otp-row').style.display='none';
       const sendBtn = document.getElementById(pfx+'-otp-send'); if (sendBtn) sendBtn.style.display='none';
-      showResult(pfx+'-otp-status','\u2713 Email verified.', true);
+      showResult(pfx+'-otp-status','✓ Email verified.', true);
     } else showResult(pfx+'-otp-status', esc(j.message || j.error || 'Incorrect code'), false);
   } catch(e){ showResult(pfx+'-otp-status','Verification failed. Try again.', false); }
 }
 function emailVerifiedFor(pfx, email) {
   return (!!googleVerifiedEmail && googleVerifiedEmail === email) || !!OTP_VERIFIED[pfx];
 }
-// v8.18 — read a file as base64 WITHOUT the FileReader global (absent in some iOS
-// in-app webviews, which throw "Can't find variable: FileReader"). Prefer Blob.arrayBuffer().
 async function fileToBase64(file) {
   if (file && typeof file.arrayBuffer === 'function') {
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -1029,8 +1025,6 @@ function tsToken(elId) {
   return inp ? (inp.value || '') : '';
 }
 
-// v8.11 — strong-password helpers (shared). Meter is GATED on PWD_RX so the bar
-// can never say "Strong" for a password the validator would reject (e.g. long but no symbol).
 const PWD_RX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 function pwdReqs(p){ p = p || ''; return { len: p.length>=8, lower: /[a-z]/.test(p), upper: /[A-Z]/.test(p), digit: /\d/.test(p), sym: /[^A-Za-z0-9]/.test(p) }; }
 function pwdStrong(p){ return PWD_RX.test(p || ''); }
@@ -1046,7 +1040,7 @@ function pwdMeterUpdate(pfx){
   if (bar){ bar.style.width = pct+'%'; bar.style.background = col; }
   if (hint){
     if (!p){ hint.textContent = 'Min 8 chars incl. upper, lower, number & symbol.'; hint.style.color = ''; return; }
-    if (ok){ hint.textContent = (p.length>=12 ? 'Very strong' : 'Strong') + ' \u2713'; hint.style.color = '#16a34a'; return; }
+    if (ok){ hint.textContent = (p.length>=12 ? 'Very strong' : 'Strong') + ' ✓'; hint.style.color = '#16a34a'; return; }
     const miss = [];
     if (!r.len) miss.push('8+ characters');
     if (!r.upper) miss.push('an uppercase letter');
@@ -1071,7 +1065,6 @@ async function apiFetch(url, options) {
   return fetch(url, options);
 }
 
-// Hide hero CTA + Two-track tiles for signed-in users
 function setSignedInChrome(signedIn) {
   const hero = document.getElementById('hero-section');
   const tiles = document.getElementById('get-started');
@@ -1124,7 +1117,6 @@ function setLoginRole(role) {
   g.classList.toggle('partner-tone', role === 'partner');
 }
 
-// Google Sign-In via GIS ID-token flow (one popup, Firebase signInWithCredential)
 let _gisLoaded = false;
 function _ensureGISLoaded(cb) {
   if (_gisLoaded) return cb();
@@ -1186,24 +1178,17 @@ async function handleGoogleCredentialResponse(response) {
   googleVerifiedEmail = email;
   applyPwdVisibility();
 
-  // v7 perf: capture the FULL status response and stash it so loadProfileAndDashboard
-  // can reuse it without re-fetching (saves ~600-1200ms on slow networks).
   let exists = false, blacklisted = false, prefetchedStatus = null;
   try {
     const typeHint = (googleSignInIntent !== 'login') ? googleSignInIntent : (loginRolePref || '');
     const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(email) + (typeHint ? '&type=' + typeHint : '') + '&_t=' + Date.now());
     prefetchedStatus = await sr.json();
     exists = !!prefetchedStatus.exists; blacklisted = !!prefetchedStatus.blacklisted;
-    window._prefetchedStatus = prefetchedStatus;  // stashed for loadProfileAndDashboard
+    window._prefetchedStatus = prefetchedStatus;
   } catch (_) {}
   if (blacklisted) { alert('This account has been blocked. Contact admin@gccpros.com.'); return; }
 
-  // v8.3 perf: for a known account logging in, dismiss the login screen NOW
-  // (right after the fast status prefetch) instead of waiting for the Firebase
-  // sign-in round-trip + auth-state event. The dashboard loads behind it.
   if (googleSignInIntent === 'login' && exists) closeModal('login-modal');
-
-  // v5: hide signup chrome immediately (don't wait for Firebase auth state to propagate)
   setSignedInChrome(true);
   try {
     const cred = firebase.auth.GoogleAuthProvider.credential(idToken);
@@ -1277,7 +1262,6 @@ async function doForgotPassword() {
   }
 }
 
-// SERVER-AUTHORITATIVE profile + role load (v7.7 — bulletproof role detection)
 function _normalizeRole(t) {
   const s = String(t || '').toLowerCase();
   if (s === 'referrer' || s === 'partner' || s === 'partners') return 'partner';
@@ -1286,16 +1270,13 @@ function _normalizeRole(t) {
 }
 async function loadProfileAndDashboard() {
   if (!CURRENT_EMAIL) return;
-  // 12 s timeout — never let a stalled fetch silently downgrade the role
   const ctrl = new AbortController();
   const tmo = setTimeout(() => ctrl.abort(), 12000);
   let sj = null;
-  // v7 perf: reuse the prefetched status from Google sign-in if available (saves a round trip)
   if (window._prefetchedStatus && window._prefetchedStatus.exists !== undefined) {
     sj = window._prefetchedStatus;
-    window._prefetchedStatus = null;  // consume once
+    window._prefetchedStatus = null;
     clearTimeout(tmo);
-    console.log('[role] using prefetched status from Google sign-in');
   } else {
     try {
       const sr = await fetch(SCRIPT_URL + '?action=oppsCheckUserStatus&email=' + encodeURIComponent(CURRENT_EMAIL) + (loginRolePref ? '&type=' + encodeURIComponent(loginRolePref) : '') + '&_t=' + Date.now(), { signal: ctrl.signal });
@@ -1307,20 +1288,17 @@ async function loadProfileAndDashboard() {
 
   if (sj && sj.exists !== undefined) {
     CURRENT_PROFILE = sj;
-    // FULL diagnostic log so we can debug any "wrong role" report from screenshot alone
     console.log('[role] oppsCheckUserStatus →', JSON.stringify(sj));
     if (sj.debug) console.log('[role] DEBUG payload:', sj.debug);
     CURRENT_USER_TYPE = _normalizeRole(sj.effective_role || sj.type);
     CURRENT_APPROVAL = sj.approvalStatus || 'pending';
     CURRENT_PRIMARY_DOMAIN = sj.primaryDomain || sj.domain || '';
-    // For 'both' users, default the active view to whichever tab they clicked on login
     if (CURRENT_USER_TYPE === 'both' && (loginRolePref === 'jobSeeker' || loginRolePref === 'partner')) {
       CURRENT_ACTIVE_VIEW = (loginRolePref === 'partner') ? 'partner' : 'job_seeker';
     } else {
       CURRENT_ACTIVE_VIEW = CURRENT_USER_TYPE === 'partner' ? 'partner' : 'job_seeker';
     }
   } else {
-    // Empty/missing — user is signed into Firebase but has no opps_users row
     console.warn('[role] no opps_users row for', CURRENT_EMAIL, '→ defaulting to job_seeker');
     CURRENT_USER_TYPE = 'job_seeker';
     CURRENT_APPROVAL = 'pending';
@@ -1328,18 +1306,12 @@ async function loadProfileAndDashboard() {
     CURRENT_PROFILE = {};
   }
 
-  // Render role chip — STATIC. No in-dashboard role switching.
-  // Job Seeker and Partner are completely separate experiences. A user's
-  // view is fixed by their registered role (login tab is only a tiebreaker
-  // for the rare dual-registered account). To use the other model, sign out
-  // and sign in via that role's path.
   const chip = document.getElementById('role-chip-pill');
   if (chip) {
     chip.classList.remove('partner','both','seeker');
     if (CURRENT_USER_TYPE === 'both') {
-      // Dual account: the chip is a one-click view switcher (no sign-out needed).
       const _p = CURRENT_ACTIVE_VIEW === 'partner';
-      chip.textContent = (_p ? 'Partner' : 'Seeker') + ' \u21C4';
+      chip.textContent = (_p ? 'Partner' : 'Seeker') + ' ⇄';
       chip.classList.add(_p ? 'partner' : 'seeker');
       chip.style.cursor = 'pointer';
       chip.title = 'Click to switch to your ' + (_p ? 'Job Seeker' : 'Partner') + ' view';
@@ -1353,8 +1325,6 @@ async function loadProfileAndDashboard() {
     }
   }
 
-  // v5: BOTH seekers and partners auto-filter to their primary domain by default.
-  // Partners refer most often in their own domain; the "All domains" pill is always one click away.
   if (CURRENT_PRIMARY_DOMAIN) {
     ACTIVE_DOMAIN = CURRENT_PRIMARY_DOMAIN;
   } else {
@@ -1365,7 +1335,6 @@ async function loadProfileAndDashboard() {
   await loadDashboard();
 }
 
-// Dual-account view switcher (chip click) — Seeker <-> Partner without re-login.
 function switchDualView() {
   if (CURRENT_USER_TYPE !== 'both') return;
   CURRENT_ACTIVE_VIEW = (CURRENT_ACTIVE_VIEW === 'partner') ? 'job_seeker' : 'partner';
@@ -1374,7 +1343,7 @@ function switchDualView() {
   const chip = document.getElementById('role-chip-pill');
   if (chip) {
     const _p = CURRENT_ACTIVE_VIEW === 'partner';
-    chip.textContent = (_p ? 'Partner' : 'Seeker') + ' \u21C4';
+    chip.textContent = (_p ? 'Partner' : 'Seeker') + ' ⇄';
     chip.classList.remove('partner','seeker'); chip.classList.add(_p ? 'partner' : 'seeker');
     chip.title = 'Click to switch to your ' + (_p ? 'Job Seeker' : 'Partner') + ' view';
   }
@@ -1383,7 +1352,6 @@ function switchDualView() {
   loadDashboard();
 }
 
-// Jobs list
 async function loadJobs() {
   try {
     const r = await fetch(SCRIPT_URL + '?action=oppsListJobs&_t=' + Date.now());
@@ -1461,7 +1429,6 @@ function renderJobs() {
   if (!el) return;
   const _isUrgent = j => (j && (j.is_urgent === true || j.is_urgent === 'true' || String(j.status || '').toLowerCase() === 'urgent')) ? 1 : 0;
   const filtered = applyFilters(JOB_LIST).slice().sort((a, b) => _isUrgent(b) - _isUrgent(a));
-  // role count intentionally hidden — replaced by a sign-in CTA (jobs-cta)
   if (!filtered.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No roles match the current filters. Try clearing them.</p>'; return; }
   el.innerHTML = filtered.map(j => renderJobCard(j)).join('');
 }
@@ -1475,13 +1442,16 @@ function renderJobCard(j) {
   const desc = j.description ? esc(String(j.description).slice(0, 220)) + (String(j.description).length > 220 ? '…' : '') : '';
   const skillChips = skills.slice(0, 5).map(s => '<span class="skill-chip">' + esc(s) + '</span>').join('')
     + (skills.length > 5 ? '<span class="skill-chip more">+' + (skills.length - 5) + '</span>' : '');
-  // v5: referral amount visible only to Partners (referrers care; seekers don't)
   const referrerBlock = (CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0))
     ? '<span class="referral-coin">🪙 ' + fmtINR(j.referral_amount_inr) + ' referral</span>'
     : '<span></span>';
-  const safeId = (j.id || '').replace(/'/g, "\\'");
-  const safeTitle = esc(j.title || '').replace(/'/g, "\\'");
-  const safeCo = esc(j.company || '').replace(/'/g, "\\'");
+  // v8.19-fix F2: Use jsSafe() for onclick params — esc() converts ' → &#39; which the browser
+  // HTML-decodes back to ' inside the onclick attribute, breaking JS string literals for any
+  // job title/company containing an apostrophe (e.g. "McDonald's", "O'Brien Global").
+  const jsSafe = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+  const safeId    = jsSafe(j.id);
+  const safeTitle = jsSafe(j.title);
+  const safeCo    = jsSafe(j.company);
   // v7.7: button follows the ACTIVE VIEW (what user is currently browsing as)
   let actionBtn;
   if (CURRENT_ACTIVE_VIEW === 'partner') {
@@ -1531,10 +1501,12 @@ function openJobDetail(jobId) {
     ? fmtINR(j.ctc_min_inr) + ' – ' + fmtINR(j.ctc_max_inr) + ' LPA'
     : (j.budget_text || 'Competitive');
   const isPartner = CURRENT_ACTIVE_VIEW === 'partner';
-  const isBoth    = false; // v7.7: "both" users see whichever view they're in; no dual buttons
-  const safeId = (j.id || '').replace(/'/g,"\\'");
-  const safeTitle = esc(j.title || '').replace(/'/g,"\\'");
-  const safeCo = esc(j.company || '').replace(/'/g,"\\'");
+  const isBoth    = false;
+  // v8.19-fix F3: Same jsSafe() fix as renderJobCard.
+  const jsSafe = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+  const safeId    = jsSafe(j.id);
+  const safeTitle = jsSafe(j.title);
+  const safeCo    = jsSafe(j.company);
   let actionHtml;
   if (isPartner) {
     actionHtml = `<button class="btn brand-orange" onclick="closeModal('jd-modal'); openReferModal('${safeId}');">Refer a Candidate</button>`;
@@ -1578,10 +1550,7 @@ function openJobDetail(jobId) {
   openModal('jd-modal');
 }
 
-// Job Seeker signup wizard
 function applyPwdVisibility() {
-  // Google-authenticated users have no password — hide the Create/Confirm Password
-  // fields on both signup forms when a Google sign-in is in effect.
   const hide = !!googleVerifiedEmail;
   ['js-pwd-block', 'pt-pwd-block'].forEach(function(id) {
     const el = document.getElementById(id);
@@ -1659,7 +1628,7 @@ async function jsSubmit() {
       totalExperience: v('js-totalexp'), domain: v('js-domain'),
       noticePeriod: v('js-notice'), currentCTC: v('js-curctc'), expectedCTC: v('js-expctc'),
       reasonForChange: v('js-reason'), source: v('js-source'), referredBy: v('js-referred'),
-      termsAgree: 'true', cfToken: cf, emailVerifiedVia: (googleVerifiedEmail && googleVerifiedEmail === email) ? 'Google' : '',
+      termsAgree: 'true', cfToken: cf,
       emailVerifiedVia: (googleVerifiedEmail && googleVerifiedEmail === email) ? 'Google' : '',
       ua: navigator.userAgent || ''
     });
@@ -1691,7 +1660,7 @@ async function jsSubmit() {
       console.error('[CV upload failed]', uj);
       showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
     }
-    else          showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
+    else showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
     setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
@@ -1700,7 +1669,6 @@ async function jsSubmit() {
   }
 }
 
-// Partner signup
 function openPartnerSignup() {
   document.getElementById('pt-result').style.display = 'none';
   if (googleVerifiedEmail) {
@@ -1788,7 +1756,6 @@ async function ptSubmit() {
   }
 }
 
-// Apply for Job — with prefill, validation, file upload
 function openApplyModal(jobId, title, company) {
   if (!CURRENT_EMAIL) { alert('Please sign in first.'); openLoginModal(); return; }
   if (CURRENT_ACTIVE_VIEW === 'partner') {
@@ -1800,19 +1767,17 @@ function openApplyModal(jobId, title, company) {
   document.getElementById('apply-title').textContent = 'Apply: ' + title;
   document.getElementById('apply-sub').textContent = 'at ' + company;
   document.getElementById('ap-result').style.display = 'none';
-  // Prefill from profile (issue #12)
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-  // Accept both camelCase (v7.7 normalized) and snake_case (raw Supabase) keys
   const pf = CURRENT_PROFILE || {};
   set('ap-email', CURRENT_EMAIL);
   set('ap-phone', pf.phone || pf.contact_phone || '');
   set('ap-altphone', pf.altPhone || pf.alt_phone || '');
   set('ap-linkedin', pf.linkedin || '');
   set('ap-curcompany', pf.currentCompany || pf.current_company || '');
-  set('ap-curdesig', pf.designation || '');
+  // v8.19-fix F4: try multiple field aliases — profile may store designation under different keys
+  set('ap-curdesig', pf.designation || pf.current_designation || pf.currentDesignation || '');
   set('ap-curcity', pf.city || pf.current_city || '');
   set('ap-totalexp', pf.totalExp != null ? pf.totalExp : (pf.total_exp || ''));
-  // CV file picker hint
   const cv = document.getElementById('ap-cv');
   if (cv) {
     cv.value = '';
@@ -1825,7 +1790,6 @@ function openApplyModal(jobId, title, company) {
       }
     };
   }
-  // Live PAN validation
   const pan = document.getElementById('ap-pan');
   if (pan) pan.oninput = () => {
     pan.value = pan.value.toUpperCase();
@@ -1834,17 +1798,13 @@ function openApplyModal(jobId, title, company) {
     const h = document.getElementById('ap-pan-hint');
     if (h) { h.textContent = ok ? '5 letters + 4 digits + 1 letter' : 'Invalid PAN format'; h.className = 'field-hint ' + (ok ? '' : 'err'); }
   };
-  // Date min = today
   const dt = document.getElementById('ap-joindate');
   if (dt) { const t = new Date(); dt.min = t.toISOString().slice(0,10); }
-  // v6: populate skill checkbox grid from the job's skills list
   renderApplySkillGrid(jobId);
   openModal('apply-modal');
 }
 
 async function apSubmit() {
-  // v7 hardening: wrap in try/catch + log full error to console.
-  // Always show ANY error to the user as a result message.
   try {
     return await _apSubmitInner();
   } catch (err) {
@@ -1857,7 +1817,6 @@ async function apSubmit() {
 async function _apSubmitInner() {
   const _g = id => document.getElementById(id);
   const v = id => (_g(id) ? (_g(id).value || '').trim() : '');
-  // v5: every field has a friendly error message
   const required = [
     ['ap-phone','Phone'], ['ap-linkedin','LinkedIn URL'],
     ['ap-curcity','Current City'], ['ap-totalexp','Total Years Experience'],
@@ -1880,11 +1839,9 @@ async function _apSubmitInner() {
   if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above) — you selected ' + skillsArr.length + '.', false);
   const elgWords = v('ap-eligibility').split(/\s+/).filter(Boolean).length;
   if (elgWords < 20) return showResult('ap-result', '"Why you fit" needs at least 20 words (you have ' + elgWords + ').', false);
-  // Join date must be today or future
   const jd = new Date(v('ap-joindate'));
   const today = new Date(); today.setHours(0,0,0,0);
   if (isNaN(jd.getTime()) || jd < today) return showResult('ap-result', 'Earliest Join Date must be today or later.', false);
-  // v6: ref1 validation — email + phone format
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ap-ref1-email'))) return showResult('ap-result', 'Reference 1 Email looks invalid.', false);
   if (!PHONE_RX.test(v('ap-ref1-phone'))) return showResult('ap-result', 'Reference 1 Phone must be 10–15 digits.', false);
   const cvFile = document.getElementById('ap-cv').files[0];
@@ -1893,11 +1850,11 @@ async function _apSubmitInner() {
   const btn = document.querySelector('#apply-modal .btn:not(.secondary)');
   btn.disabled = true; btn.textContent = 'Uploading CV…';
   try {
-    // Step 1 — upload CV with context=application (doesn't overwrite profile CV)
     const b64 = await fileToBase64(cvFile);
     const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL) + '&context=application', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
+      // v8.19-fix F5: mimeType fallback — some browsers return empty string for cvFile.type
+      body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type || 'application/octet-stream' })
     });
     const uj = await ur.json();
     if (uj.error) {
@@ -1907,7 +1864,6 @@ async function _apSubmitInner() {
     }
     const cvPath = uj.path, cvFilename = uj.filename || cvFile.name;
     btn.textContent = 'Submitting application…';
-    // Step 2 — submit application
     const params = new URLSearchParams({
       action: 'oppsSubmitApplication',
       email: CURRENT_EMAIL, jobId: v('ap-jobid'),
@@ -1938,7 +1894,6 @@ async function _apSubmitInner() {
   }
 }
 
-// KYC
 function openKYCModal() { openModal('kyc-modal'); }
 async function kycSubmit() {
   const v = id => document.getElementById(id).value.trim();
@@ -1957,7 +1912,7 @@ async function kycSubmit() {
   if (!/^\d{4}$/.test(last4)) return showResult('kyc-result', 'Last 4 digits must be numeric.', false);
   if (chequeFile.size > 5 * 1024 * 1024) return showResult('kyc-result', 'Cheque file too large (max 5 MB).', false);
   try {
-    showResult('kyc-result', 'Uploading cancelled cheque\u2026', true);
+    showResult('kyc-result', 'Uploading cancelled cheque…', true);
     const _cb64 = await fileToBase64(chequeFile);
     const _cur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCheque&email=' + encodeURIComponent(CURRENT_EMAIL), {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1984,7 +1939,6 @@ async function kycSubmit() {
   } catch (err) { showResult('kyc-result', err.message, false); }
 }
 
-// Refer a candidate — backend dedup
 function openReferModal(preselectJobId) {
   if (!CURRENT_EMAIL) { alert('Please sign in first.'); openLoginModal(); return; }
   if (CURRENT_USER_TYPE !== 'partner' && CURRENT_USER_TYPE !== 'both') {
@@ -1996,10 +1950,8 @@ function openReferModal(preselectJobId) {
   }
   const sel = document.getElementById('ref-job');
   if (preselectJobId && sel) sel.value = preselectJobId;
-  // v5: render mandatory skill assessment for the chosen job
   renderReferSkillAssessment(sel ? sel.value : '');
   if (sel) sel.onchange = () => renderReferSkillAssessment(sel.value);
-  // Reset textareas + counters
   const wf = document.getElementById('ref-whyfit'); if (wf) { wf.value=''; updateWordCount(wf, 'ref-whyfit-count', 15); }
   document.getElementById('ref-result').style.display = 'none';
   openModal('refer-modal');
@@ -2007,7 +1959,6 @@ function openReferModal(preselectJobId) {
 async function refSubmit() {
   const v = id => document.getElementById(id).value.trim();
   if (!CURRENT_EMAIL) return showResult('ref-result', 'Not signed in.', false);
-  // v5: comprehensive validation
   if (!v('ref-name')) return showResult('ref-result', 'Candidate name is required.', false);
   if (!v('ref-email')) return showResult('ref-result', 'Candidate email is required.', false);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ref-email'))) return showResult('ref-result', 'Candidate email format invalid.', false);
@@ -2017,7 +1968,6 @@ async function refSubmit() {
   if (!LINKEDIN_RX.test(v('ref-linkedin'))) return showResult('ref-result', 'Enter a valid LinkedIn profile URL (https://linkedin.com/in/...).', false);
   const whyWords = v('ref-whyfit').split(/\s+/).filter(Boolean).length;
   if (whyWords < 15) return showResult('ref-result', '"Why a Good Fit?" needs at least 15 words (you have ' + whyWords + ').', false);
-  // Skill assessment must be fully rated
   const sk = _collectSkillRatings();
   if (!sk.allFilled) return showResult('ref-result', 'Please rate the candidate on every skill in the Skill Assessment.', false);
   const avgRating = sk.ratings.reduce((a,r) => a + r.rating, 0) / Math.max(1, sk.ratings.length);
@@ -2062,7 +2012,6 @@ async function refSubmit() {
   } catch (err) { showResult('ref-result', err.message, false); }
 }
 
-// Dashboard (role-aware — partners see partner widgets, seekers see apps)
 async function loadDashboard() {
   if (!CURRENT_EMAIL) return;
   document.getElementById('dashboard-section').style.display = '';
@@ -2070,10 +2019,8 @@ async function loadDashboard() {
   const body = document.getElementById('dashboard-body');
   body.innerHTML = '<p style="text-align:center;color:var(--muted);">Loading…</p>';
 
-  // Render partner dashboard if user IS a partner AND currently viewing as partner
   const showingPartner = (CURRENT_USER_TYPE === 'partner') || (CURRENT_USER_TYPE === 'both' && CURRENT_ACTIVE_VIEW === 'partner');
   if (showingPartner) {
-    // Pending banner — use partnerStatus from opps_partners (more accurate than opps_users.approval_status)
     const partnerStatus = String((CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus) || '').toLowerCase();
     if (partnerStatus === 'pending' || partnerStatus === '') {
       const ps = String((CURRENT_PROFILE && CURRENT_PROFILE.partnerStatus) || 'Pending');
@@ -2092,7 +2039,6 @@ async function loadDashboard() {
         return;
       }
     }
-    // Approved partner — load partner dashboard
     try {
       const pr = await apiFetch(SCRIPT_URL + '?action=oppsPartnerDashboard&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now());
       const pj = await pr.json();
@@ -2110,7 +2056,6 @@ async function loadDashboard() {
     return;
   }
 
-  // Job seeker dashboard
   try {
     const ar = await apiFetch(SCRIPT_URL + '?action=oppsMyApplications&email=' + encodeURIComponent(CURRENT_EMAIL) + '&_t=' + Date.now());
     const aj = await ar.json();
@@ -2175,7 +2120,6 @@ function renderAppsTable(apps) {
     '</tbody></table>';
 }
 
-// ===== Console (v8 parity port): tabbed logged-in workspace =====
 let DASH_DATA = {};
 let CONSOLE_TAB = 'overview';
 const PROFILE_FIELDS = [
@@ -2396,6 +2340,5 @@ function renderSettingsTab() {
 // Bootstrap
 loadJobs();
 </script>
-
 </body>
 </html>
