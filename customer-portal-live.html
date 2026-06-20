@@ -643,7 +643,7 @@ async function openCand(id){
         <div><label>Email</label><strong>${esc(c.email)}</strong></div>
         <div><label>Experience</label><strong>${c.exp} yrs</strong></div>
         <div><label>Location</label><strong>${esc(c.city)}</strong></div>
-        <div><label>Expected CTC</label><strong>${c.ctc} LPA</strong></div>
+        <div><label>Expected CTC</label><strong>${fmtCTC(c.ctc)}</strong></div>
         <div><label>Notice</label><strong>${c.notice} days</strong></div>
         <div><label>Phone</label><strong class="mask">🔒 locked until cleared</strong></div>
         <div><label>Full CV</label><strong class="mask">🔒 locked until cleared</strong></div>
@@ -658,7 +658,7 @@ async function openCand(id){
       <div><label>Phone</label><strong>${esc(c.phone)}</strong></div>
       <div><label>Experience</label><strong>${c.exp} yrs</strong></div>
       <div><label>Location</label><strong>${esc(c.city)}</strong></div>
-      <div><label>Expected CTC</label><strong>${c.ctc} LPA</strong></div>
+      <div><label>Expected CTC</label><strong>${fmtCTC(c.ctc)}</strong></div>
       <div><label>Notice</label><strong>${c.notice} days</strong></div>
       <div><label>LinkedIn</label><strong>${esc(c.linkedin)}</strong></div>
     </div>`;
@@ -900,6 +900,7 @@ document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-ove
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function fmtDate(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtCTC(v){ if(v==null||v==='') return '—'; const n=Number(v); if(isNaN(n)) return esc(String(v)); return n>=100000 ? (n/100000).toFixed(1).replace(/\.0$/,'')+' LPA' : (n>0? n+' LPA' : '—'); }
 function fmtDateTime(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
 function nowISO(){ return new Date().toISOString(); }
 function todayISODate(){ return new Date().toISOString().slice(0,10); }
