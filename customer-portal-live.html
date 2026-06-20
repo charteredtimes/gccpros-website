@@ -710,26 +710,32 @@ function cvHTML(a){
       <div><b>${esc(a.candidate.name)} — CV</b></div>
       <div class="locked">In-portal viewer · download disabled by policy</div>
       <button class="btn small" style="margin-top:10px;" onclick="openCVWindow('${a.id}')">Open CV in a new window</button>
-      <div class="no-dl">🔒 Download, right-click save and print are disabled. Use the view-only link below to share with an internal interviewer.</div>
+      <div class="no-dl">🔒 Opens the candidate's actual CV in a view-only window. If no CV was uploaded, you'll be told.</div>
     </div>
     <div class="share-box">
       <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">Share with an internal interviewer</label>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <input id="share-link" readonly value="${shareLink(a)}">
-        <button class="btn small secondary" onclick="copyShare()">Copy link</button>
-        <button class="btn small" onclick="openCVWindow('${a.id}')">Open link</button>
+        <input id="share-link" readonly placeholder="Click “Generate link” to create a 7-day view-only link">
+        <button class="btn small" onclick="genShare('${a.id}')">Generate link</button>
+        <button class="btn small secondary" onclick="copyShare()">Copy</button>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px;">View-only link, scoped to your organization — recipients read the CV in-browser but cannot download it; expires in 7 days. (Test build: "Open link" previews the CV in a new tab; the live version serves a watermarked, no-download viewer at this URL.)</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">Creates a secure, view-only link (expires in 7 days). Recipients read the CV in-browser — no download button.</div>
     </div>`;
 }
 function shareLink(a){ return 'https://portal.gccpros.com/cv/'+SESSION.companyId+'/'+a.id+'?t=share_'+Math.random().toString(36).slice(2,10); }
 function copyShare(){ const i=document.getElementById('share-link'); i.select(); try{document.execCommand('copy');}catch(_){ } toast('Share link copied'); }
-function openCVWindow(id){
+async function openCVWindow(id){
   const a=myApps().find(x=>x.id===id); if(!a) return;
   if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full CV.'); return; }
-  const url=URL.createObjectURL(new Blob([buildSampleCV(a)],{type:'text/html'}));
-  const w=window.open(url,'_blank'); if(!w) toast('Allow pop-ups to open the CV preview.');
-  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  const w=window.open('about:blank','_blank'); // open synchronously so the pop-up isn't blocked
+  const res=await custCall('custCvUrl',{id});
+  if(res && res.url){ if(w){ w.location=res.url; } else { window.open(res.url,'_blank'); } }
+  else { if(w) w.close(); toast(res && res.error==='no_cv' ? 'No CV file was uploaded for this candidate.' : 'Could not open CV ('+((res&&res.error)||'error')+')'); }
+}
+async function genShare(id){
+  const res=await custCall('custCreateShareLink',null,{id});
+  if(res && res.token){ const i=document.getElementById('share-link'); if(i){ i.value='https://www.gccpros.com/cv-view.html?t='+res.token; } toast('Share link created — valid 7 days'); }
+  else toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not create link ('+((res&&res.error)||'error')+')');
 }
 function buildSampleCV(a){
   const c=a.candidate; const role=roleById(a.roleId);

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- GCCPROs — view-only CV viewer. Opened via a share link: cv-view.html?t=<token>.
+     Validates the token against gccpros-cust-api (cvShareResolve) and shows the CV in-browser. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Candidate CV (view only)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:#F8F7F4;color:#1D2226;}
+  .bar{background:#fff;border-bottom:1px solid #E2E8F0;padding:10px 18px;display:flex;align-items:center;gap:12px;}
+  .brand{font-weight:700;color:#0A66C2;font-size:15px;}
+  .tag{font-size:10px;letter-spacing:1.5px;color:#E85D04;font-weight:700;text-transform:uppercase;}
+  .who{margin-left:auto;font-size:13px;color:#64748B;}
+  .note{background:#FFFBEB;border-bottom:1px solid #F59E0B;color:#92400E;font-size:12px;padding:7px 18px;text-align:center;}
+  .stage{display:flex;align-items:center;justify-content:center;height:calc(100% - 90px);color:#64748B;font-size:15px;padding:30px;text-align:center;}
+  iframe{display:none;width:100%;height:calc(100% - 90px);border:none;background:#fff;}
+</style>
+</head>
+<body oncontextmenu="return false">
+  <div class="bar"><span class="brand">GCC<span style="color:#1D2226;">PROs</span></span><span class="tag">View-only CV</span><span class="who" id="who"></span></div>
+  <div class="note">🔒 Shared securely via GCCPROs for interview use only. Please do not redistribute. This link expires automatically.</div>
+  <div class="stage" id="stage">Loading the CV…</div>
+  <iframe id="frame" title="Candidate CV"></iframe>
+<script>
+  const API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-cust-api';
+  const t=new URLSearchParams(location.search).get('t');
+  const stage=document.getElementById('stage'), frame=document.getElementById('frame');
+  (async()=>{
+    if(!t){ stage.textContent='This link is invalid (no token).'; return; }
+    try{
+      const r=await fetch(API+'?action=cvShareResolve&token='+encodeURIComponent(t));
+      const j=await r.json();
+      if(j && j.url){
+        document.getElementById('who').textContent = j.name ? ('Candidate: '+j.name) : '';
+        stage.style.display='none'; frame.src=j.url; frame.style.display='block';
+      } else {
+        stage.textContent = j && j.error==='expired' ? 'This share link has expired.'
+          : j && j.error==='invalid_or_revoked' ? 'This share link is no longer valid.'
+          : j && j.error==='no_cv' ? 'No CV file is available for this candidate.'
+          : 'Sorry — the CV could not be loaded.';
+      }
+    }catch(e){ stage.textContent='Could not reach the server. Please try again.'; }
+  })();
+</script>
+</body>
+</html>
