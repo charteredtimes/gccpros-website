@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!-- GCCPROs — Admin Customer Management (live). Manage customers, logos, user access, audit log,
+     and a per-customer unified dashboard. Auth: GCP_ADMIN_KEY (same key as admin-unified). -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Customer Management (Admin)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1D2226;--gold:#0A66C2;--brand-orange:#E85D04;--cream:#F8F7F4;--muted:#64748B;--border:#E2E8F0;--green:#059669;--red:#DC2626;--amber:#F59E0B;--brand-blue:#1E40AF;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;font-size:15px;}
+.container{max-width:1280px;margin:0 auto;padding:0 24px;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:12px 0;position:sticky;top:0;z-index:100;}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.brand{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;}
+.brand-mark{color:var(--gold);}
+.brand-tag{font-size:9.5px;letter-spacing:2px;color:var(--brand-orange);margin-left:8px;font-weight:700;text-transform:uppercase;}
+.btn{padding:9px 16px;background:var(--gold);color:#fff;border:none;border-radius:5px;font-weight:600;font-size:13.5px;font-family:inherit;cursor:pointer;}
+.btn:hover{filter:brightness(.93);}.btn.small{padding:6px 11px;font-size:12.5px;}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--border);}.btn.secondary:hover{background:var(--cream);filter:none;}
+.btn.danger{background:var(--red);}.btn.ok{background:var(--green);}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin:22px 0;}
+.tab{background:none;border:none;padding:11px 18px;font-family:inherit;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.view{display:none;}.view.active{display:block;}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+th,td{padding:11px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle;}
+th{background:var(--cream);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+tr:last-child td{border-bottom:none;}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10.5px;font-weight:600;}
+.b-green{background:#D1FAE5;color:var(--green);}.b-grey{background:#EEF1F4;color:var(--muted);}.b-amber{background:#FEF3C7;color:#92400E;}
+.logo{width:30px;height:30px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;}
+.field{margin-top:12px;}.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600;}
+.field input,.field select{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:5px;font-size:14px;font-family:inherit;}
+.field-row{display:flex;gap:12px;flex-wrap:wrap;}.field-row>*{flex:1;min-width:150px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(29,34,38,.6);display:none;align-items:flex-start;justify-content:center;z-index:200;overflow-y:auto;padding:28px 14px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;max-width:620px;width:100%;border-radius:10px;padding:24px 28px;position:relative;}
+.modal h3{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;}
+.modal .close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:26px;color:var(--muted);cursor:pointer;}
+.login-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px;}
+.login-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:36px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(10,102,194,.08);}
+.login-card h1{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:6px;}.login-card p{color:var(--muted);font-size:13px;margin-bottom:18px;}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.kpi{background:#fff;padding:16px;border-radius:8px;text-align:center;border:1px solid var(--border);}
+.kpi-n{font-size:24px;font-weight:700;font-family:'Playfair Display',serif;}.kpi-l{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.funnel-row{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px;}
+.funnel-bar{height:16px;background:var(--gold);border-radius:3px;}
+.muted{color:var(--muted);}.err{color:var(--red);}.empty{text-align:center;color:var(--muted);padding:30px;}
+.stage-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.stage-pill{font-size:11px;background:var(--cream);border-radius:10px;padding:2px 9px;}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="container topbar-inner">
+  <span class="brand">GCC<span class="brand-mark">PROs</span><span class="brand-tag">ADMIN · CUSTOMER MANAGEMENT</span></span>
+  <div id="top-right" style="display:none;"><button class="btn secondary small" onclick="signOut()">Lock</button></div>
+</div></header>
+
+<!-- KEY GATE -->
+<section id="gate" class="login-wrap"><div class="login-card">
+  <h1>Customer Management</h1>
+  <p>GCCPROs internal. Enter your <code>GCP_ADMIN_KEY</code> (same key as the admin console). Cached in this tab only.</p>
+  <div class="field"><label>Admin key</label><input id="adminkey" type="password" placeholder="GCP_ADMIN_KEY" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <div id="gate-msg" class="err" style="display:none;margin-top:10px;font-size:13px;"></div>
+  <button class="btn" style="width:100%;margin-top:16px;" onclick="doLogin()">Unlock</button>
+</div></section>
+
+<!-- APP -->
+<div id="app" style="display:none;"><div class="container">
+  <div class="tabs">
+    <button class="tab active" data-v="customers" onclick="switchView('customers')">Customers</button>
+    <button class="tab" data-v="users" onclick="switchView('users')">User Access</button>
+    <button class="tab" data-v="dashboard" onclick="switchView('dashboard')">Unified Dashboard</button>
+    <button class="tab" data-v="audit" onclick="switchView('audit')">Audit Log</button>
+  </div>
+
+  <div class="view active" id="view-customers">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+      <p class="muted" style="font-size:13.5px;">Each customer is a hiring workspace. Logo, brand colour and authorized domains drive the customer portal's white-label.</p>
+      <button class="btn" onclick="openCustomerModal()">+ Add customer</button>
+    </div>
+    <table><thead><tr><th>Customer</th><th>Domains</th><th>Users</th><th>Roles</th><th>Apps</th><th>Status</th><th>Action</th></tr></thead><tbody id="cust-body"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table>
+  </div>
+
+  <div class="view" id="view-users">
+    <div class="field-row" style="margin-bottom:14px;align-items:end;">
+      <div class="field" style="margin:0;"><label>Customer</label><select id="u-cust" onchange="loadUsers()"></select></div>
+      <button class="btn" onclick="openUserModal()">+ Add user access</button>
+    </div>
+    <table><thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Status</th><th>Added</th><th>Action</th></tr></thead><tbody id="users-body"><tr><td colspan="6" class="empty">Select a customer.</td></tr></tbody></table>
+  </div>
+
+  <div class="view" id="view-dashboard">
+    <div class="kpi-row" id="dash-kpis"></div>
+    <div id="dash-cards"></div>
+  </div>
+
+  <div class="view" id="view-audit">
+    <table><thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Detail</th></tr></thead><tbody id="audit-body"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table>
+  </div>
+</div></div>
+
+<!-- CUSTOMER MODAL -->
+<div class="modal-overlay" id="cust-overlay"><div class="modal"><button class="close" onclick="closeModal('cust-overlay')">&times;</button>
+  <h3 id="cust-modal-title">Add customer</h3>
+  <input type="hidden" id="c-id">
+  <div class="field"><label>Name *</label><input id="c-name" placeholder="Acme GCC"></div>
+  <div class="field-row">
+    <div class="field"><label>Short name</label><input id="c-short" placeholder="Acme"></div>
+    <div class="field"><label>Brand colour (hex)</label><input id="c-color" placeholder="#0A66C2"></div>
+  </div>
+  <div class="field"><label>Authorized domains (comma-separated)</label><input id="c-domains" placeholder="acme.com, acmegcc.com"></div>
+  <div class="field-row">
+    <div class="field"><label>Logo initials</label><input id="c-initials" placeholder="AC" maxlength="3"></div>
+    <div class="field"><label>Status</label><select id="c-status"><option value="active">active</option><option value="suspended">suspended</option></select></div>
+  </div>
+  <div class="field"><label>Logo image URL (optional)</label><input id="c-logo" placeholder="https://… (leave blank to use initials)"></div>
+  <div class="field"><label>Tagline</label><input id="c-tagline" placeholder="Global Capability Center"></div>
+  <div id="cust-err" class="err" style="display:none;margin-top:10px;font-size:13px;"></div>
+  <div style="margin-top:18px;display:flex;gap:10px;"><button class="btn" onclick="saveCustomer()">Save</button><button class="btn secondary" onclick="closeModal('cust-overlay')">Cancel</button></div>
+</div></div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="user-overlay"><div class="modal"><button class="close" onclick="closeModal('user-overlay')">&times;</button>
+  <h3>Add user access</h3>
+  <div class="field"><label>Customer</label><select id="nu-cust"></select></div>
+  <div class="field"><label>Email *</label><input id="nu-email" placeholder="person@customer.com"></div>
+  <div class="field-row">
+    <div class="field"><label>Full name</label><input id="nu-name" placeholder="Full name"></div>
+    <div class="field"><label>Role</label><select id="nu-role"><option value="hiring_manager">hiring_manager</option><option value="viewer">viewer</option></select></div>
+  </div>
+  <div id="user-err" class="err" style="display:none;margin-top:10px;font-size:13px;"></div>
+  <div style="margin-top:18px;display:flex;gap:10px;"><button class="btn" onclick="saveUser()">Add</button><button class="btn secondary" onclick="closeModal('user-overlay')">Cancel</button></div>
+</div></div>
+
+<script>
+const API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-cust-api';
+let KEY = sessionStorage.getItem('gccpros_admin_key') || '';
+let CUSTOMERS = [];
+
+async function api(action, params, body){
+  const qs=new URLSearchParams(Object.assign({action},params||{})).toString();
+  const opt={ headers:{ 'Authorization':'Bearer '+KEY } };
+  if(body){ opt.method='POST'; opt.headers['Content-Type']='application/json'; opt.body=JSON.stringify(body); }
+  try{ const r=await fetch(API+'?'+qs, opt); return await r.json(); }catch(e){ return {error:String(e&&e.message||e)}; }
+}
+
+async function doLogin(){
+  const k=(document.getElementById('adminkey').value||'').trim();
+  if(!k){ return; }
+  KEY=k;
+  const res=await api('custAdminListCustomers');
+  if(res && res.error){ const m=document.getElementById('gate-msg'); m.style.display='block'; m.textContent = res.error==='admin_unauthorized' ? 'That admin key was not accepted.' : ('Error: '+res.error); return; }
+  sessionStorage.setItem('gccpros_admin_key', KEY);
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('top-right').style.display='';
+  CUSTOMERS = res.customers||[];
+  renderCustomers(); fillCustomerSelects(); switchView('customers');
+}
+function signOut(){ sessionStorage.removeItem('gccpros_admin_key'); location.reload(); }
+
+async function refreshCustomers(){ const res=await api('custAdminListCustomers'); CUSTOMERS=(res&&res.customers)||[]; renderCustomers(); fillCustomerSelects(); }
+function renderCustomers(){
+  const b=document.getElementById('cust-body');
+  if(!CUSTOMERS.length){ b.innerHTML='<tr><td colspan="7" class="empty">No customers yet.</td></tr>'; return; }
+  b.innerHTML=CUSTOMERS.map(c=>{
+    const logo = c.logo_url ? `<img src="${esc(c.logo_url)}" style="width:30px;height:30px;object-fit:contain;border-radius:6px;">` : `<span class="logo" style="background:${esc(c.brand_color||'#0A66C2')}">${esc(c.logo_initials||'GP')}</span>`;
+    const st = c.status==='active'?'<span class="badge b-green">active</span>':'<span class="badge b-grey">'+esc(c.status||'')+'</span>';
+    return `<tr><td><div style="display:flex;align-items:center;gap:10px;">${logo}<div><strong>${esc(c.name)}</strong><br><span class="muted" style="font-size:11px;">${esc(c.tagline||'')}</span></div></div></td>
+      <td class="muted" style="font-size:12px;">${esc((c.domains||[]).join(', ')||'—')}</td>
+      <td>${c.user_count||0}</td><td>${c.job_count||0}</td><td>${c.application_count||0}</td><td>${st}</td>
+      <td><button class="btn small secondary" onclick='editCustomer(${JSON.stringify(c.id)})'>Edit</button></td></tr>`;
+  }).join('');
+}
+function fillCustomerSelects(){
+  const opts=CUSTOMERS.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  ['u-cust','nu-cust'].forEach(id=>{ const e=document.getElementById(id); if(e) e.innerHTML=opts; });
+}
+
+function openCustomerModal(){
+  ['c-id','c-name','c-short','c-color','c-domains','c-initials','c-logo','c-tagline'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('c-color').value='#0A66C2'; document.getElementById('c-status').value='active';
+  document.getElementById('cust-modal-title').textContent='Add customer';
+  document.getElementById('cust-err').style.display='none';
+  openModal('cust-overlay');
+}
+function editCustomer(id){
+  const c=CUSTOMERS.find(x=>x.id===id); if(!c) return;
+  document.getElementById('c-id').value=c.id; document.getElementById('c-name').value=c.name||'';
+  document.getElementById('c-short').value=c.short_name||''; document.getElementById('c-color').value=c.brand_color||'#0A66C2';
+  document.getElementById('c-domains').value=(c.domains||[]).join(', '); document.getElementById('c-initials').value=c.logo_initials||'';
+  document.getElementById('c-logo').value=c.logo_url||''; document.getElementById('c-tagline').value=c.tagline||'';
+  document.getElementById('c-status').value=c.status||'active';
+  document.getElementById('cust-modal-title').textContent='Edit customer';
+  document.getElementById('cust-err').style.display='none';
+  openModal('cust-overlay');
+}
+async function saveCustomer(){
+  const g=id=>(document.getElementById(id).value||'').trim();
+  const err=document.getElementById('cust-err');
+  if(!g('c-name')){ err.style.display='block'; err.textContent='Name is required.'; return; }
+  const body={ id:g('c-id')||undefined, name:g('c-name'), short_name:g('c-short'), brand_color:g('c-color')||'#0A66C2', domains:g('c-domains'), logo_initials:g('c-initials'), logo_url:g('c-logo'), tagline:g('c-tagline'), status:document.getElementById('c-status').value, adminActor:'admin-console' };
+  const res=await api('custAdminUpsertCustomer', null, body);
+  if(res && res.error){ err.style.display='block'; err.textContent=res.error; return; }
+  closeModal('cust-overlay'); await refreshCustomers(); toast('Customer saved');
+}
+
+async function loadUsers(){
+  const cid=document.getElementById('u-cust').value; if(!cid){ return; }
+  const res=await api('custAdminListUsers',{customer_id:cid});
+  const b=document.getElementById('users-body');
+  const users=(res&&res.users)||[];
+  if(!users.length){ b.innerHTML='<tr><td colspan="6" class="empty">No users for this customer.</td></tr>'; return; }
+  b.innerHTML=users.map(u=>`<tr><td><strong>${esc(u.email)}</strong></td><td>${esc(u.full_name||'—')}</td><td>${esc(u.role||'')}</td><td><span class="badge ${u.status==='active'?'b-green':'b-grey'}">${esc(u.status||'')}</span></td><td class="muted" style="font-size:12px;">${fmtDate(u.created_at)}</td><td><button class="btn small danger" onclick='removeUser(${JSON.stringify(u.email)})'>Remove</button></td></tr>`).join('');
+}
+function openUserModal(){ document.getElementById('nu-email').value=''; document.getElementById('nu-name').value=''; document.getElementById('nu-cust').value=document.getElementById('u-cust').value||''; document.getElementById('user-err').style.display='none'; openModal('user-overlay'); }
+async function saveUser(){
+  const email=(document.getElementById('nu-email').value||'').trim();
+  const cid=document.getElementById('nu-cust').value;
+  const err=document.getElementById('user-err');
+  if(!email||!cid){ err.style.display='block'; err.textContent='Customer and email are required.'; return; }
+  const res=await api('custAdminAddUser', null, { email, customer_id:cid, full_name:document.getElementById('nu-name').value, role:document.getElementById('nu-role').value, adminActor:'admin-console' });
+  if(res && res.error){ err.style.display='block'; err.textContent=res.error; return; }
+  closeModal('user-overlay'); document.getElementById('u-cust').value=cid; await loadUsers(); await refreshCustomers(); toast('User access granted');
+}
+async function removeUser(email){
+  if(!confirm('Remove access for '+email+'?')) return;
+  const res=await api('custAdminRemoveUser', null, { email, adminActor:'admin-console' });
+  if(res && res.error){ toast('Error: '+res.error); return; }
+  await loadUsers(); await refreshCustomers(); toast('Access removed');
+}
+
+const STAGE_LABELS={cv_submitted:'CV Submitted',initial_screen:'Initial Screening',reviewed:'Reviewed',l1_scheduled:'L1 Scheduled',l1_feedback:'L1 Feedback',l2_scheduled:'L2 Scheduled',l2_feedback:'L2 Feedback',offer_stage:'Offer Stage',offered:'Offered',offer_accepted:'Offer Accepted',joined:'Joined',three_months:'3 Months',rejected:'Rejected'};
+async function loadDashboard(){
+  const res=await api('custAdminUnified');
+  const cs=(res&&res.customers)||[];
+  const totalApps=cs.reduce((a,c)=>a+(c.total_applications||0),0);
+  const totalRoles=cs.reduce((a,c)=>a+(c.open_roles||0),0);
+  document.getElementById('dash-kpis').innerHTML=[['Customers',cs.length],['Open roles',totalRoles],['Total applications',totalApps]].map(k=>`<div class="kpi"><div class="kpi-n">${k[1]}</div><div class="kpi-l">${k[0]}</div></div>`).join('');
+  document.getElementById('dash-cards').innerHTML=cs.map(c=>{
+    const max=Math.max(1,...Object.values(c.stages||{}));
+    const rows=Object.keys(c.stages||{}).map(s=>`<div class="funnel-row"><div style="width:140px;text-align:right;">${esc(STAGE_LABELS[s]||s)}</div><div class="funnel-bar" style="width:${(c.stages[s]/max)*200}px;background:${esc(c.brand_color||'#0A66C2')};"></div><strong>${c.stages[s]}</strong></div>`).join('') || '<div class="muted" style="font-size:12px;">No applications yet.</div>';
+    return `<div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span class="logo" style="background:${esc(c.brand_color||'#0A66C2')}">${esc(c.logo_initials||'GP')}</span><strong style="font-size:15px;">${esc(c.name)}</strong><span class="muted" style="font-size:12px;">· ${c.open_roles||0} open roles · ${c.total_applications||0} applications</span></div>${rows}</div>`;
+  }).join('') || '<div class="empty">No customers.</div>';
+}
+
+async function loadAudit(){
+  const res=await api('custAdminAudit');
+  const a=(res&&res.audit)||[];
+  const b=document.getElementById('audit-body');
+  if(!a.length){ b.innerHTML='<tr><td colspan="4" class="empty">No admin actions logged yet.</td></tr>'; return; }
+  b.innerHTML=a.map(e=>`<tr><td class="muted" style="white-space:nowrap;">${fmtDateTime(e.created_at)}</td><td>${esc(e.actor||'')}</td><td><span class="badge b-amber">${esc(e.action||'')}</span></td><td class="muted" style="font-size:12px;">${esc(JSON.stringify(e.detail||{}))}</td></tr>`).join('');
+}
+
+function switchView(v){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.v===v));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  if(v==='users'){ if(!document.getElementById('u-cust').value && CUSTOMERS[0]) document.getElementById('u-cust').value=CUSTOMERS[0].id; loadUsers(); }
+  if(v==='dashboard') loadDashboard();
+  if(v==='audit') loadAudit();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function fmtDate(d){if(!d)return'—';const x=new Date(d);return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtDateTime(d){if(!d)return'—';const x=new Date(d);return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}
+function toast(msg){let t=document.getElementById('_t');if(!t){t=document.createElement('div');t.id='_t';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:8px;font-size:13px;z-index:9999;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',2400);}
+
+// auto-unlock if key already cached this session
+if(KEY){ document.getElementById('adminkey').value=KEY; doLogin(); }
+</script>
+</body>
+</html>
