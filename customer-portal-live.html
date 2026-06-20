@@ -395,7 +395,7 @@ function mapApp(x){
   return { id:x.id, companyId:SESSION.companyId, roleId:x.role_id, source:x.source, stage:x.stage,
     duplicateStatus:x.duplicate_status, accessRevoked:false, received:(x.received||'').slice(0,10),
     candidate:{ name:x.name, email:x.email, phone:x.phone, exp:x.experience, city:x.city, ctc:x.expected_ctc, notice:x.notice, linkedin:x.linkedin },
-    coreNotes:[], hmNotes:[], history:[], referral:null,
+    coreNotes:[], hmNotes:[], history:[], referral:x.referral||null,
     joinDate:(['joined','three_months'].includes(x.stage)?'live':null) };
 }
 function eventText(e){
@@ -581,8 +581,11 @@ function renderRoles(){
       ? `<button class="btn small ok" onclick="toggleRole('${r.id}')">Enable</button>`
       : r.status==='pending' ? `<span class="locked">awaiting approval</span>`
       : `<button class="btn small secondary" onclick="toggleRole('${r.id}')">Disable</button>`;
+    const share = r.status==='open'
+      ? `<button class="btn small" style="background:#25D366;border-color:#25D366;color:#fff;" title="Share on WhatsApp + copy link" onclick="shareJobWA('${esc(r.code||r.id)}', ${JSON.stringify(r.title||'')})">↗ Share</button>`
+      : '';
     return `<tr><td>${esc(r.code||r.id)}</td><td><strong>${esc(r.title)}</strong><br><span class="locked" style="font-size:11px;">${esc(r.domain)}${(r.ctcMin||r.ctcMax)?(' · '+r.ctcMin+'–'+r.ctcMax):''}</span></td>
-      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td>${toggle}</td></tr>`;
+      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td style="white-space:nowrap;">${share} ${toggle}</td></tr>`;
   }).join('') || `<tr><td colspan="6" class="empty">No roles yet.</td></tr>`;
 }
 
@@ -736,6 +739,15 @@ async function genShare(id){
   const res=await custCall('custCreateShareLink',null,{id});
   if(res && res.token){ const i=document.getElementById('share-link'); if(i){ i.value='https://www.gccpros.com/cv-view.html?t='+res.token; } toast('Share link created — valid 7 days'); }
   else toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not create link ('+((res&&res.error)||'error')+')');
+}
+// Share an open role on WhatsApp + copy its public referral link (drives applicants & referrals)
+function shareJobWA(code, title){
+  const company=((CUSTOMERS[SESSION.companyId]||{}).name)||'GCCPROS';
+  const link='https://www.gccpros.com/opportunities.html?job='+encodeURIComponent(code);
+  const msg='🚀 We’re hiring: '+title+' at '+company+'.\n\nKnow someone great? Refer them on GCCPROS and earn a referral reward 👇\n'+link;
+  try{ navigator.clipboard && navigator.clipboard.writeText(link); }catch(_){ }
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+  toast('Opening WhatsApp · job link copied');
 }
 function buildSampleCV(a){
   const c=a.candidate; const role=roleById(a.roleId);
