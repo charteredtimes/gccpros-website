@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<!--
+  GCCPROs — Customer / Hiring-Manager Portal  (PROTOTYPE / DEMO)
+  ----------------------------------------------------------------
+  Stack target (matches opportunities + admin-unified):
+    Firebase Auth (Google / Microsoft SSO) + Supabase edge fn 'gccpros-api' + Supabase Storage.
+  This file runs in DEMO_MODE with in-memory mock data so every flow is clickable
+  without a backend. Flip DEMO_MODE=false and the apiFetch() calls below hit the
+  same SCRIPT_URL the rest of your app uses. New backend actions it expects are
+  listed in BACKEND-SPEC.md (shipped alongside this file).
+
+  Implemented per requirements:
+   - Per-email allow-list SSO (Google/Microsoft); domain alone is NOT enough.
+   - White-label landing: customer name + logo render on login (approved corporate id).
+   - Two buckets: Direct applications + Referral applications (referrer identity hidden).
+   - Mandatory duplicate-CV gate before any contact/CV is revealed.
+       yes  -> application rejected + customer loses access.
+       no   -> full application + contact details + CV unlocked.
+   - Full lifecycle: CV Submitted -> Initial Screening -> Reviewed -> L1 Scheduled ->
+       L1 Feedback -> L2 Scheduled -> L2 Feedback -> Offer Stage -> Offered ->
+       Offer Accepted -> Joined -> 3 Months Complete (auto from join date).
+   - Shared stage control: core team AND hiring manager can advance; every change logged.
+   - Core-team notes + Hiring-manager notes per candidate (HM notes visible to admin).
+   - Hiring manager can add a job role + disable/enable existing roles.
+   - CV download disabled; "Share with interviewer" generates an internal HTML link.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Customer Hiring Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<style>
+:root{
+  --ink:#1D2226; --gold:#0A66C2; --gold-light:#70B5F9; --blue:#1E40AF; --blue-mid:#1E3A8A;
+  --brand-blue:#1E40AF; --brand-orange:#E85D04; --brand-orange-dark:#c44b00;
+  --cream:#F8F7F4; --white:#FFFFFF; --surface:#FFFFFF; --muted:#64748B; --border:#E2E8F0;
+  --green:#059669; --red:#DC2626; --amber:#F59E0B;
+  --brand:#0A66C2; /* overridden per-customer on login */
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;font-size:15px;}
+a{color:var(--gold);text-decoration:none;} a:hover{text-decoration:underline;}
+.container{max-width:1240px;margin:0 auto;padding:0 24px;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 0;position:sticky;top:0;z-index:100;}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.brand{font-family:'Playfair Display',serif;font-size:21px;color:var(--ink);font-weight:700;}
+.brand-mark{color:var(--gold);}
+.brand-tag{font-family:'Inter';font-size:9.5px;letter-spacing:2px;color:var(--brand-orange);margin-left:8px;font-weight:600;vertical-align:middle;}
+.cobrand{display:flex;align-items:center;gap:12px;}
+.cobrand .divider-v{width:1px;height:30px;background:var(--border);}
+.co-logo{width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;font-family:'Inter';letter-spacing:.5px;}
+.co-name{font-size:14px;font-weight:700;color:var(--ink);line-height:1.1;}
+.co-name small{display:block;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+.right{display:flex;gap:10px;align-items:center;}
+.btn{padding:10px 18px;background:var(--brand);color:#fff;border:none;border-radius:4px;font-weight:600;font-size:13.5px;font-family:inherit;cursor:pointer;transition:all .15s;}
+.btn:hover{filter:brightness(.92);}
+.btn.small{padding:6px 12px;font-size:12.5px;}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--border);}
+.btn.secondary:hover{background:var(--cream);filter:none;}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand);}
+.btn.ghost:hover{background:var(--cream);}
+.btn.danger{background:var(--red);} .btn.ok{background:var(--green);}
+.btn.brand-orange{background:var(--brand-orange);} .btn.brand-orange:hover{background:var(--brand-orange-dark);filter:none;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.user-pill{background:var(--cream);padding:6px 12px;border-radius:14px;font-size:12.5px;color:var(--ink);display:inline-flex;align-items:center;gap:8px;}
+.role-chip{font-size:9.5px;padding:2px 8px;border-radius:8px;background:var(--brand-orange);color:#fff;letter-spacing:.5px;font-weight:700;text-transform:uppercase;}
+
+/* ---- login ---- */
+.login-wrap{min-height:calc(100vh - 130px);display:flex;align-items:center;justify-content:center;padding:40px 16px;}
+.login-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:40px 38px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(10,102,194,.08);}
+.login-card h1{font-family:'Playfair Display',serif;font-size:27px;margin-bottom:6px;}
+.login-card .sub{color:var(--muted);font-size:13.5px;margin-bottom:24px;}
+.sso-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;background:#fff;border:1.5px solid var(--border);color:var(--ink);border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;margin-bottom:12px;transition:all .15s;}
+.sso-btn:hover{background:var(--cream);border-color:var(--brand);}
+.sso-btn svg,.sso-btn img{width:20px;height:20px;flex-shrink:0;}
+.login-note{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.5;border-top:1px solid var(--border);padding-top:16px;}
+.demo-emails{margin-top:14px;background:var(--cream);border-radius:8px;padding:12px 14px;}
+.demo-emails b{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.demo-emails button{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--border);border-radius:5px;padding:7px 10px;margin-top:7px;font-family:inherit;font-size:12.5px;cursor:pointer;color:var(--ink);}
+.demo-emails button:hover{border-color:var(--brand);}
+
+/* ---- shell ---- */
+.app{display:none;}
+.hero{background:linear-gradient(135deg,var(--ink) 0%,var(--blue-mid) 100%);color:#fff;padding:30px 0 34px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:4px;}
+.hero p{color:rgba(255,255,255,.82);font-size:14px;}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin:22px 0 22px;}
+.tab{background:none;border:none;padding:11px 18px;font-family:inherit;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.tab .cnt{background:var(--cream);border-radius:10px;padding:1px 7px;font-size:11px;margin-left:6px;color:var(--muted);}
+.tab.active .cnt{background:var(--brand);color:#fff;}
+.view{display:none;} .view.active{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px;}
+.kpi{background:#fff;padding:18px 16px;border-radius:8px;text-align:center;border:1px solid var(--border);}
+.kpi-n{font-size:26px;font-weight:700;color:var(--ink);font-family:'Playfair Display',serif;}
+.kpi-l{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:8px;}
+.filter-bar input,.filter-bar select{padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;background:#fff;}
+.filter-bar input[type=search]{flex:1;min-width:220px;}
+.seg{display:inline-flex;background:var(--cream);border-radius:8px;padding:3px;}
+.seg button{border:none;background:transparent;padding:7px 14px;border-radius:6px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;}
+.seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+th,td{padding:11px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle;}
+th{background:var(--cream);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+tr:last-child td{border-bottom:none;}
+.row-click{cursor:pointer;} .row-click:hover{background:#FAFCFF;}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10.5px;font-weight:600;white-space:nowrap;}
+.b-green{background:#D1FAE5;color:var(--green);} .b-amber{background:#FEF3C7;color:#92400E;}
+.b-red{background:#FEE2E2;color:var(--red);} .b-blue{background:#DBEAFE;color:var(--brand-blue);}
+.b-grey{background:#EEF1F4;color:var(--muted);}
+.src-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px;}
+.src-direct{background:rgba(10,102,194,.12);color:var(--gold);}
+.src-referral{background:#FFF0E2;color:var(--brand-orange);}
+.locked{color:var(--muted);font-style:italic;}
+.mask{letter-spacing:1px;color:var(--muted);}
+
+/* ---- modal ---- */
+.modal-overlay{position:fixed;inset:0;background:rgba(29,34,38,.6);display:none;align-items:flex-start;justify-content:center;z-index:200;overflow-y:auto;padding:28px 14px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;max-width:720px;width:100%;border-radius:10px;padding:26px 30px;position:relative;max-height:92vh;overflow-y:auto;}
+.modal.wide{max-width:920px;}
+.modal h3{font-family:'Playfair Display',serif;font-size:23px;margin-bottom:2px;}
+.modal .close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:26px;color:var(--muted);cursor:pointer;line-height:1;}
+.field{margin-top:12px;}
+.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600;}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:4px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;}
+.field textarea{min-height:74px;resize:vertical;}
+.field-row{display:flex;gap:12px;flex-wrap:wrap;} .field-row>*{flex:1;min-width:160px;}
+.required{color:var(--red);}
+
+/* duplicate gate */
+.gate{background:#FFFBEB;border:1px solid var(--amber);border-radius:10px;padding:20px 22px;margin-bottom:18px;}
+.gate h4{color:#78350F;font-size:15px;margin-bottom:6px;}
+.gate p{font-size:13px;color:#92400E;line-height:1.55;margin-bottom:14px;}
+.gate-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* candidate detail */
+.cand-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:8px;}
+.cand-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:14px 0;padding:14px;background:var(--cream);border-radius:8px;}
+.cand-meta label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.cand-meta strong{font-size:13.5px;color:var(--ink);font-weight:600;}
+.detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:18px 0 14px;}
+.detail-tab{background:none;border:none;padding:9px 14px;font-family:inherit;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
+.detail-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.dpane{display:none;} .dpane.active{display:block;}
+
+/* pipeline */
+.pipe{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 16px;}
+.pstep{flex:1;min-width:96px;text-align:center;font-size:10.5px;font-weight:600;padding:8px 4px;border-radius:6px;background:var(--cream);color:var(--muted);position:relative;}
+.pstep.done{background:#D1FAE5;color:var(--green);}
+.pstep.current{background:var(--brand);color:#fff;}
+.pstep.rej{background:#FEE2E2;color:var(--red);}
+.stage-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 4px;padding:12px 14px;background:var(--cream);border-radius:8px;}
+
+/* notes */
+.note{background:#fff;border:1px solid var(--border);border-left:3px solid var(--brand);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:13px;}
+.note.hm{border-left-color:var(--brand-orange);}
+.note.core{border-left-color:var(--gold);}
+.note .meta{font-size:10.5px;color:var(--muted);margin-bottom:3px;display:flex;justify-content:space-between;gap:8px;}
+.note .who{font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.note .who.hm{color:var(--brand-orange);} .note .who.core{color:var(--gold);}
+
+/* cv viewer */
+.cv-frame{border:1px solid var(--border);border-radius:8px;background:var(--cream);height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);text-align:center;padding:24px;user-select:none;}
+.cv-frame .doc{font-size:46px;}
+.no-dl{font-size:11.5px;color:var(--muted);margin-top:8px;}
+.share-box{margin-top:14px;background:var(--cream);border-radius:8px;padding:14px;}
+.share-box input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:5px;font-size:12.5px;font-family:monospace;background:#fff;}
+
+.log-line{font-size:12.5px;padding:8px 0;border-bottom:1px dashed var(--border);display:flex;justify-content:space-between;gap:12px;}
+.log-line:last-child{border-bottom:none;}
+.log-line .t{color:var(--muted);font-size:11px;white-space:nowrap;}
+.empty{text-align:center;color:var(--muted);padding:40px;font-size:14px;}
+.banner{background:#FEE2E2;color:var(--red);border:1px solid var(--red);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:14px;font-weight:600;}
+footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-align:center;font-size:12px;margin-top:40px;}
+.demo-flag{position:fixed;left:10px;bottom:10px;background:var(--amber);color:#3a2a00;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:10px;z-index:9999;letter-spacing:.5px;}
+@media(max-width:768px){.cand-head{flex-direction:column;}.hero h1{font-size:23px;}}
+</style>
+</head>
+<body>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar">
+  <div class="container topbar-inner">
+    <div class="cobrand">
+      <span class="brand">GCC<span class="brand-mark">PROs</span><span class="brand-tag">HIRING PORTAL</span></span>
+      <span class="divider-v" id="cobrand-div" style="display:none;"></span>
+      <span id="cobrand-customer" style="display:none;" class="cobrand">
+        <span class="co-logo" id="co-logo">AC</span>
+        <span class="co-name" id="co-name">Acme<small>Hiring Workspace</small></span>
+      </span>
+    </div>
+    <div class="right" id="topbar-right" style="display:none;">
+      <span class="user-pill" id="user-pill"></span>
+      <button class="btn secondary small" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LOGIN ============ -->
+<section id="login-section" class="login-wrap">
+  <div class="login-card">
+    <h1>Customer Hiring Portal</h1>
+    <p class="sub">Sign in with your approved corporate account to manage your roles and applications on GCCPROs.</p>
+
+    <button class="sso-btn" onclick="ssoLogin('google')">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+      Continue with Google
+    </button>
+    <button class="sso-btn" onclick="ssoLogin('microsoft')">
+      <svg viewBox="0 0 23 23"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#7fba00" d="M12 1h10v10H12z"/><path fill="#00a4ef" d="M1 12h10v10H1z"/><path fill="#ffb900" d="M12 12h10v10H12z"/></svg>
+      Continue with Microsoft
+    </button>
+
+    <div id="login-msg" class="banner" style="display:none;"></div>
+
+    <p class="login-note">Access is restricted to <b>specific, pre-authorized email addresses</b> on approved customer domains. If your email isn't recognized, ask your GCCPROs account manager to add you.</p>
+
+    <div class="demo-emails">
+      <b>Live access</b>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;">Sign in with the Google or Microsoft account on your approved corporate email. Your access is checked against the GCCPROs allow-list in real time. If your email isn't recognized, ask your GCCPROs account manager to add you.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <section class="hero">
+    <div class="container">
+      <h1 id="hero-h1">Welcome</h1>
+      <p id="hero-p">Your recruitment workspace</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
+      <button class="tab" data-view="applications" onclick="switchView('applications')">Applications <span class="cnt" id="cnt-apps">0</span></button>
+      <button class="tab" data-view="roles" onclick="switchView('roles')">Job Roles <span class="cnt" id="cnt-roles">0</span></button>
+      <button class="tab" data-view="activity" onclick="switchView('activity')">Activity Log</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="kpi-row" id="kpi-row"></div>
+      <h3 style="font-family:'Playfair Display',serif;margin:8px 0 12px;">Pipeline snapshot</h3>
+      <table id="dash-pipeline"><tbody></tbody></table>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div class="view" id="view-applications">
+      <div class="filter-bar">
+        <div class="seg" id="bucket-seg">
+          <button class="active" data-bucket="all" onclick="setBucket('all')">All</button>
+          <button data-bucket="direct" onclick="setBucket('direct')">Direct CVs</button>
+          <button data-bucket="referral" onclick="setBucket('referral')">Referral CVs</button>
+        </div>
+        <input type="search" id="app-search" placeholder="Search candidate / role…" oninput="renderApps()">
+        <select id="app-stage" onchange="renderApps()"><option value="">All stages</option></select>
+        <select id="app-role" onchange="renderApps()"><option value="">All roles</option></select>
+      </div>
+      <table>
+        <thead><tr><th>Candidate</th><th>Role</th><th>Source</th><th>Stage</th><th>Duplicate check</th><th>Received</th></tr></thead>
+        <tbody id="apps-body"></tbody>
+      </table>
+      <div id="apps-empty" class="empty" style="display:none;">No applications in this bucket.</div>
+    </div>
+
+    <!-- ROLES -->
+    <div class="view" id="view-roles">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <p style="color:var(--muted);font-size:13.5px;">Enable, disable, or post roles for your organization. New roles go live on the GCCPROs Opportunities portal for applicants and referrers the moment you post them.</p>
+        <button class="btn" onclick="openRoleModal()">+ Add a role</button>
+      </div>
+      <table>
+        <thead><tr><th>Code</th><th>Title</th><th>Applicants</th><th>Status</th><th>Posted</th><th>Action</th></tr></thead>
+        <tbody id="roles-body"></tbody>
+      </table>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="view" id="view-activity">
+      <div id="activity-body"></div>
+    </div>
+  </div>
+  <footer><div class="container">GCCPROs Customer Hiring Portal · For the GCC community, by the GCC community · Prototype</div></footer>
+</div>
+
+<!-- ============ CANDIDATE MODAL ============ -->
+<div class="modal-overlay" id="cand-overlay">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('cand-overlay')">&times;</button>
+    <div id="cand-body"></div>
+  </div>
+</div>
+
+<!-- ============ ADD ROLE MODAL (mirrors the real GCCPROs "Post a new job" form) ============ -->
+<div class="modal-overlay" id="role-overlay">
+  <div class="modal wide">
+    <button class="close" onclick="closeModal('role-overlay')">&times;</button>
+    <h3>✚ Post a new job</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:6px;">Same form and rules as the GCCPROs jobs board. When posted, it goes live for applicants and referrers immediately.</p>
+    <div class="field-row">
+      <div class="field"><label>Job code (unique short ID) <span class="required">*</span></label><input id="r-job_code" placeholder="e.g. GCC-2026-101"></div>
+      <div class="field"><label>Title <span class="required">*</span></label><input id="r-title" placeholder="e.g. Senior Data Engineer"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Company / GCC <span class="required">*</span></label><input id="r-company" readonly></div>
+      <div class="field"><label>Industry</label><input id="r-industry" placeholder="e.g. BFSI, SaaS"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Primary domain</label><input id="r-primary_domain" placeholder="e.g. Finance, Engineering"></div>
+      <div class="field"><label>Location</label><input id="r-location" placeholder="e.g. Bengaluru"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Experience band</label><input id="r-experience_band" placeholder="e.g. 5-8 yrs"></div>
+      <div class="field"><label>Job type</label><select id="r-job_type"><option value="">(unset)</option><option value="full_time">full time</option><option value="part_time">part time</option><option value="contract">contract</option><option value="internship">internship</option></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>CTC min (INR, optional)</label><input id="r-ctc_min_inr" type="number"></div>
+      <div class="field"><label>CTC max (INR, optional)</label><input id="r-ctc_max_inr" type="number"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Partner referral fee (INR)</label><input id="r-referral_amount_inr" type="number" placeholder="paid on placement"></div>
+      <div class="field"><label>Status</label><select id="r-status"><option value="active">active</option><option value="draft">draft</option><option value="paused">paused</option><option value="closed">closed</option></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Work mode</label><select id="r-mode"><option value="">(unset)</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></div>
+      <div class="field"><label>Seniority</label><select id="r-level"><option value="">(unset)</option><option>Junior</option><option>Mid</option><option>Senior</option><option>Lead</option><option>Director</option><option>Other</option></select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Budget text (shown only if CTC empty)</label><input id="r-budget_text" placeholder="e.g. Competitive"></div>
+      <div class="field"><label>Min. qualification</label><input id="r-qualification" placeholder="e.g. Graduate"></div>
+    </div>
+    <div class="field"><label>Skills (REQUIRED — comma-separated, 3+ recommended) <span class="required">*</span></label><textarea id="r-skills" placeholder="e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX"></textarea></div>
+    <div class="field"><label>Responsibilities</label><textarea id="r-responsibilities" placeholder="What the person will own day-to-day"></textarea></div>
+    <div class="field"><label>Description</label><textarea id="r-description" placeholder="Role overview, what success looks like…"></textarea></div>
+    <div class="field"><label>Requirements</label><textarea id="r-requirements" placeholder="Must-have skills / qualifications"></textarea></div>
+    <div class="field"><label>Benefits</label><textarea id="r-benefits" placeholder="Optional"></textarea></div>
+    <div id="role-err" style="display:none;margin-top:12px;padding:10px 12px;border-radius:6px;background:#FEF2F2;color:var(--red);font-size:13px;border-left:3px solid var(--red);"></div>
+    <div style="margin-top:18px;display:flex;gap:10px;">
+      <button class="btn" onclick="submitRole()">Post job</button>
+      <button class="btn secondary" onclick="closeModal('role-overlay')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-flag" style="background:var(--green);color:#fff;">LIVE · connected to your GCCPROs database</div>
+
+<script>
+/* =================================================================
+   CONFIG  — flip DEMO_MODE to false to use the live backend.
+   ================================================================= */
+const DEMO_MODE = false;
+const CUST_API = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-cust-api';
+// Firebase — same project as the Opportunities portal (Google + Microsoft SSO)
+firebase.initializeApp({ apiKey:'AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w', authDomain:'gccpros-9aadb.firebaseapp.com', projectId:'gccpros-9aadb', storageBucket:'gccpros-9aadb.firebasestorage.app', messagingSenderId:'764592723192', appId:'1:764592723192:web:002a03f217b57d47f0570d' });
+
+/* Lifecycle stages (ordered). 'rejected'/'on_hold' are off-track states. */
+const STAGES = [
+  {key:'cv_submitted',   label:'CV Submitted'},
+  {key:'initial_screen', label:'Initial Screening'},
+  {key:'reviewed',       label:'Reviewed'},
+  {key:'l1_scheduled',   label:'L1 Scheduled'},
+  {key:'l1_feedback',    label:'L1 Feedback'},
+  {key:'l2_scheduled',   label:'L2 Scheduled'},
+  {key:'l2_feedback',    label:'L2 Feedback'},
+  {key:'offer_stage',    label:'Offer Stage'},
+  {key:'offered',        label:'Offered'},
+  {key:'offer_accepted', label:'Offer Accepted'},
+  {key:'joined',         label:'Joined'},
+  {key:'three_months',   label:'3 Months Complete'}
+];
+const stageLabel = k => (STAGES.find(s=>s.key===k)||{label:k}).label;
+const stageIndex = k => STAGES.findIndex(s=>s.key===k);
+
+/* =================================================================
+   LIVE DATA — loaded from gccpros-cust-api. CUSTOMERS is filled on login.
+   ================================================================= */
+let CUSTOMERS = {};  // { [customerId]: {name, short, logo, color, tagline, logo_url} }
+function mapRole(x){
+  return { id:x.id, code:x.job_code||x.id, companyId:SESSION.companyId, title:x.title,
+    domain:x.primary_domain||'', status:(x.posting_status==='open'?'open':(x.posting_status==='pending_review'?'pending':'disabled')),
+    ctcMin:x.ctc_min_inr||0, ctcMax:x.ctc_max_inr||0, posted:(x.created_at||'').slice(0,10) };
+}
+function mapApp(x){
+  return { id:x.id, companyId:SESSION.companyId, roleId:x.role_id, source:x.source, stage:x.stage,
+    duplicateStatus:x.duplicate_status, accessRevoked:false, received:(x.received||'').slice(0,10),
+    candidate:{ name:x.name, email:x.email, phone:x.phone, exp:x.experience, city:x.city, ctc:x.expected_ctc, notice:x.notice, linkedin:x.linkedin },
+    coreNotes:[], hmNotes:[], history:[], referral:null,
+    joinDate:(['joined','three_months'].includes(x.stage)?'live':null) };
+}
+function eventText(e){
+  const d=e.detail||{};
+  if(e.event_type==='stage_change') return 'Stage: '+stageLabel(d.from)+' → '+(d.to==='rejected'?'Rejected':stageLabel(d.to));
+  if(e.event_type==='duplicate_decision') return d.decision==='yes'?'Marked duplicate — application rejected':'Confirmed NOT a duplicate — unlocked';
+  if(e.event_type==='note') return 'Added a note';
+  if(e.event_type==='cv_share') return 'Created a CV share link';
+  return e.event_type;
+}
+async function loadData(){
+  DB = { roles:[], apps:[], activity:[] };
+  const [rr, ra, rc] = await Promise.all([ custCall('custListRoles'), custCall('custListApplications'), custCall('custActivity') ]);
+  DB.roles = (rr.roles||[]).map(mapRole);
+  DB.apps  = (ra.applications||[]).map(mapApp);
+  (rc.events||[]).forEach(e=>{ const a=DB.apps.find(x=>x.id===e.application_id);
+    if(a) a.history.push({ ts:e.created_at, actor:(e.actor_role==='core'?'GCCPROs Team':(e.actor_role==='hiring_manager'?SESSION.name:'system')), actorRole:e.actor_role, text:eventText(e) }); });
+  renderAll();
+}
+
+/* =================================================================
+   SESSION
+   ================================================================= */
+let SESSION = null;     // {email, name, role, companyId}
+let DB = null;          // mock store
+let BUCKET = 'all';
+let CUR_APP = null;     // open candidate id
+
+/* ---- Live API: attaches the Firebase ID token on every call ---- */
+async function custCall(action, params, body){
+  const qs = new URLSearchParams(Object.assign({action}, params||{})).toString();
+  const headers = {};
+  try { const u=firebase.auth().currentUser; if(u){ headers['Authorization']='Bearer '+await u.getIdToken(); } } catch(_){}
+  const opt = { headers };
+  if(body){ opt.method='POST'; headers['Content-Type']='application/json'; opt.body=JSON.stringify(body); }
+  try { const r = await fetch(CUST_API + '?' + qs, opt); return await r.json(); }
+  catch(e){ return { error: String(e&&e.message||e) }; }
+}
+
+/* =================================================================
+   AUTH
+   ================================================================= */
+function showLoginMsg(t){ const m=document.getElementById('login-msg'); if(m){ m.style.display='block'; m.textContent=t; } }
+function ssoLogin(provider){
+  showLoginMsg('');
+  const p = provider==='microsoft' ? new firebase.auth.OAuthProvider('microsoft.com') : new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(p).catch(err=>{ showLoginMsg('Sign-in could not start: '+(err.message||err.code||err)); });
+}
+function demoLogin(email){ /* live build: real SSO only */ ssoLogin('google'); }
+
+// Fires after Firebase sign-in. Verifies against the per-email allow-list via the live engine.
+firebase.auth().onAuthStateChanged(async (user)=>{
+  if(!user) return; // stay on the login screen
+  let res;
+  try { res = await custCall('custCheckAccess'); }
+  catch(e){ showLoginMsg('Could not reach the server — please try again.'); return; }
+  if(!res || !res.authorized){
+    showLoginMsg('⛔ '+(user.email||'This account')+' is not authorized for any customer workspace. Ask your GCCPROs account manager to add your email.');
+    try { await firebase.auth().signOut(); } catch(_){}
+    return;
+  }
+  SESSION = { email:res.user.email, name:res.user.name||user.displayName||res.user.email, role:res.user.role, companyId:res.customer.id };
+  CUSTOMERS[res.customer.id] = {
+    name:res.customer.name, short:res.customer.short_name||res.customer.name,
+    logo:res.customer.logo_initials||'GP', color:res.customer.brand_color||'#0A66C2',
+    tagline:res.customer.tagline||'Hiring Workspace', logo_url:res.customer.logo_url
+  };
+  await bootApp();
+});
+
+async function bootApp(){
+  const cust = CUSTOMERS[SESSION.companyId];
+  // white-label branding
+  document.documentElement.style.setProperty('--brand', cust.color);
+  document.getElementById('cobrand-div').style.display='';
+  document.getElementById('cobrand-customer').style.display='';
+  const lg = document.getElementById('co-logo');
+  if(cust.logo_url){ lg.textContent=''; lg.style.background='#fff'; lg.innerHTML='<img src="'+esc(cust.logo_url)+'" alt="" style="width:34px;height:34px;object-fit:contain;border-radius:7px;">'; }
+  else { lg.textContent = cust.logo; lg.style.background = cust.color; }
+  document.getElementById('co-name').innerHTML = esc(cust.name)+'<small>'+esc(cust.tagline)+'</small>';
+  document.title = cust.short+' · GCCPROs Hiring Portal';
+
+  document.getElementById('topbar-right').style.display='';
+  document.getElementById('user-pill').innerHTML = esc(SESSION.name)+' <span class="role-chip">Hiring Mgr</span>';
+  document.getElementById('hero-h1').textContent = 'Welcome, '+SESSION.name.split(' ')[0];
+  document.getElementById('hero-p').textContent = cust.name+' — recruitment workspace';
+
+  document.getElementById('login-section').style.display='none';
+  document.getElementById('app').style.display='block';
+
+  const ss=document.getElementById('app-stage'); if(!ss.dataset.filled){ STAGES.forEach(s=>ss.insertAdjacentHTML('beforeend',`<option value="${s.key}">${s.label}</option>`)); ss.dataset.filled='1'; }
+  switchView('dashboard');
+  await loadData();
+}
+function signOut(){ try{ firebase.auth().signOut(); }catch(_){} location.reload(); }
+
+/* =================================================================
+   SCOPING — a hiring manager only sees their company's data
+   ================================================================= */
+const myRoles = ()=> DB.roles.filter(r=>r.companyId===SESSION.companyId);
+const myApps  = ()=> DB.apps.filter(a=>a.companyId===SESSION.companyId);
+const roleById= id=> DB.roles.find(r=>r.id===id);
+
+/* =================================================================
+   RENDER
+   ================================================================= */
+function renderAll(){ renderKPIs(); renderDashPipeline(); renderApps(); renderRoles(); renderActivity(); refreshCounts(); fillRoleFilter(); }
+function refreshCounts(){
+  document.getElementById('cnt-apps').textContent = myApps().filter(a=>!a.accessRevoked).length;
+  document.getElementById('cnt-roles').textContent = myRoles().length;
+}
+function fillRoleFilter(){
+  const sel=document.getElementById('app-role'); sel.innerHTML='<option value="">All roles</option>';
+  myRoles().forEach(r=>sel.insertAdjacentHTML('beforeend',`<option value="${r.id}">${esc(r.title)}</option>`));
+}
+
+function renderKPIs(){
+  const a = myApps().filter(x=>!x.accessRevoked);
+  const active = a.filter(x=>!['rejected','three_months'].includes(x.stage));
+  const interviewing = a.filter(x=>['l1_scheduled','l1_feedback','l2_scheduled','l2_feedback'].includes(x.stage)).length;
+  const offers = a.filter(x=>['offer_stage','offered','offer_accepted'].includes(x.stage)).length;
+  const joined = a.filter(x=>['joined','three_months'].includes(x.stage)).length;
+  const pendingDup = a.filter(x=>x.duplicateStatus===null).length;
+  const kpis=[
+    ['Open roles', myRoles().filter(r=>r.status==='open').length],
+    ['Active candidates', active.length],
+    ['Awaiting dup-check', pendingDup],
+    ['In interviews', interviewing],
+    ['In offer', offers],
+    ['Joined', joined]
+  ];
+  document.getElementById('kpi-row').innerHTML = kpis.map(k=>`<div class="kpi"><div class="kpi-n">${k[1]}</div><div class="kpi-l">${k[0]}</div></div>`).join('');
+}
+function renderDashPipeline(){
+  const body=document.querySelector('#dash-pipeline tbody');
+  const rows = myRoles().map(r=>{
+    const apps=myApps().filter(a=>a.roleId===r.id && !a.accessRevoked);
+    const byStage = {};
+    apps.forEach(a=>byStage[a.stage]=(byStage[a.stage]||0)+1);
+    const cells = ['initial_screen','l1_scheduled','l2_scheduled','offer_stage','joined'].map(s=>byStage[s]||0);
+    return `<tr><td><strong>${esc(r.title)}</strong><br><span class="locked" style="font-size:11px;">${esc(r.code||r.id)}</span></td>
+      <td>${apps.length} total</td><td>${cells[0]} screening</td><td>${cells[1]} L1</td><td>${cells[2]} L2</td><td>${cells[3]} offer</td><td>${cells[4]} joined</td></tr>`;
+  }).join('');
+  body.innerHTML = `<tr><th>Role</th><th>Applicants</th><th>Screening</th><th>L1</th><th>L2</th><th>Offer</th><th>Joined</th></tr>` + (rows||`<tr><td colspan="7" class="empty">No roles yet.</td></tr>`);
+}
+
+function setBucket(b){ BUCKET=b; document.querySelectorAll('#bucket-seg button').forEach(x=>x.classList.toggle('active',x.dataset.bucket===b)); renderApps(); }
+function renderApps(){
+  const q=(document.getElementById('app-search').value||'').toLowerCase();
+  const fs=document.getElementById('app-stage').value, fr=document.getElementById('app-role').value;
+  let list=myApps().filter(a=>!a.accessRevoked);
+  if(BUCKET!=='all') list=list.filter(a=>a.source===BUCKET);
+  if(fs) list=list.filter(a=>a.stage===fs);
+  if(fr) list=list.filter(a=>a.roleId===fr);
+  if(q) list=list.filter(a=> (a.candidate.name+' '+(roleById(a.roleId)?.title||'')).toLowerCase().includes(q));
+  const body=document.getElementById('apps-body');
+  document.getElementById('apps-empty').style.display = list.length?'none':'block';
+  body.innerHTML = list.sort((x,y)=>y.received.localeCompare(x.received)).map(a=>{
+    const unlocked = a.duplicateStatus==='no';
+    const nameCell = `<strong>${esc(a.candidate.name)}</strong><br><span class="locked" style="font-size:11px;">${a.candidate.exp}y · ${esc(a.candidate.city)}${unlocked?'':' · phone/CV locked'}</span>`;
+    const dup = a.duplicateStatus===null ? `<span class="badge b-amber">Action needed</span>`
+              : a.duplicateStatus==='no' ? `<span class="badge b-green">Cleared</span>`
+              : `<span class="badge b-red">Duplicate</span>`;
+    const src = a.source==='referral'?`<span class="src-pill src-referral">Referral</span>`:`<span class="src-pill src-direct">Direct</span>`;
+    return `<tr class="row-click" onclick="openCand('${a.id}')">
+      <td>${nameCell}</td><td>${esc(roleById(a.roleId)?.title||'—')}</td><td>${src}</td>
+      <td><span class="badge ${stageBadge(a.stage)}">${stageLabel(a.stage)}</span></td><td>${dup}</td><td>${fmtDate(a.received)}</td></tr>`;
+  }).join('');
+}
+function stageBadge(s){
+  if(s==='rejected') return 'b-red';
+  if(['joined','three_months'].includes(s)) return 'b-green';
+  if(['offer_stage','offered','offer_accepted'].includes(s)) return 'b-blue';
+  return 'b-amber';
+}
+
+function renderRoles(){
+  const body=document.getElementById('roles-body');
+  body.innerHTML = myRoles().map(r=>{
+    const n=myApps().filter(a=>a.roleId===r.id && !a.accessRevoked).length;
+    const st = r.status==='open'?'<span class="badge b-green">Open</span>': r.status==='pending'?'<span class="badge b-amber">Pending review</span>':'<span class="badge b-grey">Disabled</span>';
+    const toggle = r.status==='disabled'
+      ? `<button class="btn small ok" onclick="toggleRole('${r.id}')">Enable</button>`
+      : r.status==='pending' ? `<span class="locked">awaiting approval</span>`
+      : `<button class="btn small secondary" onclick="toggleRole('${r.id}')">Disable</button>`;
+    return `<tr><td>${esc(r.code||r.id)}</td><td><strong>${esc(r.title)}</strong><br><span class="locked" style="font-size:11px;">${esc(r.domain)}${(r.ctcMin||r.ctcMax)?(' · '+r.ctcMin+'–'+r.ctcMax):''}</span></td>
+      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td>${toggle}</td></tr>`;
+  }).join('') || `<tr><td colspan="6" class="empty">No roles yet.</td></tr>`;
+}
+
+function renderActivity(){
+  const evts=[];
+  myApps().forEach(a=>a.history.forEach(h=>evts.push(Object.assign({app:a},h))));
+  evts.sort((x,y)=>String(y.ts).localeCompare(String(x.ts)));
+  const box=document.getElementById('activity-body');
+  if(!evts.length){box.innerHTML='<div class="empty">No activity yet.</div>';return;}
+  box.innerHTML = '<table><tbody>'+evts.map(e=>{
+    const who = e.actorRole==='hiring_manager'?'<span style="color:var(--brand-orange);font-weight:700;">HM</span>'
+              : e.actorRole==='core'?'<span style="color:var(--gold);font-weight:700;">GCCPROs</span>'
+              : '<span class="locked">system</span>';
+    const cand = esc(e.app.candidate.name);
+    return `<tr><td style="white-space:nowrap;" class="locked">${fmtDateTime(e.ts)}</td><td>${who}</td><td>${esc(e.text)} — <em>${cand}</em></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+/* =================================================================
+   CANDIDATE DETAIL  (+ duplicate gate)
+   ================================================================= */
+async function openCand(id){
+  CUR_APP=id;
+  const a=myApps().find(x=>x.id===id); if(!a) return;
+  const role=roleById(a.roleId);
+  const unlocked = a.duplicateStatus==='no';
+  const c=a.candidate;
+  // load notes live
+  try { const nres=await custCall('custListNotes',{id}); a.coreNotes=[]; a.hmNotes=[]; (nres.notes||[]).forEach(n=>{ const o={by:n.author_name||(n.author_kind==='core'?'GCCPROs Team':'Hiring Mgr'),ts:n.created_at,text:n.body}; (n.author_kind==='core'?a.coreNotes:a.hmNotes).push(o); }); } catch(_){}
+  let html = `<div class="cand-head"><div>
+      <h3 style="margin-bottom:2px;">${esc(c.name)}</h3>
+      <div class="locked">${esc(role?.title||'')} · ${role?.code||role?.id||''} · ${a.source==='referral'?'<span class="src-pill src-referral">Referral</span>':'<span class="src-pill src-direct">Direct</span>'}</div>
+    </div><div style="text-align:right;"><span class="badge ${stageBadge(a.stage)}">${stageLabel(a.stage)}</span><br>
+      <span class="locked" style="font-size:11px;">Received ${fmtDate(a.received)}</span></div></div>`;
+
+  // referral privacy note + FULL referrer submission (everything except referrer identity)
+  if(a.source==='referral'){
+    html += `<div style="font-size:12px;color:var(--brand-orange);background:#FFF0E2;border-radius:6px;padding:8px 12px;margin:10px 0;">🔒 Referred candidate — the referrer's identity is withheld by GCCPROs policy.</div>`;
+    html += referralPanelHTML(a, false);
+  }
+
+  // === MANDATORY duplicate gate ===
+  if(a.duplicateStatus===null){
+    html += `<div class="gate">
+      <h4>Step 1 — Mandatory: is this a duplicate CV in your database?</h4>
+      <p>You can see the candidate's <b>name and email</b> to check against your records. Their <b>phone number and full CV stay locked</b> until you confirm this isn't a duplicate.<br>
+      <b>If yes</b>, the application is rejected and removed from your portal. <b>If no</b>, the phone number and full CV unlock.</p>
+      <div class="gate-actions">
+        <button class="btn danger" onclick="answerDuplicate('${a.id}','yes')">Yes — it's a duplicate (reject)</button>
+        <button class="btn ok" onclick="answerDuplicate('${a.id}','no')">No — not a duplicate (unlock)</button>
+      </div></div>`;
+    // pre-clearance preview: NAME + EMAIL visible; PHONE + full CV stay locked until "not a duplicate"
+    html += `<div class="cand-meta">
+        <div><label>Name</label><strong>${esc(c.name)}</strong></div>
+        <div><label>Email</label><strong>${esc(c.email)}</strong></div>
+        <div><label>Experience</label><strong>${c.exp} yrs</strong></div>
+        <div><label>Location</label><strong>${esc(c.city)}</strong></div>
+        <div><label>Expected CTC</label><strong>${c.ctc} LPA</strong></div>
+        <div><label>Notice</label><strong>${c.notice} days</strong></div>
+        <div><label>Phone</label><strong class="mask">🔒 locked until cleared</strong></div>
+        <div><label>Full CV</label><strong class="mask">🔒 locked until cleared</strong></div>
+      </div>`;
+    document.getElementById('cand-body').innerHTML = html;
+    openModal('cand-overlay'); return;
+  }
+
+  // unlocked detail
+  html += `<div class="cand-meta">
+      <div><label>Email</label><strong>${esc(c.email)}</strong></div>
+      <div><label>Phone</label><strong>${esc(c.phone)}</strong></div>
+      <div><label>Experience</label><strong>${c.exp} yrs</strong></div>
+      <div><label>Location</label><strong>${esc(c.city)}</strong></div>
+      <div><label>Expected CTC</label><strong>${c.ctc} LPA</strong></div>
+      <div><label>Notice</label><strong>${c.notice} days</strong></div>
+      <div><label>LinkedIn</label><strong>${esc(c.linkedin)}</strong></div>
+    </div>`;
+
+  // detail tabs
+  html += `<div class="detail-tabs">
+      <button class="detail-tab active" onclick="dtab(this,'d-pipe')">Pipeline</button>
+      <button class="detail-tab" onclick="dtab(this,'d-cv')">CV</button>
+      <button class="detail-tab" onclick="dtab(this,'d-core')">GCCPROs Notes (${a.coreNotes.length})</button>
+      <button class="detail-tab" onclick="dtab(this,'d-hm')">My Notes (${a.hmNotes.length})</button>
+      <button class="detail-tab" onclick="dtab(this,'d-log')">History</button>
+    </div>`;
+
+  html += `<div id="d-pipe" class="dpane active">${pipelineHTML(a)}</div>`;
+  html += `<div id="d-cv" class="dpane">${cvHTML(a)}</div>`;
+  html += `<div id="d-core" class="dpane">${notesHTML(a,'core')}</div>`;
+  html += `<div id="d-hm" class="dpane">${notesHTML(a,'hm')}</div>`;
+  html += `<div id="d-log" class="dpane">${logHTML(a)}</div>`;
+
+  document.getElementById('cand-body').innerHTML = html;
+  openModal('cand-overlay');
+}
+
+function pipelineHTML(a){
+  const cur=stageIndex(a.stage);
+  let steps = STAGES.map((s,i)=>{
+    let cls = i<cur?'done': i===cur?'current':'';
+    return `<div class="pstep ${cls}">${s.label}</div>`;
+  }).join('');
+  if(a.stage==='rejected') steps = `<div class="pstep rej" style="flex:1;">Rejected</div>`;
+  // stage control — shared (HM here; core team has same control in admin console)
+  const opts = STAGES.map((s,i)=>`<option value="${s.key}" ${s.key===a.stage?'selected':''}>${i+1}. ${s.label}</option>`).join('');
+  let auto='';
+  if(a.joinDate){
+    const months = monthsSince(a.joinDate);
+    auto = `<div style="font-size:12px;color:var(--muted);margin-top:8px;">Joined ${fmtDate(a.joinDate)} · ${months.toFixed(1)} months ago. “3 Months Complete” advances automatically at the 90-day mark.</div>`;
+  }
+  return `<div class="pipe">${steps}</div>
+    <div class="stage-ctl">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">Move to stage</label>
+      <select id="stage-select" style="padding:8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;">${opts}</select>
+      <button class="btn small" onclick="advanceStage('${a.id}')">Update stage</button>
+      <button class="btn small danger" onclick="advanceStageTo('${a.id}','rejected')">Reject</button>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);">Both your team and the GCCPROs core team can move stages — every change is logged with who made it.</div>
+    ${auto}`;
+}
+
+function cvHTML(a){
+  return `<div class="cv-frame">
+      <div class="doc">📄</div>
+      <div><b>${esc(a.candidate.name)} — CV</b></div>
+      <div class="locked">In-portal viewer · download disabled by policy</div>
+      <button class="btn small" style="margin-top:10px;" onclick="openCVWindow('${a.id}')">Open CV in a new window</button>
+      <div class="no-dl">🔒 Download, right-click save and print are disabled. Use the view-only link below to share with an internal interviewer.</div>
+    </div>
+    <div class="share-box">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">Share with an internal interviewer</label>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <input id="share-link" readonly value="${shareLink(a)}">
+        <button class="btn small secondary" onclick="copyShare()">Copy link</button>
+        <button class="btn small" onclick="openCVWindow('${a.id}')">Open link</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">View-only link, scoped to your organization — recipients read the CV in-browser but cannot download it; expires in 7 days. (Test build: "Open link" previews the CV in a new tab; the live version serves a watermarked, no-download viewer at this URL.)</div>
+    </div>`;
+}
+function shareLink(a){ return 'https://portal.gccpros.com/cv/'+SESSION.companyId+'/'+a.id+'?t=share_'+Math.random().toString(36).slice(2,10); }
+function copyShare(){ const i=document.getElementById('share-link'); i.select(); try{document.execCommand('copy');}catch(_){ } toast('Share link copied'); }
+function openCVWindow(id){
+  const a=myApps().find(x=>x.id===id); if(!a) return;
+  if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full CV.'); return; }
+  const url=URL.createObjectURL(new Blob([buildSampleCV(a)],{type:'text/html'}));
+  const w=window.open(url,'_blank'); if(!w) toast('Allow pop-ups to open the CV preview.');
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function buildSampleCV(a){
+  const c=a.candidate; const role=roleById(a.roleId);
+  const skills=(a.referral&&a.referral.skillRatings)?a.referral.skillRatings.map(s=>s.skill):['Communication','Problem Solving','Stakeholder Management','Analysis'];
+  const org=CUSTOMERS[a.companyId]?CUSTOMERS[a.companyId].name:'your organization';
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(c.name)} — CV (view only)</title>
+  <style>
+   body{font-family:'Segoe UI',Arial,sans-serif;color:#1D2226;max-width:820px;margin:0 auto;padding:40px 48px;line-height:1.55;}
+   .wm{position:fixed;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-28deg);font-size:62px;color:rgba(10,102,194,.07);font-weight:800;pointer-events:none;white-space:nowrap;}
+   h1{margin:0;font-size:28px;} .role{color:#0A66C2;font-weight:600;margin:2px 0 6px;} .contact{color:#64748B;font-size:13px;}
+   h2{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#0A66C2;border-bottom:2px solid #E2E8F0;padding-bottom:4px;margin:22px 0 8px;}
+   .job b{font-size:14px;} .muted{color:#64748B;font-size:12px;} ul{margin:6px 0 0 18px;} li{font-size:13px;margin:3px 0;}
+   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;} .chip{background:#EFF6FF;color:#1E40AF;padding:3px 10px;border-radius:4px;font-size:12px;}
+   .banner{background:#FFFBEB;border:1px solid #F59E0B;color:#92400E;font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:18px;}
+  </style></head>
+  <body oncontextmenu="return false" ondragstart="return false">
+   <div class="wm">GCCPROS · VIEW ONLY</div>
+   <div class="banner">🔒 View-only copy shared via GCCPROs. Downloading, printing and copying are disabled. For ${esc(org)} interview use only.</div>
+   <h1>${esc(c.name)}</h1>
+   <div class="role">${esc(role?role.title:'Candidate')} · ${c.exp} yrs experience</div>
+   <div class="contact">${esc(c.email)} · ${esc(c.phone||'')} · ${esc(c.city||'')} · ${esc(c.linkedin||'')}</div>
+   <h2>Summary</h2>
+   <p style="font-size:13px;">${esc(c.name.split(' ')[0])} is a ${c.exp}-year professional based in ${esc(c.city||'India')}, with experience relevant to the ${esc(role?role.title:'role')}. Expected CTC ${esc(c.ctc||'—')} · notice ${esc(c.notice||'—')}.</p>
+   <h2>Experience</h2>
+   <div class="job"><b>Senior position — Confidential GCC</b><div class="muted">2021 – Present · ${esc(c.city||'')}</div>
+     <ul><li>Led key initiatives across ${esc((role&&role.domain)||'their domain')}.</li><li>Partnered cross-functionally to deliver measurable outcomes.</li><li>Mentored juniors and owned delivery quality.</li></ul></div>
+   <h2>Key skills</h2><div class="chips">${skills.map(s=>'<span class="chip">'+esc(s)+'</span>').join('')}</div>
+   <h2>Education</h2><p style="font-size:13px;">Bachelor's degree · India</p>
+   <p class="muted" style="margin-top:24px;">Note: in this first live release the in-portal CV viewer shows a structured profile. Serving the candidate's original uploaded CV file is the next backend step.</p>
+  </body></html>`;
+}
+function referralPanelHTML(a, showIdentity){
+  const r=a.referral; if(!r) return '<div style="font-size:12px;color:var(--muted);margin:0 0 12px;">Detailed referrer submission (skill ratings, relationship, recommendation) will appear here once the referral join is added to the live engine.</div>';
+  const ident = showIdentity ? `<div style="margin-bottom:8px;"><strong>${esc(r.referrerName)}</strong> · <span class="locked">${esc(r.referrerEmail)}</span></div>` : '';
+  const grid = `<div class="cand-meta" style="margin:0 0 10px;">
+    <div><label>Relationship</label><strong>${esc(r.relationship||'—')}</strong></div>
+    <div><label>Known for</label><strong>${esc(r.knownDuration||'—')}</strong></div>
+    <div><label>Worked together</label><strong>${esc(r.workedTogether||'—')}</strong></div>
+    <div><label>Referrer confidence</label><strong>${esc(r.confidence||'—')}</strong></div>
+    <div><label>Skill avg</label><strong>${r.skillAvg!=null?r.skillAvg.toFixed(2)+' / 5':'—'}</strong></div>
+  </div>`;
+  const skills=(r.skillRatings||[]).map(s=>`<div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
+      <div style="flex:1;font-size:12.5px;">${esc(s.skill)}</div>
+      <div style="width:120px;height:8px;background:#eceef1;border-radius:6px;overflow:hidden;"><div style="height:100%;width:${(s.rating/5)*100}%;background:var(--brand-orange);"></div></div>
+      <div style="width:30px;text-align:right;font-size:12px;font-weight:700;">${s.rating}/5</div></div>`).join('');
+  return `<div style="background:#FFFBF6;border:1px solid var(--border);border-left:3px solid var(--brand-orange);border-radius:8px;padding:14px 16px;margin:0 0 14px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--brand-orange);margin-bottom:8px;">Referrer's submission ${showIdentity?'':'· identity withheld'}</div>
+    ${ident}${grid}
+    <label style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Why a good fit</label>
+    <div style="font-size:13px;margin:2px 0 10px;">${esc(r.whyGoodFit||'—')}</div>
+    <label style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Skill-wise rating</label>
+    <div style="margin-top:6px;">${skills||'<span class="locked">none</span>'}</div>
+  </div>`;
+}
+function notesHTML(a,kind){
+  const notes = kind==='core'?a.coreNotes:a.hmNotes;
+  const list = notes.length? notes.map(n=>`<div class="note ${kind}"><div class="meta"><span class="who ${kind}">${kind==='core'?'GCCPROs':'Hiring Mgr'}</span><span>${esc(n.by)} · ${fmtDateTime(n.ts)}</span></div>${esc(n.text)}</div>`).join('') : `<div class="locked" style="padding:8px 0;">No notes yet.</div>`;
+  let composer='';
+  if(kind==='hm'){
+    composer = `<div class="field"><label>Add a note (visible to GCCPROs admin)</label>
+      <textarea id="hm-note-text" placeholder="Your feedback / interview notes…"></textarea></div>
+      <button class="btn small" style="margin-top:8px;" onclick="addNote('${a.id}','hm')">Add note</button>`;
+  } else {
+    composer = `<div class="locked" style="font-size:12px;margin-top:8px;">Read-only — added by the GCCPROs core team.</div>`;
+  }
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${kind==='core'?'Comments added by the GCCPROs core team for this candidate.':'Your notes for this application. These are visible to the GCCPROs admin team.'}</div>${list}${composer}`;
+}
+function logHTML(a){
+  return a.history.slice().reverse().map(h=>{
+    const who = h.actorRole==='hiring_manager'?'Hiring Mgr':h.actorRole==='core'?'GCCPROs':'System';
+    return `<div class="log-line"><span>${esc(h.text)} <span class="locked">· ${esc(h.actor)} (${who})</span></span><span class="t">${fmtDateTime(h.ts)}</span></div>`;
+  }).join('') || '<div class="empty">No history yet.</div>';
+}
+function dtab(btn,id){
+  btn.parentElement.querySelectorAll('.detail-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.dpane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* =================================================================
+   ACTIONS — all call the live gccpros-cust-api, then reload from server
+   ================================================================= */
+async function answerDuplicate(id,ans){
+  const res = await custCall('custDuplicateDecision', null, {id, decision:ans});
+  if(res && res.error){ toast('Error: '+res.error); return; }
+  if(ans==='yes'){ closeModal('cand-overlay'); toast('Marked duplicate. Application rejected and removed.'); await loadData(); }
+  else { toast('Unlocked. Phone number and full CV are now visible.'); await loadData(); openCand(id); }
+}
+function advanceStage(id){ const sel=document.getElementById('stage-select'); advanceStageTo(id, sel.value); }
+async function advanceStageTo(id,stage){
+  const a=myApps().find(x=>x.id===id); if(a && a.duplicateStatus!=='no'){ toast('Resolve the duplicate check first.'); return; }
+  const res = await custCall('custSetStage', null, {id, stage});
+  if(res && res.error){ toast('Error: '+res.error); return; }
+  await loadData(); openCand(id); toast('Stage updated to '+(stage==='rejected'?'Rejected':stageLabel(stage)));
+}
+async function addNote(id,kind){
+  const t=(document.getElementById('hm-note-text').value||'').trim(); if(!t) return;
+  const res = await custCall('custAddNote', null, {id, body:t});
+  if(res && res.error){ toast('Error: '+res.error); return; }
+  await loadData(); openCand(id); toast('Note added');
+}
+async function toggleRole(id){
+  const r=roleById(id); if(!r) return;
+  const newPosting = r.status==='disabled' ? 'open' : 'disabled';
+  const res = await custCall('custSetJobStatus', null, {id:r.id, posting_status:newPosting});
+  if(res && res.error){ toast('Error: '+res.error); return; }
+  await loadData(); toast('Role '+(newPosting==='open'?'enabled':'disabled'));
+}
+
+function openRoleModal(){
+  ['r-job_code','r-title','r-industry','r-primary_domain','r-location','r-experience_band','r-ctc_min_inr','r-ctc_max_inr','r-referral_amount_inr','r-budget_text','r-qualification','r-skills','r-responsibilities','r-description','r-requirements','r-benefits'].forEach(x=>{const e=document.getElementById(x); if(e)e.value='';});
+  document.getElementById('r-company').value = (CUSTOMERS[SESSION.companyId]||{}).name || '';
+  document.getElementById('r-job_type').value=''; document.getElementById('r-status').value='active';
+  document.getElementById('r-mode').value=''; document.getElementById('r-level').value='';
+  document.getElementById('role-err').style.display='none';
+  openModal('role-overlay');
+}
+async function submitRole(){
+  const g=id=>(document.getElementById(id).value||'').trim();
+  const err=document.getElementById('role-err'); const fail=m=>{err.textContent=m;err.style.display='block';};
+  err.style.display='none';
+  const job_code=g('r-job_code'), title=g('r-title'), company=g('r-company');
+  if(!title||!company||!job_code){ fail('Title, company and job code are required.'); return; }
+  const skills=g('r-skills').split(/[,;|\n]/).map(x=>x.trim()).filter(Boolean);
+  if(skills.length<3){ fail('Please list at least 3 skills (comma-separated). Candidates need them to apply.'); return; }
+  const payload={ job_code,title,company,industry:g('r-industry'),primary_domain:g('r-primary_domain'),location:g('r-location'),
+    experience_band:g('r-experience_band'),job_type:document.getElementById('r-job_type').value,
+    ctc_min_inr:g('r-ctc_min_inr'),ctc_max_inr:g('r-ctc_max_inr'),referral_amount_inr:g('r-referral_amount_inr'),
+    status:document.getElementById('r-status').value,mode:document.getElementById('r-mode').value,level:document.getElementById('r-level').value,
+    budget_text:g('r-budget_text'),qualification:g('r-qualification'),skills:skills.join(', '),
+    responsibilities:g('r-responsibilities'),description:g('r-description'),requirements:g('r-requirements'),benefits:g('r-benefits') };
+  const res = await custCall('custCreateJob', null, payload);
+  if(res && res.error){ fail('Could not post: '+res.error); return; }
+  closeModal('role-overlay'); await loadData();
+  toast(payload.status==='active' ? '✓ Job posted — '+title+' is now live for applicants & referrers' : '✓ Job saved as '+payload.status);
+}
+
+/* =================================================================
+   VIEW SWITCH + utils
+   ================================================================= */
+function switchView(v){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); });
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function fmtDate(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateTime(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function nowISO(){ return new Date().toISOString(); }
+function todayISODate(){ return new Date().toISOString().slice(0,10); }
+function monthsSince(d){ return (Date.now()-new Date(d).getTime())/(1000*60*60*24*30.4375); }
+function toast(msg){
+  let t=document.getElementById('_toast'); if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);';document.body.appendChild(t);}
+  t.textContent=msg; t.style.opacity='1'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity='0',2600);
+}
+</script>
+</body>
+</html>
