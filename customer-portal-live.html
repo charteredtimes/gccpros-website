@@ -154,6 +154,9 @@ tr:last-child td{border-bottom:none;}
 .detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:18px 0 14px;}
 .detail-tab{background:none;border:none;padding:9px 14px;font-family:inherit;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
 .detail-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.detail-tab.cv-tab{background:var(--brand-orange);color:#fff;border-radius:8px;font-weight:800;font-size:14.5px;padding:10px 18px;border-bottom:2px solid transparent;box-shadow:0 3px 10px rgba(232,93,4,.32);}
+.detail-tab.cv-tab:hover{filter:brightness(.95);color:#fff;}
+.detail-tab.cv-tab.active{color:#fff;border-bottom-color:transparent;}
 .dpane{display:none;} .dpane.active{display:block;}
 
 /* pipeline */
@@ -369,6 +372,23 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
   </div>
 </div>
 
+<!-- ============ EMAIL PREVIEW / CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="preview-overlay">
+  <div class="modal">
+    <button class="close" onclick="closeModal('preview-overlay')">&times;</button>
+    <h3>Review email before sending</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">This is exactly what the candidate will receive. It sends only when you click <b>Send</b>.</p>
+    <div style="font-size:13px;margin-bottom:4px;"><b>To:</b> <span id="pv-to"></span></div>
+    <div style="font-size:13px;margin-bottom:4px;"><b>Subject:</b> <span id="pv-subject"></span></div>
+    <div id="pv-extra" style="font-size:12px;color:var(--brand-orange);font-weight:600;margin:6px 0 10px;"></div>
+    <div id="pv-body" style="border:1px solid var(--border);border-radius:8px;padding:14px;max-height:46vh;overflow:auto;background:var(--cream);"></div>
+    <div style="margin-top:18px;display:flex;gap:10px;">
+      <button class="btn ok" id="pv-send-btn" onclick="confirmSendAction()">✉ Send email now</button>
+      <button class="btn secondary" onclick="closeModal('preview-overlay')">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="demo-flag" style="background:var(--green);color:#fff;">LIVE · connected to your GCCPROs database</div>
 
 <script>
@@ -442,6 +462,7 @@ let BUCKET = 'all';
 let CUR_APP = null;     // open candidate id
 let AI_SORT = false;    // when true, applications sort by AI fit score
 let EDIT_ROLE_ID = null;// when set, the role modal is editing this role id
+let PENDING_ACTION = null; // candidate email action awaiting preview confirmation
 
 /* ---- Live API: attaches the Firebase ID token on every call ---- */
 async function custCall(action, params, body){
@@ -610,8 +631,9 @@ function renderRoles(){
       ? `<button class="btn small" style="background:#25D366;border-color:#25D366;color:#fff;" title="Share on WhatsApp + copy link" data-code="${esc(r.code||r.id)}" data-title="${esc(r.title||'')}" onclick="shareJobBtn(this)">↗ Share</button>`
       : '';
     const edit = `<button class="btn small secondary" onclick="openRoleEdit('${r.id}')">Edit</button>`;
+    const del = r.status==='disabled' ? `<button class="btn small danger" onclick="deleteRole('${r.id}', ${n})">Delete</button>` : '';
     return `<tr><td>${esc(r.code||r.id)}</td><td><strong>${esc(r.title)}</strong><br><span class="locked" style="font-size:11px;">${esc(r.domain)}${(r.ctcMin||r.ctcMax)?(' · '+r.ctcMin+'–'+r.ctcMax):''}</span></td>
-      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td style="white-space:nowrap;">${share} ${edit} ${toggle}</td></tr>`;
+      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td style="white-space:nowrap;">${share} ${edit} ${toggle} ${del}</td></tr>`;
   }).join('') || `<tr><td colspan="6" class="empty">No roles yet.</td></tr>`;
 }
 
@@ -699,7 +721,7 @@ async function openCand(id){
   // detail tabs
   html += `<div class="detail-tabs">
       <button class="detail-tab active" onclick="dtab(this,'d-pipe')">Pipeline</button>
-      <button class="detail-tab" onclick="dtab(this,'d-cv')">CV</button>
+      <button class="detail-tab cv-tab" onclick="dtab(this,'d-cv')">📄 CV &amp; Info</button>
       <button class="detail-tab" onclick="dtab(this,'d-core')">GCCPROs Notes (${a.coreNotes.length})</button>
       <button class="detail-tab" onclick="dtab(this,'d-hm')">My Notes (${a.hmNotes.length})</button>
       <button class="detail-tab" onclick="dtab(this,'d-actions')">✉ Actions</button>
@@ -765,11 +787,12 @@ function copyShare(){ const i=document.getElementById('share-link'); i.select();
 async function openCVWindow(id){
   const a=myApps().find(x=>x.id===id); if(!a) return;
   if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full packet.'); return; }
-  const w=window.open('about:blank','_blank'); // open synchronously so the pop-up isn't blocked
-  // route through the stamped packet viewer (cover + CV) via a fresh secure token
+  toast('Opening the interview packet…');
+  // Route through the stamped packet viewer (cover + CV) via a fresh secure token.
+  // Navigate in the SAME tab so pop-up blockers don't interfere; the browser Back button returns to the portal.
   const res=await custCall('custCreateShareLink', null, {id});
-  if(res && res.token){ const url='https://www.gccpros.com/cv-view.html?t='+encodeURIComponent(res.token); if(w){ w.location=url; } else { window.open(url,'_blank'); } }
-  else { if(w) w.close(); toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not open the packet ('+((res&&res.error)||'error')+')'); }
+  if(res && res.token){ window.location.href='https://www.gccpros.com/cv-view.html?t='+encodeURIComponent(res.token); }
+  else { toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not open the packet ('+((res&&res.error)||'error')+')'); }
 }
 async function genShare(id){
   const res=await custCall('custCreateShareLink',null,{id});
@@ -897,15 +920,33 @@ async function sendAction(id, type){
     payload.message=v('act-info-msg'); if(!payload.message){ toast('Add what you need from the candidate.'); return; }
   } else if(type==='request_availability'){ payload.message=v('act-avail-msg'); }
   else if(type==='offer'){ payload.ctc=v('act-ctc'); payload.joining_date=v('act-join'); payload.message=v('act-offer-msg'); }
-  toast('Sending…');
-  const res=await custCall('custCandidateAction', null, payload);
-  if(res && res.error){
-    toast(res.error==='email_not_configured'?'Email isn’t configured on the server.'
-      :res.error==='resolve_duplicate_first'?'Clear the duplicate check first.'
-      :res.error==='no_candidate_email'?'No candidate email on file.'
-      :('Could not send: '+res.error+(res.detail?(' — '+res.detail):'')));
+  toast('Preparing preview…');
+  const pv=await custCall('custCandidateAction', null, Object.assign({preview:true}, payload));
+  if(pv && pv.error){
+    toast(pv.error==='email_not_configured'?'Email isn’t configured on the server.'
+      :pv.error==='resolve_duplicate_first'?'Clear the duplicate check first.'
+      :pv.error==='no_candidate_email'?'No candidate email on file.'
+      :('Could not prepare: '+pv.error+(pv.detail?(' — '+pv.detail):'')));
     return;
   }
+  if(!pv || !pv.subject){ toast('Could not build the email preview.'); return; }
+  PENDING_ACTION={ id, payload, type };
+  document.getElementById('pv-to').textContent = pv.to || '';
+  document.getElementById('pv-subject').textContent = pv.subject || '';
+  const extra=[]; if(type==='schedule') extra.push('A calendar invite (.ics) will be attached');
+  if(pv.will_set_stage) extra.push('Stage will move to '+stageLabel(pv.will_set_stage));
+  document.getElementById('pv-extra').textContent = extra.length?('· '+extra.join('  ·  ')):'';
+  document.getElementById('pv-body').innerHTML = pv.html || '';
+  openModal('preview-overlay');
+}
+async function confirmSendAction(){
+  if(!PENDING_ACTION) return;
+  const btn=document.getElementById('pv-send-btn'); const id=PENDING_ACTION.id, payload=PENDING_ACTION.payload;
+  btn.disabled=true; btn.textContent='Sending…';
+  const res=await custCall('custCandidateAction', null, payload);
+  btn.disabled=false; btn.textContent='✉ Send email now';
+  if(res && res.error){ toast('Could not send: '+res.error+(res.detail?(' — '+res.detail):'')); return; }
+  PENDING_ACTION=null; closeModal('preview-overlay');
   await loadData(); openCand(id);
   setTimeout(()=>{ const tb=[...document.querySelectorAll('.detail-tab')].find(b=>/Actions/.test(b.textContent)); if(tb) dtab(tb,'d-actions'); }, 30);
   toast('✓ Email sent to the candidate'+(res.stage?(' · stage: '+stageLabel(res.stage)):''));
@@ -951,6 +992,14 @@ async function toggleRole(id){
   const res = await custCall('custSetJobStatus', null, {id:r.id, posting_status:newPosting});
   if(res && res.error){ toast('Error: '+res.error); return; }
   await loadData(); toast('Role '+(newPosting==='open'?'enabled':'disabled'));
+}
+async function deleteRole(id, n){
+  const r=roleById(id); if(!r) return;
+  if(n>0){ toast('This role has '+n+' application(s) — it can’t be deleted. Keep it disabled instead.'); return; }
+  if(!confirm('Delete the role “'+(r.title||r.code||id)+'” permanently?\n\nThis cannot be undone.')) return;
+  const res = await custCall('custDeleteJob', null, {id});
+  if(res && res.error){ toast(res.error==='has_applications' ? 'This role has applications — it can’t be deleted.' : ('Could not delete: '+res.error)); return; }
+  await loadData(); toast('✓ Role deleted');
 }
 
 function openRoleModal(){
