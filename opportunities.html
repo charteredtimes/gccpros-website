@@ -273,6 +273,23 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .result-line{margin:10px 0;font-size:13px;}
 .rec-intro{color:var(--muted,#6b7280);font-size:13px;margin-bottom:14px;}
 .console-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+/* ===== B2B employer call-out ===== */
+.b2b-callout{background:linear-gradient(135deg,#1E3A8A 0%,#1E40AF 60%,#0A66C2 100%);color:#fff;padding:34px 0;}
+.b2b-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.b2b-eyebrow{font-size:11px;letter-spacing:2.5px;font-weight:800;text-transform:uppercase;color:#93C5FD;margin-bottom:6px;}
+.b2b-text h2{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:6px;line-height:1.15;}
+.b2b-text p{font-size:14px;color:rgba(255,255,255,.85);max-width:580px;margin:0;}
+.b2b-btn{background:var(--brand-orange);color:#fff;border:none;padding:15px 28px;font-size:15px;font-weight:800;border-radius:6px;white-space:nowrap;box-shadow:0 6px 18px rgba(232,93,4,.4);text-decoration:none;display:inline-block;transition:all .15s;}
+.b2b-btn:hover{background:var(--brand-orange-dark);color:#fff;text-decoration:none;transform:translateY(-1px);}
+.btn.employer-login{background:var(--brand-orange);color:#fff;border:none;text-decoration:none;}
+.btn.employer-login:hover{background:var(--brand-orange-dark);color:#fff;text-decoration:none;}
+/* ===== Guest sample teaser ===== */
+.guest-teaser{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#FFF7ED 0%,#FEF3C7 100%);border:2px dashed var(--brand-orange);border-radius:10px;padding:30px 24px;}
+.guest-teaser-n{font-family:'Playfair Display',serif;font-size:42px;font-weight:800;color:var(--brand-orange);line-height:1;}
+.guest-teaser h3{font-family:'Inter';font-size:18px;font-weight:800;color:var(--ink);margin:4px 0 6px;}
+.guest-teaser p{font-size:13.5px;color:var(--muted);margin-bottom:14px;max-width:420px;}
+@media(max-width:640px){.b2b-inner{flex-direction:column;text-align:center;align-items:center;}.b2b-text p{margin:0 auto;}}
 </style>
 </head>
 <body>
@@ -291,6 +308,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <a href="#" class="active">Opportunities</a>
     </nav>
     <div class="right">
+      <a class="btn employer-login" href="/customer-portal-live.html" title="Employer / customer login to the Talent Engine">🏢 Employer Login</a>
       <button class="btn secondary" id="signin-btn" onclick="openLoginModal()">Sign in</button>
       <span class="user-pill" id="user-pill" style="display:none;"></span>
       <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
@@ -354,6 +372,17 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   </div>
 </section>
 
+<section class="b2b-callout">
+  <div class="container b2b-inner">
+    <div class="b2b-text">
+      <div class="b2b-eyebrow">For Employers &amp; GCC Hiring Teams</div>
+      <h2>Hiring for your GCC? Enter the Talent Engine.</h2>
+      <p>Post roles, review AI-ranked applicants, and manage your hiring pipeline in your private, white-labeled workspace.</p>
+    </div>
+    <a class="b2b-btn" href="/customer-portal-live.html">🏢 Customer / B2B Login &rarr;</a>
+  </div>
+</section>
+
 <section class="jobs-section">
   <div class="container">
     <div class="section-intro">
@@ -364,7 +393,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <a class="wa-inline" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg> Join the &ldquo;GCC Jobs&rdquo; WhatsApp group</a>
       </p>
     </div>
-    <div class="filter-bar">
+    <div class="filter-bar" id="filter-bar" style="display:none;">
       <input type="search" id="f-search" placeholder="&#128269; Search title, company, or skill&hellip;" oninput="renderJobs()">
       <select id="f-location" onchange="renderJobs()"><option value="">All locations</option></select>
       <select id="f-experience" onchange="renderJobs()">
@@ -377,7 +406,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       </select>
       <button class="btn secondary" onclick="resetFilters()" style="padding:8px 14px;">Reset</button>
     </div>
-    <div class="filter-pills" id="domain-pills">
+    <div class="filter-pills" id="domain-pills" style="display:none;">
       <button class="filter-pill active" data-domain="">All domains</button>
     </div>
     <div id="job-list" class="jobs-grid">
@@ -1070,16 +1099,22 @@ function setSignedInChrome(signedIn) {
   const tiles = document.getElementById('get-started');
   const h1 = document.getElementById('hero-h1');
   const cta = document.getElementById('jobs-cta');
+  const fb = document.getElementById('filter-bar');
+  const dp = document.getElementById('domain-pills');
   if (signedIn) {
     hero.classList.add('is-signedin');
     if (h1) h1.textContent = 'Welcome back';
     tiles.style.display = 'none';
     if (cta) cta.style.display = 'none';
+    if (fb) fb.style.display = '';
+    if (dp) dp.style.display = '';
   } else {
     hero.classList.remove('is-signedin');
     if (h1) h1.textContent = 'Your Career, Elevated';
     tiles.style.display = '';
     if (cta) cta.style.display = 'inline-block';
+    if (fb) fb.style.display = 'none';
+    if (dp) dp.style.display = 'none';
   }
 }
 
@@ -1427,13 +1462,33 @@ function applyFilters(jobs) {
 function renderJobs() {
   const el = document.getElementById('job-list');
   if (!el) return;
+  if (!CURRENT_EMAIL) { renderGuestSample(el); return; }
   const _isUrgent = j => (j && (j.is_urgent === true || j.is_urgent === 'true' || String(j.status || '').toLowerCase() === 'urgent')) ? 1 : 0;
   const filtered = applyFilters(JOB_LIST).slice().sort((a, b) => _isUrgent(b) - _isUrgent(a));
   if (!filtered.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No roles match the current filters. Try clearing them.</p>'; return; }
   el.innerHTML = filtered.map(j => renderJobCard(j)).join('');
 }
 
-function renderJobCard(j) {
+function renderGuestSample(el) {
+  if (!JOB_LIST.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">Loading roles&hellip;</p>'; return; }
+  const dom = d => JOB_LIST.filter(j => String(j.primary_domain || '').toLowerCase() === d);
+  const fin = dom('finance').slice(0, 2);
+  const tech = dom('technology').slice(0, 2);
+  let sample = fin.concat(tech);
+  const ids = new Set(sample.map(j => j.id));
+  for (const j of JOB_LIST) { if (sample.length >= 4) break; if (!ids.has(j.id)) { sample.push(j); ids.add(j.id); } }
+  const more = Math.max(0, JOB_LIST.length - sample.length);
+  const cards = sample.map(j => renderJobCard(j, true)).join('');
+  const teaser = '<div class="guest-teaser">'
+    + '<div class="guest-teaser-n">' + more + '+</div>'
+    + '<h3>more roles inside the portal</h3>'
+    + '<p>Sign in for the full list and to apply or refer candidates.</p>'
+    + '<button class="btn" onclick="openLoginModal()">🔓 Sign in for full view &rarr;</button>'
+    + '</div>';
+  el.innerHTML = cards + teaser;
+}
+
+function renderJobCard(j, guest) {
   const urgent = (j.is_urgent === true || j.is_urgent === 'true') || String(j.status || '').toLowerCase() === 'urgent';
   const skills = splitToArr(j.skills);
   const ctcText = (j.ctc_min_inr || j.ctc_max_inr)
@@ -1453,10 +1508,15 @@ function renderJobCard(j) {
   const safeTitle = jsSafe(j.title);
   const safeCo    = jsSafe(j.company);
   // v7.7: button follows the ACTIVE VIEW (what user is currently browsing as)
-  let actionBtn;
-  if (CURRENT_ACTIVE_VIEW === 'partner') {
+  let actionBtn, detailBtn;
+  if (guest) {
+    detailBtn = `<button class="btn secondary" onclick="openLoginModal()">View Details</button>`;
+    actionBtn = `<button class="btn" onclick="openLoginModal()">🔒 Sign in to apply</button>`;
+  } else if (CURRENT_ACTIVE_VIEW === 'partner') {
+    detailBtn = `<button class="btn secondary" onclick="openJobDetail('${safeId}')">View Details</button>`;
     actionBtn = `<button class="btn brand-orange" onclick="openReferModal('${safeId}')">Refer →</button>`;
   } else {
+    detailBtn = `<button class="btn secondary" onclick="openJobDetail('${safeId}')">View Details</button>`;
     actionBtn = `<button class="btn" onclick="openApplyModal('${safeId}', '${safeTitle}', '${safeCo}')">Apply →</button>`;
   }
   return `
@@ -1483,7 +1543,7 @@ function renderJobCard(j) {
         <span>${j.posted_at ? 'Posted ' + relTime(j.posted_at) : ''}</span>
       </div>
       <div class="job-foot">
-        <button class="btn secondary" onclick="openJobDetail('${safeId}')">View Details</button>
+        ${detailBtn}
         ${actionBtn}
       </div>
     </div>
