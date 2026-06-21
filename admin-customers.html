@@ -241,16 +241,40 @@ async function removeUser(email){
 
 const STAGE_LABELS={cv_submitted:'CV Submitted',initial_screen:'Initial Screening',reviewed:'Reviewed',l1_scheduled:'L1 Scheduled',l1_feedback:'L1 Feedback',l2_scheduled:'L2 Scheduled',l2_feedback:'L2 Feedback',offer_stage:'Offer Stage',offered:'Offered',offer_accepted:'Offer Accepted',joined:'Joined',three_months:'3 Months',rejected:'Rejected'};
 async function loadDashboard(){
-  const res=await api('custAdminUnified');
+  const [res, mres]=await Promise.all([ api('custAdminUnified'), api('custAdminMetrics') ]);
   const cs=(res&&res.customers)||[];
-  const totalApps=cs.reduce((a,c)=>a+(c.total_applications||0),0);
-  const totalRoles=cs.reduce((a,c)=>a+(c.open_roles||0),0);
-  document.getElementById('dash-kpis').innerHTML=[['Customers',cs.length],['Open roles',totalRoles],['Total applications',totalApps]].map(k=>`<div class="kpi"><div class="kpi-n">${k[1]}</div><div class="kpi-l">${k[0]}</div></div>`).join('');
-  document.getElementById('dash-cards').innerHTML=cs.map(c=>{
+  const m=(mres&&mres.metrics)||null;
+  let kpis;
+  if(m){
+    const cnt=m.counts;
+    kpis=[['Customers',cnt.totalCustomers],['Users',cnt.totalUsers],['Total roles',cnt.totalRoles],['Open roles',cnt.openRoles],
+      ['Applications',cnt.totalApplications],['Direct',cnt.direct],['Referrals',cnt.referral],['Shortlisted',cnt.shortlisted],
+      ['L1 interviews',cnt.l1Interviews],['Offered',cnt.offered],['Joined',cnt.joined],['3 months done',cnt.threeMonths]];
+  } else {
+    const totalApps=cs.reduce((a,c)=>a+(c.total_applications||0),0); const totalRoles=cs.reduce((a,c)=>a+(c.open_roles||0),0);
+    kpis=[['Customers',cs.length],['Open roles',totalRoles],['Total applications',totalApps]];
+  }
+  document.getElementById('dash-kpis').innerHTML=kpis.map(k=>`<div class="kpi"><div class="kpi-n">${k[1]==null?'—':k[1]}</div><div class="kpi-l">${k[0]}</div></div>`).join('');
+  let ratiosHtml='';
+  if(m){
+    const r=m.ratios; const pf=x=> x==null?'—':(x+'%');
+    const items=[
+      ['Direct → Offer', pf(r.direct_to_offer), 'of direct applications reach an offer'],
+      ['Referral → Offer', pf(r.referral_to_offer), 'of referral applications reach an offer'],
+      ['Offer → Join', pf(r.offer_to_join), 'of offers convert to a join'],
+      ['L1 → Offer', pf(r.l1_to_offer), 'of L1 interviews reach an offer'],
+      ['Offer drop rate', pf(r.offer_drop_rate), 'offered but did not join'],
+      ['Time to hire', (m.time_to_hire_days==null?'—':(m.time_to_hire_days+' days')), 'avg role-open → offer'+(m.time_to_hire_n?(' · n='+m.time_to_hire_n):'')]
+    ];
+    ratiosHtml='<h3 style="font-size:18px;font-weight:700;margin:6px 0 10px;">Funnel &amp; conversion (all customers)</h3>'+
+      '<div class="kpi-row" style="margin-bottom:24px;">'+items.map(it=>`<div class="kpi"><div class="kpi-n" style="font-size:21px;">${it[1]}</div><div class="kpi-l">${it[0]}</div><div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.3;">${it[2]}</div></div>`).join('')+'</div>'+
+      '<h3 style="font-size:18px;font-weight:700;margin:6px 0 10px;">By customer</h3>';
+  }
+  document.getElementById('dash-cards').innerHTML=ratiosHtml + (cs.map(c=>{
     const max=Math.max(1,...Object.values(c.stages||{}));
     const rows=Object.keys(c.stages||{}).map(s=>`<div class="funnel-row"><div style="width:140px;text-align:right;">${esc(STAGE_LABELS[s]||s)}</div><div class="funnel-bar" style="width:${(c.stages[s]/max)*200}px;background:${esc(c.brand_color||'#0A66C2')};"></div><strong>${c.stages[s]}</strong></div>`).join('') || '<div class="muted" style="font-size:12px;">No applications yet.</div>';
     return `<div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span class="logo" style="background:${esc(c.brand_color||'#0A66C2')}">${esc(c.logo_initials||'GP')}</span><strong style="font-size:15px;">${esc(c.name)}</strong><span class="muted" style="font-size:12px;">· ${c.open_roles||0} open roles · ${c.total_applications||0} applications</span></div>${rows}</div>`;
-  }).join('') || '<div class="empty">No customers.</div>';
+  }).join('') || '<div class="empty">No customers.</div>');
 }
 
 async function loadAudit(){
