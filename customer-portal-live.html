@@ -210,6 +210,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
     </div>
     <div class="right" id="topbar-right" style="display:none;">
       <span class="user-pill" id="user-pill"></span>
+      <button class="btn secondary small" id="switch-co-btn" style="display:none;" onclick="switchCompany()">⇄ Switch company</button>
       <button class="btn secondary small" onclick="signOut()">Sign out</button>
     </div>
   </div>
@@ -231,6 +232,14 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
     </button>
 
     <div id="login-msg" class="banner" style="display:none;"></div>
+
+    <div id="company-picker" style="display:none;margin-top:6px;">
+      <p style="font-size:13.5px;color:var(--ink);margin-bottom:8px;font-weight:600;">Choose a company to open</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Your account has access to more than one company. Type the company name (not case-sensitive).</p>
+      <input id="company-input" list="company-list" placeholder="Company name" autocomplete="off" style="width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit;" onkeydown="if(event.key==='Enter')chooseCompany()">
+      <datalist id="company-list"></datalist>
+      <button class="btn" style="width:100%;margin-top:10px;" onclick="chooseCompany()">Continue →</button>
+    </div>
 
     <p class="login-note">Access is restricted to <b>specific, pre-authorized email addresses</b> on approved customer domains. If your email isn't recognized, ask your GCCPROs account manager to add you.</p>
 
@@ -464,10 +473,15 @@ let AI_SORT = false;    // when true, applications sort by AI fit score
 let EDIT_ROLE_ID = null;// when set, the role modal is editing this role id
 let PENDING_ACTION = null; // candidate email action awaiting preview confirmation
 let SHOW_HISTORY = false;  // when true, Applications includes rejected/removed (full audit trail)
+let SELECTED_CID = null;   // chosen customer id (super-admin can switch); sent on every request
+let COMPANY_LIST = [];     // companies a multi-company user can open
+let PENDING_USER = null;   // firebase user awaiting company choice
 
 /* ---- Live API: attaches the Firebase ID token on every call ---- */
 async function custCall(action, params, body){
-  const qs = new URLSearchParams(Object.assign({action}, params||{})).toString();
+  const base = Object.assign({action}, params||{});
+  if(SELECTED_CID && !('cid' in base)) base.cid = SELECTED_CID;
+  const qs = new URLSearchParams(base).toString();
   const headers = {};
   try { const u=firebase.auth().currentUser; if(u){ headers['Authorization']='Bearer '+await u.getIdToken(); } } catch(_){}
   const opt = { headers };
@@ -493,19 +507,43 @@ firebase.auth().onAuthStateChanged(async (user)=>{
   let res;
   try { res = await custCall('custCheckAccess'); }
   catch(e){ showLoginMsg('Could not reach the server — please try again.'); return; }
-  if(!res || !res.authorized){
+  if(res && res.multiple){ showCompanyPicker(res.customers||[], user); return; }
+  if(!res || !res.authorized || !res.customer){
     showLoginMsg('⛔ '+(user.email||'This account')+' is not authorized for any customer workspace. Ask your GCCPROs account manager to add your email.');
     try { await firebase.auth().signOut(); } catch(_){}
     return;
   }
-  SESSION = { email:res.user.email, name:res.user.name||user.displayName||res.user.email, role:res.user.role, companyId:res.customer.id };
+  finishLogin(res, user);
+});
+function finishLogin(res, user){
+  SELECTED_CID = res.customer.id;
+  SESSION = { email:res.user.email, name:res.user.name||(user&&user.displayName)||res.user.email, role:res.user.role, companyId:res.customer.id, isAdmin:(res.user.role==='admin'||!!res.super_admin) };
   CUSTOMERS[res.customer.id] = {
     name:res.customer.name, short:res.customer.short_name||res.customer.name,
     logo:res.customer.logo_initials||'GP', color:res.customer.brand_color||'#0A66C2',
     tagline:res.customer.tagline||'Hiring Workspace', logo_url:res.customer.logo_url
   };
-  await bootApp();
-});
+  const cp=document.getElementById('company-picker'); if(cp) cp.style.display='none';
+  bootApp();
+}
+function showCompanyPicker(customers, user){
+  COMPANY_LIST = customers; PENDING_USER = user; showLoginMsg('');
+  document.querySelectorAll('.sso-btn').forEach(b=>b.style.display='none');
+  const box=document.getElementById('company-picker'); if(box) box.style.display='block';
+  const dl=document.getElementById('company-list'); if(dl) dl.innerHTML=customers.map(c=>`<option value="${esc(c.name)}">`).join('');
+  const inp=document.getElementById('company-input'); if(inp){ inp.value=''; setTimeout(()=>inp.focus(),50); }
+}
+async function chooseCompany(){
+  const name=(document.getElementById('company-input').value||'').trim();
+  if(!name){ showLoginMsg('Type your company name to continue.'); return; }
+  const match = COMPANY_LIST.find(c=> (c.name||'').toLowerCase()===name.toLowerCase() || (c.short_name||'').toLowerCase()===name.toLowerCase());
+  let res;
+  if(match){ SELECTED_CID=match.id; res=await custCall('custCheckAccess'); }
+  else { res=await custCall('custCheckAccess', { company:name }); }
+  if(res && res.multiple){ SELECTED_CID=null; showLoginMsg('Couldn’t find “'+name+'”. Please pick a valid company from the list.'); return; }
+  if(!res || !res.authorized || !res.customer){ SELECTED_CID=null; showLoginMsg('Couldn’t open “'+name+'”. Please try again.'); return; }
+  finishLogin(res, PENDING_USER||firebase.auth().currentUser);
+}
 
 async function bootApp(){
   const cust = CUSTOMERS[SESSION.companyId];
@@ -520,7 +558,8 @@ async function bootApp(){
   document.title = cust.short+' · GCCPROs Hiring Portal';
 
   document.getElementById('topbar-right').style.display='';
-  document.getElementById('user-pill').innerHTML = esc(SESSION.name)+' <span class="role-chip">Hiring Mgr</span>';
+  document.getElementById('user-pill').innerHTML = esc(SESSION.name)+' <span class="role-chip">'+(SESSION.isAdmin?'Admin':'Hiring Mgr')+'</span>';
+  const sc=document.getElementById('switch-co-btn'); if(sc) sc.style.display = SESSION.isAdmin?'':'none';
   document.getElementById('hero-h1').textContent = 'Welcome, '+SESSION.name.split(' ')[0];
   document.getElementById('hero-p').textContent = cust.name+' — recruitment workspace';
 
@@ -532,6 +571,7 @@ async function bootApp(){
   await loadData();
 }
 function signOut(){ try{ firebase.auth().signOut(); }catch(_){} location.reload(); }
+function switchCompany(){ SELECTED_CID=null; location.reload(); }
 
 /* =================================================================
    SCOPING — a hiring manager only sees their company's data
