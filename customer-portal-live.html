@@ -912,12 +912,18 @@ function openRoleEdit(id){
   const set=(eid,val)=>{const e=document.getElementById(eid); if(e) e.value=(val==null?'':val);};
   set('r-job_code', x.job_code||r.code);
   set('r-title', x.title||r.title);
-  document.getElementById('r-company').value = x.company || (CUSTOMERS[SESSION.companyId]||{}).name || '';
+  // company is fixed to the customer (custUpdateJob never changes it); avoid showing stray stored values
+  document.getElementById('r-company').value = (CUSTOMERS[SESSION.companyId]||{}).name || x.company || '';
   set('r-industry', x.industry); set('r-primary_domain', x.primary_domain);
   set('r-location', x.location); set('r-experience_band', x.experience_band);
   set('r-ctc_min_inr', x.ctc_min_inr); set('r-ctc_max_inr', x.ctc_max_inr);
   set('r-referral_amount_inr', x.referral_amount_inr); set('r-budget_text', x.budget_text);
-  set('r-qualification', x.qualification); set('r-skills', x.skills);
+  set('r-qualification', x.qualification);
+  // skills may be stored as a JSON array (roles created on the main jobs board) or a comma list — normalise to a clean comma list
+  let skillsVal = x.skills;
+  if(typeof skillsVal==='string' && skillsVal.trim().charAt(0)==='['){ try{ const arr=JSON.parse(skillsVal); if(Array.isArray(arr)) skillsVal=arr.join(', '); }catch(_){ } }
+  else if(Array.isArray(skillsVal)){ skillsVal = skillsVal.join(', '); }
+  set('r-skills', skillsVal);
   set('r-responsibilities', x.responsibilities); set('r-description', x.description);
   set('r-requirements', x.requirements); set('r-benefits', x.benefits);
   document.getElementById('r-job_type').value = x.job_type||'';
