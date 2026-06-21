@@ -176,6 +176,9 @@ tr:last-child td{border-bottom:none;}
 .cv-frame{border:1px solid var(--border);border-radius:8px;background:var(--cream);height:420px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);text-align:center;padding:24px;user-select:none;}
 .cv-frame .doc{font-size:46px;}
 .no-dl{font-size:11.5px;color:var(--muted);margin-top:8px;}
+.act-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;}
+.act-h{font-weight:700;font-size:14px;margin-bottom:8px;color:var(--ink);}
+.cv-cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;padding:14px 24px;font-weight:700;box-shadow:0 4px 14px rgba(10,102,194,.25);}
 .share-box{margin-top:14px;background:var(--cream);border-radius:8px;padding:14px;}
 .share-box input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:5px;font-size:12.5px;font-family:monospace;background:#fff;}
 
@@ -699,6 +702,7 @@ async function openCand(id){
       <button class="detail-tab" onclick="dtab(this,'d-cv')">CV</button>
       <button class="detail-tab" onclick="dtab(this,'d-core')">GCCPROs Notes (${a.coreNotes.length})</button>
       <button class="detail-tab" onclick="dtab(this,'d-hm')">My Notes (${a.hmNotes.length})</button>
+      <button class="detail-tab" onclick="dtab(this,'d-actions')">✉ Actions</button>
       <button class="detail-tab" onclick="dtab(this,'d-log')">History</button>
     </div>`;
 
@@ -706,6 +710,7 @@ async function openCand(id){
   html += `<div id="d-cv" class="dpane">${cvHTML(a)}</div>`;
   html += `<div id="d-core" class="dpane">${notesHTML(a,'core')}</div>`;
   html += `<div id="d-hm" class="dpane">${notesHTML(a,'hm')}</div>`;
+  html += `<div id="d-actions" class="dpane">${actionsHTML(a)}</div>`;
   html += `<div id="d-log" class="dpane">${logHTML(a)}</div>`;
 
   document.getElementById('cand-body').innerHTML = html;
@@ -740,10 +745,10 @@ function pipelineHTML(a){
 function cvHTML(a){
   return `<div class="cv-frame">
       <div class="doc">📄</div>
-      <div><b>${esc(a.candidate.name)} — CV</b></div>
-      <div class="locked">In-portal viewer · download disabled by policy</div>
-      <button class="btn small" style="margin-top:10px;" onclick="openCVWindow('${a.id}')">Open CV in a new window</button>
-      <div class="no-dl">🔒 Opens the candidate's actual CV in a view-only window. If no CV was uploaded, you'll be told.</div>
+      <div><b>${esc(a.candidate.name)} — Interview packet</b></div>
+      <div class="locked">Cover (referrer input · AI assessment · notes) + the candidate's CV — every page stamped</div>
+      <button class="btn cv-cta" onclick="openCVWindow('${a.id}')">📄 View CV &amp; Additional Info</button>
+      <div class="no-dl">🔒 Opens the full stamped interview packet in a new window. If no CV was uploaded, you'll be told.</div>
     </div>
     <div class="share-box">
       <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">Share with an internal interviewer</label>
@@ -759,11 +764,12 @@ function shareLink(a){ return 'https://portal.gccpros.com/cv/'+SESSION.companyId
 function copyShare(){ const i=document.getElementById('share-link'); i.select(); try{document.execCommand('copy');}catch(_){ } toast('Share link copied'); }
 async function openCVWindow(id){
   const a=myApps().find(x=>x.id===id); if(!a) return;
-  if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full CV.'); return; }
+  if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full packet.'); return; }
   const w=window.open('about:blank','_blank'); // open synchronously so the pop-up isn't blocked
-  const res=await custCall('custCvUrl',{id});
-  if(res && res.url){ if(w){ w.location=res.url; } else { window.open(res.url,'_blank'); } }
-  else { if(w) w.close(); toast(res && res.error==='no_cv' ? 'No CV file was uploaded for this candidate.' : 'Could not open CV ('+((res&&res.error)||'error')+')'); }
+  // route through the stamped packet viewer (cover + CV) via a fresh secure token
+  const res=await custCall('custCreateShareLink', null, {id});
+  if(res && res.token){ const url='https://www.gccpros.com/cv-view.html?t='+encodeURIComponent(res.token); if(w){ w.location=url; } else { window.open(url,'_blank'); } }
+  else { if(w) w.close(); toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not open the packet ('+((res&&res.error)||'error')+')'); }
 }
 async function genShare(id){
   const res=await custCall('custCreateShareLink',null,{id});
@@ -846,6 +852,63 @@ function notesHTML(a,kind){
     composer = `<div class="locked" style="font-size:12px;margin-top:8px;">Read-only — added by the GCCPROs core team.</div>`;
   }
   return `<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${kind==='core'?'Comments added by the GCCPROs core team for this candidate.':'Your notes for this application. These are visible to the GCCPROs admin team.'}</div>${list}${composer}`;
+}
+function actionsHTML(a){
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Send the candidate a real email from GCCPROs — they reply straight to you. Scheduling also attaches a calendar invite and advances the stage.</div>
+  <div class="act-card">
+    <div class="act-h">📅 Schedule interview</div>
+    <div class="field-row">
+      <div class="field"><label>Date &amp; time</label><input type="datetime-local" id="act-dt"></div>
+      <div class="field"><label>Round</label><select id="act-lvl"><option value="L1">L1 interview</option><option value="L2">L2 interview</option></select></div>
+    </div>
+    <div class="field"><label>Location / meeting link</label><input id="act-loc" placeholder="e.g. Google Meet link, or office address"></div>
+    <div class="field"><label>Message to candidate (optional)</label><textarea id="act-sch-msg" placeholder="Anything to add…"></textarea></div>
+    <button class="btn small" onclick="sendAction('${a.id}','schedule')">Send invite + calendar</button>
+  </div>
+  <div class="act-card">
+    <div class="act-h">📝 Request additional information</div>
+    <div class="field"><label>What do you need from the candidate?</label><textarea id="act-info-msg" placeholder="e.g. updated CV, notice-period proof, portfolio link…"></textarea></div>
+    <button class="btn small" onclick="sendAction('${a.id}','request_info')">Send request</button>
+  </div>
+  <div class="act-card">
+    <div class="act-h">🕒 Request availability</div>
+    <div class="field"><label>Message (optional)</label><textarea id="act-avail-msg" placeholder="Optional note…"></textarea></div>
+    <button class="btn small" onclick="sendAction('${a.id}','request_availability')">Ask for availability</button>
+  </div>
+  <div class="act-card">
+    <div class="act-h">🎉 Make / extend offer</div>
+    <div class="field-row">
+      <div class="field"><label>Offered CTC (optional)</label><input id="act-ctc" placeholder="e.g. 18 LPA"></div>
+      <div class="field"><label>Tentative joining (optional)</label><input id="act-join" placeholder="e.g. 1 Aug 2026"></div>
+    </div>
+    <div class="field"><label>Message (optional)</label><textarea id="act-offer-msg" placeholder="Optional note…"></textarea></div>
+    <button class="btn small ok" onclick="sendAction('${a.id}','offer')">Send offer</button>
+  </div>`;
+}
+async function sendAction(id, type){
+  const v=eid=>{const e=document.getElementById(eid); return e?(e.value||'').trim():'';};
+  const payload={ id, type };
+  if(type==='schedule'){
+    const dt=v('act-dt'); if(!dt){ toast('Pick a date & time for the interview.'); return; }
+    payload.datetime=new Date(dt).toISOString();
+    payload.level=document.getElementById('act-lvl').value;
+    payload.location=v('act-loc'); payload.message=v('act-sch-msg');
+  } else if(type==='request_info'){
+    payload.message=v('act-info-msg'); if(!payload.message){ toast('Add what you need from the candidate.'); return; }
+  } else if(type==='request_availability'){ payload.message=v('act-avail-msg'); }
+  else if(type==='offer'){ payload.ctc=v('act-ctc'); payload.joining_date=v('act-join'); payload.message=v('act-offer-msg'); }
+  toast('Sending…');
+  const res=await custCall('custCandidateAction', null, payload);
+  if(res && res.error){
+    toast(res.error==='email_not_configured'?'Email isn’t configured on the server.'
+      :res.error==='resolve_duplicate_first'?'Clear the duplicate check first.'
+      :res.error==='no_candidate_email'?'No candidate email on file.'
+      :('Could not send: '+res.error+(res.detail?(' — '+res.detail):'')));
+    return;
+  }
+  await loadData(); openCand(id);
+  setTimeout(()=>{ const tb=[...document.querySelectorAll('.detail-tab')].find(b=>/Actions/.test(b.textContent)); if(tb) dtab(tb,'d-actions'); }, 30);
+  toast('✓ Email sent to the candidate'+(res.stage?(' · stage: '+stageLabel(res.stage)):''));
 }
 function logHTML(a){
   return a.history.slice().reverse().map(h=>{
