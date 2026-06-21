@@ -28,7 +28,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCCPROs — Customer Hiring Portal</title>
+<title>GCCPROs — Talent Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -199,7 +199,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
 <header class="topbar">
   <div class="container topbar-inner">
     <div class="cobrand">
-      <span class="brand">GCC<span class="brand-mark">PROs</span><span class="brand-tag">HIRING PORTAL</span></span>
+      <span class="brand">GCC<span class="brand-mark">PROs</span><span class="brand-tag">TALENT ENGINE</span></span>
       <span class="divider-v" id="cobrand-div" style="display:none;"></span>
       <span id="cobrand-customer" style="display:none;" class="cobrand">
         <span class="co-logo" id="co-logo">AC</span>
@@ -217,7 +217,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
 <!-- ============ LOGIN ============ -->
 <section id="login-section" class="login-wrap">
   <div class="login-card">
-    <h1>Customer Hiring Portal</h1>
+    <h1>Talent Engine</h1>
     <p class="sub">Sign in with your approved corporate account to manage your roles and applications on GCCPROs.</p>
 
     <button class="sso-btn" onclick="ssoLogin('google')">
@@ -310,7 +310,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
       <div id="activity-body"></div>
     </div>
   </div>
-  <footer><div class="container">GCCPROs Customer Hiring Portal · For the GCC community, by the GCC community · Prototype</div></footer>
+  <footer><div class="container">GCCPROs Talent Engine · For the GCC community, by the GCC community · Prototype</div></footer>
 </div>
 
 <!-- ============ CANDIDATE MODAL ============ -->
@@ -553,7 +553,7 @@ async function bootApp(){
   if(cust.logo_url){ lg.textContent=''; lg.style.background='#fff'; lg.innerHTML='<img src="'+esc(cust.logo_url)+'" alt="" style="width:34px;height:34px;object-fit:contain;border-radius:7px;">'; }
   else { lg.textContent = cust.logo; lg.style.background = cust.color; }
   document.getElementById('co-name').innerHTML = esc(cust.name)+'<small>'+esc(cust.tagline)+'</small>';
-  document.title = cust.short+' · GCCPROs Hiring Portal';
+  document.title = cust.short+' · GCCPROs Talent Engine';
 
   document.getElementById('topbar-right').style.display='';
   document.getElementById('user-pill').innerHTML = esc(SESSION.name)+' <span class="role-chip">'+(SESSION.isAdmin?'Admin':'Hiring Mgr')+'</span>';
