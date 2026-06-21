@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <!-- GCCPROs — view-only CV viewer. Opened via a share link: cv-view.html?t=<token>.
-     Validates the token against gccpros-cust-api (cvShareResolve) and shows the CV in-browser. -->
+     Builds a single STAMPED packet in-browser: a GCCPROs cover (referrer input + AI
+     recommendation + notes/feedback) followed by the candidate's actual CV, with a
+     GCCPROs + sharer + date stamp on every page. Whatever is saved/printed is stamped. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCCPROs — Candidate CV (view only)</title>
+<title>GCCPROs — Candidate Interview Packet (view only)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:#F8F7F4;color:#1D2226;}
@@ -16,35 +19,157 @@
   .tag{font-size:10px;letter-spacing:1.5px;color:#E85D04;font-weight:700;text-transform:uppercase;}
   .who{margin-left:auto;font-size:13px;color:#64748B;}
   .note{background:#FFFBEB;border-bottom:1px solid #F59E0B;color:#92400E;font-size:12px;padding:7px 18px;text-align:center;}
-  .stage{display:flex;align-items:center;justify-content:center;height:calc(100% - 90px);color:#64748B;font-size:15px;padding:30px;text-align:center;}
+  .stage{display:flex;align-items:center;justify-content:center;height:calc(100% - 90px);color:#64748B;font-size:15px;padding:30px;text-align:center;flex-direction:column;gap:10px;}
+  .spin{width:26px;height:26px;border:3px solid #E2E8F0;border-top-color:#0A66C2;border-radius:50%;animation:sp 0.8s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
   iframe{display:none;width:100%;height:calc(100% - 90px);border:none;background:#fff;}
 </style>
 </head>
 <body oncontextmenu="return false">
-  <div class="bar"><span class="brand">GCC<span style="color:#1D2226;">PROs</span></span><span class="tag">View-only CV</span><span class="who" id="who"></span></div>
-  <div class="note">🔒 Shared securely via GCCPROs for interview use only. Please do not redistribute. This link expires automatically.</div>
-  <div class="stage" id="stage">Loading the CV…</div>
-  <iframe id="frame" title="Candidate CV"></iframe>
+  <div class="bar"><span class="brand">GCC<span style="color:#1D2226;">PROs</span></span><span class="tag">Interview Packet · view-only</span><span class="who" id="who"></span></div>
+  <div class="note">🔒 Shared securely via GCCPROs for interview use only. Every page is stamped. Please do not redistribute — this link expires automatically.</div>
+  <div class="stage" id="stage"><div class="spin"></div><div>Preparing the interview packet…</div></div>
+  <iframe id="frame" title="Candidate Interview Packet"></iframe>
 <script>
   const API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-cust-api';
   const t=new URLSearchParams(location.search).get('t');
   const stage=document.getElementById('stage'), frame=document.getElementById('frame');
-  (async()=>{
-    if(!t){ stage.textContent='This link is invalid (no token).'; return; }
+  function fail(msg){ stage.innerHTML='<div style="font-size:34px">📄</div><div>'+msg+'</div>'; }
+
+  function san(s){ return String(s==null?'':s)
+    .replace(/[‘’]/g,"'").replace(/[“”]/g,'"')
+    .replace(/[–—]/g,'-').replace(/[•●]/g,'-').replace(/₹/g,'Rs ')
+    .replace(/→/g,'>').replace(/[ ]/g,' ')
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g,''); }
+  function fmtDate(d){ if(!d)return''; const x=new Date(d); return isNaN(x)?'':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+  function fmtCTC(v){ if(v==null||v==='')return'-'; const n=Number(v); if(isNaN(n))return san(String(v)); return n>=100000?(n/100000).toFixed(1).replace(/\.0$/,'')+' LPA':(n>0?n+' LPA':'-'); }
+
+  (async ()=>{
+    if(!t){ fail('This link is invalid (no token).'); return; }
+    let j;
+    try{ const r=await fetch(API+'?action=cvShareResolve&token='+encodeURIComponent(t)); j=await r.json(); }
+    catch(e){ fail('Could not reach the server. Please try again.'); return; }
+    if(!j || !j.url){
+      fail( j&&j.error==='expired'?'This share link has expired.'
+        : j&&j.error==='invalid_or_revoked'?'This share link is no longer valid.'
+        : j&&j.error==='no_cv'?'No CV file is available for this candidate.'
+        : 'Sorry — the CV could not be loaded.');
+      return;
+    }
+    document.getElementById('who').textContent = j.name?('Candidate: '+j.name):'';
     try{
-      const r=await fetch(API+'?action=cvShareResolve&token='+encodeURIComponent(t));
-      const j=await r.json();
-      if(j && j.url){
-        document.getElementById('who').textContent = j.name ? ('Candidate: '+j.name) : '';
-        stage.style.display='none'; frame.src=j.url; frame.style.display='block';
-      } else {
-        stage.textContent = j && j.error==='expired' ? 'This share link has expired.'
-          : j && j.error==='invalid_or_revoked' ? 'This share link is no longer valid.'
-          : j && j.error==='no_cv' ? 'No CV file is available for this candidate.'
-          : 'Sorry — the CV could not be loaded.';
-      }
-    }catch(e){ stage.textContent='Could not reach the server. Please try again.'; }
+      const blobUrl = await buildPacket(j);
+      stage.style.display='none'; frame.src=blobUrl; frame.style.display='block';
+    }catch(e){
+      console.error('packet build failed', e);
+      stage.style.display='none'; frame.src=j.url; frame.style.display='block';
+    }
   })();
+
+  async function buildPacket(j){
+    const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+    let cvBytes=null;
+    try{ const cr=await fetch(j.url); if(cr.ok) cvBytes=await cr.arrayBuffer(); }catch(_){}
+
+    const out = await PDFDocument.create();
+    const font = await out.embedFont(StandardFonts.Helvetica);
+    const bold = await out.embedFont(StandardFonts.HelveticaBold);
+    const A4=[595.28,841.89]; const M=50; const W=A4[0]-M*2;
+    const navy=rgb(0.11,0.16,0.23), blue=rgb(0.04,0.4,0.76), gray=rgb(0.4,0.45,0.5),
+          dark=rgb(0.11,0.13,0.15), faint=rgb(0.88,0.9,0.92);
+    let page, y;
+    function newPage(){ page=out.addPage(A4); y=A4[1]-M; }
+    function ensure(h){ if(y-h < M+30){ newPage(); } }
+    function wrap(text,f,size){ text=san(text); const lines=[]; for(const raw of text.split('\n')){ const words=raw.split(/\s+/); let cur=''; for(const w of words){ const tl=cur?cur+' '+w:w; if(f.widthOfTextAtSize(tl,size)>W && cur){ lines.push(cur); cur=w; } else cur=tl; } lines.push(cur); } return lines; }
+    function para(text,size,f,color){ f=f||font; color=color||dark; for(const ln of wrap(text,f,size)){ ensure(size+4); page.drawText(ln,{x:M,y:y-size,size,font:f,color}); y-=size+4; } }
+    function heading(text){ ensure(30); y-=8; page.drawText(san(text),{x:M,y:y-13,size:13,font:bold,color:blue}); y-=19; page.drawLine({start:{x:M,y},end:{x:M+W,y},thickness:1,color:faint}); y-=10; }
+    function kv(label,val){ ensure(18); page.drawText(san(label).toUpperCase(),{x:M,y:y-9,size:8,font:bold,color:gray}); for(const ln of wrap(val||'-',font,10)){ page.drawText(ln,{x:M+125,y:y-10,size:10,font,color:dark}); y-=14; } y-=4; }
+
+    newPage();
+    page.drawRectangle({x:0,y:A4[1]-92,width:A4[0],height:92,color:navy});
+    page.drawText('GCCPROs',{x:M,y:A4[1]-46,size:22,font:bold,color:rgb(1,1,1)});
+    page.drawText('CANDIDATE INTERVIEW PACKET',{x:M,y:A4[1]-67,size:10,font:bold,color:rgb(0.7,0.8,0.95)});
+    page.drawText('Confidential - for interview use only',{x:M,y:A4[1]-83,size:8,font,color:rgb(0.62,0.68,0.78)});
+    y=A4[1]-92-22;
+
+    page.drawText(san(j.name||'Candidate'),{x:M,y:y-18,size:18,font:bold,color:dark}); y-=24;
+    para((j.role||'')+(j.code?(' ('+j.code+')'):'')+(j.source?('   -   '+(j.source==='referral'?'Referral':'Direct')):''),10,font,gray);
+    y-=6;
+    kv('Applied', fmtDate(j.applied_at));
+    kv('Shared by', (j.shared_by||'-')+(j.customer?(' ('+j.customer+')'):''));
+    kv('Packet prepared', fmtDate(Date.now()));
+
+    heading('Candidate snapshot');
+    kv('Experience', (j.experience!=null?(j.experience+' yrs'):'-'));
+    kv('Location', j.city||'-');
+    kv('Expected CTC', fmtCTC(j.expected_ctc));
+    kv('Notice period', (j.notice!=null?(j.notice+' days'):'-'));
+
+    if(j.ai){
+      heading('AI fit assessment');
+      ensure(20); page.drawText('Score: '+j.ai.score+' / 100',{x:M,y:y-12,size:12,font:bold,color:blue}); y-=20;
+      para(j.ai.reason||'',10);
+      para('AI-assisted estimate of fit for this role - use as a guide, not a decision.',8,font,gray);
+    }
+
+    if(j.referral){
+      const r=j.referral;
+      heading('Referrer submission (referrer identity withheld)');
+      kv('Relationship', r.relationship);
+      kv('Known for', r.known_duration);
+      kv('Worked together', r.worked_together);
+      kv('Referrer confidence', r.confidence);
+      if(r.skill_avg!=null) kv('Skill average', (Number(r.skill_avg).toFixed(2))+' / 5');
+      if(r.why_good_fit){ y-=2; para('Why a good fit:',9,bold,gray); para(r.why_good_fit,10); }
+      if(r.highlights){ y-=2; para('Highlights:',9,bold,gray); para(r.highlights,10); }
+      if(r.concerns){ y-=2; para('Concerns:',9,bold,gray); para(r.concerns,10); }
+      if(r.skill_ratings && r.skill_ratings.length){ y-=2; para('Skill-wise rating:',9,bold,gray);
+        for(const s of r.skill_ratings){ const sk=san(s.skill||s.name||s.label||''); const rt=(s.rating!=null?s.rating:(s.score!=null?s.score:(s.value!=null?s.value:''))); para('- '+sk+': '+rt+' / 5',10); } }
+    }
+
+    if(j.notes && j.notes.length){
+      heading('Notes & feedback');
+      for(const n of j.notes){
+        const who = n.kind==='core'?'GCCPROs Team':(n.kind==='hm'?'Hiring Manager':(n.author||'Note'));
+        y-=2; para(who+(n.author?(' - '+n.author):'')+'   ('+fmtDate(n.at)+')',8,bold,gray);
+        para(n.body||'',10);
+      }
+    } else {
+      heading('Notes & feedback');
+      para('No notes or feedback recorded yet.',10,font,gray);
+    }
+
+    // separator before the CV
+    newPage();
+    page.drawRectangle({x:0,y:A4[1]/2-16,width:A4[0],height:32,color:rgb(0.95,0.96,0.98)});
+    page.drawText('CANDIDATE CV',{x:M,y:A4[1]/2-6,size:14,font:bold,color:blue});
+    page.drawText("The candidate's original CV follows on the next pages.",{x:M,y:A4[1]/2-26,size:9,font,color:gray});
+
+    let cvEmbedded=false;
+    if(cvBytes){
+      try{
+        const cvDoc=await PDFDocument.load(cvBytes,{ignoreEncryption:true});
+        const copied=await out.copyPages(cvDoc, cvDoc.getPageIndices());
+        copied.forEach(pg=>out.addPage(pg)); cvEmbedded=true;
+      }catch(e){ console.warn('cv embed failed', e); }
+    }
+    if(!cvEmbedded){
+      newPage(); heading('Original CV');
+      para('The original CV file could not be embedded into this packet automatically. It remains available through the secure GCCPROs link.',10,font,gray);
+    }
+
+    // STAMP every page (watermark + footer identity stamp)
+    const stampLine = san('Shared via GCCPROs  -  '+(j.shared_by||'')+(j.customer?(' ('+j.customer+')'):'')+'  -  '+fmtDate(Date.now())+'  -  View-only, do not redistribute');
+    for(const pg of out.getPages()){
+      const {width,height}=pg.getSize();
+      pg.drawText('GCCPROs',{x:width*0.15,y:height*0.42,size:62,font:bold,color:blue,opacity:0.07,rotate:degrees(34)});
+      pg.drawRectangle({x:0,y:0,width,height:17,color:navy,opacity:0.93});
+      pg.drawText(stampLine,{x:14,y:5.5,size:7,font,color:rgb(1,1,1),opacity:0.95});
+    }
+
+    const bytes=await out.save();
+    return URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+  }
 </script>
 </body>
 </html>
