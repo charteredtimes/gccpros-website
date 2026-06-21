@@ -33,9 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<!-- In-browser JD text extraction (PDF / Word) for AI autofill -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<!-- pdf.js + mammoth are lazy-loaded only when a JD is uploaded (keeps the landing page fast) -->
 <style>
 :root{
   --ink:#1D2226; --gold:#0A66C2; --gold-light:#70B5F9; --blue:#1E40AF; --blue-mid:#1E3A8A;
@@ -828,13 +826,16 @@ function shareLink(a){ return 'https://portal.gccpros.com/cv/'+SESSION.companyId
 function copyShare(){ const i=document.getElementById('share-link'); i.select(); try{document.execCommand('copy');}catch(_){ } toast('Share link copied'); }
 async function openCVWindow(id){
   const a=myApps().find(x=>x.id===id); if(!a) return;
-  if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the full packet.'); return; }
-  toast('Opening the interview packet…');
-  // Route through the stamped packet viewer (cover + CV) via a fresh secure token.
-  // Navigate in the SAME tab so pop-up blockers don't interfere; the browser Back button returns to the portal.
-  const res=await custCall('custCreateShareLink', null, {id});
-  if(res && res.token){ window.location.href='https://www.gccpros.com/cv-view.html?t='+encodeURIComponent(res.token); }
-  else { toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not open the packet ('+((res&&res.error)||'error')+')'); }
+  if(a.duplicateStatus!=='no'){ toast('Clear the duplicate check first to view the CV.'); return; }
+  toast('Opening the CV…');
+  // Same tab so pop-up blockers don't interfere; the browser Back button returns to the portal.
+  const res=await custCall('custCvUrl', {id});
+  if(res && res.external && res.url){ window.location.href=res.url; return; }   // legacy CV (e.g. Google Doc/Drive) → open directly
+  // storage CV → stamped packet (cover + CV) via a fresh secure token
+  const link=await custCall('custCreateShareLink', null, {id});
+  if(link && link.token){ window.location.href='https://www.gccpros.com/cv-view.html?t='+encodeURIComponent(link.token); }
+  else if(res && res.url){ window.location.href=res.url; }
+  else { toast((link&&link.error==='resolve_duplicate_first')||(res&&res.error==='resolve_duplicate_first') ? 'Clear the duplicate check first.' : (res&&res.error==='no_cv' ? 'No CV on file for this candidate.' : 'Could not open the CV.')); }
 }
 async function genShare(id){
   const res=await custCall('custCreateShareLink',null,{id});
@@ -1132,9 +1133,13 @@ async function submitRole(){
 /* =================================================================
    AI — JD autofill + candidate ranking (economical: Gemini Flash, on-demand)
    ================================================================= */
+function loadScriptOnce(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src)){ res(); return; } const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('load failed')); document.head.appendChild(s); }); }
+async function ensurePdfLib(){ if(!window.pdfjsLib) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); }
+async function ensureMammoth(){ if(!window.mammoth) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js'); }
 async function extractJDText(file){
   const name=(file.name||'').toLowerCase();
   if(name.endsWith('.pdf')){
+    await ensurePdfLib();
     if(!window.pdfjsLib) throw new Error('pdf reader not loaded');
     try{ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }catch(_){}
     const buf=await file.arrayBuffer();

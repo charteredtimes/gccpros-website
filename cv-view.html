@@ -56,6 +56,7 @@
         : 'Sorry — the CV could not be loaded.');
       return;
     }
+    if(j.external && j.url){ window.location.replace(j.url); return; }  // legacy CV (Google Doc/Drive) — open the original directly
     document.getElementById('who').textContent = j.name?('Candidate: '+j.name):'';
     try{
       const blobUrl = await buildPacket(j);
