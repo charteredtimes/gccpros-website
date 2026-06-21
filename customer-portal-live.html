@@ -33,6 +33,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<!-- In-browser JD text extraction (PDF / Word) for AI autofill -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 :root{
   --ink:#1D2226; --gold:#0A66C2; --gold-light:#70B5F9; --blue:#1E40AF; --blue-mid:#1E3A8A;
@@ -144,9 +147,10 @@ tr:last-child td{border-bottom:none;}
 
 /* candidate detail */
 .cand-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:8px;}
-.cand-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:14px 0;padding:14px;background:var(--cream);border-radius:8px;}
+.cand-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin:14px 0;padding:14px;background:var(--cream);border-radius:8px;}
+.cand-meta>div{min-width:0;}
 .cand-meta label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
-.cand-meta strong{font-size:13.5px;color:var(--ink);font-weight:600;}
+.cand-meta strong{font-size:13.5px;color:var(--ink);font-weight:600;display:block;overflow-wrap:anywhere;word-break:break-word;}
 .detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:18px 0 14px;}
 .detail-tab{background:none;border:none;padding:9px 14px;font-family:inherit;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
 .detail-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
@@ -266,9 +270,10 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
         <input type="search" id="app-search" placeholder="Search candidate / role…" oninput="renderApps()">
         <select id="app-stage" onchange="renderApps()"><option value="">All stages</option></select>
         <select id="app-role" onchange="renderApps()"><option value="">All roles</option></select>
+        <button class="btn small" id="ai-rank-btn" style="background:#4F46E5;border-color:#4F46E5;" onclick="rankByAI()" title="Score &amp; rank cleared candidates by fit for the role">✨ Rank by AI</button>
       </div>
       <table>
-        <thead><tr><th>Candidate</th><th>Role</th><th>Source</th><th>Stage</th><th>Duplicate check</th><th>Received</th></tr></thead>
+        <thead><tr><th>Candidate</th><th>Role</th><th>Source</th><th>Stage</th><th>Duplicate check</th><th>AI fit</th><th>Received</th></tr></thead>
         <tbody id="apps-body"></tbody>
       </table>
       <div id="apps-empty" class="empty" style="display:none;">No applications in this bucket.</div>
@@ -306,8 +311,16 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
 <div class="modal-overlay" id="role-overlay">
   <div class="modal wide">
     <button class="close" onclick="closeModal('role-overlay')">&times;</button>
-    <h3>✚ Post a new job</h3>
+    <h3 id="role-modal-title">✚ Post a new job</h3>
     <p style="color:var(--muted);font-size:13px;margin-bottom:6px;">Same form and rules as the GCCPROs jobs board. When posted, it goes live for applicants and referrers immediately.</p>
+    <div class="field" style="background:#F0F7FF;border:1px solid var(--gold-light);border-radius:8px;padding:12px 14px;margin-top:10px;">
+      <label style="color:var(--gold);">✨ Autofill from a JD (PDF / Word) — optional</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+        <input type="file" id="jd-file" accept=".pdf,.docx,.doc,.txt" style="font-size:13px;flex:1;min-width:180px;background:#fff;">
+        <button class="btn small" type="button" onclick="autofillFromJD()">Autofill with AI</button>
+      </div>
+      <div id="jd-status" style="font-size:12px;color:var(--muted);margin-top:6px;">Upload a job description and AI fills the fields below. Review before posting.</div>
+    </div>
     <div class="field-row">
       <div class="field"><label>Job code (unique short ID) <span class="required">*</span></label><input id="r-job_code" placeholder="e.g. GCC-2026-101"></div>
       <div class="field"><label>Title <span class="required">*</span></label><input id="r-title" placeholder="e.g. Senior Data Engineer"></div>
@@ -347,7 +360,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
     <div class="field"><label>Benefits</label><textarea id="r-benefits" placeholder="Optional"></textarea></div>
     <div id="role-err" style="display:none;margin-top:12px;padding:10px 12px;border-radius:6px;background:#FEF2F2;color:var(--red);font-size:13px;border-left:3px solid var(--red);"></div>
     <div style="margin-top:18px;display:flex;gap:10px;">
-      <button class="btn" onclick="submitRole()">Post job</button>
+      <button class="btn" id="role-submit-btn" onclick="submitRole()">Post job</button>
       <button class="btn secondary" onclick="closeModal('role-overlay')">Cancel</button>
     </div>
   </div>
@@ -389,13 +402,14 @@ let CUSTOMERS = {};  // { [customerId]: {name, short, logo, color, tagline, logo
 function mapRole(x){
   return { id:x.id, code:x.job_code||x.id, companyId:SESSION.companyId, title:x.title,
     domain:x.primary_domain||'', status:(x.posting_status==='open'?'open':(x.posting_status==='pending_review'?'pending':'disabled')),
-    ctcMin:x.ctc_min_inr||0, ctcMax:x.ctc_max_inr||0, posted:(x.created_at||'').slice(0,10) };
+    ctcMin:x.ctc_min_inr||0, ctcMax:x.ctc_max_inr||0, posted:(x.created_at||'').slice(0,10), raw:x };
 }
 function mapApp(x){
   return { id:x.id, companyId:SESSION.companyId, roleId:x.role_id, source:x.source, stage:x.stage,
     duplicateStatus:x.duplicate_status, accessRevoked:false, received:(x.received||'').slice(0,10),
     candidate:{ name:x.name, email:x.email, phone:x.phone, exp:x.experience, city:x.city, ctc:x.expected_ctc, notice:x.notice, linkedin:x.linkedin },
     coreNotes:[], hmNotes:[], history:[], referral:x.referral||null,
+    aiScore:(x.ai_score!=null?x.ai_score:null), aiReason:x.ai_reason||null,
     joinDate:(['joined','three_months'].includes(x.stage)?'live':null) };
 }
 function eventText(e){
@@ -423,6 +437,8 @@ let SESSION = null;     // {email, name, role, companyId}
 let DB = null;          // mock store
 let BUCKET = 'all';
 let CUR_APP = null;     // open candidate id
+let AI_SORT = false;    // when true, applications sort by AI fit score
+let EDIT_ROLE_ID = null;// when set, the role modal is editing this role id
 
 /* ---- Live API: attaches the Firebase ID token on every call ---- */
 async function custCall(action, params, body){
@@ -553,16 +569,22 @@ function renderApps(){
   if(q) list=list.filter(a=> (a.candidate.name+' '+(roleById(a.roleId)?.title||'')).toLowerCase().includes(q));
   const body=document.getElementById('apps-body');
   document.getElementById('apps-empty').style.display = list.length?'none':'block';
-  body.innerHTML = list.sort((x,y)=>y.received.localeCompare(x.received)).map(a=>{
+  const sorter = AI_SORT
+    ? (x,y)=>((y.aiScore==null?-1:y.aiScore)-(x.aiScore==null?-1:x.aiScore)) || y.received.localeCompare(x.received)
+    : (x,y)=>y.received.localeCompare(x.received);
+  body.innerHTML = list.sort(sorter).map(a=>{
     const unlocked = a.duplicateStatus==='no';
     const nameCell = `<strong>${esc(a.candidate.name)}</strong><br><span class="locked" style="font-size:11px;">${a.candidate.exp}y · ${esc(a.candidate.city)}${unlocked?'':' · phone/CV locked'}</span>`;
     const dup = a.duplicateStatus===null ? `<span class="badge b-amber">Action needed</span>`
               : a.duplicateStatus==='no' ? `<span class="badge b-green">Cleared</span>`
               : `<span class="badge b-red">Duplicate</span>`;
     const src = a.source==='referral'?`<span class="src-pill src-referral">Referral</span>`:`<span class="src-pill src-direct">Direct</span>`;
+    const ai = a.aiScore!=null
+      ? `<span class="badge" style="background:#EEF2FF;color:#3730A3;cursor:help;" title="${esc(a.aiReason||'')}">${a.aiScore}</span>`
+      : `<span class="locked">—</span>`;
     return `<tr class="row-click" onclick="openCand('${a.id}')">
       <td>${nameCell}</td><td>${esc(roleById(a.roleId)?.title||'—')}</td><td>${src}</td>
-      <td><span class="badge ${stageBadge(a.stage)}">${stageLabel(a.stage)}</span></td><td>${dup}</td><td>${fmtDate(a.received)}</td></tr>`;
+      <td><span class="badge ${stageBadge(a.stage)}">${stageLabel(a.stage)}</span></td><td>${dup}</td><td>${ai}</td><td>${fmtDate(a.received)}</td></tr>`;
   }).join('');
 }
 function stageBadge(s){
@@ -582,10 +604,11 @@ function renderRoles(){
       : r.status==='pending' ? `<span class="locked">awaiting approval</span>`
       : `<button class="btn small secondary" onclick="toggleRole('${r.id}')">Disable</button>`;
     const share = r.status==='open'
-      ? `<button class="btn small" style="background:#25D366;border-color:#25D366;color:#fff;" title="Share on WhatsApp + copy link" onclick="shareJobWA('${esc(r.code||r.id)}', ${JSON.stringify(r.title||'')})">↗ Share</button>`
+      ? `<button class="btn small" style="background:#25D366;border-color:#25D366;color:#fff;" title="Share on WhatsApp + copy link" data-code="${esc(r.code||r.id)}" data-title="${esc(r.title||'')}" onclick="shareJobBtn(this)">↗ Share</button>`
       : '';
+    const edit = `<button class="btn small secondary" onclick="openRoleEdit('${r.id}')">Edit</button>`;
     return `<tr><td>${esc(r.code||r.id)}</td><td><strong>${esc(r.title)}</strong><br><span class="locked" style="font-size:11px;">${esc(r.domain)}${(r.ctcMin||r.ctcMax)?(' · '+r.ctcMin+'–'+r.ctcMax):''}</span></td>
-      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td style="white-space:nowrap;">${share} ${toggle}</td></tr>`;
+      <td>${n}</td><td>${st}</td><td>${fmtDate(r.posted)}</td><td style="white-space:nowrap;">${share} ${edit} ${toggle}</td></tr>`;
   }).join('') || `<tr><td colspan="6" class="empty">No roles yet.</td></tr>`;
 }
 
@@ -662,6 +685,13 @@ async function openCand(id){
       <div><label>Notice</label><strong>${c.notice} days</strong></div>
       <div><label>LinkedIn</label><strong>${esc(c.linkedin)}</strong></div>
     </div>`;
+
+  if(a.aiScore!=null){
+    html += `<div style="display:flex;gap:12px;align-items:flex-start;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:12px 14px;margin:0 0 6px;">
+      <div style="text-align:center;min-width:64px;"><div style="font-size:24px;font-weight:800;color:#3730A3;font-family:'Playfair Display',serif;">${a.aiScore}</div><div style="font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:#4F46E5;">AI fit /100</div></div>
+      <div style="font-size:12.5px;color:#312E81;line-height:1.5;"><b>Why this score:</b> ${esc(a.aiReason||'—')}<br><span style="font-size:10.5px;color:#6366F1;">AI-assisted estimate of fit for this role. Use as a guide, not a decision.</span></div>
+    </div>`;
+  }
 
   // detail tabs
   html += `<div class="detail-tabs">
@@ -749,6 +779,8 @@ function shareJobWA(code, title){
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
   toast('Opening WhatsApp · job link copied');
 }
+// Share button handler — reads code/title from data-* attributes (avoids inline-quote bugs)
+function shareJobBtn(btn){ shareJobWA(btn.dataset.code||'', btn.dataset.title||''); }
 function buildSampleCV(a){
   const c=a.candidate; const role=roleById(a.roleId);
   const skills=(a.referral&&a.referral.skillRatings)?a.referral.skillRatings.map(s=>s.skill):['Communication','Problem Solving','Stakeholder Management','Analysis'];
@@ -859,10 +891,44 @@ async function toggleRole(id){
 }
 
 function openRoleModal(){
+  EDIT_ROLE_ID = null;
   ['r-job_code','r-title','r-industry','r-primary_domain','r-location','r-experience_band','r-ctc_min_inr','r-ctc_max_inr','r-referral_amount_inr','r-budget_text','r-qualification','r-skills','r-responsibilities','r-description','r-requirements','r-benefits'].forEach(x=>{const e=document.getElementById(x); if(e)e.value='';});
   document.getElementById('r-company').value = (CUSTOMERS[SESSION.companyId]||{}).name || '';
   document.getElementById('r-job_type').value=''; document.getElementById('r-status').value='active';
   document.getElementById('r-mode').value=''; document.getElementById('r-level').value='';
+  const jc=document.getElementById('r-job_code'); jc.readOnly=false; jc.style.background='';
+  document.getElementById('role-modal-title').textContent='✚ Post a new job';
+  document.getElementById('role-submit-btn').textContent='Post job';
+  const jf=document.getElementById('jd-file'); if(jf) jf.value='';
+  document.getElementById('jd-status').textContent='Upload a job description and AI fills the fields below. Review before posting.';
+  document.getElementById('role-err').style.display='none';
+  openModal('role-overlay');
+}
+// Open the role modal pre-filled to EDIT an existing role
+function openRoleEdit(id){
+  const r=roleById(id); if(!r){ toast('Role not found'); return; }
+  const x=r.raw||{};
+  EDIT_ROLE_ID=id;
+  const set=(eid,val)=>{const e=document.getElementById(eid); if(e) e.value=(val==null?'':val);};
+  set('r-job_code', x.job_code||r.code);
+  set('r-title', x.title||r.title);
+  document.getElementById('r-company').value = x.company || (CUSTOMERS[SESSION.companyId]||{}).name || '';
+  set('r-industry', x.industry); set('r-primary_domain', x.primary_domain);
+  set('r-location', x.location); set('r-experience_band', x.experience_band);
+  set('r-ctc_min_inr', x.ctc_min_inr); set('r-ctc_max_inr', x.ctc_max_inr);
+  set('r-referral_amount_inr', x.referral_amount_inr); set('r-budget_text', x.budget_text);
+  set('r-qualification', x.qualification); set('r-skills', x.skills);
+  set('r-responsibilities', x.responsibilities); set('r-description', x.description);
+  set('r-requirements', x.requirements); set('r-benefits', x.benefits);
+  document.getElementById('r-job_type').value = x.job_type||'';
+  document.getElementById('r-status').value = x.status||'active';
+  document.getElementById('r-mode').value = x.mode||'';
+  document.getElementById('r-level').value = x.level||'';
+  const jc=document.getElementById('r-job_code'); jc.readOnly=true; jc.style.background='#F1F5F9';
+  document.getElementById('role-modal-title').textContent='✎ Edit job role';
+  document.getElementById('role-submit-btn').textContent='Save changes';
+  const jf=document.getElementById('jd-file'); if(jf) jf.value='';
+  document.getElementById('jd-status').textContent='Editing an existing role. You can also re-autofill from a JD above.';
   document.getElementById('role-err').style.display='none';
   openModal('role-overlay');
 }
@@ -880,10 +946,89 @@ async function submitRole(){
     status:document.getElementById('r-status').value,mode:document.getElementById('r-mode').value,level:document.getElementById('r-level').value,
     budget_text:g('r-budget_text'),qualification:g('r-qualification'),skills:skills.join(', '),
     responsibilities:g('r-responsibilities'),description:g('r-description'),requirements:g('r-requirements'),benefits:g('r-benefits') };
-  const res = await custCall('custCreateJob', null, payload);
-  if(res && res.error){ fail('Could not post: '+res.error); return; }
+  let res;
+  if(EDIT_ROLE_ID){ res = await custCall('custUpdateJob', null, Object.assign({id:EDIT_ROLE_ID}, payload)); }
+  else { res = await custCall('custCreateJob', null, payload); }
+  if(res && res.error){ fail('Could not save: '+res.error); return; }
+  const wasEdit = !!EDIT_ROLE_ID; EDIT_ROLE_ID=null;
   closeModal('role-overlay'); await loadData();
-  toast(payload.status==='active' ? '✓ Job posted — '+title+' is now live for applicants & referrers' : '✓ Job saved as '+payload.status);
+  toast(wasEdit ? '✓ Role updated — '+title : (payload.status==='active' ? '✓ Job posted — '+title+' is now live for applicants & referrers' : '✓ Job saved as '+payload.status));
+}
+
+/* =================================================================
+   AI — JD autofill + candidate ranking (economical: Gemini Flash, on-demand)
+   ================================================================= */
+async function extractJDText(file){
+  const name=(file.name||'').toLowerCase();
+  if(name.endsWith('.pdf')){
+    if(!window.pdfjsLib) throw new Error('pdf reader not loaded');
+    try{ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }catch(_){}
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    let t='';
+    for(let i=1;i<=pdf.numPages;i++){ const pg=await pdf.getPage(i); const c=await pg.getTextContent(); t+=c.items.map(x=>x.str).join(' ')+'\n'; }
+    return t;
+  }
+  if(name.endsWith('.docx')||name.endsWith('.doc')){
+    if(!window.mammoth) throw new Error('word reader not loaded');
+    const buf=await file.arrayBuffer();
+    const r=await mammoth.extractRawText({arrayBuffer:buf});
+    return r.value||'';
+  }
+  return await file.text();
+}
+async function autofillFromJD(){
+  const st=document.getElementById('jd-status');
+  const f=(document.getElementById('jd-file').files||[])[0];
+  if(!f){ st.style.color='var(--red)'; st.textContent='Choose a PDF or Word file first.'; return; }
+  st.style.color='var(--muted)'; st.textContent='Reading the file…';
+  let text='';
+  try{ text=await extractJDText(f); }catch(e){ st.style.color='var(--red)'; st.textContent='Could not read this file. Try a PDF or .docx.'; return; }
+  if(!text || text.trim().length<30){ st.style.color='var(--red)'; st.textContent='No readable text found in this file.'; return; }
+  st.textContent='Asking AI to extract the fields…';
+  const res=await custCall('custAiParseJD', null, { text:text.slice(0,12000) });
+  if(!res || res.error){
+    st.style.color='var(--red)';
+    st.textContent = (res&&res.error==='ai_not_configured') ? 'AI isn’t switched on yet — add the Gemini key in Supabase to enable autofill.' : ('AI error: '+((res&&res.error)||'unknown'));
+    return;
+  }
+  const fl=res.fields||{};
+  const put=(id,val)=>{ const e=document.getElementById(id); if(e && val!=null && String(val).trim()!=='') e.value=val; };
+  put('r-title',fl.title); put('r-industry',fl.industry); put('r-primary_domain',fl.primary_domain);
+  put('r-location',fl.location); put('r-experience_band',fl.experience_band);
+  put('r-ctc_min_inr',fl.ctc_min_inr); put('r-ctc_max_inr',fl.ctc_max_inr);
+  put('r-qualification',fl.qualification);
+  put('r-skills', Array.isArray(fl.skills)?fl.skills.join(', '):fl.skills);
+  put('r-responsibilities', Array.isArray(fl.responsibilities)?fl.responsibilities.join('\n'):fl.responsibilities);
+  put('r-description',fl.description);
+  put('r-requirements', Array.isArray(fl.requirements)?fl.requirements.join('\n'):fl.requirements);
+  put('r-benefits', Array.isArray(fl.benefits)?fl.benefits.join('\n'):fl.benefits);
+  const selSet=(id,val)=>{ if(!val) return; const e=document.getElementById(id); if(!e) return; const v=String(val).toLowerCase();
+    for(const o of e.options){ if(o.value.toLowerCase()===v || o.text.toLowerCase()===v){ e.value=o.value; return; } } };
+  selSet('r-job_type',fl.job_type); selSet('r-mode',fl.mode); selSet('r-level',fl.level);
+  st.style.color='var(--green)'; st.textContent='✓ Fields autofilled from the JD — review, adjust, then post.';
+}
+async function rankByAI(){
+  const btn=document.getElementById('ai-rank-btn');
+  const fr=document.getElementById('app-role').value;
+  let roleIds;
+  if(fr){ roleIds=[fr]; }
+  else {
+    const cleared=myApps().filter(a=>!a.accessRevoked && a.duplicateStatus==='no');
+    roleIds=[...new Set(cleared.map(a=>a.roleId))];
+  }
+  if(!roleIds.length){ toast('No cleared candidates to rank yet — clear the duplicate check first.'); return; }
+  const old=btn.textContent; btn.disabled=true; btn.textContent='Scoring…';
+  let any=false, errMsg='';
+  for(const rid of roleIds){
+    const res=await custCall('custAiRankApplications', null, {role_id:rid});
+    if(!res || res.error){ errMsg=(res&&res.error==='ai_not_configured')?'AI isn’t switched on yet — add the Gemini key in Supabase to enable ranking.':('AI error: '+((res&&res.error)||'unknown')); continue; }
+    (res.ranked||[]).forEach(r=>{ const a=myApps().find(x=>x.id===r.id); if(a){ a.aiScore=r.ai_score; a.aiReason=r.ai_reason; } });
+    any=true;
+  }
+  btn.disabled=false; btn.textContent=old;
+  if(any){ AI_SORT=true; switchView('applications'); renderApps(); toast('✓ Candidates ranked by AI fit (best first)'); }
+  else { toast(errMsg||'Could not rank candidates'); }
 }
 
 /* =================================================================
