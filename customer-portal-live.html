@@ -612,7 +612,7 @@ function renderKPIs(){
 }
 function renderDashPipeline(){
   const body=document.querySelector('#dash-pipeline tbody');
-  const rows = myRoles().map(r=>{
+  const rows = myRoles().filter(r=>r.status!=='disabled').map(r=>{
     const apps=myApps().filter(a=>a.roleId===r.id && !a.accessRevoked);
     const byStage = {};
     apps.forEach(a=>byStage[a.stage]=(byStage[a.stage]||0)+1);
