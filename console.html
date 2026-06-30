@@ -76,6 +76,19 @@
 .restbl td{max-width:320px;white-space:normal;word-break:break-word;vertical-align:top}
 .restbl td:first-child{position:sticky;left:0;background:#fff;box-shadow:1px 0 0 var(--line)}
 .restbl tr:nth-child(even) td:first-child{background:#FAFCFF}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:4px}
+.gcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;box-shadow:0 1px 4px rgba(40,60,110,.05);display:flex;flex-direction:column}
+.gcard.open{box-shadow:0 3px 14px rgba(40,60,110,.16);border-color:#A8C2E8}
+.gcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.gcard-name{font-size:14.5px;color:var(--navy);line-height:1.25}
+.gcard-parent{font-size:12.5px;color:var(--grey);margin:3px 0 8px}
+.gcard-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.gcard-meta .gm{font-size:11.5px;color:#33415c;background:var(--pale);border:1px solid var(--line);border-radius:999px;padding:2px 9px;display:inline-flex;align-items:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcard-btn{align-self:flex-start;margin-top:auto}
+.gdet{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.gdet dl{margin:0;display:grid;grid-template-columns:132px 1fr;gap:4px 10px;font-size:12px}
+.gdet dt{font-weight:bold;color:var(--navy)}
+.gdet dd{margin:0;color:#33415c;word-break:break-word;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -171,7 +184,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.3 SSO (full-field table)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.4 SSO (detail tiles)</div>
   </div>
 </div>
 
@@ -271,26 +284,20 @@ function render(r){
   $('exportBar').classList.toggle('hide', !canExport);
   $('exportNote').classList.toggle('hide', !(S.tier && S.tier!=='enterprise' && data.length>0));
   if(!data.length){$('resTable').innerHTML='<p class="muted">No GCCs match those filters. Try widening them.</p>';$('pager').classList.add('hide');return;}
-  // Build columns dynamically: every entitled field present in the returned rows,
-  // in canonical order, minus internal-reference fields (see SKIP).
-  var present={}; data.forEach(function(c){Object.keys(c).forEach(function(k){present[k]=1;});});
-  var cols=TABLE_FIELDS.filter(function(k){return present[k] && !SKIP[k];});
-  Object.keys(present).forEach(function(k){if(!SKIP[k] && cols.indexOf(k)<0) cols.push(k);});
-  var h='<div style="overflow-x:auto"><table class="restbl"><thead><tr>';
-  cols.forEach(function(k){h+='<th>'+esc(FIELD_LABELS[k]||k)+'</th>';});
-  h+='</tr></thead><tbody>';
-  data.forEach(function(c){
-    h+='<tr>';
-    cols.forEach(function(k){
-      var v=c[k];
-      if(k==='confidence'){var cf=(String(v||'').toLowerCase().indexOf('h')===0)?'<span class="pill high">HIGH</span>':(v?'<span class="pill med">MED</span>':'');h+='<td>'+cf+'</td>';return;}
-      var blank=(v===null||v===undefined||v==='');
-      var inner=blank?'':((ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'')+fmtVal(k,v));
-      h+=(k==='company_name')?('<td><b>'+inner+'</b></td>'):('<td>'+inner+'</td>');
-    });
-    h+='</tr>';
+  // Card/tile grid: each tile shows headline fields; click expands full details.
+  function meta(c,k){var v=c[k];if(v===null||v===undefined||v==='')return '';return '<span class="gm">'+(ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'')+esc(String(v))+'</span>';}
+  var h='<div class="cardgrid">';
+  data.forEach(function(c,i){
+    var conf=(String(c.confidence||'').toLowerCase().indexOf('h')===0)?'<span class="pill high">HIGH</span>':(c.confidence?'<span class="pill med">MED</span>':'');
+    h+='<div class="gcard" id="card'+i+'">'
+      +'<div class="gcard-top"><div class="gcard-name">'+ICN.bld+'<b>'+esc(c.company_name)+'</b></div>'+conf+'</div>'
+      +(c.group_company?('<div class="gcard-parent">'+esc(c.group_company)+'</div>'):'')
+      +'<div class="gcard-meta">'+meta(c,'hq_country')+meta(c,'gcc_city')+meta(c,'industry')+meta(c,'headcount_band')+'</div>'
+      +'<button class="det-btn gcard-btn" onclick="toggle('+i+')">View all details</button>'
+      +'<div id="det'+i+'" class="gdet hide">'+details(c)+'</div>'
+    +'</div>';
   });
-  h+='</tbody></table></div>';
+  h+='</div>';
   $('resTable').innerHTML=h; window._rows=data;
   $('pageInfo').textContent=(S.offset+1)+'–'+(S.offset+data.length)+' of '+S.total.toLocaleString();
   $('pager').classList.remove('hide');
@@ -328,7 +335,7 @@ var FIELD_LABELS={company_name:'Company',mca_legal_entity_name:'Legal entity (MC
 // Internal-reference fields never shown to users (also stripped server-side by the field tiers).
 var SKIP={id:1,country:1,validation_notes:1,audit_verification_certificate:1,internal_flags:1,embedding:1,created_at:1,updated_at:1,enterprise_active:1};
 function details(c){var h='<dl>';var seen={};function row(k){if(SKIP[k]||seen[k])return;var v=c[k];if(v===null||v===''||v===undefined)return;seen[k]=1;var ic=ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'';h+='<dt>'+(FIELD_LABELS[k]||k)+'</dt><dd>'+ic+fmtVal(k,v)+'</dd>';}FIELD_ORDER.forEach(row);Object.keys(c).forEach(row);return h+'</dl>';}
-function toggle(i){var el=$('det'+i);if(el)el.classList.toggle('hide');}
+function toggle(i){var el=$('det'+i);if(!el)return;var open=el.classList.toggle('hide')===false;var card=$('card'+i);if(card)card.classList.toggle('open',open);var b=card?card.querySelector('.gcard-btn'):null;if(b)b.textContent=open?'Hide details':'View all details';}
 function nextPage(){if(S.offset+S.limit<S.total){S.offset+=S.limit;search();}}
 function prevPage(){if(S.offset>0){S.offset=Math.max(0,S.offset-S.limit);search();}}
 
