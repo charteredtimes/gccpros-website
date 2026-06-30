@@ -184,7 +184,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.4 SSO (detail tiles)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.5 SSO (clean leaders)</div>
   </div>
 </div>
 
@@ -334,7 +334,7 @@ var TABLE_FIELDS=FIELD_ORDER.slice();
 var FIELD_LABELS={company_name:'Company',mca_legal_entity_name:'Legal entity (MCA)',leaders_technology:'Technology leaders',leaders_finance:'Finance leaders',leaders_hr:'HR leaders',ip_notes:'IP notes',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',industry:'Industry',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',other_leaders:'Other leaders',leader_linkedin_urls:'LinkedIn',leader_email_verified:'Leader email',headcount_band:'Headcount',headcount:'Headcount (exact)',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',setup_model:'Setup model',setup_partner:'Setup partner',maturity_level:'Maturity',sez_stpi_peza:'SEZ / STPI',office_area_sqft:'Office area',tech_stack:'Tech stack',office_addresses:'Office addresses',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',gender_diversity_women_pct:'Women %',confidence:'Confidence',fy24_revenue_usd_mn:'FY24 revenue ($mn)',fy25_revenue_usd_mn:'FY25 revenue ($mn)',revenue_growth_yoy_pct:'Revenue growth YoY %',net_profit_local_ccy:'Net profit',transfer_pricing_markup_pct:'TP markup %',ips_registered:'IPs registered',group_global_turnover:'Group turnover',group_turnover_fy:'Group turnover FY',group_turnover_source:'Turnover source',finance_domain_active:'Finance domain',other_country_gcc_units:'Other-country units',validation_notes:'Validation notes',audit_verification_certificate:'Audit certificate'};
 // Internal-reference fields never shown to users (also stripped server-side by the field tiers).
 var SKIP={id:1,country:1,validation_notes:1,audit_verification_certificate:1,internal_flags:1,embedding:1,created_at:1,updated_at:1,enterprise_active:1};
-function details(c){var h='<dl>';var seen={};function row(k){if(SKIP[k]||seen[k])return;var v=c[k];if(v===null||v===''||v===undefined)return;seen[k]=1;var ic=ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'';h+='<dt>'+(FIELD_LABELS[k]||k)+'</dt><dd>'+ic+fmtVal(k,v)+'</dd>';}FIELD_ORDER.forEach(row);Object.keys(c).forEach(row);return h+'</dl>';}
+function details(c){var h='<dl>';var seen={};function row(k){if(SKIP[k]||seen[k])return;var v=c[k];var blank=(v===null||v===''||v===undefined);if(blank&&k!=='site_head')return;seen[k]=1;var ic=ICN_FIELD[k]?ICN[ICN_FIELD[k]]:'';var disp=blank?'<span class="muted">Not updated yet</span>':(ic+fmtVal(k,v));h+='<dt>'+(FIELD_LABELS[k]||k)+'</dt><dd>'+disp+'</dd>';}FIELD_ORDER.forEach(row);Object.keys(c).forEach(row);return h+'</dl>';}
 function toggle(i){var el=$('det'+i);if(!el)return;var open=el.classList.toggle('hide')===false;var card=$('card'+i);if(card)card.classList.toggle('open',open);var b=card?card.querySelector('.gcard-btn'):null;if(b)b.textContent=open?'Hide details':'View all details';}
 function nextPage(){if(S.offset+S.limit<S.total){S.offset+=S.limit;search();}}
 function prevPage(){if(S.offset>0){S.offset=Math.max(0,S.offset-S.limit);search();}}
