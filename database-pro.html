@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.6-mailto-only -->
+<!-- GCCPROs Database Pro · build: supabase-2026-06-08-v7.7-loud-signup-errors -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3255,8 +3255,14 @@ async function submitOTP(ev) {
   // 3. Submit profile + signupToken to backend (this creates the users row)
   //    The Turnstile token captured at sign-up time is forwarded here so the
   //    Edge Function can server-side verify before writing to the DB.
+  // 2026-06-08 v7.7-loud-signup-errors:
+  // The silent catch here used to swallow EVERY failure, leaving Firebase
+  // accounts orphaned with no Supabase row. The user saw "Pending" forever
+  // and the admin panel had no entry to approve. Now we surface the real
+  // cause to the user AND log it to the console for post-mortem.
+  console.log('[signup] POST requestApproval for', p.email);
   try {
-    var _raRes = await fetch(SCRIPT_URL + '?action=requestApproval'
+    var _raUrl = SCRIPT_URL + '?action=requestApproval'
       + '&token='     + encodeURIComponent(p.email)
       + '&signupToken=' + encodeURIComponent(signupToken)
       + '&cfToken='   + encodeURIComponent(p.cfToken || '')
@@ -3273,12 +3279,21 @@ async function submitOTP(ev) {
       + '&waConsent=' + encodeURIComponent(p.waConsent)
       + '&dpdpConsent=' + encodeURIComponent(p.dpdpConsent || 'Yes')
       + '&dpdpConsentTs=' + encodeURIComponent(p.dpdpConsentTs || new Date().toISOString())
-      + '&dpdpPolicyVersion=' + encodeURIComponent(p.dpdpPolicyVersion || '2026-05-18'));
-    var _raJson = {}; try { _raJson = await _raRes.json(); } catch (_) {}
-    if (_raJson && _raJson.error) {
-      var _rmsg = _raJson.message || (_raJson.error === 'duplicate_identity'
+      + '&dpdpPolicyVersion=' + encodeURIComponent(p.dpdpPolicyVersion || '2026-05-18');
+    var _raRes = await fetch(_raUrl);
+    var _raText = await _raRes.text();
+    console.log('[signup] requestApproval status=' + _raRes.status + ' body=' + _raText.substring(0, 500));
+    var _raJson = {}; try { _raJson = JSON.parse(_raText); } catch (_) { _raJson = { error: 'non_json_response', message: _raText.substring(0, 200) }; }
+    if (!_raRes.ok || (_raJson && _raJson.error)) {
+      var _errCode = (_raJson && _raJson.error) || ('HTTP_' + _raRes.status);
+      var _rmsg = (_raJson && _raJson.message) || (_errCode === 'duplicate_identity'
         ? 'This LinkedIn profile or phone number is already registered to another account. Each member may hold only one account.'
-        : ('Registration could not be completed (' + _raJson.error + '). Please contact admin@gccpros.com.'));
+        : _errCode === 'captcha_failed'
+        ? 'The bot check did not pass. Please reload the page and try again.'
+        : _errCode === 'blacklisted'
+        ? 'This account has been blocked. Please contact admin@gccpros.com.'
+        : ('Registration did not complete (' + _errCode + '). Please screenshot this and email admin@gccpros.com.'));
+      console.error('[signup] FAILED:', _errCode, _raJson);
       // remove the just-created Firebase account so no orphan login remains
       try { var _cu = firebase.auth().currentUser; if (_cu) { await _cu.delete(); } } catch (_) { try { await firebase.auth().signOut(); } catch (_) {} }
       window._pendingSignup = null;
@@ -3286,7 +3301,17 @@ async function submitOTP(ev) {
       _showSignInErr(_rmsg);
       return;
     }
-  } catch (_) {}
+    console.log('[signup] requestApproval OK — user row created in Supabase');
+  } catch (e) {
+    // Network failure / CORS / DNS — was previously SILENTLY swallowed.
+    console.error('[signup] requestApproval threw exception:', e);
+    var _netMsg = 'Could not reach the registration server (' + (e && e.message ? e.message : 'network error') + '). Your account was NOT saved. Please retry, and if it keeps failing email admin@gccpros.com with this message.';
+    try { var _cu2 = firebase.auth().currentUser; if (_cu2) { await _cu2.delete(); } } catch (_) { try { await firebase.auth().signOut(); } catch (_) {} }
+    window._pendingSignup = null;
+    switchMode('signin');
+    _showSignInErr(_netMsg);
+    return;
+  }
 
   window._pendingSignup = null;
   // onAuthStateChanged will pick up the new user and show the Pending screen.
@@ -3823,7 +3848,7 @@ function showPage(page) {
     return '<div class="result-row" onclick="showCompanyDetail(\'' + escHtml(r.name).replace(/'/g, "\\'") + '\')" oncontextmenu="return false">' +
       '<span class="r-num">' + String(startNum + i).padStart(2,'0') + '</span>' +
       '<div class="r-body">' +
-        '<span class="r-name">' + escHtml(r.name) + '</span>' +
+        '<span class="r-name">' + escHtml(r.name) + (r.verified ? ' <span title="Data verified by an active GCC leader" style="color:#1D9BF0;font-weight:700">\u2713</span>' : '') + '</span>' +
         (lastField !== 'company' ? '<span class="r-match">' + escHtml(fieldLabel) + ' - ' + escHtml(r.matchedValue || '') + '</span>' : '') +
       '</div>' +
       '<span class="r-arrow">\u203a</span>' +

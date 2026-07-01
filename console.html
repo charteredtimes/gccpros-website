@@ -332,7 +332,7 @@ function render(r){
   data.forEach(function(c,i){
     var conf=(String(c.confidence||'').toLowerCase().indexOf('h')===0)?'<span class="pill high">HIGH</span>':(c.confidence?'<span class="pill med">MED</span>':'');
     h+='<div class="gcard" id="card'+i+'">'
-      +'<div class="gcard-top"><div class="gcard-name">'+ICN.bld+'<b>'+esc(c.company_name)+'</b></div>'+conf+'</div>'
+      +'<div class="gcard-top"><div class="gcard-name">'+ICN.bld+'<b>'+esc(c.company_name)+'</b>'+((c.leadership_verified===true||String(c.leadership_verified)==='true')?' <span title="Data verified by an active GCC leader" style="color:#1D9BF0;font-weight:bold">\u2713</span>':'')+'</div>'+conf+'</div>'
       +(c.group_company?('<div class="gcard-parent">'+esc(c.group_company)+'</div>'):'')
       +'<div class="gcard-meta">'+meta(c,'hq_country')+meta(c,'gcc_city')+meta(c,'industry')+meta(c,'headcount_band')+'</div>'
       +'<button class="det-btn gcard-btn" onclick="toggle('+i+')">View all details</button>'
