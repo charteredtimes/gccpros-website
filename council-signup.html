@@ -15,8 +15,19 @@
   .hero h1{font-family:Georgia,serif;font-size:30px;margin:8px 0 6px;line-height:1.15}
   .hero h1 em{color:var(--gold);font-style:normal}
   .hero p{color:var(--ice);font-size:14.5px;max-width:680px;margin:0}
-  .peers{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;color:#fff;font-size:12.5px}
-  .peers b{font-family:Georgia,serif;font-size:20px;color:#fff;display:block}
+  .peers{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:stretch}
+  .pchip{background:rgba(255,255,255,.08);border:1px solid rgba(202,220,252,.30);border-radius:12px;padding:9px 14px;color:#fff;font-size:12px;min-width:160px}
+  .pchip b{display:block;font-family:Georgia,serif;font-size:15px;color:#fff;margin-bottom:1px}
+  .pchip span{color:var(--ice)}
+  .valueseal{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,#B8901E 0%,#C9A227 45%,#EBCB5C 100%);color:#14213D;border-radius:16px;padding:14px 20px;margin-top:14px;box-shadow:0 10px 26px rgba(201,162,39,.38);max-width:560px;position:relative;overflow:hidden}
+  .valueseal::after{content:"";position:absolute;top:-40px;right:-40px;width:130px;height:130px;background:radial-gradient(circle,rgba(255,255,255,.35),transparent 70%)}
+  .valueseal .amt{line-height:1;z-index:1}
+  .valueseal .amt .k{font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;opacity:.85}
+  .valueseal .amt .n{font-family:Georgia,serif;font-size:34px;font-weight:bold;display:block;margin-top:2px}
+  .valueseal .amt .n small{font-size:15px;font-weight:bold}
+  .valueseal .free{background:#14213D;color:#fff;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:bold;text-align:center;line-height:1.35;z-index:1;white-space:nowrap}
+  .valueseal .free .big{color:var(--gold);font-size:15px;display:block;letter-spacing:.5px}
+  @media(max-width:520px){.valueseal{flex-direction:column;align-items:flex-start;gap:10px}}
   .wrap{max-width:960px;margin:0 auto;padding:22px 22px 70px}
   .valuegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:-40px 0 18px}
   .vcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px;box-shadow:0 6px 18px rgba(20,33,61,.10)}
@@ -65,9 +76,12 @@
     <h1>Join the <em>GCC Leaders' Community</em></h1>
     <p>A peer collective of serving GCC heads building India's most trusted, leader-verified benchmark — together. Add your voice, keep your own centre's record accurate, and see how your industry really compares. No vendors, no commercial agenda.</p>
     <div class="peers">
-      <div><b>Peer-built</b>verified by serving heads</div>
-      <div><b>Fully masked</b>your identity never shown</div>
-      <div><b>₹5,00,000/yr</b>value, always complimentary</div>
+      <div class="pchip"><b>🤝 Peer-built</b><span>Verified by serving heads</span></div>
+      <div class="pchip"><b>🔒 Fully masked</b><span>Your identity is never shown</span></div>
+    </div>
+    <div class="valueseal">
+      <div class="amt"><span class="k">Annual membership value</span><span class="n">₹5,00,000<small>/year</small></span></div>
+      <div class="free"><span class="big">100% FREE</span>exclusively for serving<br>GCC leaders</div>
     </div>
   </div>
 </div>
