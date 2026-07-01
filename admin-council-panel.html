@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCCPROS Admin — Leaders' Community</title>
+<style>
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
+  header{background:var(--dark);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  header .brand{font-family:Georgia,serif;font-size:19px;font-weight:bold}
+  .wrap{max-width:1240px;margin:0 auto;padding:18px 22px 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 2px 8px rgba(40,60,110,.06);padding:16px 18px;margin-bottom:16px}
+  .card h2{font-family:Georgia,serif;font-size:16px;color:var(--navy);margin:0 0 10px}
+  input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+  button{cursor:pointer;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:bold;font-family:inherit}
+  .btn{background:var(--navy);color:#fff}.btn:hover{background:var(--steel)}
+  .btn.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+  .btn.ok{background:var(--ok);color:#fff}.btn.bad{background:var(--bad);color:#fff}.btn.gold{background:var(--gold);color:var(--navy)}
+  .btn.sm{padding:5px 10px;font-size:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{background:#fff;border:1px solid var(--line);color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:bold;font-size:13px}
+  .tab.active{background:var(--navy);color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  th{background:var(--navy);color:#fff;text-align:left;padding:8px 9px;font-size:11.5px}
+  td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#FAFCFF}
+  .pill{display:inline-block;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:20px}
+  .p-otp_verified{background:#FFF4DC;color:#8a6d12}.p-pending_approval{background:#FDE8CC;color:#8a5a12}
+  .p-approved{background:#E4F4EA;color:var(--ok)}.p-rejected{background:#FBE7E5;color:var(--bad)}
+  .chk{background:#E4F4EA;color:#12703b;font-weight:bold}
+  .muted{color:var(--grey);font-size:12px}
+  .msg{font-size:13px;font-weight:bold;padding:9px 12px;border-radius:8px;margin-top:10px;display:none}
+  .msg.ok{background:#E4F4EA;color:var(--ok);display:block}.msg.bad{background:#FBE7E5;color:var(--bad);display:block}.msg.info{background:var(--pale);color:var(--navy);display:block}
+  .diff{font-size:12px;margin:2px 0}.diff .f{font-weight:bold;color:var(--navy)}
+  .diff .old{color:#8a3a3a;text-decoration:line-through}.diff .new{color:#12703b;font-weight:bold}
+  .drawer{background:var(--pale);border-radius:8px;padding:10px 12px;margin-top:6px}
+  .hide{display:none}
+  .kbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .stat{display:inline-block;background:var(--pale);border-radius:8px;padding:6px 12px;margin-right:8px;font-size:12px}.stat b{color:var(--navy);font-size:15px}
+  a{color:#0A66C2}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community</div>
+  <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
+</header>
+
+<div class="wrap">
+  <div id="gate" class="card">
+    <h2>Enter admin key</h2>
+    <p class="muted">Reuses the same admin key as the main portal (<code>GCC_ADMIN_KEY</code>). Talks only to the community endpoints.</p>
+    <div id="mGate" class="msg"></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="tabs">
+      <div class="tab active" id="tab-approvals" onclick="switchTab('approvals')">Approvals</div>
+      <div class="tab" id="tab-confirmations" onclick="switchTab('confirmations')">GCC confirmations &amp; changes</div>
+    </div>
+
+    <!-- APPROVALS -->
+    <div id="view-approvals" class="card">
+      <h2>Membership approvals</h2>
+      <div class="row">
+        <label class="muted">Status</label>
+        <select id="statusFilter" onchange="load()">
+          <option value="pending_approval" selected>Awaiting approval</option>
+          <option value="">All</option>
+          <option value="otp_verified">Started (email verified, not submitted)</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <button class="btn alt sm" onclick="load()">↻ Refresh</button>
+        <span id="counts"></span>
+      </div>
+      <div id="mApp" class="msg"></div>
+      <div style="overflow-x:auto"><table id="tbl"><thead><tr>
+        <th>Leader</th><th>Work email</th><th>Phone</th><th>Industry</th><th>Their GCC</th><th>Identity</th><th>Status</th><th>Actions</th>
+      </tr></thead><tbody></tbody></table></div>
+      <p class="muted">Flow: verify the person is a serving head (open LinkedIn, check the email domain) → <b>Mark ✓</b> identity → <b>Approve</b>. Approval opens their access; they then confirm their own GCC + set priorities on first login (that's when the masked Peer-Verified badge is earned).</p>
+    </div>
+
+    <!-- CONFIRMATIONS -->
+    <div id="view-confirmations" class="card hide">
+      <h2>GCC confirmations &amp; suggested changes</h2>
+      <div class="row"><button class="btn alt sm" onclick="loadConf()">↻ Refresh</button><span id="confCounts"></span></div>
+      <div id="mConf" class="msg"></div>
+      <div style="overflow-x:auto"><table id="ctbl"><thead><tr>
+        <th>Leader</th><th>GCC</th><th>Industry</th><th>Verdict</th><th>Comment</th><th>Changes</th><th>Actions</th>
+      </tr></thead><tbody></tbody></table></div>
+      <p class="muted">When a member confirms their own record they may suggest corrections. Review the diff and <b>Apply changes</b> to write them into the company row (this also refreshes the masked badge).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
+let ADMIN_KEY=''; let ROWS=[]; let CONF=[];
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function msg(id,t,c){var e=$(id);e.textContent=t;e.className='msg '+(c||'info');}
+
+try{var k=sessionStorage.getItem('GCC_ADMIN_KEY'); if(k){$('admin-key').value=k; ADMIN_KEY=k; verifyKey(true);}}catch(_){}
+function saveKey(){ var k=($('admin-key').value||'').trim(); if(!k){msg('mGate','Enter a key.','bad');return;} ADMIN_KEY=k; verifyKey(false); }
+async function adminApi(action, params){
+  var body=Object.assign({action:action}, params||{});
+  var res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},body:JSON.stringify(body)});
+  return res.json().catch(function(){return {error:'bad_response'};});
+}
+async function verifyKey(silent){
+  var r=await adminApi('adminCouncilQueue',{status:''});
+  if(r.error){ if(!silent)msg('mGate','Key rejected or endpoint not deployed: '+(r.message||r.error),'bad'); return; }
+  try{sessionStorage.setItem('GCC_ADMIN_KEY',ADMIN_KEY);}catch(_){}
+  $('gate').classList.add('hide'); $('app').classList.remove('hide'); load();
+}
+function switchTab(t){
+  $('tab-approvals').classList.toggle('active',t==='approvals');
+  $('tab-confirmations').classList.toggle('active',t==='confirmations');
+  $('view-approvals').classList.toggle('hide',t!=='approvals');
+  $('view-confirmations').classList.toggle('hide',t!=='confirmations');
+  if(t==='confirmations') loadConf();
+}
+
+async function load(){
+  var status=$('statusFilter').value; msg('mApp','Loading…','info');
+  var r=await adminApi('adminCouncilQueue',{status:status});
+  if(r.error){ msg('mApp',r.message||r.error,'bad'); return; }
+  $('mApp').style.display='none'; ROWS=r.rows||[];
+  var c={}; ROWS.forEach(function(x){c[x.application_status]=(c[x.application_status]||0)+1;});
+  $('counts').innerHTML='<span class="stat"><b>'+ROWS.length+'</b> shown</span><span class="stat">Awaiting: <b>'+(c.pending_approval||0)+'</b></span><span class="stat">Approved: <b>'+(c.approved||0)+'</b></span>';
+  render();
+}
+function render(){
+  var tb=$('tbl').querySelector('tbody'); var h='';
+  ROWS.forEach(function(x,i){
+    h+='<tr>'
+      +'<td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div>'+(x.linkedin?'<div><a href="'+esc(x.linkedin)+'" target="_blank" rel="noopener">LinkedIn ↗</a></div>':'')+'</td>'
+      +'<td>'+esc(x.email||'')+'<div class="muted">@'+esc(x.email_domain||'')+'</div></td>'
+      +'<td>'+esc((x.country_code||'')+' '+(x.phone||''))+'</td>'
+      +'<td>'+esc(x.industry_selected||x.matched_industry||'—')+'</td>'
+      +'<td>'+esc(x.matched_company_name||x.current_company||'<span class="muted">not listed</span>')+'</td>'
+      +'<td>'+(x.identity_verified?'<span class="pill chk">✓ verified</span>':'<button class="btn alt sm" onclick="verifyId('+i+')">Mark ✓</button>')+'</td>'
+      +'<td><span class="pill p-'+esc(x.application_status)+'">'+esc(x.application_status)+'</span></td>'
+      +'<td><div class="row">'
+        +'<button class="btn ok sm" onclick="approve('+i+')">Approve</button>'
+        +'<button class="btn bad sm" onclick="reject('+i+')">Reject</button>'
+      +'</div></td></tr>';
+  });
+  if(!ROWS.length) h='<tr><td colspan="8" class="muted">Nothing in this view.</td></tr>';
+  tb.innerHTML=h;
+}
+async function verifyId(i){ var x=ROWS[i]; var r=await adminApi('adminCouncilVerifyIdentity',{application_id:x.application_id,verified:'true'}); if(r.error){msg('mApp',r.message||r.error,'bad');return;} load(); }
+async function approve(i){
+  var x=ROWS[i];
+  if(!x.identity_verified){ if(!confirm('Identity is not marked verified. Mark verified and approve now?'))return; await adminApi('adminCouncilVerifyIdentity',{application_id:x.application_id,verified:'true'}); }
+  var notes=prompt('Optional approval note:','')||'';
+  msg('mApp','Approving '+x.full_name+'…','info');
+  var r=await adminApi('adminCouncilApprove',{application_id:x.application_id,notes:notes});
+  if(r.error){ msg('mApp',r.message||r.error,'bad'); return; }
+  msg('mApp','Approved. Access opened for industry: '+(r.industry||'')+'. The leader confirms their GCC + priorities on first login.','ok'); load();
+}
+async function reject(i){ var x=ROWS[i]; var notes=prompt('Reason for rejection:','')||''; var r=await adminApi('adminAppDecision',{kind:'council',id:x.application_id,decision:'rejected',notes:notes}); if(r.error){msg('mApp',r.message||r.error,'bad');return;} msg('mApp','Rejected.','ok'); load(); }
+
+/* Confirmations tab */
+async function loadConf(){
+  msg('mConf','Loading…','info');
+  var r=await adminApi('adminCouncilQueue',{status:'approved'});
+  if(r.error){ msg('mConf',r.message||r.error,'bad'); return; }
+  $('mConf').style.display='none';
+  CONF=(r.rows||[]).filter(function(x){return x.certification_id;});
+  $('confCounts').innerHTML='<span class="stat"><b>'+CONF.length+'</b> confirmations</span>';
+  var tb=$('ctbl').querySelector('tbody'); var h='';
+  CONF.forEach(function(x,i){
+    var reviews=(x.field_reviews||[]).filter(function(r){return r&&r.verdict==='change';});
+    h+='<tr>'
+      +'<td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.email||'')+'</div></td>'
+      +'<td>'+esc(x.matched_company_name||'')+'</td>'
+      +'<td>'+esc(x.matched_industry||'')+'</td>'
+      +'<td>'+esc(x.overall_verdict||'')+'</td>'
+      +'<td class="muted" style="max-width:220px">'+esc(x.confirm_comment||'')+'</td>'
+      +'<td>'+(reviews.length?('<button class="btn alt sm" onclick="cdraw('+i+')">'+reviews.length+' change'+(reviews.length>1?'s':'')+'</button>'):'<span class="muted">none</span>')+'</td>'
+      +'<td>'+(reviews.length?'<button class="btn gold sm" onclick="applyChanges('+i+')">Apply changes</button>':'<span class="muted">—</span>')+'</td>'
+      +'</tr>';
+    h+='<tr id="cdr'+i+'" class="hide"><td colspan="7"><div class="drawer" id="cdrc'+i+'"></div></td></tr>';
+  });
+  if(!CONF.length) h='<tr><td colspan="7" class="muted">No GCC confirmations yet.</td></tr>';
+  tb.innerHTML=h;
+}
+function cdraw(i){
+  var tr=$('cdr'+i); var open=tr.classList.toggle('hide')===false; if(!open)return;
+  var reviews=($('cdr'+i)&&CONF[i].field_reviews||[]).filter(function(r){return r&&r.verdict==='change';});
+  var h='<b>Suggested changes:</b>';
+  reviews.forEach(function(r){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="old">'+esc(r.current_value||'(blank)')+'</span> → <span class="new">'+esc(r.suggested_value||'')+'</span></div>'; });
+  $('cdrc'+i).innerHTML=h;
+}
+async function applyChanges(i){
+  var x=CONF[i]; if(!confirm('Apply the leader\'s suggested changes to '+(x.matched_company_name||'this company')+'?'))return;
+  msg('mConf','Applying…','info');
+  var r=await adminApi('adminCouncilApplyChanges',{certification_id:x.certification_id});
+  if(r.error){ msg('mConf',r.message||r.error,'bad'); return; }
+  msg('mConf','Applied '+(r.applied||0)+' field change(s) and refreshed the badge.','ok'); loadConf();
+}
+</script>
+</body>
+</html>
