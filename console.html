@@ -125,27 +125,69 @@
       <h2>Find GCCs</h2>
       <div class="grid">
       <div class="chips" style="grid-column:1/-1">
-        <span class="chips-label">Quick filters</span>
+        <span class="chips-label">Sector</span>
+        <span class="chip" onclick="chipSet({industry:'SaaS'})">SaaS & Software</span>
+        <span class="chip" onclick="chipSet({industry:'BFSI'})">BFSI (all)</span>
+        <span class="chip" onclick="chipSet({industry:'Insurance'})">Insurance</span>
+        <span class="chip" onclick="chipSet({industry:'Semiconductors'})">Semiconductors</span>
+        <span class="chip" onclick="chipSet({industry:'Data, Analytics'})">Data & AI</span>
+        <span class="chip" onclick="chipSet({industry:'Cybersecurity'})">Cybersecurity</span>
+        <span class="chip" onclick="chipSet({industry:'Cloud, Infrastructure'})">Cloud & Infra</span>
+        <span class="chip" onclick="chipSet({industry:'Automotive'})">Automotive</span>
+        <span class="chip" onclick="chipSet({industry:'Healthcare'})">Healthcare</span>
+        <span class="chip" onclick="chipSet({industry:'Pharma'})">Pharma</span>
+        <span class="chip" onclick="chipSet({industry:'Industrial, Engineering'})">Industrial</span>
+        <span class="chip" onclick="chipSet({industry:'Retail, Consumer'})">Retail & Consumer</span>
+        <span class="chip" onclick="chipSet({industry:'Energy, Power'})">Energy</span>
+        <span class="chip" onclick="chipSet({industry:'Chemicals'})">Chemicals</span>
+        <span class="chip" onclick="chipSet({industry:'Logistics'})">Logistics</span>
+        <span class="chip" onclick="chipSet({industry:'Aerospace'})">Aerospace &amp; Defense</span>
+        <span class="chip" onclick="chipSet({industry:'Telecom'})">Telecom</span>
+        <span class="chip" onclick="chipSet({industry:'Media'})">Media</span>
+        <span class="chip" onclick="chipSet({industry:'Professional Services'})">Prof. Services</span>
+        <span class="chips-label">City</span>
         <span class="chip" onclick="chipSet({gcc_city:'Bengaluru'})">Bengaluru</span>
         <span class="chip" onclick="chipSet({gcc_city:'Pune'})">Pune</span>
         <span class="chip" onclick="chipSet({gcc_city:'Hyderabad'})">Hyderabad</span>
         <span class="chip" onclick="chipSet({gcc_city:'Mumbai'})">Mumbai</span>
         <span class="chip" onclick="chipSet({gcc_city:'Chennai'})">Chennai</span>
         <span class="chip" onclick="chipSet({gcc_city:'Gurugram'})">Gurugram</span>
-        <span class="chip" onclick="chipSet({industry:'BFSI'})">BFSI</span>
-        <span class="chip" onclick="chipSet({industry:'SaaS'})">SaaS</span>
-        <span class="chip" onclick="chipSet({industry:'Pharma'})">Pharma</span>
-        <span class="chip" onclick="chipSet({industry:'Retail'})">Retail</span>
-        <span class="chip" onclick="chipSet({industry:'Manufacturing'})">Manufacturing</span>
-        <span class="chip" onclick="chipSet({domain:'Finance'})">Finance domain</span>
+        <span class="chip" onclick="chipSet({gcc_city:'Noida'})">Noida</span>
+        <span class="chip" onclick="chipSet({gcc_city:'Kolkata'})">Kolkata</span>
+        <span class="chip" onclick="chipSet({gcc_city:'Ahmedabad'})">Ahmedabad</span>
+        <span class="chip" onclick="chipSet({gcc_city:'Coimbatore'})">Coimbatore</span>
+        <span class="chip" onclick="chipSet({gcc_city:'Kochi'})">Kochi</span>
+        <span class="chips-label">Capability / domain</span>
+        <span class="chip" onclick="chipSet({domain:'Finance'})">Finance</span>
         <span class="chip" onclick="chipSet({domain:'Engineering'})">Engineering</span>
         <span class="chip" onclick="chipSet({domain:'AI'})">AI &amp; Data</span>
-        <span class="chip" onclick="chipSet({headcount_band:'1000-5000'})">1,000–5,000</span>
+        <span class="chip" onclick="chipSet({domain:'Cybersecurity'})">Cybersecurity</span>
+        <span class="chip" onclick="chipSet({domain:'Product'})">Product</span>
+        <span class="chip" onclick="chipSet({domain:'R&D'})">R&amp;D</span>
+        <span class="chip" onclick="chipSet({domain:'HR'})">HR</span>
+        <span class="chip" onclick="chipSet({domain:'Procurement'})">Procurement</span>
+        <span class="chips-label">Headcount</span>
+        <span class="chip" onclick="chipSet({headcount_band:'1-100'})">1–100</span>
+        <span class="chip" onclick="chipSet({headcount_band:'101-500'})">101–500</span>
+        <span class="chip" onclick="chipSet({headcount_band:'501-1000'})">501–1,000</span>
+        <span class="chip" onclick="chipSet({headcount_band:'1001-5000'})">1,001–5,000</span>
         <span class="chip" onclick="chipSet({headcount_band:'5000+'})">5,000+</span>
-        <span class="chip" onclick="chipSet({confidence:'High'})">High confidence</span>
-        <span class="chip" onclick="chipSet({hq_country:'USA'})">US-HQ</span>
-        <span class="chip" onclick="chipSet({hq_country:'Germany'})">DE-HQ</span>
-        <span class="chip" onclick="chipSet({hq_country:'UK'})">UK-HQ</span>
+        <span class="chips-label">Parent HQ</span>
+        <span class="chip" onclick="chipSet({hq_country:'USA'})">US</span>
+        <span class="chip" onclick="chipSet({hq_country:'UK'})">UK</span>
+        <span class="chip" onclick="chipSet({hq_country:'Germany'})">Germany</span>
+        <span class="chip" onclick="chipSet({hq_country:'Japan'})">Japan</span>
+        <span class="chip" onclick="chipSet({hq_country:'France'})">France</span>
+        <span class="chip" onclick="chipSet({hq_country:'Netherlands'})">Netherlands</span>
+        <span class="chip" onclick="chipSet({hq_country:'Switzerland'})">Switzerland</span>
+        <span class="chip" onclick="chipSet({hq_country:'Sweden'})">Sweden</span>
+        <span class="chip" onclick="chipSet({hq_country:'Israel'})">Israel</span>
+        <span class="chip" onclick="chipSet({hq_country:'Singapore'})">Singapore</span>
+        <span class="chip" onclick="chipSet({hq_country:'UAE'})">UAE</span>
+        <span class="chip" onclick="chipSet({hq_country:'Canada'})">Canada</span>
+        <span class="chips-label">Confidence</span>
+        <span class="chip" onclick="chipSet({confidence:'High'})">High</span>
+        <span class="chip" onclick="chipSet({confidence:'Medium'})">Medium</span>
       </div>
         <div><label>Country</label><input id="f_country" value="India"></div>
         <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
@@ -184,7 +226,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.5 SSO (clean leaders)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.6 SSO (sector filters)</div>
   </div>
 </div>
 
