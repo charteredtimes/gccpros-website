@@ -145,10 +145,10 @@
   <!-- APP: data -->
   <div id="app" class="hide">
     <div class="researchbar"><span>🔒</span>
-      <div><b>Community benchmark — research use only.</b> Provided free to serving GCC leaders (notional value ₹5,00,000 / year). Commercial use, resale, redistribution, copying, downloading, printing or export is <b>not permitted</b>. You see your own industry only.</div>
+      <div><b>Community benchmark — research use only.</b> Provided free to serving GCC leaders (notional value ₹5,00,000 / year). Commercial use, resale, redistribution, copying, downloading, printing or export is <b>not permitted</b>. You see your own sector only.</div>
     </div>
     <div class="card">
-      <h2>Your industry benchmark <span id="lockChip" class="lockchip"></span></h2>
+      <h2>Your sector benchmark <span id="lockChip" class="lockchip"></span></h2>
       <div class="grid">
         <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
         <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI…"></div>
@@ -159,7 +159,7 @@
         <div><label>Results per page</label><select id="f_limit"><option>10</option><option selected>25</option><option>50</option></select></div>
       </div>
       <div class="btns">
-        <button class="btn" onclick="resetPage();search()">Search my industry</button>
+        <button class="btn" onclick="resetPage();search()">Search my sector</button>
         <button class="btn alt" onclick="clearFilters()">Clear filters</button>
         <button class="btn alt" onclick="signOut()">Sign out</button>
       </div>
@@ -313,11 +313,11 @@ async function search(){
   badge('Connected · '+esc((r.industry||'').toUpperCase()),'ok'); render(r);
 }
 var FIELD_ORDER=['company_name','group_company','hq_country','gcc_city','state_province','office_addresses','industry','gcc_domains','sub_domains','site_head','leaders_technology','leaders_finance','leaders_hr','other_leaders','headcount','headcount_band','headcount_notes','year_established','legal_structure','cin_reg_id','maturity_level','setup_model','setup_partner','group_global_turnover','tech_stack','recent_press_6mo','strategic_initiatives','glassdoor_rating','gptw_certified','confidence','leadership_verified','leadership_verified_cycle'];
-var FIELD_LABELS={company_name:'Company',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',office_addresses:'Office address(es)',industry:'Industry',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',leaders_technology:'Technology leaders',leaders_finance:'Finance leaders',leaders_hr:'HR leaders',other_leaders:'Other leaders',headcount:'Headcount (exact)',headcount_band:'Headcount',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',maturity_level:'Maturity',setup_model:'Setup model',setup_partner:'Setup partner',group_global_turnover:'Group turnover',tech_stack:'Tech stack',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',confidence:'Confidence',leadership_verified:'Peer-verified',leadership_verified_cycle:'Verified cycle'};
+var FIELD_LABELS={company_name:'Company',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',office_addresses:'Office address(es)',industry:'Sector',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',leaders_technology:'Technology leaders',leaders_finance:'Finance leaders',leaders_hr:'HR leaders',other_leaders:'Other leaders',headcount:'Headcount (exact)',headcount_band:'Headcount',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',maturity_level:'Maturity',setup_model:'Setup model',setup_partner:'Setup partner',group_global_turnover:'Group turnover',tech_stack:'Tech stack',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',confidence:'Confidence',leadership_verified:'Peer-verified',leadership_verified_cycle:'Verified cycle'};
 var SKIP={id:1,country:1,embedding:1,leadership_verified_at:1,leadership_verified_count:1};
 function render(r){
   S.total=r.page.total; var data=r.data||[];
-  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> GCCs in <b>'+esc(r.industry)+'</b>';
+  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> GCCs in the <b>'+esc(r.industry)+'</b> sector';
   if(!data.length){ $('resTable').innerHTML='<p class="muted">No GCCs match those filters within your industry.</p>'; $('pager').classList.add('hide'); return; }
   var h='<div class="cardgrid">';
   data.forEach(function(c,i){

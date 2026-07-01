@@ -9,7 +9,7 @@
   :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
   *{box-sizing:border-box}
   body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
-  .hero{background:radial-gradient(1200px 400px at 20% -10%,#2E5496 0%,#14213D 55%);color:#fff;padding:34px 26px 30px}
+  .hero{background:radial-gradient(900px 320px at 20% -10%,#2E5496 0%,#14213D 55%);color:#fff;padding:34px 26px 30px}
   .hero-in{max-width:960px;margin:0 auto}
   .eyebrow{color:var(--gold);font-size:12.5px;letter-spacing:2px;text-transform:uppercase;font-weight:bold}
   .hero h1{font-family:Georgia,serif;font-size:30px;margin:8px 0 6px;line-height:1.15}
@@ -51,7 +51,7 @@
   .msg{font-size:13px;font-weight:bold;padding:9px 12px;border-radius:8px;margin-top:12px;display:none}
   .msg.ok{background:#E4F4EA;color:var(--ok);display:block}.msg.bad{background:#FBE7E5;color:var(--bad);display:block}.msg.info{background:var(--pale);color:var(--navy);display:block}
   .steps{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
-  .step{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:11.5px;color:var(--grey)}
+  .step{flex:1;min-width:130px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:11.5px;color:var(--grey)}
   .step b{display:block;color:var(--navy);font-size:12px;margin-bottom:2px}
   .step.on{border-color:var(--steel);box-shadow:0 0 0 2px var(--ice) inset}
   .step.done{background:#E4F4EA;border-color:#B7E1C6}
@@ -74,7 +74,7 @@
   <div class="hero-in">
     <div class="eyebrow">By GCC leaders, for GCC leaders</div>
     <h1>Join the <em>GCC Leaders' Community</em></h1>
-    <p>A peer collective of serving GCC heads building India's most trusted, leader-verified benchmark — together. Add your voice, keep your own centre's record accurate, and see how your industry really compares. No vendors, no commercial agenda.</p>
+    <p>A peer collective of serving GCC heads building India's most trusted, leader-verified benchmark — together. Add your voice, keep your own centre's record accurate, and see how your sector really compares. No vendors, no commercial agenda.</p>
     <div class="peers">
       <div class="pchip"><b>🤝 Peer-built</b><span>Verified by serving heads</span></div>
       <div class="pchip"><b>🔒 Fully masked</b><span>Your identity is never shown</span></div>
@@ -88,7 +88,7 @@
 
 <div class="wrap">
   <div class="valuegrid">
-    <div class="vcard"><div class="ic">📊</div><h3>Benchmark your GCC</h3><p>See how your centre compares with peers in your own industry — headcount, maturity, domains, hubs.</p></div>
+    <div class="vcard"><div class="ic">📊</div><h3>Benchmark your GCC</h3><p>See how your centre compares with peers in your own sector — headcount, maturity, domains, hubs.</p></div>
     <div class="vcard"><div class="ic">🚀</div><h3>Find your next move</h3><p>Spot where the strongest GCCs and leadership mandates are emerging in your sector.</p></div>
     <div class="vcard"><div class="ic">🤝</div><h3>Shape the record</h3><p>Confirm your own centre's data so the community benchmark everyone relies on stays accurate.</p></div>
     <div class="vcard"><div class="ic">🔒</div><h3>Protected by design</h3><p>Your inputs are never published. Only an anonymous <b>Peer-Verified&nbsp;✓</b> mark appears — never you.</p></div>
@@ -101,9 +101,8 @@
   <div class="steps">
     <div class="step on"  id="s1"><b>1 · You</b>Your details</div>
     <div class="step"     id="s2"><b>2 · Verify</b>Confirm your work email</div>
-    <div class="step"     id="s3"><b>3 · Industry</b>Choose your sector</div>
-    <div class="step"     id="s4"><b>4 · Your GCC</b>Find your centre</div>
-    <div class="step"     id="s5"><b>5 · Done</b>Steward review</div>
+    <div class="step"     id="s3"><b>3 · Your GCC</b>Type your company</div>
+    <div class="step"     id="s4"><b>4 · Done</b>Steward review</div>
   </div>
 
   <!-- STEP 1 -->
@@ -142,10 +141,7 @@
       </div>
       <div><label>Current title *</label><input id="i_title" placeholder="MD India / Site Head / VP GCC"></div>
     </div>
-    <div class="grid2">
-      <div><label>LinkedIn URL *</label><input id="i_linkedin" placeholder="https://linkedin.com/in/…"></div>
-      <div><label>Your company (as you call it)</label><input id="i_company" placeholder="e.g. Acme Global Capability Center"></div>
-    </div>
+    <div><label>LinkedIn URL *</label><input id="i_linkedin" placeholder="https://linkedin.com/in/…"></div>
 
     <div class="consent">
       <input type="checkbox" id="i_consent">
@@ -161,26 +157,16 @@
         <input id="i_otp" inputmode="numeric" maxlength="8" placeholder="123456">
         <button class="btn" onclick="verifyCode()">Confirm &amp; continue</button>
       </div>
-      <div class="note">📩 The code comes from our verification sender. If you don't see it in ~1 minute, check <b>Spam/Junk</b> or <b>Quarantine</b>, mark it "Not junk", and add the sender to safe senders. Corporate firewall holding it? Ask IT to allowlist our sender domain, or <a href="#" onclick="sendCode();return false;">resend</a>.</div>
+      <div class="note">📩 The code comes from our verification sender (no-reply@gccpros.com). If you don't see it in ~1 minute, check <b>Spam/Junk</b>, then <a href="#" onclick="sendCode();return false;">resend</a>. Always use the newest code — older ones stop working.</div>
     </div>
   </div>
 
-  <!-- STEP 3 -->
-  <div class="card hide" id="cardIndustry">
-    <h2>Which industry is your GCC in?</h2>
-    <p class="muted">This is the community you'll benchmark within. You'll only ever see your own industry's data — and only peers in it see the same.</p>
-    <label>Industry *</label>
-    <select id="i_industry"><option value="">Loading industries…</option></select>
-    <div class="btns"><button class="btn" onclick="chooseIndustry()">Continue →</button></div>
-    <div id="mIndustry" class="msg"></div>
-  </div>
-
-  <!-- STEP 4 -->
+  <!-- STEP 3 — company (industry/sector derived automatically) -->
   <div class="card hide" id="cardCompany">
     <h2>Find your GCC</h2>
-    <p class="muted">Select your own centre. Can't find it? Choose “My GCC isn't listed yet” — we'll add it after the steward check.</p>
-    <label>Search your company / parent group</label>
-    <input id="i_search" placeholder="Type a company or group name…" oninput="debouncedSearch()">
+    <p class="muted">Just start typing your <b>company or parent-group name</b> and pick it from the list. We'll place you in the right sector automatically. Can't find it? Choose “My GCC isn't listed yet”.</p>
+    <label>Your company name</label>
+    <input id="i_search" placeholder="Start typing your company…" oninput="debouncedSearch()" autocomplete="off">
     <div id="matches"></div>
     <div class="btns"><button class="btn alt" onclick="notListed()">My GCC isn't listed yet</button></div>
     <div id="mCompany" class="msg"></div>
@@ -193,7 +179,7 @@
     <div class="big" style="margin:14px 0 6px">What happens right after you're approved</div>
     <div class="usecase"><b>1. Confirm your own GCC</b> — a 60-second check that your centre's record is accurate (with a quick comment). This earns your GCC its masked <b>Peer-Verified ✓</b> mark.</div>
     <div class="usecase"><b>2. Share your top 3 priorities</b> for the next 12 months — so the community understands where leaders are focused.</div>
-    <div class="usecase"><b>3. Explore your industry benchmark</b> — compare your centre with peers, and spot where the momentum (and opportunities) are.</div>
+    <div class="usecase"><b>3. Explore your sector benchmark</b> — compare your centre with peers, and spot where the momentum (and opportunities) are.</div>
     <div class="btns"><a href="./council-console.html"><button class="btn gold">Go to the community console</button></a></div>
     <p class="note">Access opens after approval — you'll sign in there with the same work email and a one-time code.</p>
   </div>
@@ -210,7 +196,7 @@ const API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1
 
 const FREE_EMAIL = ["gmail.com","yahoo.com","yahoo.co.in","hotmail.com","outlook.com","live.com","icloud.com","protonmail.com","proton.me","aol.com","rediffmail.com","ymail.com","gmx.com","mail.com","zoho.com"];
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-var ST = { appId:null, email:null, industry:null, company:null };
+var ST = { appId:null, email:null };
 
 function $(id){return document.getElementById(id);}
 function esc(s){if(s===null||s===undefined)return '';return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -241,69 +227,55 @@ async function sendCode(){
   ST.email=email; show('otpBox'); msg('mYou','Code sent. Enter it below. (Check Spam/Junk if it is not in your inbox within a minute.)','ok');
 }
 
-/* Step 2: verify + register */
+/* Step 2: verify + register, then go straight to company */
 async function verifyCode(){
   var code=($('i_otp').value||'').trim(); if(!code){ msg('mYou','Enter the code from your email.','bad'); return; }
   msg('mYou','Verifying…','info');
   var { error } = await sb.auth.verifyOtp({ email:ST.email, token:code, type:'email' });
-  if(error){ msg('mYou','Invalid or expired code: '+error.message,'bad'); return; }
+  if(error){ msg('mYou','Invalid or expired code — click resend and use the newest one. ('+error.message+')','bad'); return; }
   var r=await api('councilRegister',{
     fullName:$('i_name').value.trim(), linkedin:$('i_linkedin').value.trim(), title:$('i_title').value.trim(),
-    company:$('i_company').value.trim(), phone:$('i_phone').value.trim(), countryCode:$('i_cc').value,
+    company:'', phone:$('i_phone').value.trim(), countryCode:$('i_cc').value,
     privacyConsent:$('i_consent').checked?'Yes':'No'
   });
   if(r.error){ msg('mYou','Could not register: '+(r.message||r.error),'bad'); return; }
   ST.appId=r.application_id;
   $('s1').className='step done'; $('s2').className='step done'; $('s3').className='step on';
-  hide('cardYou'); show('cardIndustry'); loadIndustries();
+  hide('cardYou'); show('cardCompany'); $('i_search').focus();
 }
 
-/* Step 3: industries */
-async function loadIndustries(){
-  var r=await api('councilIndustries',{});
-  var sel=$('i_industry');
-  if(r.error||!r.industries){ sel.innerHTML='<option value="">Could not load — type below</option>'; return; }
-  sel.innerHTML='<option value="">Select your industry…</option>'+r.industries.map(function(i){return '<option value="'+esc(i)+'">'+esc(i)+'</option>';}).join('');
-}
-function chooseIndustry(){
-  var v=$('i_industry').value; if(!v){ msg('mIndustry','Please choose your industry.','bad'); return; }
-  ST.industry=v; $('s3').className='step done'; $('s4').className='step on';
-  hide('cardIndustry'); show('cardCompany');
-  if($('i_company').value.trim()){ $('i_search').value=$('i_company').value.trim(); doSearch(); }
-}
-
-/* Step 4: company */
+/* Step 3: company search (all sectors); sector is derived from the pick */
 var _t=null;
 function debouncedSearch(){ clearTimeout(_t); _t=setTimeout(doSearch,300); }
 async function doSearch(){
-  var q=($('i_search').value||'').trim(); if(q.length<2) return;
-  var r=await api('councilSearchCompanies',{ q:q, industry:ST.industry });
+  var q=($('i_search').value||'').trim(); if(q.length<2){ $('matches').innerHTML=''; return; }
+  var r=await api('councilSearchCompanies',{ q:q });
   if(r.error){ msg('mCompany',r.message||r.error,'bad'); return; }
   renderMatches(r.rows||[]);
 }
 function renderMatches(rows){
-  var h=''; if(!rows.length) h='<p class="muted">No matches in '+esc(ST.industry)+' yet — keep typing, or choose “My GCC isn\'t listed yet”.</p>';
+  var h=''; if(!rows.length) h='<p class="muted">No matches yet — keep typing, or choose “My GCC isn\'t listed yet”.</p>';
   rows.forEach(function(c){
-    h+='<div class="match" onclick="pick(\''+c.id+'\',\''+esc(c.company_name).replace(/'/g,"\\'")+'\')">'
-      +'<div><div class="n">'+esc(c.company_name)+'</div><div class="m">'+[c.group_company,c.gcc_city,c.hq_country].filter(Boolean).map(esc).join(' · ')+'</div></div>'
+    var sect=c.industry?(' · '+esc(c.industry)):'';
+    h+='<div class="match" onclick="pick(\''+c.id+'\')">'
+      +'<div><div class="n">'+esc(c.company_name)+'</div><div class="m">'+[c.group_company,c.gcc_city,c.hq_country].filter(Boolean).map(esc).join(' · ')+sect+'</div></div>'
       +'<button class="btn alt" style="padding:6px 12px">This is us</button></div>';
   });
   $('matches').innerHTML=h;
 }
-async function pick(id,name){
-  ST.company={id:id,name:name};
+async function pick(id){
   msg('mCompany','Submitting your membership…','info');
-  var r=await api('councilSubmit',{ application_id:ST.appId, industry:ST.industry, company_id:id });
+  var r=await api('councilSubmit',{ application_id:ST.appId, company_id:id });
   if(r.error){ msg('mCompany',r.message||r.error,'bad'); return; }
   finishUp();
 }
 async function notListed(){
-  msg('mCompany','No problem — submitting; we\'ll add your GCC after the steward check.','info');
-  var r=await api('councilSubmit',{ application_id:ST.appId, industry:ST.industry, notListed:'true' });
+  msg('mCompany','No problem — submitting; we\'ll add your GCC and sector after the steward check.','info');
+  var r=await api('councilSubmit',{ application_id:ST.appId, notListed:'true' });
   if(r.error){ msg('mCompany',r.message||r.error,'bad'); return; }
   finishUp();
 }
-function finishUp(){ $('s4').className='step done'; $('s5').className='step on'; hide('cardCompany'); show('cardDone'); }
+function finishUp(){ $('s3').className='step done'; $('s4').className='step on'; hide('cardCompany'); show('cardDone'); }
 </script>
 </body>
 </html>
