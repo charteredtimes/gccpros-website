@@ -89,12 +89,12 @@
       <div id="loginStep">
         <label style="text-align:left">Work email</label>
         <input id="i_email" type="email" placeholder="you@yourcompany.com">
-        <div class="btns" style="justify-content:center"><button class="btn" id="btnSend" onclick="sendCode()">Send code</button></div>
+        <div class="btns" style="justify-content:center"><button class="btn" id="btnSend" onclick="sendCode()" style="width:100%;padding:14px;font-size:16px">Send me a sign-in code</button></div>
       </div>
       <div id="otpStep" class="hide">
         <label style="text-align:left">6-digit code</label>
         <input id="i_otp" inputmode="numeric" maxlength="8" placeholder="123456">
-        <div class="btns" style="justify-content:center"><button class="btn" onclick="verifyCode()">Verify &amp; enter</button></div>
+        <div class="btns" style="justify-content:center"><button class="btn" onclick="verifyCode()" style="width:100%;padding:14px;font-size:16px">Verify &amp; sign in</button></div>
         <div class="muted" style="margin-top:8px">Not in your inbox? Check <b>Spam/Junk</b> or ask IT to allowlist our sender.</div>
       </div>
       <div id="mGate" class="msg"></div>
@@ -106,7 +106,7 @@
   <div id="wizConfirm" class="hide">
     <div class="wizhead"><div class="e">Step 1 of 2 · Takes ~60 seconds</div>
       <h2>Confirm your own GCC's record</h2>
-      <p>You're almost in. Please check your centre's details below — this is what earns your GCC its masked <b>Peer-Verified ✓</b> mark and keeps the community benchmark trustworthy.</p></div>
+      <p>A quick re-confirmation each time you sign in keeps your record accurate and current — this is what earns your GCC its masked <b>Peer-Verified ✓</b> mark and keeps the community benchmark trustworthy. Review every field below.</p></div>
     <div class="card">
       <div id="myCompanyName" class="lockchip" style="margin-bottom:10px"></div>
       <div style="overflow-x:auto"><table id="confTable"><thead><tr><th>Field</th><th>Current record</th><th style="width:220px">Is this right?</th></tr></thead><tbody></tbody></table></div>
@@ -123,7 +123,7 @@
   <div id="wizPriorities" class="hide">
     <div class="wizhead"><div class="e">Step 2 of 2 · Almost there</div>
       <h2>Your top 3 priorities for the next 12 months</h2>
-      <p>Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile — never published with your name.</p></div>
+      <p id="priNote">Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile — never published with your name.</p></div>
     <div class="card">
       <label>Priority 1 *</label><input id="p1" placeholder="e.g. Scale AI/ML engineering charter">
       <label style="margin-top:10px">Priority 2 *</label><input id="p2" placeholder="e.g. Move up the value chain to product ownership">
@@ -233,7 +233,7 @@ async function enter(){
     var st=me.member_status||me.application_status||'pending';
     showGate(); msg('mGate','Your access is not active yet (status: '+st+'). We\'ll email you once a steward approves you.','info'); return;
   }
-  S.industry=me.industry; S.email=me.email;
+  S.industry=me.industry; S.email=me.email; S.priorities=me.priorities||{p1:'',p2:'',p3:'',set_at:null};
   $('topright').innerHTML='<span class="who">Signed in as <b>'+esc(S.email)+'</b></span> &nbsp; <span class="status ok">Member · '+esc(S.industry)+'</span>';
   $('gate').classList.add('hide');
   if(me.step==='confirm_gcc'){ startConfirm(); }
@@ -242,7 +242,14 @@ async function enter(){
 }
 
 /* ---- Wizard A ---- */
-var CONF_FIELDS=[['company_name','Company name'],['group_company','Parent group'],['hq_country','HQ country'],['gcc_city','GCC city'],['state_province','State'],['industry','Industry'],['gcc_domains','Capabilities / domains'],['headcount_band','Headcount band'],['site_head','India site head'],['year_established','Year established'],['setup_model','Setup model'],['maturity_level','Maturity']];
+// Confirm EVERY data point on the leader's own record. Skip only system/badge fields.
+var CONFIRM_SKIP={id:1,country:1,embedding:1,created_at:1,updated_at:1,validation_notes:1,audit_verification_certificate:1,internal_flags:1,enterprise_active:1,leadership_verified:1,leadership_verified_at:1,leadership_verified_cycle:1,leadership_verified_count:1,confidence:1};
+function buildConfirmFields(c){
+  var seen={}, out=[];
+  FIELD_ORDER.forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k, FIELD_LABELS[k]||k.replace(/_/g,' ')]); });
+  Object.keys(c).forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k, FIELD_LABELS[k]||k.replace(/_/g,' ')]); });
+  return out;
+}
 async function startConfirm(){
   hide('app'); hide('wizPriorities'); show('wizConfirm');
   var r=await api('councilGetMyCompany',{});
@@ -252,7 +259,7 @@ async function startConfirm(){
   if(!c){ $('myCompanyName').textContent='Your GCC is being added — just add your comment below.'; tb.innerHTML='<tr><td colspan="3" class="muted">No record to review yet. A steward will add your centre; please leave a confirming comment.</td></tr>'; S.confFields=[]; return; }
   $('myCompanyName').textContent='Reviewing: '+(c.company_name||'')+(c.industry?(' · '+c.industry):'');
   var h=''; S.confFields=[];
-  CONF_FIELDS.forEach(function(f,i){
+  buildConfirmFields(c).forEach(function(f,i){
     var key=f[0], lab=f[1], val=(c[key]===null||c[key]===undefined)?'':String(c[key]); S.confFields.push(key);
     h+='<tr><td class="fld">'+esc(lab)+'</td><td class="cur" id="cur_'+i+'">'+(val?esc(val):'<span class="muted">(blank)</span>')+'</td>'
       +'<td><div class="rc"><label><input type="radio" name="v'+i+'" value="correct" checked onchange="tg('+i+')"> Correct</label>'
@@ -274,7 +281,14 @@ async function submitConfirm(){
   msg('mConfirm','Saving your confirmation…','info');
   var r=await api('councilConfirmGcc',{ verdict:verdict, comment:comment, fieldReviews:JSON.stringify(reviews) });
   if(r.error){ msg('mConfirm',r.message||r.error,'bad'); return; }
-  hide('wizConfirm'); show('wizPriorities');
+  hide('wizConfirm'); prefillPriorities(); show('wizPriorities');
+}
+function prefillPriorities(){
+  var pr=S.priorities||{}; $('p1').value=pr.p1||''; $('p2').value=pr.p2||''; $('p3').value=pr.p3||'';
+  var note=$('priNote'); if(note){
+    if(pr.set_at){ var d=new Date(pr.set_at); note.innerHTML='These are your last saved priorities'+(isNaN(d)?'':(' (updated '+d.toLocaleDateString()+')'))+'. Confirm they still hold, or update them — then continue.'; }
+    else { note.textContent='Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile — never published with your name.'; }
+  }
 }
 
 /* ---- Wizard B ---- */
