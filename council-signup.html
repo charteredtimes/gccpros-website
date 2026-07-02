@@ -172,6 +172,44 @@
     <div id="mCompany" class="msg"></div>
   </div>
 
+  <!-- STEP 3b — submit a new GCC (not listed) -->
+  <div class="card hide" id="cardNewGcc">
+    <h2>Add your GCC</h2>
+    <p class="muted">Your centre isn't in our database yet. Share its details and we'll add it to the database once a steward verifies you, and open your sector access. Fields marked * are required.</p>
+    <div class="grid2">
+      <div><label>Sector *</label><select id="ng_industry"><option value="">Select your sector…</option></select></div>
+      <div><label>Company name *</label><input id="ng_company_name" placeholder="Your GCC's name"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Parent group</label><input id="ng_group_company" placeholder="Global parent company"></div>
+      <div><label>HQ country</label><input id="ng_hq_country" placeholder="e.g. USA"></div>
+    </div>
+    <div class="grid2">
+      <div><label>GCC city</label><input id="ng_gcc_city" placeholder="e.g. Bengaluru"></div>
+      <div><label>State</label><input id="ng_state_province" placeholder="e.g. Karnataka"></div>
+    </div>
+    <div><label>Capabilities / domains</label><input id="ng_gcc_domains" placeholder="e.g. Engineering, Finance, Data & AI"></div>
+    <div class="grid2">
+      <div><label>Headcount band</label><input id="ng_headcount_band" list="ngbands" placeholder="any">
+        <datalist id="ngbands"><option value="1-100"><option value="101-500"><option value="501-1000"><option value="1001-5000"><option value="5000+"></datalist></div>
+      <div><label>India site head</label><input id="ng_site_head" placeholder="Name, title"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Year established</label><input id="ng_year_established" placeholder="e.g. 2018"></div>
+      <div><label>Setup model</label><input id="ng_setup_model" placeholder="e.g. Captive (Wholly Owned)"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Maturity</label><input id="ng_maturity_level" placeholder="e.g. Gen 3"></div>
+      <div><label>Office address</label><input id="ng_office_addresses" placeholder="Office location(s)"></div>
+    </div>
+    <div><label>Tech stack</label><input id="ng_tech_stack" placeholder="Key technologies"></div>
+    <div class="btns">
+      <button class="btn" onclick="submitNewGcc()">Submit my GCC for review →</button>
+      <button class="btn alt" onclick="backToSearch()">← Back to search</button>
+    </div>
+    <div id="mNewGcc" class="msg"></div>
+  </div>
+
   <!-- DONE -->
   <div class="card hide" id="cardDone">
     <h2>🎉 Welcome — you're on the list</h2>
@@ -273,9 +311,24 @@ async function pick(id){
   finishUp();
 }
 async function notListed(){
-  msg('mCompany','No problem — submitting; we\'ll add your GCC and sector after the steward check.','info');
-  var r=await api('councilSubmit',{ application_id:ST.appId, notListed:'true' });
-  if(r.error){ msg('mCompany',r.message||r.error,'bad'); return; }
+  hide('cardCompany'); show('cardNewGcc');
+  var r=await api('councilIndustries',{});
+  var sel=$('ng_industry');
+  if(r&&r.industries){ sel.innerHTML='<option value="">Select your sector…</option>'+r.industries.map(function(i){return '<option value="'+esc(i)+'">'+esc(i)+'</option>';}).join(''); }
+  else { sel.innerHTML='<option value="">Could not load sectors</option>'; }
+}
+function backToSearch(){ hide('cardNewGcc'); show('cardCompany'); }
+async function submitNewGcc(){
+  var sector=$('ng_industry').value;
+  var name=($('ng_company_name').value||'').trim();
+  if(!sector){ msg('mNewGcc','Please choose your sector.','bad'); return; }
+  if(!name){ msg('mNewGcc','Please enter your company name.','bad'); return; }
+  var fields=['company_name','group_company','hq_country','gcc_city','state_province','gcc_domains','headcount_band','site_head','year_established','setup_model','maturity_level','office_addresses','tech_stack'];
+  var pc={}; fields.forEach(function(f){ var el=$('ng_'+f); var v=el?(el.value||'').trim():''; if(v)pc[f]=v; });
+  pc.company_name=name;
+  msg('mNewGcc','Submitting your GCC for review…','info');
+  var r=await api('councilSubmit',{ application_id:ST.appId, notListed:'true', industry:sector, proposedCompany:JSON.stringify(pc) });
+  if(r.error){ msg('mNewGcc',r.message||r.error,'bad'); return; }
   finishUp();
 }
 function finishUp(){ $('s3').className='step done'; $('s4').className='step on'; hide('cardCompany'); show('cardDone'); }

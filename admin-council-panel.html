@@ -141,7 +141,7 @@
 
 <script>
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
-let ADMIN_KEY=''; let ROWS=[]; let CONF=[]; let MEMBERS=[]; let ACT=[];
+let ADMIN_KEY=''; let ROWS=[]; let CONF=[]; let MEMBERS=[]; let ACT=[]; let SECTORS=[];
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function msg(id,t,c){var e=$(id);e.textContent=t;e.className='msg '+(c||'info');}
@@ -158,7 +158,27 @@ async function verifyKey(silent){
   var r=await adminApi('adminCouncilQueue',{status:''});
   if(r.error){ if(!silent)msg('mGate','Key rejected or endpoint not deployed: '+(r.message||r.error),'bad'); return; }
   try{sessionStorage.setItem('GCC_ADMIN_KEY',ADMIN_KEY);}catch(_){}
-  $('gate').classList.add('hide'); $('app').classList.remove('hide'); load();
+  $('gate').classList.add('hide'); $('app').classList.remove('hide');
+  adminApi('adminCouncilSectors',{}).then(function(r){ if(r&&r.sectors) SECTORS=r.sectors; });
+  load();
+}
+function sectorPicker(i){
+  var opts='<option value="">Assign sector…</option>'+SECTORS.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('');
+  return '<select id="sec'+i+'" style="max-width:150px;font-size:12px">'+opts+'</select> <button class="btn alt sm" onclick="assignSector('+i+')">Assign</button>';
+}
+async function assignSector(i){
+  var x=ROWS[i]; var el=$('sec'+i); var sec=el?el.value:'';
+  if(!sec){ msg('mApp','Pick a sector to assign first.','bad'); return; }
+  msg('mApp','Assigning sector…','info');
+  var r=await adminApi('adminCouncilAssign',{application_id:x.application_id, industry:sec});
+  if(r.error){ msg('mApp',r.message||r.error,'bad'); return; }
+  msg('mApp','Sector assigned. You can approve now.','ok'); load();
+}
+function showProposed(i){
+  var tr=$('pdr'+i); if(!tr)return; var open=tr.classList.toggle('hide')===false; if(!open)return;
+  var pc=ROWS[i].proposed_company||{}; var h='<b>Submitted GCC details — added to the database when you approve:</b>';
+  Object.keys(pc).forEach(function(k){ h+='<div class="diff"><span class="f">'+esc(k)+':</span> '+esc(String(pc[k]))+'</div>'; });
+  $('pdrc'+i).innerHTML=h;
 }
 function switchTab(t){
   ['approvals','confirmations','members','activity'].forEach(function(x){
@@ -184,11 +204,12 @@ async function load(){
       +'<td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div>'+(x.linkedin?'<div><a href="'+esc(x.linkedin)+'" target="_blank" rel="noopener">LinkedIn ↗</a></div>':'')+'</td>'
       +'<td>'+esc(x.email||'')+'<div class="muted">@'+esc(x.email_domain||'')+'</div></td>'
       +'<td>'+esc((x.country_code||'')+' '+(x.phone||''))+'</td>'
-      +'<td>'+esc(x.industry_selected||x.matched_industry||'—')+'</td>'
-      +'<td>'+esc(x.matched_company_name||x.current_company||'not listed')+'</td>'
+      +'<td>'+((x.industry_selected||x.matched_industry)?esc(x.industry_selected||x.matched_industry):sectorPicker(i))+'</td>'
+      +'<td>'+esc(x.matched_company_name||x.current_company||'not listed')+(x.proposed_company?(' <a href="#" onclick="showProposed('+i+');return false;">view details</a>'):'')+'</td>'
       +'<td>'+(x.identity_verified?'<span class="pill chk">✓</span>':'<button class="btn alt sm" onclick="verifyId('+i+')">Mark ✓</button>')+'</td>'
       +'<td><span class="pill p-'+esc(x.application_status)+'">'+esc(x.application_status)+'</span></td>'
       +'<td><div class="row"><button class="btn ok sm" onclick="approve('+i+')">Approve</button><button class="btn bad sm" onclick="reject('+i+')">Reject</button></div></td></tr>';
+    if(x.proposed_company){ h+='<tr id="pdr'+i+'" class="hide"><td colspan="8"><div class="drawer" id="pdrc'+i+'"></div></td></tr>'; }
   });
   if(!ROWS.length) h='<tr><td colspan="8" class="muted">Nothing in this view.</td></tr>';
   tb.innerHTML=h;
