@@ -66,6 +66,7 @@
       <div class="tab" id="tab-confirmations" onclick="switchTab('confirmations')">GCC confirmations</div>
       <div class="tab" id="tab-members" onclick="switchTab('members')">Members</div>
       <div class="tab" id="tab-activity" onclick="switchTab('activity')">Activity log</div>
+      <div class="tab" id="tab-submissions" onclick="switchTab('submissions')">Submissions</div>
     </div>
 
     <!-- APPROVALS -->
@@ -136,12 +137,27 @@
       </tr></thead><tbody></tbody></table></div>
       <p class="muted">Every move is logged: register, submit, login, GCC confirmation, priorities, each data search, and admin actions.</p>
     </div>
+
+    <!-- SUBMISSIONS -->
+    <div id="view-submissions" class="card hide">
+      <h2>Submissions (field-level, name &amp; date stamped)</h2>
+      <div class="row">
+        <button class="btn alt sm" onclick="loadSubmissions()">↻ Refresh</button>
+        <button class="btn gold sm" onclick="downloadSubmissionsCSV()">⬇ Download CSV</button>
+        <span id="subCounts"></span>
+      </div>
+      <div id="mSub" class="msg"></div>
+      <div style="overflow-x:auto"><table id="stbl"><thead><tr>
+        <th style="width:130px">Submitted</th><th>Leader</th><th>GCC</th><th>Sector</th><th>Field</th><th>Verdict</th><th>Current value</th><th>Suggested value</th><th>Comment</th>
+      </tr></thead><tbody></tbody></table></div>
+      <p class="muted">Every field each leader reviewed, with who and when. Use Download CSV for the full export. Admin-only view; leaders stay masked in the public database.</p>
+    </div>
   </div>
 </div>
 
 <script>
 const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api';
-let ADMIN_KEY=''; let ROWS=[]; let CONF=[]; let MEMBERS=[]; let ACT=[]; let SECTORS=[];
+let ADMIN_KEY=''; let ROWS=[]; let CONF=[]; let MEMBERS=[]; let ACT=[]; let SECTORS=[]; let SUBS=[];
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function msg(id,t,c){var e=$(id);e.textContent=t;e.className='msg '+(c||'info');}
@@ -181,13 +197,14 @@ function showProposed(i){
   $('pdrc'+i).innerHTML=h;
 }
 function switchTab(t){
-  ['approvals','confirmations','members','activity'].forEach(function(x){
+  ['approvals','confirmations','members','activity','submissions'].forEach(function(x){
     $('tab-'+x).classList.toggle('active',x===t);
     $('view-'+x).classList.toggle('hide',x!==t);
   });
   if(t==='confirmations') loadConf();
   if(t==='members') loadMembers();
   if(t==='activity') loadActivity();
+  if(t==='submissions') loadSubmissions();
 }
 
 /* Approvals */
@@ -313,6 +330,47 @@ async function loadActivity(){
   });
   if(!ACT.length) h='<tr><td colspan="5" class="muted">No activity yet.</td></tr>';
   tb.innerHTML=h;
+}
+
+/* Submissions (field-level report + CSV) */
+async function loadSubmissions(){
+  msg('mSub','Loading…','info');
+  var r=await adminApi('adminCouncilQueue',{status:'approved'});
+  if(r.error){ msg('mSub',r.message||r.error,'bad'); return; }
+  $('mSub').style.display='none';
+  SUBS=[];
+  (r.rows||[]).forEach(function(x){
+    if(!x.certification_id) return;
+    var revs=x.field_reviews||[];
+    var base={at:x.certified_at,name:x.full_name,email:x.email,gcc:x.matched_company_name,sector:x.matched_industry,overall:x.overall_verdict,ocomment:x.confirm_comment};
+    if(!revs.length){ SUBS.push(Object.assign({field:'',verdict:'',current:'',suggested:'',comment:''},base)); return; }
+    revs.forEach(function(fr){
+      SUBS.push(Object.assign({field:fr.field||'',verdict:fr.verdict||'',current:fr.current_value||'',suggested:fr.suggested_value||'',comment:fr.comment||''},base));
+    });
+  });
+  $('subCounts').innerHTML='<span class="stat"><b>'+SUBS.length+'</b> rows</span>';
+  var tb=$('stbl').querySelector('tbody'); var h='';
+  SUBS.forEach(function(s){
+    h+='<tr><td class="muted">'+esc(fmtDT(s.at))+'</td>'
+      +'<td><b>'+esc(s.name||'')+'</b><div class="muted">'+esc(s.email||'')+'</div></td>'
+      +'<td>'+esc(s.gcc||'')+'</td><td>'+esc(s.sector||'')+'</td>'
+      +'<td>'+esc(s.field||'')+'</td><td>'+esc(s.verdict||'')+'</td>'
+      +'<td class="muted" style="max-width:200px">'+esc(s.current||'')+'</td>'
+      +'<td style="max-width:200px">'+esc(s.suggested||'')+'</td>'
+      +'<td class="muted" style="max-width:200px">'+esc(s.comment||'')+'</td></tr>';
+  });
+  if(!SUBS.length) h='<tr><td colspan="9" class="muted">No submissions yet.</td></tr>';
+  tb.innerHTML=h;
+}
+function csvCell(v){ v=(v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"'; }
+function downloadSubmissionsCSV(){
+  if(!SUBS.length){ alert('Nothing to export yet — click Refresh first.'); return; }
+  var head=['Submitted at','Leader','Email','GCC','Sector','Overall verdict','Overall comment','Field','Field verdict','Current value','Suggested value','Field comment'];
+  var lines=[head.map(csvCell).join(',')];
+  SUBS.forEach(function(s){ lines.push([s.at,s.name,s.email,s.gcc,s.sector,s.overall,s.ocomment,s.field,s.verdict,s.current,s.suggested,s.comment].map(csvCell).join(',')); });
+  var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='GCC_Leader_Submissions_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
