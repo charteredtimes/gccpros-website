@@ -218,7 +218,10 @@ async function sendCode(){
   var name=($('i_name').value||'').trim(), title=($('i_title').value||'').trim(), linkedin=($('i_linkedin').value||'').trim(), phone=($('i_phone').value||'').trim();
   if(!name||!email||!title||!linkedin||!phone){ msg('mYou','Please fill name, work email, phone, title and LinkedIn.','bad'); return; }
   var dom=email.split('@')[1]||'';
-  if(!dom||FREE_EMAIL.indexOf(dom)>=0){ msg('mYou','Please use your corporate email — personal domains are not accepted.','bad'); return; }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg('mYou','Please enter a valid email address.','bad'); return; }
+  if(!dom||FREE_EMAIL.indexOf(dom)>=0){ msg('mYou','Please use your corporate email. Personal domains are not accepted.','bad'); return; }
+  if(!/linkedin\.com\/(in|pub|profile)\//i.test(linkedin)){ msg('mYou','Please enter a valid LinkedIn profile URL, like linkedin.com/in/yourname.','bad'); $('i_linkedin').focus(); return; }
+  var pdigits=phone.replace(/\D/g,''); if(pdigits.length<7||pdigits.length>15){ msg('mYou','Please enter a valid phone number (7 to 15 digits) with your country code.','bad'); $('i_phone').focus(); return; }
   if(!$('i_consent').checked){ msg('mYou','Please tick the consent box to continue.','bad'); return; }
   $('btnSend').disabled=true; msg('mYou','Sending a one-time code to '+email+'…','info');
   var { error } = await sb.auth.signInWithOtp({ email:email, options:{ shouldCreateUser:true } });

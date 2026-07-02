@@ -97,6 +97,19 @@
         <div class="btns" style="justify-content:center"><button class="btn" onclick="verifyCode()" style="width:100%;padding:14px;font-size:16px">Verify &amp; sign in</button></div>
         <div class="muted" style="margin-top:8px">Not in your inbox? Check <b>Spam/Junk</b> or ask IT to allowlist our sender.</div>
       </div>
+      <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+        <div class="muted" style="text-align:center;margin-bottom:8px">Or sign in another way</div>
+        <div class="btns" style="justify-content:center;gap:8px">
+          <button class="btn alt" onclick="ssoLogin('google')">Continue with Google</button>
+          <button class="btn alt" onclick="ssoLogin('azure')">Continue with Microsoft</button>
+        </div>
+        <p class="muted" style="text-align:center;margin-top:10px"><a href="#" onclick="togglePwd();return false;">Have a password? Sign in with password</a></p>
+        <div id="pwdStep" class="hide">
+          <label style="text-align:left">Password</label>
+          <input id="i_pwd" type="password" placeholder="Your password">
+          <div class="btns" style="justify-content:center"><button class="btn" onclick="pwdLogin()">Sign in with password</button></div>
+        </div>
+      </div>
       <div id="mGate" class="msg"></div>
       <p class="muted" style="margin-top:16px">New here? <a href="./council-signup.html">Join the community →</a></p>
     </div>
@@ -161,6 +174,7 @@
       <div class="btns">
         <button class="btn" onclick="resetPage();search()">Search my sector</button>
         <button class="btn alt" onclick="clearFilters()">Clear filters</button>
+        <button class="btn alt" onclick="setPassword()">Set password</button>
         <button class="btn alt" onclick="signOut()">Sign out</button>
       </div>
     </div>
@@ -225,6 +239,24 @@ async function verifyCode(){
   enter();
 }
 function signOut(){ sb.auth.signOut().then(function(){ location.reload(); }); }
+async function ssoLogin(provider){ msg('mGate','Redirecting to sign-in…','info'); try{ await sb.auth.signInWithOAuth({ provider:provider, options:{ redirectTo: location.origin+location.pathname } }); }catch(e){ msg('mGate','Could not start sign-in: '+((e&&e.message)||e),'bad'); } }
+function togglePwd(){ $('pwdStep').classList.toggle('hide'); }
+async function pwdLogin(){
+  var email=($('i_email').value||'').trim().toLowerCase(); var pwd=$('i_pwd').value||'';
+  if(!email||!pwd){ msg('mGate','Enter your work email and password.','bad'); return; }
+  msg('mGate','Signing in…','info');
+  var res=await sb.auth.signInWithPassword({ email:email, password:pwd });
+  if(res.error){ msg('mGate','Sign-in failed. If you have not set a password yet, use the code option above. ('+res.error.message+')','bad'); return; }
+  enter();
+}
+async function setPassword(){
+  var pwd=prompt('Set a password for faster sign-in next time (at least 8 characters):','');
+  if(pwd===null) return;
+  if((pwd||'').length<8){ alert('Password must be at least 8 characters.'); return; }
+  var res=await sb.auth.updateUser({ password:pwd });
+  if(res.error){ alert('Could not set password: '+res.error.message); return; }
+  alert('Password set. Next time you can sign in with your email and password, or keep using the one-time code.');
+}
 
 async function enter(){
   var me=await api('councilMe',{});
