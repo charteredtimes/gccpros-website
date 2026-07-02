@@ -155,6 +155,19 @@
     </div>
   </div>
 
+  <!-- WIZARD C: mandatory password (first login only) -->
+  <div id="wizPassword" class="hide">
+    <div class="wizhead"><div class="e">One last step</div>
+      <h2>Set a password</h2>
+      <p>For your security, please set a password before you access the benchmark. From next time you can sign in with your email and password, with Google or Microsoft, or with a one-time code.</p></div>
+    <div class="card">
+      <label>New password *</label><input id="np1" type="password" placeholder="At least 8 characters">
+      <label style="margin-top:10px">Confirm password *</label><input id="np2" type="password" placeholder="Re-enter password">
+      <div class="btns"><button class="btn gold" onclick="submitPassword()">Save password and open benchmark →</button></div>
+      <div id="mPwdSet" class="msg"></div>
+    </div>
+  </div>
+
   <!-- APP: data -->
   <div id="app" class="hide">
     <div class="researchbar"><span>🔒</span>
@@ -174,7 +187,7 @@
       <div class="btns">
         <button class="btn" onclick="resetPage();search()">Search my sector</button>
         <button class="btn alt" onclick="clearFilters()">Clear filters</button>
-        <button class="btn alt" onclick="setPassword()">Set password</button>
+        <button class="btn alt" onclick="setPassword()">Reset password</button>
         <button class="btn alt" onclick="signOut()">Sign out</button>
       </div>
     </div>
@@ -250,12 +263,14 @@ async function pwdLogin(){
   enter();
 }
 async function setPassword(){
-  var pwd=prompt('Set a password for faster sign-in next time (at least 8 characters):','');
+  var pwd=prompt('Reset your password (at least 8 characters):','');
   if(pwd===null) return;
   if((pwd||'').length<8){ alert('Password must be at least 8 characters.'); return; }
   var res=await sb.auth.updateUser({ password:pwd });
-  if(res.error){ alert('Could not set password: '+res.error.message); return; }
-  alert('Password set. Next time you can sign in with your email and password, or keep using the one-time code.');
+  if(res.error){ alert('Could not update password: '+res.error.message); return; }
+  try{ await api('councilMarkPassword',{}); }catch(_e){}
+  S.password_set=true;
+  alert('Password updated. You can sign in with your email and password next time.');
 }
 
 async function enter(){
@@ -265,7 +280,7 @@ async function enter(){
     var st=me.member_status||me.application_status||'pending';
     showGate(); msg('mGate','Your access is not active yet (status: '+st+'). We\'ll email you once a steward approves you.','info'); return;
   }
-  S.industry=me.industry; S.email=me.email; S.priorities=me.priorities||{p1:'',p2:'',p3:'',set_at:null};
+  S.industry=me.industry; S.email=me.email; S.priorities=me.priorities||{p1:'',p2:'',p3:'',set_at:null}; S.password_set=!!me.password_set;
   $('topright').innerHTML='<span class="who">Signed in as <b>'+esc(S.email)+'</b></span> &nbsp; <span class="status ok">Member · '+esc(S.industry)+'</span>';
   $('gate').classList.add('hide');
   if(me.step==='confirm_gcc'){ startConfirm(); }
@@ -331,7 +346,17 @@ async function submitPriorities(){
   msg('mPri','Saving…','info');
   var r=await api('councilSetPriorities',{ p1:p1,p2:p2,p3:p3 });
   if(r.error){ msg('mPri',r.message||r.error,'bad'); return; }
-  hide('wizPriorities'); startData();
+  hide('wizPriorities'); if(!S.password_set){ show('wizPassword'); } else { startData(); }
+}
+async function submitPassword(){
+  var a=$('np1').value||'', b=$('np2').value||'';
+  if(a.length<8){ msg('mPwdSet','Password must be at least 8 characters.','bad'); return; }
+  if(a!==b){ msg('mPwdSet','Passwords do not match.','bad'); return; }
+  msg('mPwdSet','Saving your password…','info');
+  var res=await sb.auth.updateUser({ password:a });
+  if(res.error){ msg('mPwdSet','Could not set password: '+res.error.message,'bad'); return; }
+  await api('councilMarkPassword',{});
+  S.password_set=true; hide('wizPassword'); startData();
 }
 
 /* ---- Data console ---- */
@@ -353,6 +378,7 @@ async function search(){
   if(r.error){
     if(r.error==='confirm_gcc_required'){ startConfirm(); return; }
     if(r.error==='priorities_required'){ hide('app'); show('wizPriorities'); return; }
+    if(r.error==='password_required'){ hide('app'); show('wizPassword'); return; }
     badge('Error','bad'); $('resMeta').innerHTML='<span style="color:#B3261E">'+esc(r.message||r.error)+'</span>'; $('resTable').innerHTML=''; $('pager').classList.add('hide');
     if(r.error==='not_approved'||r.error==='otp_required'){ showGate(); } return;
   }
