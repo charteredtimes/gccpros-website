@@ -334,23 +334,25 @@ async function startConfirm(){
 }
 function tg(i){
   var sel=document.querySelector('input[name="v'+i+'"]:checked'); if(!sel)return;
-  var chg=sel.value==="change"; var el=$("sug_"+i); if(!el)return;
-  el.classList.toggle("hide",!chg);
-  if(chg){ var cur=$("cur_"+i).textContent; if(cur && cur!=="(blank)" && !el.value) el.value=cur; }
+  var chg=sel.value==="change";
+  var el=$("sug_"+i); if(el){ el.classList.toggle("hide",!chg); if(chg){ var cur=$("cur_"+i).textContent; if(cur && cur!=="(blank)" && !el.value) el.value=cur; } }
+  var cmt=$("cmt_"+i); if(cmt){ cmt.placeholder = chg ? "Comment (required for a change)" : "Comment (optional)"; if(!chg) cmt.style.borderColor=""; }
 }
 async function submitConfirm(){
   var comment=($("i_comment").value||"").trim();
   if(!comment){ msg("mConfirm","A short confirmation comment is required.","bad"); return; }
-  var reviews=[];
+  var reviews=[]; var missing=-1;
   S.confFields.forEach(function(key,i){
     var sel=document.querySelector('input[name="v'+i+'"]:checked'); var v=sel?sel.value:"correct";
     var cur=$("cur_"+i)?$("cur_"+i).textContent:""; if(cur==="(blank)")cur="";
     var cmtEl=$("cmt_"+i); var cmt=cmtEl?(cmtEl.value||"").trim():"";
+    if(v==="change" && !cmt && missing<0) missing=i;
     var row={field:key,verdict:v,current_value:cur};
     if(v==="change"){ var sg=$("sug_"+i); row.suggested_value=sg?(sg.value||"").trim():""; }
     if(cmt) row.comment=cmt;
     reviews.push(row);
   });
+  if(missing>=0){ msg("mConfirm","Please add a comment for every field you marked 'Needs change'.","bad"); var mel=$("cmt_"+missing); if(mel){ mel.style.borderColor="#B3261E"; mel.focus(); mel.scrollIntoView({block:"center"}); } return; }
   var verdict = reviews.some(function(r){return r.verdict==="change";}) ? "changes_suggested" : "all_correct";
   msg("mConfirm","Saving your confirmation...","info");
   var r=await api("councilConfirmGcc",{ verdict:verdict, comment:comment, fieldReviews:JSON.stringify(reviews) });
