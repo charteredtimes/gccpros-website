@@ -310,8 +310,11 @@ async function startConfirm(){
     var key=f[0], lab=f[1], val=(c[key]===null||c[key]===undefined)?'':String(c[key]); S.confFields.push(key);
     h+='<tr><td class="fld">'+esc(lab)+'</td><td class="cur" id="cur_'+i+'">'+(val?esc(val):'<span class="muted">(blank)</span>')+'</td>'
       +'<td><div class="rc"><label><input type="radio" name="v'+i+'" value="correct" checked onchange="tg('+i+')"> Correct</label>'
-      +'<label><input type="radio" name="v'+i+'" value="change" onchange="tg('+i+')"> Needs change</label></div>'
-      +'<input id="sug_'+i+'" class="hide" placeholder="Correct value" style="margin-top:6px"></td></tr>';
+      +'<label><input type="radio" name="v'+i+'" value="change" onchange="tg('+i+')"> Needs change</label>'
+      +'<label><input type="radio" name="v'+i+'" value="unknown" onchange="tg('+i+')"> Don\\'t know</label></div>'
+      +'<input id="sug_'+i+'" class="hide" placeholder="Correct value" style="margin-top:6px">'
+      +'<input id="cmt_'+i+'" placeholder="Comment (optional)" style="margin-top:6px">'
+      +'</td></tr>';
   });
   tb.innerHTML=h;
 }
@@ -321,8 +324,11 @@ async function submitConfirm(){
   if(!comment){ msg('mConfirm','A short confirmation comment is required.','bad'); return; }
   var reviews=[]; S.confFields.forEach(function(key,i){
     var v=document.querySelector('input[name="v'+i+'"]:checked').value; var cur=$('cur_'+i).textContent; if(cur==='(blank)')cur='';
-    if(v==='change') reviews.push({field:key,verdict:'change',current_value:cur,suggested_value:($('sug_'+i).value||'').trim()});
-    else reviews.push({field:key,verdict:'correct',current_value:cur});
+    var cmt=($('cmt_'+i)?($('cmt_'+i).value||''):'').trim();
+    var row={field:key,verdict:v,current_value:cur};
+    if(v==='change') row.suggested_value=($('sug_'+i).value||'').trim();
+    if(cmt) row.comment=cmt;
+    reviews.push(row);
   });
   var verdict = reviews.some(function(r){return r.verdict==='change';})?'changes_suggested':'all_correct';
   msg('mConfirm','Saving your confirmation…','info');

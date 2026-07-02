@@ -222,7 +222,7 @@ async function approve(i){
   msg('mApp','Approving '+x.full_name+'…','info');
   var r=await adminApi('adminCouncilApprove',{application_id:x.application_id,notes:notes});
   if(r.error){ msg('mApp',r.message||r.error,'bad'); return; }
-  msg('mApp','Approved. Access opened for sector: '+(r.industry||'')+'. Welcome email sent.','ok'); load();
+  msg('mApp','Approved. Access opened for sector: '+(r.industry||'')+'. '+(r.email_sent?'Welcome email sent ✓':'⚠ Welcome email was NOT sent — set the RESEND_API_KEY secret in Supabase (Edge Functions).'), r.email_sent?'ok':'bad'); load();
 }
 async function reject(i){ var x=ROWS[i]; var notes=prompt('Reason for rejection:','')||''; var r=await adminApi('adminAppDecision',{kind:'council',id:x.application_id,decision:'rejected',notes:notes}); if(r.error){msg('mApp',r.message||r.error,'bad');return;} msg('mApp','Rejected.','ok'); load(); }
 
@@ -237,10 +237,11 @@ async function loadConf(){
   var tb=$('ctbl').querySelector('tbody'); var h='';
   CONF.forEach(function(x,i){
     var reviews=(x.field_reviews||[]).filter(function(r){return r&&r.verdict==='change';});
+    var notable=(x.field_reviews||[]).filter(function(r){return r&&(r.verdict==='change'||r.verdict==='unknown'||r.comment);});
     h+='<tr><td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.email||'')+'</div></td>'
       +'<td>'+esc(x.matched_company_name||'')+'</td><td>'+esc(x.matched_industry||'')+'</td>'
       +'<td>'+esc(x.overall_verdict||'')+'</td><td class="muted" style="max-width:220px">'+esc(x.confirm_comment||'')+'</td>'
-      +'<td>'+(reviews.length?('<button class="btn alt sm" onclick="cdraw('+i+')">'+reviews.length+' change'+(reviews.length>1?'s':'')+'</button>'):'<span class="muted">none</span>')+'</td>'
+      +'<td>'+(notable.length?('<button class="btn alt sm" onclick="cdraw('+i+')">review ('+notable.length+')</button>'):'<span class="muted">none</span>')+'</td>'
       +'<td>'+(reviews.length?'<button class="btn gold sm" onclick="applyChanges('+i+')">Apply</button>':'<span class="muted">—</span>')+'</td></tr>';
     h+='<tr id="cdr'+i+'" class="hide"><td colspan="7"><div class="drawer" id="cdrc'+i+'"></div></td></tr>';
   });
@@ -248,8 +249,14 @@ async function loadConf(){
   tb.innerHTML=h;
 }
 function cdraw(i){ var tr=$('cdr'+i); var open=tr.classList.toggle('hide')===false; if(!open)return;
-  var reviews=(CONF[i].field_reviews||[]).filter(function(r){return r&&r.verdict==='change';});
-  var h='<b>Suggested changes:</b>'; reviews.forEach(function(r){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="old">'+esc(r.current_value||'(blank)')+'</span> → <span class="new">'+esc(r.suggested_value||'')+'</span></div>'; });
+  var all=(CONF[i].field_reviews||[]).filter(function(r){return r&&(r.verdict==='change'||r.verdict==='unknown'||r.comment);});
+  var h='<b>Leader review notes:</b>';
+  all.forEach(function(r){
+    if(r.verdict==='change'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="old">'+esc(r.current_value||'(blank)')+'</span> → <span class="new">'+esc(r.suggested_value||'')+'</span>'+(r.comment?(' <span class="muted">— '+esc(r.comment)+'</span>'):'')+'</div>'; }
+    else if(r.verdict==='unknown'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="muted">Don\'t know</span>'+(r.comment?(' <span class="muted">— '+esc(r.comment)+'</span>'):'')+'</div>'; }
+    else if(r.comment){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="muted">'+esc(r.comment)+'</span></div>'; }
+  });
+  if(!all.length) h+='<div class="muted">No changes, comments, or unknowns.</div>';
   $('cdrc'+i).innerHTML=h;
 }
 async function applyChanges(i){ var x=CONF[i]; if(!confirm('Apply the leader\'s suggested changes to '+(x.matched_company_name||'this company')+'?'))return;
