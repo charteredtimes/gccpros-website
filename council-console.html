@@ -55,7 +55,6 @@
   .msg{font-size:13px;font-weight:bold;padding:9px 12px;border-radius:8px;margin-top:12px;display:none}
   .msg.ok{background:#E4F4EA;color:var(--ok);display:block}.msg.bad{background:#FBE7E5;color:var(--bad);display:block}.msg.info{background:var(--pale);color:var(--navy);display:block}
   .wm{position:fixed;inset:0;pointer-events:none;z-index:9;opacity:.05;background-repeat:repeat;display:none}
-  /* wizard */
   .wizhead{background:linear-gradient(100deg,#14213D,#1F3864,#2E5496);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:16px}
   .wizhead .e{color:var(--gold);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:bold}
   .wizhead h2{font-family:Georgia,serif;font-size:20px;margin:6px 0 4px}
@@ -65,7 +64,7 @@
   td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
   .fld{font-weight:bold;color:var(--navy);width:150px}
   .cur{color:#33415c;max-width:300px;word-break:break-word}
-  .rc{display:flex;gap:12px;align-items:center;font-size:12px}
+  .rc{display:flex;gap:12px;align-items:center;font-size:12px;flex-wrap:wrap}
   .rc label{display:inline;font-weight:normal;color:#33415c;margin:0}
   .prichip{display:inline-block;font-size:12px;border:1px solid var(--line);background:#F4F7FB;color:var(--navy);border-radius:999px;padding:4px 11px;margin:3px 4px 0 0;cursor:pointer}
   .prichip:hover{background:#E5EEFB}
@@ -74,8 +73,8 @@
 <body oncontextmenu="return false">
 <div id="wm" class="wm"></div>
 <header>
-  <div class="brand">GCC Leaders' Community <span class="gold">·</span> Benchmark Console
-    <small>By leaders, for leaders · research &amp; benchmarking · no export</small>
+  <div class="brand">GCC Leaders' Community <span class="gold">&middot;</span> Benchmark Console
+    <small>By leaders, for leaders &middot; research &amp; benchmarking &middot; no export</small>
   </div>
   <div id="topright"><span id="acctBadge" class="status idle">Not signed in</span></div>
 </header>
@@ -85,7 +84,7 @@
   <div id="gate" class="gate">
     <div class="card">
       <h1>Member sign-in</h1>
-      <p>Welcome back. Sign in with the <b>work email</b> you joined with — we'll email you a one-time code.</p>
+      <p>Welcome back. Sign in with the <b>work email</b> you joined with, and we will email you a one-time code.</p>
       <div id="loginStep">
         <label style="text-align:left">Work email</label>
         <input id="i_email" type="email" placeholder="you@yourcompany.com">
@@ -95,7 +94,7 @@
         <label style="text-align:left">6-digit code</label>
         <input id="i_otp" inputmode="numeric" maxlength="8" placeholder="123456">
         <div class="btns" style="justify-content:center"><button class="btn" onclick="verifyCode()" style="width:100%;padding:14px;font-size:16px">Verify &amp; sign in</button></div>
-        <div class="muted" style="margin-top:8px">Not in your inbox? Check <b>Spam/Junk</b> or ask IT to allowlist our sender.</div>
+        <div class="muted" style="margin-top:8px">Not in your inbox? Check <b>Spam/Junk</b> or ask IT to allowlist our sender. Always use the newest code.</div>
       </div>
       <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
         <div class="muted" style="text-align:center;margin-bottom:8px">Or sign in another way</div>
@@ -111,32 +110,30 @@
         </div>
       </div>
       <div id="mGate" class="msg"></div>
-      <p class="muted" style="margin-top:16px">New here? <a href="./council-signup.html">Join the community →</a></p>
+      <p class="muted" style="margin-top:16px">New here? <a href="./council-signup.html">Join the community &rarr;</a></p>
     </div>
   </div>
 
   <!-- WIZARD A: confirm own GCC -->
   <div id="wizConfirm" class="hide">
-    <div class="wizhead"><div class="e">Step 1 of 2 · Takes ~60 seconds</div>
-      <h2>Confirm your own GCC's record</h2>
-      <p>A quick re-confirmation each time you sign in keeps your record accurate and current — this is what earns your GCC its masked <b>Peer-Verified ✓</b> mark and keeps the community benchmark trustworthy. Review every field below.</p></div>
+    <div class="wizhead"><div class="e">Step 1 of 3 &middot; Takes ~60 seconds</div>
+      <h2>Confirm your own GCC record</h2>
+      <p>A quick re-confirmation each time you sign in keeps your record accurate. This earns your GCC its masked <b>Peer-Verified &check;</b> mark. For each field choose Correct, Needs change, or Don&#39;t know, and add a comment if useful.</p></div>
     <div class="card">
       <div id="myCompanyName" class="lockchip" style="margin-bottom:10px"></div>
-      <div style="overflow-x:auto"><table id="confTable"><thead><tr><th>Field</th><th>Current record</th><th style="width:220px">Is this right?</th></tr></thead><tbody></tbody></table></div>
-      <label style="margin-top:16px">Your confirmation comment * <span class="muted">(required — e.g. "All accurate" or a note on what changed)</span></label>
-      <textarea id="i_comment" rows="2" placeholder="Confirm the details are correct, or briefly note what you changed…"></textarea>
-      <div class="btns">
-        <button class="btn gold" onclick="submitConfirm()">Confirm &amp; continue →</button>
-      </div>
+      <div style="overflow-x:auto"><table id="confTable"><thead><tr><th>Field</th><th>Current record</th><th style="width:280px">Is this right?</th></tr></thead><tbody></tbody></table></div>
+      <label style="margin-top:16px">Your overall confirmation comment * <span class="muted">(required)</span></label>
+      <textarea id="i_comment" rows="2" placeholder="Confirm the details are correct, or note what you changed"></textarea>
+      <div class="btns"><button class="btn gold" onclick="submitConfirm()">Confirm &amp; continue &rarr;</button></div>
       <div id="mConfirm" class="msg"></div>
     </div>
   </div>
 
   <!-- WIZARD B: priorities -->
   <div id="wizPriorities" class="hide">
-    <div class="wizhead"><div class="e">Step 2 of 2 · Almost there</div>
+    <div class="wizhead"><div class="e">Step 2 of 3</div>
       <h2>Your top 3 priorities for the next 12 months</h2>
-      <p id="priNote">Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile — never published with your name.</p></div>
+      <p id="priNote">Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile, never published with your name.</p></div>
     <div class="card">
       <label>Priority 1 *</label><input id="p1" placeholder="e.g. Scale AI/ML engineering charter">
       <label style="margin-top:10px">Priority 2 *</label><input id="p2" placeholder="e.g. Move up the value chain to product ownership">
@@ -145,43 +142,43 @@
         <span class="muted">Quick picks:</span><br>
         <span class="prichip" onclick="addPri('Scale AI/GenAI capability')">Scale AI/GenAI</span>
         <span class="prichip" onclick="addPri('Move from services to product ownership')">Product ownership</span>
-        <span class="prichip" onclick="addPri('Talent attraction &amp; retention')">Talent &amp; retention</span>
-        <span class="prichip" onclick="addPri('Cost efficiency &amp; productivity')">Cost &amp; productivity</span>
+        <span class="prichip" onclick="addPri('Talent attraction and retention')">Talent &amp; retention</span>
+        <span class="prichip" onclick="addPri('Cost efficiency and productivity')">Cost &amp; productivity</span>
         <span class="prichip" onclick="addPri('Expand global mandate / new charters')">Expand mandate</span>
-        <span class="prichip" onclick="addPri('Leadership bench &amp; succession')">Leadership bench</span>
+        <span class="prichip" onclick="addPri('Leadership bench and succession')">Leadership bench</span>
       </div>
-      <div class="btns"><button class="btn gold" onclick="submitPriorities()">Unlock my industry benchmark →</button></div>
+      <div class="btns"><button class="btn gold" onclick="submitPriorities()">Continue &rarr;</button></div>
       <div id="mPri" class="msg"></div>
     </div>
   </div>
 
-  <!-- WIZARD C: mandatory password (first login only) -->
+  <!-- WIZARD C: mandatory password -->
   <div id="wizPassword" class="hide">
-    <div class="wizhead"><div class="e">One last step</div>
+    <div class="wizhead"><div class="e">Step 3 of 3 &middot; One last step</div>
       <h2>Set a password</h2>
       <p>For your security, please set a password before you access the benchmark. From next time you can sign in with your email and password, with Google or Microsoft, or with a one-time code.</p></div>
     <div class="card">
       <label>New password *</label><input id="np1" type="password" placeholder="At least 8 characters">
       <label style="margin-top:10px">Confirm password *</label><input id="np2" type="password" placeholder="Re-enter password">
-      <div class="btns"><button class="btn gold" onclick="submitPassword()">Save password and open benchmark →</button></div>
+      <div class="btns"><button class="btn gold" onclick="submitPassword()">Save password and open benchmark &rarr;</button></div>
       <div id="mPwdSet" class="msg"></div>
     </div>
   </div>
 
   <!-- APP: data -->
   <div id="app" class="hide">
-    <div class="researchbar"><span>🔒</span>
-      <div><b>Community benchmark — research use only.</b> Provided free to serving GCC leaders (notional value ₹5,00,000 / year). Commercial use, resale, redistribution, copying, downloading, printing or export is <b>not permitted</b>. You see your own sector only.</div>
+    <div class="researchbar"><span>&#128274;</span>
+      <div><b>Community benchmark, research use only.</b> Provided free to serving GCC leaders (notional value &#8377;5,00,000 / year). Commercial use, resale, redistribution, copying, downloading, printing or export is <b>not permitted</b>. You see your own sector only.</div>
     </div>
     <div class="card">
       <h2>Your sector benchmark <span id="lockChip" class="lockchip"></span></h2>
       <div class="grid">
-        <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
-        <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI…"></div>
-        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="USA, Germany…"></div>
+        <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru"></div>
+        <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI"></div>
+        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="USA, Germany"></div>
         <div><label>Headcount band</label><input id="f_headcount_band" list="hcbands" placeholder="any">
           <datalist id="hcbands"><option value="1-100"><option value="101-500"><option value="501-1000"><option value="1001-5000"><option value="5000+"></datalist></div>
-        <div><label>Search company / parent</label><input id="f_q" placeholder="name contains…"></div>
+        <div><label>Search company / parent</label><input id="f_q" placeholder="name contains"></div>
         <div><label>Results per page</label><select id="f_limit"><option>10</option><option selected>25</option><option>50</option></select></div>
       </div>
       <div class="btns">
@@ -193,227 +190,264 @@
     </div>
     <div class="card">
       <h2>Results</h2>
-      <div id="resMeta" class="meta"><span class="muted">Run a search to see GCCs in your industry.</span></div>
+      <div id="resMeta" class="meta"><span class="muted">Run a search to see GCCs in your sector.</span></div>
       <div id="resTable"></div>
       <div id="pager" class="pager hide">
-        <button class="btn alt" onclick="prevPage()">‹ Previous</button>
+        <button class="btn alt" onclick="prevPage()">&lsaquo; Previous</button>
         <span id="pageInfo" class="muted"></span>
-        <button class="btn alt" onclick="nextPage()">Next ›</button>
+        <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community · industry-locked research console · build council-v2</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v3 stable</div>
   </div>
 </div>
 
 <script>
 /* ===== CONFIG ===== */
-const SUPABASE_URL      = "https://fufnvnvufmrhrzhcoeil.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
-const API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api";
+var SUPABASE_URL      = "https://fufnvnvufmrhrzhcoeil.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
+var API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api";
 /* ================== */
 
-var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-var S = { limit:25, offset:0, total:0, industry:'', email:'', confFields:[] };
-function $(id){return document.getElementById(id);}
-function esc(s){if(s===null||s===undefined)return '';return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function badge(t,c){var b=$('acctBadge'); if(b){b.textContent=t;b.className='status '+(c||'idle');}}
-function msg(id,text,cls){var e=$(id);e.textContent=text;e.className='msg '+(cls||'info');}
-function show(id){$(id).classList.remove('hide');}
-function hide(id){$(id).classList.add('hide');}
+var sb = null;
+var S = { limit:25, offset:0, total:0, industry:"", email:"", confFields:[], priorities:{}, password_set:false };
+function $(id){ return document.getElementById(id); }
+function esc(s){ if(s===null||s===undefined) return ""; return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+function badge(t,c){ var b=$("acctBadge"); if(b){ b.textContent=t; b.className="status "+(c||"idle"); } }
+function msg(id,text,cls){ var e=$(id); if(e){ e.textContent=text; e.className="msg "+(cls||"info"); } }
+function show(id){ var e=$(id); if(e) e.classList.remove("hide"); }
+function hide(id){ var e=$(id); if(e) e.classList.add("hide"); }
 
 /* copy/export hardening */
-document.addEventListener('copy', function(e){ e.clipboardData.setData('text/plain','© GCCPROS Community — research use only. Copying is disabled.'); e.preventDefault(); });
-document.addEventListener('keydown', function(e){ var k=(e.key||'').toLowerCase(); if((e.ctrlKey||e.metaKey)&&['c','s','p','u'].indexOf(k)>=0){ e.preventDefault(); badge('Copying/printing is disabled','bad'); } });
-window.addEventListener('beforeprint', function(){ document.body.innerHTML='<div style="padding:40px;font-family:Calibri"><h2>Printing disabled</h2><p>The community benchmark is for on-screen research use only.</p></div>'; });
+document.addEventListener("copy", function(e){ try{ e.clipboardData.setData("text/plain","GCCPROS Community - research use only. Copying is disabled."); e.preventDefault(); }catch(_){} });
+document.addEventListener("keydown", function(e){ var k=(e.key||"").toLowerCase(); if((e.ctrlKey||e.metaKey) && (k==="c"||k==="s"||k==="p"||k==="u")){ e.preventDefault(); badge("Copying/printing is disabled","bad"); } });
+window.addEventListener("beforeprint", function(){ try{ document.body.innerHTML='<div style="padding:40px;font-family:Calibri"><h2>Printing disabled</h2><p>The community benchmark is for on-screen research use only.</p></div>'; }catch(_){} });
 
-async function boot(){ var r=await sb.auth.getSession(); if(r?.data?.session){ enter(); } else { showGate(); } }
-function showGate(){ hide('app'); hide('wizConfirm'); hide('wizPriorities'); $('gate').classList.remove('hide'); }
-async function token(){ var r=await sb.auth.getSession(); return r?.data?.session?.access_token||null; }
+async function token(){ try{ var r=await sb.auth.getSession(); return (r&&r.data&&r.data.session)?r.data.session.access_token:null; }catch(_){ return null; } }
 async function api(action, params){
-  var t=await token(); var headers={'Content-Type':'application/json'}; if(t)headers['Authorization']='Bearer '+t;
-  var body=Object.assign({action:action, ua:navigator.userAgent}, params||{});
-  var res=await fetch(API_BASE,{method:'POST',headers:headers,body:JSON.stringify(body)});
-  return res.json().catch(function(){return {error:'bad_response',message:'Server did not return JSON.'};});
+  try{
+    var t=await token(); var headers={"Content-Type":"application/json"}; if(t) headers["Authorization"]="Bearer "+t;
+    var body=Object.assign({action:action, ua:navigator.userAgent}, params||{});
+    var res=await fetch(API_BASE,{method:"POST",headers:headers,body:JSON.stringify(body)});
+    return await res.json();
+  }catch(err){ return {error:"network", message:(err&&err.message)?err.message:String(err)}; }
 }
+
+function boot(){
+  try{
+    if(typeof supabase==="undefined" || !supabase.createClient){ msg("mGate","Could not load the sign-in library. Check your connection and refresh.","bad"); showGate(); return; }
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    sb.auth.getSession().then(function(r){ if(r&&r.data&&r.data.session){ enter(); } else { showGate(); } }).catch(function(){ showGate(); });
+  }catch(err){ showGate(); msg("mGate","Startup error: "+((err&&err.message)?err.message:err),"bad"); }
+}
+function showGate(){ hide("app"); hide("wizConfirm"); hide("wizPriorities"); hide("wizPassword"); show("gate"); }
 
 async function sendCode(){
-  var email=($('i_email').value||'').trim().toLowerCase(); if(!email){ msg('mGate','Enter your work email.','bad'); return; }
-  $('btnSend').disabled=true; msg('mGate','Sending code…','info');
-  var { error } = await sb.auth.signInWithOtp({ email:email, options:{ shouldCreateUser:false } });
-  $('btnSend').disabled=false;
-  if(error){ msg('mGate','Could not send code: '+error.message+' — if you have not joined yet, please sign up first.','bad'); return; }
-  S.email=email; hide('loginStep'); show('otpStep'); msg('mGate','Code sent. Enter it below.','ok');
+  var email=($("i_email").value||"").trim().toLowerCase();
+  if(!email){ msg("mGate","Enter your work email.","bad"); return; }
+  $("btnSend").disabled=true; msg("mGate","Sending code...","info");
+  try{
+    var r=await sb.auth.signInWithOtp({ email:email, options:{ shouldCreateUser:false } });
+    $("btnSend").disabled=false;
+    if(r.error){ msg("mGate","Could not send code: "+r.error.message+". If you have not joined yet, please sign up first.","bad"); return; }
+    S.email=email; hide("loginStep"); show("otpStep"); msg("mGate","Code sent. Enter it below.","ok");
+  }catch(err){ $("btnSend").disabled=false; msg("mGate","Could not send code: "+((err&&err.message)?err.message:err),"bad"); }
 }
 async function verifyCode(){
-  var code=($('i_otp').value||'').trim(); if(!code){ msg('mGate','Enter the code.','bad'); return; }
-  msg('mGate','Verifying…','info');
-  var { error } = await sb.auth.verifyOtp({ email:S.email, token:code, type:'email' });
-  if(error){ msg('mGate','Invalid or expired code: '+error.message,'bad'); return; }
-  enter();
+  var code=($("i_otp").value||"").trim(); if(!code){ msg("mGate","Enter the code.","bad"); return; }
+  msg("mGate","Verifying...","info");
+  try{
+    var r=await sb.auth.verifyOtp({ email:S.email, token:code, type:"email" });
+    if(r.error){ msg("mGate","Invalid or expired code. Click Send code again and use the newest one. ("+r.error.message+")","bad"); return; }
+    enter();
+  }catch(err){ msg("mGate","Verification failed: "+((err&&err.message)?err.message:err),"bad"); }
 }
-function signOut(){ sb.auth.signOut().then(function(){ location.reload(); }); }
-async function ssoLogin(provider){ msg('mGate','Redirecting to sign-in…','info'); try{ await sb.auth.signInWithOAuth({ provider:provider, options:{ redirectTo: location.origin+location.pathname } }); }catch(e){ msg('mGate','Could not start sign-in: '+((e&&e.message)||e),'bad'); } }
-function togglePwd(){ $('pwdStep').classList.toggle('hide'); }
+async function ssoLogin(provider){
+  msg("mGate","Redirecting to sign-in...","info");
+  try{ await sb.auth.signInWithOAuth({ provider:provider, options:{ redirectTo: location.origin+location.pathname } }); }
+  catch(err){ msg("mGate","Could not start sign-in: "+((err&&err.message)?err.message:err),"bad"); }
+}
+function togglePwd(){ var e=$("pwdStep"); if(e) e.classList.toggle("hide"); }
 async function pwdLogin(){
-  var email=($('i_email').value||'').trim().toLowerCase(); var pwd=$('i_pwd').value||'';
-  if(!email||!pwd){ msg('mGate','Enter your work email and password.','bad'); return; }
-  msg('mGate','Signing in…','info');
-  var res=await sb.auth.signInWithPassword({ email:email, password:pwd });
-  if(res.error){ msg('mGate','Sign-in failed. If you have not set a password yet, use the code option above. ('+res.error.message+')','bad'); return; }
-  enter();
+  var email=($("i_email").value||"").trim().toLowerCase(); var pwd=$("i_pwd").value||"";
+  if(!email||!pwd){ msg("mGate","Enter your work email and password.","bad"); return; }
+  msg("mGate","Signing in...","info");
+  try{
+    var r=await sb.auth.signInWithPassword({ email:email, password:pwd });
+    if(r.error){ msg("mGate","Sign-in failed. If you have not set a password yet, use the code option above. ("+r.error.message+")","bad"); return; }
+    enter();
+  }catch(err){ msg("mGate","Sign-in failed: "+((err&&err.message)?err.message:err),"bad"); }
 }
-async function setPassword(){
-  var pwd=prompt('Reset your password (at least 8 characters):','');
-  if(pwd===null) return;
-  if((pwd||'').length<8){ alert('Password must be at least 8 characters.'); return; }
-  var res=await sb.auth.updateUser({ password:pwd });
-  if(res.error){ alert('Could not update password: '+res.error.message); return; }
-  try{ await api('councilMarkPassword',{}); }catch(_e){}
-  S.password_set=true;
-  alert('Password updated. You can sign in with your email and password next time.');
-}
+function signOut(){ try{ sb.auth.signOut().then(function(){ location.reload(); }); }catch(_){ location.reload(); } }
 
 async function enter(){
-  var me=await api('councilMe',{});
-  if(me.error){ msg('mGate','Could not verify membership: '+(me.message||me.error),'bad'); showGate(); return; }
+  var me=await api("councilMe",{});
+  if(me.error){ msg("mGate","Could not verify membership: "+(me.message||me.error),"bad"); showGate(); return; }
   if(!me.member || !me.approved){
-    var st=me.member_status||me.application_status||'pending';
-    showGate(); msg('mGate','Your access is not active yet (status: '+st+'). We\'ll email you once a steward approves you.','info'); return;
+    var st=me.member_status||me.application_status||"pending";
+    showGate(); msg("mGate","Your access is not active yet (status: "+st+"). We will email you once a steward approves you.","info"); return;
   }
-  S.industry=me.industry; S.email=me.email; S.priorities=me.priorities||{p1:'',p2:'',p3:'',set_at:null}; S.password_set=!!me.password_set;
-  $('topright').innerHTML='<span class="who">Signed in as <b>'+esc(S.email)+'</b></span> &nbsp; <span class="status ok">Member · '+esc(S.industry)+'</span>';
-  $('gate').classList.add('hide');
-  if(me.step==='confirm_gcc'){ startConfirm(); }
-  else if(me.step==='priorities'){ hide('wizConfirm'); show('wizPriorities'); }
-  else { startData(); }
+  S.industry=me.industry; S.email=me.email;
+  S.priorities=me.priorities||{p1:"",p2:"",p3:"",set_at:null};
+  S.password_set=!!me.password_set;
+  var tr=$("topright"); if(tr) tr.innerHTML='<span class="who">Signed in as <b>'+esc(S.email)+'</b></span> &nbsp; <span class="status ok">Member &middot; '+esc(S.industry)+'</span>';
+  hide("gate");
+  startConfirm();
 }
 
-/* ---- Wizard A ---- */
-// Confirm EVERY data point on the leader's own record. Skip only system/badge fields.
+/* ---- Wizard A: confirm ---- */
+var FIELD_ORDER=["company_name","group_company","hq_country","gcc_city","state_province","office_addresses","industry","gcc_domains","sub_domains","site_head","leaders_technology","leaders_finance","leaders_hr","other_leaders","headcount","headcount_band","headcount_notes","year_established","legal_structure","cin_reg_id","maturity_level","setup_model","setup_partner","group_global_turnover","tech_stack","recent_press_6mo","strategic_initiatives","glassdoor_rating","gptw_certified","confidence","leadership_verified","leadership_verified_cycle"];
+var FIELD_LABELS={company_name:"Company",group_company:"Parent group",hq_country:"HQ country",gcc_city:"GCC city",state_province:"State",office_addresses:"Office address(es)",industry:"Sector",gcc_domains:"Domains",sub_domains:"Sub-domains",site_head:"India site head",leaders_technology:"Technology leaders",leaders_finance:"Finance leaders",leaders_hr:"HR leaders",other_leaders:"Other leaders",headcount:"Headcount (exact)",headcount_band:"Headcount",headcount_notes:"Headcount notes",year_established:"Established",legal_structure:"Legal structure",cin_reg_id:"CIN / Reg ID",maturity_level:"Maturity",setup_model:"Setup model",setup_partner:"Setup partner",group_global_turnover:"Group turnover",tech_stack:"Tech stack",recent_press_6mo:"Recent press",strategic_initiatives:"Strategic initiatives",glassdoor_rating:"Glassdoor",gptw_certified:"GPTW certified",confidence:"Confidence",leadership_verified:"Peer-verified",leadership_verified_cycle:"Verified cycle"};
+var SKIP={id:1,country:1,embedding:1,leadership_verified_at:1,leadership_verified_count:1};
 var CONFIRM_SKIP={id:1,country:1,embedding:1,created_at:1,updated_at:1,validation_notes:1,audit_verification_certificate:1,internal_flags:1,enterprise_active:1,leadership_verified:1,leadership_verified_at:1,leadership_verified_cycle:1,leadership_verified_count:1,confidence:1};
+function labelFor(k){ return FIELD_LABELS[k] || k.replace(/_/g," "); }
 function buildConfirmFields(c){
   var seen={}, out=[];
-  FIELD_ORDER.forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k, FIELD_LABELS[k]||k.replace(/_/g,' ')]); });
-  Object.keys(c).forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k, FIELD_LABELS[k]||k.replace(/_/g,' ')]); });
+  FIELD_ORDER.forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k,labelFor(k)]); });
+  Object.keys(c||{}).forEach(function(k){ if(CONFIRM_SKIP[k]||seen[k])return; seen[k]=1; out.push([k,labelFor(k)]); });
   return out;
 }
 async function startConfirm(){
-  hide('app'); hide('wizPriorities'); show('wizConfirm');
-  var r=await api('councilGetMyCompany',{});
-  var tb=$('confTable').querySelector('tbody');
-  if(r.error){ msg('mConfirm',r.message||r.error,'bad'); return; }
+  hide("app"); hide("wizPriorities"); hide("wizPassword"); show("wizConfirm");
+  var r=await api("councilGetMyCompany",{});
+  var tb=$("confTable").querySelector("tbody");
+  if(r.error){ msg("mConfirm",r.message||r.error,"bad"); return; }
   var c=r.company;
-  if(!c){ $('myCompanyName').textContent='Your GCC is being added — just add your comment below.'; tb.innerHTML='<tr><td colspan="3" class="muted">No record to review yet. A steward will add your centre; please leave a confirming comment.</td></tr>'; S.confFields=[]; return; }
-  $('myCompanyName').textContent='Reviewing: '+(c.company_name||'')+(c.industry?(' · '+c.industry):'');
-  var h=''; S.confFields=[];
+  S.confFields=[];
+  if(!c){ $("myCompanyName").textContent="Your GCC is being added. Just add your comment below."; tb.innerHTML='<tr><td colspan="3" class="muted">No record to review yet. A steward will add your centre. Please leave a confirming comment.</td></tr>'; return; }
+  $("myCompanyName").textContent="Reviewing: "+(c.company_name||"")+(c.industry?(" - "+c.industry):"");
+  var h="";
   buildConfirmFields(c).forEach(function(f,i){
-    var key=f[0], lab=f[1], val=(c[key]===null||c[key]===undefined)?'':String(c[key]); S.confFields.push(key);
-    h+='<tr><td class="fld">'+esc(lab)+'</td><td class="cur" id="cur_'+i+'">'+(val?esc(val):'<span class="muted">(blank)</span>')+'</td>'
-      +'<td><div class="rc"><label><input type="radio" name="v'+i+'" value="correct" checked onchange="tg('+i+')"> Correct</label>'
+    var key=f[0], lab=f[1], v=(c[key]===null||c[key]===undefined)?"":String(c[key]);
+    S.confFields.push(key);
+    h+='<tr><td class="fld">'+esc(lab)+'</td><td class="cur" id="cur_'+i+'">'+(v?esc(v):'<span class="muted">(blank)</span>')+'</td>'
+      +'<td><div class="rc">'
+      +'<label><input type="radio" name="v'+i+'" value="correct" checked onchange="tg('+i+')"> Correct</label>'
       +'<label><input type="radio" name="v'+i+'" value="change" onchange="tg('+i+')"> Needs change</label>'
-      +'<label><input type="radio" name="v'+i+'" value="unknown" onchange="tg('+i+')"> Don\\'t know</label></div>'
+      +'<label><input type="radio" name="v'+i+'" value="unknown" onchange="tg('+i+')"> Don&#39;t know</label>'
+      +'</div>'
       +'<input id="sug_'+i+'" class="hide" placeholder="Correct value" style="margin-top:6px">'
       +'<input id="cmt_'+i+'" placeholder="Comment (optional)" style="margin-top:6px">'
       +'</td></tr>';
   });
   tb.innerHTML=h;
 }
-function tg(i){ var chg=document.querySelector('input[name="v'+i+'"]:checked').value==='change'; $('sug_'+i).classList.toggle('hide',!chg); if(chg){var cur=$('cur_'+i).textContent; if(cur&&cur!=='(blank)'&&!$('sug_'+i).value)$('sug_'+i).value=cur;} }
+function tg(i){
+  var sel=document.querySelector('input[name="v'+i+'"]:checked'); if(!sel)return;
+  var chg=sel.value==="change"; var el=$("sug_"+i); if(!el)return;
+  el.classList.toggle("hide",!chg);
+  if(chg){ var cur=$("cur_"+i).textContent; if(cur && cur!=="(blank)" && !el.value) el.value=cur; }
+}
 async function submitConfirm(){
-  var comment=($('i_comment').value||'').trim();
-  if(!comment){ msg('mConfirm','A short confirmation comment is required.','bad'); return; }
-  var reviews=[]; S.confFields.forEach(function(key,i){
-    var v=document.querySelector('input[name="v'+i+'"]:checked').value; var cur=$('cur_'+i).textContent; if(cur==='(blank)')cur='';
-    var cmt=($('cmt_'+i)?($('cmt_'+i).value||''):'').trim();
+  var comment=($("i_comment").value||"").trim();
+  if(!comment){ msg("mConfirm","A short confirmation comment is required.","bad"); return; }
+  var reviews=[];
+  S.confFields.forEach(function(key,i){
+    var sel=document.querySelector('input[name="v'+i+'"]:checked'); var v=sel?sel.value:"correct";
+    var cur=$("cur_"+i)?$("cur_"+i).textContent:""; if(cur==="(blank)")cur="";
+    var cmtEl=$("cmt_"+i); var cmt=cmtEl?(cmtEl.value||"").trim():"";
     var row={field:key,verdict:v,current_value:cur};
-    if(v==='change') row.suggested_value=($('sug_'+i).value||'').trim();
+    if(v==="change"){ var sg=$("sug_"+i); row.suggested_value=sg?(sg.value||"").trim():""; }
     if(cmt) row.comment=cmt;
     reviews.push(row);
   });
-  var verdict = reviews.some(function(r){return r.verdict==='change';})?'changes_suggested':'all_correct';
-  msg('mConfirm','Saving your confirmation…','info');
-  var r=await api('councilConfirmGcc',{ verdict:verdict, comment:comment, fieldReviews:JSON.stringify(reviews) });
-  if(r.error){ msg('mConfirm',r.message||r.error,'bad'); return; }
-  hide('wizConfirm'); prefillPriorities(); show('wizPriorities');
-}
-function prefillPriorities(){
-  var pr=S.priorities||{}; $('p1').value=pr.p1||''; $('p2').value=pr.p2||''; $('p3').value=pr.p3||'';
-  var note=$('priNote'); if(note){
-    if(pr.set_at){ var d=new Date(pr.set_at); note.innerHTML='These are your last saved priorities'+(isNaN(d)?'':(' (updated '+d.toLocaleDateString()+')'))+'. Confirm they still hold, or update them — then continue.'; }
-    else { note.textContent='Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile — never published with your name.'; }
-  }
+  var verdict = reviews.some(function(r){return r.verdict==="change";}) ? "changes_suggested" : "all_correct";
+  msg("mConfirm","Saving your confirmation...","info");
+  var r=await api("councilConfirmGcc",{ verdict:verdict, comment:comment, fieldReviews:JSON.stringify(reviews) });
+  if(r.error){ msg("mConfirm",r.message||r.error,"bad"); return; }
+  hide("wizConfirm"); prefillPriorities(); show("wizPriorities");
 }
 
-/* ---- Wizard B ---- */
-function addPri(t){ if(!$('p1').value){$('p1').value=t;} else if(!$('p2').value){$('p2').value=t;} else if(!$('p3').value){$('p3').value=t;} }
-async function submitPriorities(){
-  var p1=($('p1').value||'').trim(),p2=($('p2').value||'').trim(),p3=($('p3').value||'').trim();
-  if(!p1||!p2||!p3){ msg('mPri','Please share all three priorities.','bad'); return; }
-  msg('mPri','Saving…','info');
-  var r=await api('councilSetPriorities',{ p1:p1,p2:p2,p3:p3 });
-  if(r.error){ msg('mPri',r.message||r.error,'bad'); return; }
-  hide('wizPriorities'); if(!S.password_set){ show('wizPassword'); } else { startData(); }
+/* ---- Wizard B: priorities ---- */
+function prefillPriorities(){
+  var pr=S.priorities||{}; if($("p1"))$("p1").value=pr.p1||""; if($("p2"))$("p2").value=pr.p2||""; if($("p3"))$("p3").value=pr.p3||"";
+  var note=$("priNote"); if(note){
+    if(pr.set_at){ var d=new Date(pr.set_at); note.innerHTML="These are your last saved priorities"+(isNaN(d)?"":(" (updated "+d.toLocaleDateString()+")"))+". Confirm they still hold, or update them, then continue."; }
+  }
 }
+function addPri(t){ if($("p1")&&!$("p1").value){$("p1").value=t;} else if($("p2")&&!$("p2").value){$("p2").value=t;} else if($("p3")&&!$("p3").value){$("p3").value=t;} }
+async function submitPriorities(){
+  var p1=($("p1").value||"").trim(),p2=($("p2").value||"").trim(),p3=($("p3").value||"").trim();
+  if(!p1||!p2||!p3){ msg("mPri","Please share all three priorities.","bad"); return; }
+  msg("mPri","Saving...","info");
+  var r=await api("councilSetPriorities",{ p1:p1,p2:p2,p3:p3 });
+  if(r.error){ msg("mPri",r.message||r.error,"bad"); return; }
+  hide("wizPriorities"); if(!S.password_set){ show("wizPassword"); } else { startData(); }
+}
+
+/* ---- Wizard C: password ---- */
 async function submitPassword(){
-  var a=$('np1').value||'', b=$('np2').value||'';
-  if(a.length<8){ msg('mPwdSet','Password must be at least 8 characters.','bad'); return; }
-  if(a!==b){ msg('mPwdSet','Passwords do not match.','bad'); return; }
-  msg('mPwdSet','Saving your password…','info');
-  var res=await sb.auth.updateUser({ password:a });
-  if(res.error){ msg('mPwdSet','Could not set password: '+res.error.message,'bad'); return; }
-  await api('councilMarkPassword',{});
-  S.password_set=true; hide('wizPassword'); startData();
+  var a=$("np1").value||"", b=$("np2").value||"";
+  if(a.length<8){ msg("mPwdSet","Password must be at least 8 characters.","bad"); return; }
+  if(a!==b){ msg("mPwdSet","Passwords do not match.","bad"); return; }
+  msg("mPwdSet","Saving your password...","info");
+  try{
+    var res=await sb.auth.updateUser({ password:a });
+    if(res.error){ msg("mPwdSet","Could not set password: "+res.error.message,"bad"); return; }
+  }catch(err){ msg("mPwdSet","Could not set password: "+((err&&err.message)?err.message:err),"bad"); return; }
+  await api("councilMarkPassword",{});
+  S.password_set=true; hide("wizPassword"); startData();
+}
+async function setPassword(){
+  var pwd=prompt("Reset your password (at least 8 characters):","");
+  if(pwd===null) return;
+  if((pwd||"").length<8){ alert("Password must be at least 8 characters."); return; }
+  try{
+    var res=await sb.auth.updateUser({ password:pwd });
+    if(res.error){ alert("Could not update password: "+res.error.message); return; }
+  }catch(err){ alert("Could not update password: "+((err&&err.message)?err.message:err)); return; }
+  try{ await api("councilMarkPassword",{}); }catch(_){}
+  S.password_set=true;
+  alert("Password updated. You can sign in with your email and password next time.");
 }
 
 /* ---- Data console ---- */
 function startData(){
-  show('app'); $('lockChip').textContent='🔒 '+S.industry;
-  var wm=$('wm'); wm.style.display='block';
-  wm.style.backgroundImage="url('data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="330" height="150"><text x="10" y="80" font-family="Arial" font-size="15" fill="#1F3864" transform="rotate(-20 0 80)">GCCPROS · '+S.email+' · research only</text></svg>')+"')";
+  show("app");
+  if($("lockChip")) $("lockChip").textContent="🔒 "+S.industry;
+  var wm=$("wm"); if(wm){ wm.style.display="block";
+    wm.style.backgroundImage="url('data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="330" height="150"><text x="10" y="80" font-family="Arial" font-size="15" fill="#1F3864" transform="rotate(-20 0 80)">GCCPROS - '+S.email+' - research only</text></svg>')+"')"; }
   search();
 }
-function qs(){ var p={}; ['gcc_city','domain','hq_country','headcount_band','q'].forEach(function(k){var v=($('f_'+k).value||'').trim(); if(v)p[k]=v;}); return p; }
+function qs(){ var p={}; ["gcc_city","domain","hq_country","headcount_band","q"].forEach(function(k){ var el=$("f_"+k); var v=el?(el.value||"").trim():""; if(v)p[k]=v; }); return p; }
 function resetPage(){ S.offset=0; }
-function clearFilters(){ ['gcc_city','domain','hq_country','headcount_band','q'].forEach(function(k){$('f_'+k).value='';}); }
+function clearFilters(){ ["gcc_city","domain","hq_country","headcount_band","q"].forEach(function(k){ if($("f_"+k))$("f_"+k).value=""; }); }
 function nextPage(){ if(S.offset+S.limit<S.total){ S.offset+=S.limit; search(); } }
 function prevPage(){ if(S.offset>0){ S.offset=Math.max(0,S.offset-S.limit); search(); } }
 async function search(){
-  badge('Searching…','idle'); S.limit=parseInt($('f_limit').value,10)||25;
+  badge("Searching...","idle"); S.limit=parseInt($("f_limit").value,10)||25;
   var params=Object.assign(qs(),{limit:S.limit,offset:S.offset});
-  var r=await api('councilData',params);
+  var r=await api("councilData",params);
   if(r.error){
-    if(r.error==='confirm_gcc_required'){ startConfirm(); return; }
-    if(r.error==='priorities_required'){ hide('app'); show('wizPriorities'); return; }
-    if(r.error==='password_required'){ hide('app'); show('wizPassword'); return; }
-    badge('Error','bad'); $('resMeta').innerHTML='<span style="color:#B3261E">'+esc(r.message||r.error)+'</span>'; $('resTable').innerHTML=''; $('pager').classList.add('hide');
-    if(r.error==='not_approved'||r.error==='otp_required'){ showGate(); } return;
+    if(r.error==="confirm_gcc_required"){ startConfirm(); return; }
+    if(r.error==="priorities_required"){ hide("app"); prefillPriorities(); show("wizPriorities"); return; }
+    if(r.error==="password_required"){ hide("app"); show("wizPassword"); return; }
+    badge("Error","bad"); $("resMeta").innerHTML='<span style="color:#B3261E">'+esc(r.message||r.error)+'</span>'; $("resTable").innerHTML=""; $("pager").classList.add("hide");
+    if(r.error==="not_approved"||r.error==="otp_required"){ showGate(); } return;
   }
-  badge('Connected · '+esc((r.industry||'').toUpperCase()),'ok'); render(r);
+  badge("Connected &middot; "+esc((r.industry||"").toUpperCase()),"ok"); render(r);
 }
-var FIELD_ORDER=['company_name','group_company','hq_country','gcc_city','state_province','office_addresses','industry','gcc_domains','sub_domains','site_head','leaders_technology','leaders_finance','leaders_hr','other_leaders','headcount','headcount_band','headcount_notes','year_established','legal_structure','cin_reg_id','maturity_level','setup_model','setup_partner','group_global_turnover','tech_stack','recent_press_6mo','strategic_initiatives','glassdoor_rating','gptw_certified','confidence','leadership_verified','leadership_verified_cycle'];
-var FIELD_LABELS={company_name:'Company',group_company:'Parent group',hq_country:'HQ country',gcc_city:'GCC city',state_province:'State',office_addresses:'Office address(es)',industry:'Sector',gcc_domains:'Domains',sub_domains:'Sub-domains',site_head:'India site head',leaders_technology:'Technology leaders',leaders_finance:'Finance leaders',leaders_hr:'HR leaders',other_leaders:'Other leaders',headcount:'Headcount (exact)',headcount_band:'Headcount',headcount_notes:'Headcount notes',year_established:'Established',legal_structure:'Legal structure',cin_reg_id:'CIN / Reg ID',maturity_level:'Maturity',setup_model:'Setup model',setup_partner:'Setup partner',group_global_turnover:'Group turnover',tech_stack:'Tech stack',recent_press_6mo:'Recent press',strategic_initiatives:'Strategic initiatives',glassdoor_rating:'Glassdoor',gptw_certified:'GPTW certified',confidence:'Confidence',leadership_verified:'Peer-verified',leadership_verified_cycle:'Verified cycle'};
-var SKIP={id:1,country:1,embedding:1,leadership_verified_at:1,leadership_verified_count:1};
 function render(r){
   S.total=r.page.total; var data=r.data||[];
-  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> GCCs in the <b>'+esc(r.industry)+'</b> sector';
-  if(!data.length){ $('resTable').innerHTML='<p class="muted">No GCCs match those filters within your industry.</p>'; $('pager').classList.add('hide'); return; }
+  $("resMeta").innerHTML="Showing <b>"+data.length+"</b> of <b>"+S.total.toLocaleString()+"</b> GCCs in the <b>"+esc(r.industry)+"</b> sector";
+  if(!data.length){ $("resTable").innerHTML='<p class="muted">No GCCs match those filters within your sector.</p>'; $("pager").classList.add("hide"); return; }
   var h='<div class="cardgrid">';
   data.forEach(function(c,i){
-    var conf=(String(c.confidence||'').toLowerCase().indexOf('h')===0)?'<span class="gm">HIGH</span>':(c.confidence?'<span class="gm">MED</span>':'');
-    var ver=(c.leadership_verified===true||String(c.leadership_verified)==='true')?'<span class="gm verified">✓ Peer-verified</span>':'';
-    function gm(k){var v=c[k]; if(v===null||v===undefined||v==='')return ''; return '<span class="gm">'+esc(String(v))+'</span>';}
+    var conf=(String(c.confidence||"").toLowerCase().indexOf("h")===0)?'<span class="gm">HIGH</span>':(c.confidence?'<span class="gm">MED</span>':"");
+    var ver=(c.leadership_verified===true||String(c.leadership_verified)==="true")?'<span class="gm verified">&check; Peer-verified</span>':"";
+    function gm(k){ var v=c[k]; if(v===null||v===undefined||v==="")return ""; return '<span class="gm">'+esc(String(v))+'</span>'; }
     h+='<div class="gcard" id="card'+i+'"><div class="gcard-top"><div class="gcard-name">'+esc(c.company_name)+'</div>'+conf+'</div>'
-      +(c.group_company?('<div class="gcard-parent">'+esc(c.group_company)+'</div>'):'')
-      +'<div class="gcard-meta">'+ver+gm('hq_country')+gm('gcc_city')+gm('headcount_band')+'</div>'
+      +(c.group_company?('<div class="gcard-parent">'+esc(c.group_company)+'</div>'):"")
+      +'<div class="gcard-meta">'+ver+gm("hq_country")+gm("gcc_city")+gm("headcount_band")+'</div>'
       +'<button class="det-btn" onclick="toggle('+i+')">View all details</button>'
       +'<div id="det'+i+'" class="gdet hide">'+details(c)+'</div></div>';
   });
-  h+='</div>'; $('resTable').innerHTML=h;
-  $('pageInfo').textContent=(S.offset+1)+'–'+(S.offset+data.length)+' of '+S.total.toLocaleString(); $('pager').classList.remove('hide');
+  h+="</div>"; $("resTable").innerHTML=h;
+  $("pageInfo").textContent=(S.offset+1)+"-"+(S.offset+data.length)+" of "+S.total.toLocaleString(); $("pager").classList.remove("hide");
 }
-function fmt(k,v){ if(k==='leadership_verified')return (v===true||String(v)==='true')?'✓ Confirmed by a serving head':'—'; var s=String(v); if(/^https?:\/\//i.test(s))return '<a href="'+esc(s)+'" target="_blank" rel="noopener" style="color:#0A66C2">'+esc(s.replace(/^https?:\/\//,''))+'</a>'; return esc(s); }
-function details(c){ var h='<dl>'; var seen={}; function row(k){ if(SKIP[k]||seen[k])return; var v=c[k]; if(v===null||v===''||v===undefined)return; seen[k]=1; h+='<dt>'+esc(FIELD_LABELS[k]||k)+'</dt><dd>'+fmt(k,v)+'</dd>'; } FIELD_ORDER.forEach(row); Object.keys(c).forEach(row); return h+'</dl>'; }
-function toggle(i){ var el=$('det'+i); if(!el)return; var open=el.classList.toggle('hide')===false; var card=$('card'+i); if(card)card.classList.toggle('open',open); var b=card?card.querySelector('.det-btn'):null; if(b)b.textContent=open?'Hide details':'View all details'; }
+function fmt(k,v){ if(k==="leadership_verified")return (v===true||String(v)==="true")?"&check; Confirmed by a serving head":"-"; var s=String(v); if(/^https?:\/\//i.test(s))return '<a href="'+esc(s)+'" target="_blank" rel="noopener" style="color:#0A66C2">'+esc(s.replace(/^https?:\/\//,""))+'</a>'; return esc(s); }
+function details(c){ var h="<dl>"; var seen={}; function row(k){ if(SKIP[k]||seen[k])return; var v=c[k]; if(v===null||v===""||v===undefined)return; seen[k]=1; h+="<dt>"+esc(labelFor(k))+"</dt><dd>"+fmt(k,v)+"</dd>"; } FIELD_ORDER.forEach(row); Object.keys(c).forEach(row); return h+"</dl>"; }
+function toggle(i){ var el=$("det"+i); if(!el)return; var open=el.classList.toggle("hide")===false; var card=$("card"+i); if(card)card.classList.toggle("open",open); var b=card?card.querySelector(".det-btn"):null; if(b)b.textContent=open?"Hide details":"View all details"; }
 
 boot();
 </script>
