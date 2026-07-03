@@ -49,7 +49,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v8 · 2026-07-03 · 33-sector picker + safe delete</span></div>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v9 · 2026-07-03 · full delete (revoke access + traces)</span></div>
   <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
 </header>
 
@@ -412,17 +412,20 @@ async function mstatus(i,status){
    person. The GCC company record in the database is NOT deleted. Two-step confirm. */
 async function doDelete(email,name){
   var who=name||email;
-  if(!confirm('Permanently DELETE '+who+'?\n\nThis removes their application, membership, confirmations and activity log. The GCC company record stays in the database. This cannot be undone.')) return false;
+  if(!confirm('Permanently DELETE '+who+'?\n\nThis REVOKES ALL ACCESS and removes every trace:\n• their sign-in login (they can no longer authenticate)\n• application, membership, confirmations, activity & consent log\n\nThe GCC company record stays in the database. This cannot be undone.')) return false;
   var typed=prompt('Type DELETE to confirm removing '+who+':','');
   if(String(typed||'').trim().toUpperCase()!=='DELETE') return false;
   var r=await adminApi('adminCouncilDeleteUser',{email:email});
-  if(r.error){ alert('Could not delete: '+(r.message||r.error)+'\n\nIf this says "unknown action", the edge function needs the v7.9.33 deploy.'); return false; }
+  if(r.error){ alert('Could not delete: '+(r.message||r.error)+'\n\nIf this says "unknown action", deploy the v7.9.34 edge function first.'); return false; }
   var steps=r.steps||{};
-  var failed=Object.keys(steps).filter(function(k){return String(steps[k]).indexOf('error')===0;});
+  var failed=Object.keys(steps).filter(function(k){var v=String(steps[k]);return v.indexOf('error')===0||v.indexOf('delete_failed')===0;});
   if(r.status==='partial' || failed.length){
     alert('Partly deleted '+who+'.\n\nThese parts failed:\n- '+failed.map(function(k){return k+': '+steps[k];}).join('\n- ')+'\n\nUsually a database foreign-key or permission issue. The rest was removed.');
+  } else {
+    var au=steps.auth_login||'';
+    msg('mMem','Deleted '+who+' — access revoked'+(au==='deleted'?' (login removed)':(au==='no_auth_user'?' (no login existed)':''))+'.','ok');
   }
-  return true;   // refresh either way — some rows were removed
+  return true;   // refresh either way
 }
 async function dq(i){ var x=ROWS[i]; if(await doDelete(x.email,x.full_name)){ msg('mApp','Deleted '+(x.full_name||x.email)+'.','ok'); load(); } }
 async function dm(i){ var x=MEMBERS[i]; if(await doDelete(x.email,x.full_name)){ msg('mMem','Deleted '+(x.full_name||x.email)+'.','ok'); loadMembers(); } }
