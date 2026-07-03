@@ -49,7 +49,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v4 · 2026-07-03 · Review&amp;apply</span></div>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v7 · 2026-07-03 · 33-sector grouped picker</span></div>
   <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
 </header>
 
@@ -175,15 +175,65 @@ async function verifyKey(silent){
   if(r.error){ if(!silent)msg('mGate','Key rejected or endpoint not deployed: '+(r.message||r.error),'bad'); return; }
   try{sessionStorage.setItem('GCC_ADMIN_KEY',ADMIN_KEY);}catch(_){}
   $('gate').classList.add('hide'); $('app').classList.remove('hide');
-  adminApi('adminCouncilSectors',{}).then(function(r){ if(r&&r.sectors) SECTORS=r.sectors; });
+  ensureSectorList();
   load();
 }
+/* Curated, standardised GCC sectors. Type to search; a custom value can still
+   be typed for a genuinely new sector. Replaces the old 100+ raw DB list. */
+var CANON_SECTORS=[
+  "Software / Technology — Enterprise Applications",
+  "Software / Technology — Platform, Developer & Productivity",
+  "Software / Technology — Vertical / Industry SaaS",
+  "Software / Technology — Horizontal & Other Products",
+  "Software / Technology — Data, Analytics & AI",
+  "Software / Technology — Cloud & IT Infrastructure",
+  "Software / Technology — Cybersecurity",
+  "Software / Technology — Semiconductors & Chip Design",
+  "Software / Technology — Electronics & Hardware",
+  "BFSI — Banking & Financial Services",
+  "BFSI — Capital Markets & Investment Mgmt",
+  "BFSI — FinTech, Payments & Lending",
+  "BFSI — Insurance & InsurTech",
+  "Healthcare & Life Sciences — Pharma & Biotech",
+  "Healthcare & Life Sciences — Medical Devices & Diagnostics",
+  "Healthcare & Life Sciences — Providers & MedTech",
+  "Industrial & Manufacturing — Engineering & Mfg",
+  "Industrial & Manufacturing — Automation & Electrical",
+  "Automotive & Mobility","Aerospace, Defense & Aviation",
+  "Energy, Oil & Gas & Utilities","Chemicals & Materials","Metals & Mining",
+  "Consumer, Food & Agriculture","Retail & E-commerce",
+  "Logistics, Transport & Travel","Telecom & Networking",
+  "Media, Gaming & Advertising","Professional, Legal & Business Services",
+  "Real Estate, Construction & Building","Education & EdTech",
+  "Public Sector & Government","Conglomerate / Diversified"
+];
+function ensureSectorList(){ /* no-op kept for compatibility */ }
+function sectorOptions(){
+  var groups={}, order=[];
+  CANON_SECTORS.forEach(function(s){
+    var pos=s.indexOf(" — "); var g=(pos>0)?s.slice(0,pos):"Other sectors";
+    if(!groups[g]){ groups[g]=[]; order.push(g); }
+    groups[g].push(s);
+  });
+  var h='<option value="">Assign sector…</option>';
+  order.forEach(function(g){
+    h+='<optgroup label="'+esc(g)+'">';
+    groups[g].forEach(function(s){
+      var pos=s.indexOf(" — "); var lbl=(pos>0)?s.slice(pos+3):s;
+      h+='<option value="'+esc(s)+'">'+esc(lbl)+'</option>';
+    });
+    h+='</optgroup>';
+  });
+  h+='<option value="__custom__">➕ Other (type a custom sector)…</option>';
+  return h;
+}
 function sectorPicker(i){
-  var opts='<option value="">Assign sector…</option>'+SECTORS.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join('');
-  return '<select id="sec'+i+'" style="max-width:150px;font-size:12px">'+opts+'</select> <button class="btn alt sm" onclick="assignSector('+i+')">Assign</button>';
+  return '<select id="sec'+i+'" style="max-width:240px;font-size:12px">'+sectorOptions()+'</select> '
+       + '<button class="btn alt sm" onclick="assignSector('+i+')">Assign</button>';
 }
 async function assignSector(i){
-  var x=ROWS[i]; var el=$('sec'+i); var sec=el?el.value:'';
+  var x=ROWS[i]; var el=$('sec'+i); var sec=el?(el.value||'').trim():'';
+  if(sec==='__custom__'){ sec=(prompt('Enter a custom sector name (kept consistent with the taxonomy where possible):','')||'').trim(); if(!sec) return; }
   if(!sec){ msg('mApp','Pick a sector to assign first.','bad'); return; }
   msg('mApp','Assigning sector…','info');
   var r=await adminApi('adminCouncilAssign',{application_id:x.application_id, industry:sec});
@@ -225,7 +275,7 @@ async function load(){
       +'<td>'+esc(x.matched_company_name||x.current_company||'not listed')+(x.proposed_company?(' <a href="#" onclick="showProposed('+i+');return false;">view details</a>'):'')+'</td>'
       +'<td>'+(x.identity_verified?'<span class="pill chk">✓</span>':'<button class="btn alt sm" onclick="verifyId('+i+')">Mark ✓</button>')+'</td>'
       +'<td><span class="pill p-'+esc(x.application_status)+'">'+esc(x.application_status)+'</span></td>'
-      +'<td><div class="row"><button class="btn ok sm" onclick="approve('+i+')">Approve</button><button class="btn bad sm" onclick="reject('+i+')">Reject</button></div></td></tr>';
+      +'<td><div class="row"><button class="btn ok sm" onclick="approve('+i+')">Approve</button><button class="btn bad sm" onclick="reject('+i+')">Reject</button><button class="btn sm" style="background:#6b7280;color:#fff" onclick="dq('+i+')">Delete</button></div></td></tr>';
     if(x.proposed_company){ h+='<tr id="pdr'+i+'" class="hide"><td colspan="8"><div class="drawer" id="pdrc'+i+'"></div></td></tr>'; }
   });
   if(!ROWS.length) h='<tr><td colspan="8" class="muted">Nothing in this view.</td></tr>';
@@ -337,6 +387,7 @@ async function loadMembers(){
     var actions='';
     if(x.status==='approved'){ actions='<button class="btn warn sm" onclick="mstatus('+i+',\'suspended\')">Suspend</button> <button class="btn bad sm" onclick="mstatus('+i+',\'revoked\')">Revoke</button>'; }
     else { actions='<button class="btn ok sm" onclick="mstatus('+i+',\'approved\')">Reinstate</button>'; }
+    actions+=' <button class="btn sm" style="background:#6b7280;color:#fff" onclick="dm('+i+')">Delete</button>';
     h+='<tr><td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div></td>'
       +'<td>'+esc(x.email||'')+'</td><td>'+esc(x.industry_locked||'')+'</td>'
       +'<td class="muted" style="max-width:260px;font-size:11.5px">'+[x.priority_1,x.priority_2,x.priority_3].filter(Boolean).map(function(pp,k){return (k+1)+'. '+esc(pp);}).join('<br>')+'</td>'
@@ -357,6 +408,19 @@ async function mstatus(i,status){
   if(r.error){ msg('mMem',r.message||r.error,'bad'); return; }
   msg('mMem',(x.full_name||x.email)+' is now '+status+'.','ok'); loadMembers();
 }
+/* Hard delete — removes application, membership, confirmations & activity for a
+   person. The GCC company record in the database is NOT deleted. Two-step confirm. */
+async function doDelete(email,name){
+  var who=name||email;
+  if(!confirm('Permanently DELETE '+who+'?\n\nThis removes their application, membership, confirmations and activity log. The GCC company record stays in the database. This cannot be undone.')) return false;
+  var typed=prompt('Type DELETE to confirm removing '+who+':','');
+  if(String(typed||'').trim().toUpperCase()!=='DELETE') return false;
+  var r=await adminApi('adminCouncilDeleteUser',{email:email});
+  if(r.error){ alert('Could not delete: '+(r.message||r.error)); return false; }
+  return true;
+}
+async function dq(i){ var x=ROWS[i]; if(await doDelete(x.email,x.full_name)){ msg('mApp','Deleted '+(x.full_name||x.email)+'.','ok'); load(); } }
+async function dm(i){ var x=MEMBERS[i]; if(await doDelete(x.email,x.full_name)){ msg('mMem','Deleted '+(x.full_name||x.email)+'.','ok'); loadMembers(); } }
 
 /* Activity */
 async function loadActivity(){
