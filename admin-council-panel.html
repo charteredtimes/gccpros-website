@@ -49,7 +49,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v7 · 2026-07-03 · 33-sector grouped picker</span></div>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v8 · 2026-07-03 · 33-sector picker + safe delete</span></div>
   <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
 </header>
 
@@ -416,8 +416,13 @@ async function doDelete(email,name){
   var typed=prompt('Type DELETE to confirm removing '+who+':','');
   if(String(typed||'').trim().toUpperCase()!=='DELETE') return false;
   var r=await adminApi('adminCouncilDeleteUser',{email:email});
-  if(r.error){ alert('Could not delete: '+(r.message||r.error)); return false; }
-  return true;
+  if(r.error){ alert('Could not delete: '+(r.message||r.error)+'\n\nIf this says "unknown action", the edge function needs the v7.9.33 deploy.'); return false; }
+  var steps=r.steps||{};
+  var failed=Object.keys(steps).filter(function(k){return String(steps[k]).indexOf('error')===0;});
+  if(r.status==='partial' || failed.length){
+    alert('Partly deleted '+who+'.\n\nThese parts failed:\n- '+failed.map(function(k){return k+': '+steps[k];}).join('\n- ')+'\n\nUsually a database foreign-key or permission issue. The rest was removed.');
+  }
+  return true;   // refresh either way — some rows were removed
 }
 async function dq(i){ var x=ROWS[i]; if(await doDelete(x.email,x.full_name)){ msg('mApp','Deleted '+(x.full_name||x.email)+'.','ok'); load(); } }
 async function dm(i){ var x=MEMBERS[i]; if(await doDelete(x.email,x.full_name)){ msg('mMem','Deleted '+(x.full_name||x.email)+'.','ok'); loadMembers(); } }
