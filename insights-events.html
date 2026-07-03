@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<!-- GCCPROs Insights & Events · build: 2026-06-08-v4-summit-leaders-folder -->
+<!-- GCCPROs Insights & Events · build: 2026-06-18-v11-poster-centered-500k -->
 <html lang="en">
 <head>
 <!-- Google Analytics -->
@@ -376,6 +376,149 @@ html.menu-open{overflow:hidden;}
 #pune-feature .pf-poster a{display:block;transition:transform .25s ease;}
 #pune-feature .pf-poster a:hover{transform:translateY(-4px) scale(1.01);}
 
+/* ============================================================
+   Premium reimagining (v9 additive polish)
+   All rules below EXTEND the base above — nothing is overridden
+   destructively, so falling back to the old look is impossible.
+   ============================================================ */
+
+/* Subtle grid + dual-radial glow behind the whole hero */
+#pune-feature::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(600px 300px at 12% 25%, rgba(240,200,122,0.08) 0%, transparent 55%),
+    radial-gradient(700px 340px at 88% 82%, rgba(127,194,234,0.08) 0%, transparent 55%);
+}
+#pune-feature::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at center, #000 40%, transparent 85%);
+          -webkit-mask-image:radial-gradient(ellipse at center, #000 40%, transparent 85%);
+  opacity:0.55;
+}
+#pune-feature .pf-wrap{position:relative; z-index:1;}
+
+/* Kicker dot — soft breathing pulse */
+@keyframes pfDotPulse{
+  0%,100%{ box-shadow:0 0 0 4px rgba(240,200,122,.18);}
+  50%   { box-shadow:0 0 0 9px rgba(240,200,122,.08);}
+}
+#pune-feature .pf-dot{ animation:pfDotPulse 2.6s ease-in-out infinite; }
+
+/* Title — subtle glow behind the italic accent */
+#pune-feature .pf-title em{
+  background:linear-gradient(180deg,#F4CF82 0%,#E8B94F 60%,#D6A73C 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 40px rgba(240,200,122,0.18);
+}
+
+/* Lead line — slightly refined weight + colour */
+#pune-feature .pf-lead{
+  color:#8ECEEC;
+  letter-spacing:-0.2px;
+}
+
+/* Meta chips — small icon-in-circle treatment */
+#pune-feature .pf-meta span{
+  padding:8px 14px 8px 8px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:999px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+/* Theme pills — subtle inner light */
+#pune-feature .pf-themes span{
+  background:linear-gradient(180deg,rgba(127,194,234,.10),rgba(127,194,234,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);
+  transition:transform .25s ease, border-color .25s ease, background .25s ease;
+}
+#pune-feature .pf-themes span:hover{
+  transform:translateY(-1px);
+  border-color:rgba(127,194,234,0.6);
+  background:linear-gradient(180deg,rgba(127,194,234,.18),rgba(127,194,234,.08));
+}
+
+/* Primary CTA — richer shadow + inset highlight */
+#pune-feature .pf-primary{
+  background:linear-gradient(180deg,#F7D68E 0%,#EABF5A 55%,#DDA83A 100%);
+  box-shadow:
+    0 10px 28px rgba(232,185,79,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(150,100,30,0.3);
+  transition:transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease;
+}
+#pune-feature .pf-primary:hover{
+  transform:translateY(-3px);
+  box-shadow:
+    0 16px 40px rgba(232,185,79,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 rgba(150,100,30,0.35);
+}
+#pune-feature .pf-ghost{
+  transition:transform .35s cubic-bezier(.2,.7,.3,1), border-color .3s ease, background .3s ease;
+}
+#pune-feature .pf-ghost:hover{ transform:translateY(-3px); }
+
+/* Poster — golden aura + slow float, sharper frame, explicit centering */
+#pune-feature .pf-poster{
+  isolation:isolate;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+#pune-feature .pf-poster > a{
+  margin:0 auto !important;
+  width:100%;
+  max-width:380px;
+  display:flex;
+  justify-content:center;
+}
+#pune-feature .pf-poster img{
+  margin:0 auto !important;
+}
+#pune-feature .pf-poster::before{
+  content:""; position:absolute; inset:-40px; z-index:-1;
+  background:radial-gradient(ellipse at center, rgba(240,200,122,0.18) 0%, transparent 62%);
+  filter:blur(30px);
+  pointer-events:none;
+}
+@keyframes pfPosterFloat{
+  0%,100%{ transform:translateY(0); }
+  50%   { transform:translateY(-8px); }
+}
+#pune-feature .pf-poster > a{
+  animation:pfPosterFloat 7s ease-in-out infinite;
+  transition:transform .4s cubic-bezier(.2,.7,.3,1);
+}
+#pune-feature .pf-poster > a:hover{
+  animation-play-state:paused;
+  transform:translateY(-10px) scale(1.015);
+}
+#pune-feature .pf-poster img{
+  border:1px solid rgba(240,200,122,0.22);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(240,200,122,0.12),
+    0 0 60px rgba(240,200,122,0.10);
+  transition:box-shadow .45s ease;
+}
+#pune-feature .pf-poster > a:hover img{
+  box-shadow:
+    0 50px 110px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(240,200,122,0.28),
+    0 0 90px rgba(240,200,122,0.18);
+}
+@media (prefers-reduced-motion: reduce){
+  #pune-feature .pf-poster > a{ animation:none; }
+  #pune-feature .pf-dot{ animation:none; }
+}
+
 </style>
 <section id="pune-feature">
   <div class="pf-wrap">
@@ -396,7 +539,7 @@ html.menu-open{overflow:hidden;}
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a class="pf-btn pf-ghost" href="mailto:admin@gccpros.com?subject=Speaking%20%26%20Sponsorship%20-%20Pune%20GCC%20Leadership%20Summit%20(24%20July%202026)">Speaking &amp; sponsorship</a>
       </div>
-      <div class="pf-note">Limited to 100 seats. Curated database benefits worth Rs. 2,00,000 per leader, beyond the room. Register at www.gccpros.com &middot; Speaking &amp; sponsorship: admin@gccpros.com</div>
+      <div class="pf-note">Limited to 100 seats. Curated database benefits worth Rs. 5,00,000 per leader, beyond the room. Register at www.gccpros.com &middot; Speaking &amp; sponsorship: admin@gccpros.com</div>
     </div>
     <div class="pf-poster">
       <a href="#rsvp-summit" onclick="var c=document.querySelector(&quot;#rsvp-summit .summit-event-card[data-event='pune']&quot;);if(c){c.click();}else if(window.openRsvpModal){window.openRsvpModal();}return false;" title="Register for the GCC Leadership Summit">
@@ -964,6 +1107,344 @@ html.menu-open{overflow:hidden;}
   </script>
 </section>
 <!-- ===== END CONFIRMED ATTENDEES ===== -->
+
+<!-- =================================================================== -->
+<!-- CONFIRMED PARTICIPATING COMPANIES · logo marquee                     -->
+<!-- Two auto-scrolling rows in opposite directions. Logos are fetched    -->
+<!-- transparent from Clearbit CDN (free, no auth). Any logo that fails   -->
+<!-- to load gracefully falls back to a styled text badge with the        -->
+<!-- company name — layout is never empty. Self-contained styles + JS.   -->
+<!-- =================================================================== -->
+<section id="confirmed-companies" aria-label="Confirmed participating companies">
+  <div class="cc-wrap">
+    <header class="cc-head">
+      <span class="cc-kicker">CONFIRMED PARTICIPATION</span>
+      <h2 class="cc-title">60+ GCCs already in the room</h2>
+      <p class="cc-sub">A working sample of the companies whose leaders have confirmed attendance across BFSI, Pharma, Manufacturing, Consumer Goods, Energy, Logistics, Tech &amp; Automotive.</p>
+    </header>
+  </div>
+
+  <!-- Row 1 · scrolls left-to-right slowly -->
+  <div class="cc-marquee cc-marquee--ltr" aria-hidden="true">
+    <div class="cc-track">
+      <!-- Set A -->
+      <div class="cc-logo" data-name="Accendra Health"><img decoding="async" fetchpriority="low" alt="Accendra Health" src="https://logo.clearbit.com/accendrahealth.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Accendra Health</span></div>
+      <div class="cc-logo" data-name="ArcelorMittal"><img decoding="async" fetchpriority="low" alt="ArcelorMittal" src="https://logo.clearbit.com/arcelormittal.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>ArcelorMittal</span></div>
+      <div class="cc-logo" data-name="Arkose Labs"><img decoding="async" fetchpriority="low" alt="Arkose Labs" src="https://logo.clearbit.com/arkoselabs.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Arkose Labs</span></div>
+      <div class="cc-logo" data-name="Assent"><img decoding="async" fetchpriority="low" alt="Assent" src="https://logo.clearbit.com/assent.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Assent</span></div>
+      <div class="cc-logo" data-name="Bosch"><img decoding="async" fetchpriority="low" alt="Bosch" src="https://logo.clearbit.com/bosch.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Bosch</span></div>
+      <div class="cc-logo" data-name="Brose Group"><img decoding="async" fetchpriority="low" alt="Brose Group" src="https://logo.clearbit.com/brose.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Brose Group</span></div>
+      <div class="cc-logo" data-name="Checkmarx"><img decoding="async" fetchpriority="low" alt="Checkmarx" src="https://logo.clearbit.com/checkmarx.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Checkmarx</span></div>
+      <div class="cc-logo" data-name="Citi"><img decoding="async" fetchpriority="low" alt="Citi" src="https://logo.clearbit.com/citi.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Citi</span></div>
+      <div class="cc-logo" data-name="Dohler"><img decoding="async" fetchpriority="low" alt="Dohler" src="https://logo.clearbit.com/doehler.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Dohler</span></div>
+      <div class="cc-logo" data-name="Ecolab"><img decoding="async" fetchpriority="low" alt="Ecolab" src="https://logo.clearbit.com/ecolab.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Ecolab</span></div>
+      <div class="cc-logo" data-name="Ford"><img decoding="async" fetchpriority="low" alt="Ford" src="https://logo.clearbit.com/ford.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Ford</span></div>
+      <div class="cc-logo" data-name="Kimberly-Clark"><img decoding="async" fetchpriority="low" alt="Kimberly-Clark" src="https://logo.clearbit.com/kimberly-clark.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Kimberly-Clark</span></div>
+      <div class="cc-logo" data-name="KONE"><img decoding="async" fetchpriority="low" alt="KONE" src="https://logo.clearbit.com/kone.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>KONE</span></div>
+      <div class="cc-logo" data-name="LinkedIn"><img decoding="async" fetchpriority="low" alt="LinkedIn" src="https://logo.clearbit.com/linkedin.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>LinkedIn</span></div>
+      <div class="cc-logo" data-name="Maersk"><img decoding="async" fetchpriority="low" alt="Maersk" src="https://logo.clearbit.com/maersk.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Maersk</span></div>
+      <div class="cc-logo" data-name="Malomatia"><img decoding="async" fetchpriority="low" alt="Malomatia" src="https://logo.clearbit.com/malomatia.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Malomatia</span></div>
+      <div class="cc-logo" data-name="Mercedes-Benz"><img decoding="async" fetchpriority="low" alt="Mercedes-Benz" src="https://logo.clearbit.com/mercedes-benz.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Mercedes-Benz</span></div>
+      <div class="cc-logo" data-name="Metro"><img decoding="async" fetchpriority="low" alt="Metro" src="https://logo.clearbit.com/metroag.de?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Metro</span></div>
+      <div class="cc-logo" data-name="MSD"><img decoding="async" fetchpriority="low" alt="MSD" src="https://logo.clearbit.com/msd.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>MSD</span></div>
+      <div class="cc-logo" data-name="NIQ"><img decoding="async" fetchpriority="low" alt="NIQ" src="https://logo.clearbit.com/nielseniq.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>NIQ</span></div>
+      <div class="cc-logo" data-name="Northern Trust"><img decoding="async" fetchpriority="low" alt="Northern Trust" src="https://logo.clearbit.com/northerntrust.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Northern Trust</span></div>
+
+      <!-- Set B — exact duplicate for seamless infinite loop -->
+      <div class="cc-logo" data-name="Accendra Health"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/accendrahealth.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Accendra Health</span></div>
+      <div class="cc-logo" data-name="ArcelorMittal"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/arcelormittal.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>ArcelorMittal</span></div>
+      <div class="cc-logo" data-name="Arkose Labs"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/arkoselabs.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Arkose Labs</span></div>
+      <div class="cc-logo" data-name="Assent"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/assent.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Assent</span></div>
+      <div class="cc-logo" data-name="Bosch"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/bosch.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Bosch</span></div>
+      <div class="cc-logo" data-name="Brose Group"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/brose.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Brose Group</span></div>
+      <div class="cc-logo" data-name="Checkmarx"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/checkmarx.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Checkmarx</span></div>
+      <div class="cc-logo" data-name="Citi"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/citi.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Citi</span></div>
+      <div class="cc-logo" data-name="Dohler"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/doehler.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Dohler</span></div>
+      <div class="cc-logo" data-name="Ecolab"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/ecolab.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Ecolab</span></div>
+      <div class="cc-logo" data-name="Ford"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/ford.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Ford</span></div>
+      <div class="cc-logo" data-name="Kimberly-Clark"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/kimberly-clark.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Kimberly-Clark</span></div>
+      <div class="cc-logo" data-name="KONE"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/kone.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>KONE</span></div>
+      <div class="cc-logo" data-name="LinkedIn"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/linkedin.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>LinkedIn</span></div>
+      <div class="cc-logo" data-name="Maersk"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/maersk.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Maersk</span></div>
+      <div class="cc-logo" data-name="Malomatia"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/malomatia.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Malomatia</span></div>
+      <div class="cc-logo" data-name="Mercedes-Benz"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/mercedes-benz.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Mercedes-Benz</span></div>
+      <div class="cc-logo" data-name="Metro"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/metroag.de?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Metro</span></div>
+      <div class="cc-logo" data-name="MSD"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/msd.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>MSD</span></div>
+      <div class="cc-logo" data-name="NIQ"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/nielseniq.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>NIQ</span></div>
+      <div class="cc-logo" data-name="Northern Trust"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/northerntrust.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Northern Trust</span></div>
+    </div>
+  </div>
+
+  <!-- Row 2 · scrolls right-to-left slowly -->
+  <div class="cc-marquee cc-marquee--rtl" aria-hidden="true">
+    <div class="cc-track">
+      <!-- Set A -->
+      <div class="cc-logo" data-name="Novartis"><img decoding="async" fetchpriority="low" alt="Novartis" src="https://logo.clearbit.com/novartis.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Novartis</span></div>
+      <div class="cc-logo" data-name="Qualcomm"><img decoding="async" fetchpriority="low" alt="Qualcomm" src="https://logo.clearbit.com/qualcomm.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Qualcomm</span></div>
+      <div class="cc-logo" data-name="Redaptive"><img decoding="async" fetchpriority="low" alt="Redaptive" src="https://logo.clearbit.com/redaptive.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Redaptive</span></div>
+      <div class="cc-logo" data-name="Roquette"><img decoding="async" fetchpriority="low" alt="Roquette" src="https://logo.clearbit.com/roquette.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Roquette</span></div>
+      <div class="cc-logo" data-name="Simplify"><img decoding="async" fetchpriority="low" alt="Simplify" src="https://logo.clearbit.com/simplify.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Simplify</span></div>
+      <div class="cc-logo" data-name="SKF"><img decoding="async" fetchpriority="low" alt="SKF" src="https://logo.clearbit.com/skf.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>SKF</span></div>
+      <div class="cc-logo" data-name="SLB"><img decoding="async" fetchpriority="low" alt="SLB" src="https://logo.clearbit.com/slb.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>SLB</span></div>
+      <div class="cc-logo" data-name="Smith &amp; Nephew"><img decoding="async" fetchpriority="low" alt="Smith &amp; Nephew" src="https://logo.clearbit.com/smith-nephew.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Smith &amp; Nephew</span></div>
+      <div class="cc-logo" data-name="Sulzer"><img decoding="async" fetchpriority="low" alt="Sulzer" src="https://logo.clearbit.com/sulzer.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Sulzer</span></div>
+      <div class="cc-logo" data-name="Syensqo"><img decoding="async" fetchpriority="low" alt="Syensqo" src="https://logo.clearbit.com/syensqo.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Syensqo</span></div>
+      <div class="cc-logo" data-name="Syngenta"><img decoding="async" fetchpriority="low" alt="Syngenta" src="https://logo.clearbit.com/syngenta.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Syngenta</span></div>
+      <div class="cc-logo" data-name="TomTom"><img decoding="async" fetchpriority="low" alt="TomTom" src="https://logo.clearbit.com/tomtom.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>TomTom</span></div>
+      <div class="cc-logo" data-name="UPL"><img decoding="async" fetchpriority="low" alt="UPL" src="https://logo.clearbit.com/upl-ltd.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>UPL</span></div>
+      <div class="cc-logo" data-name="Upland"><img decoding="async" fetchpriority="low" alt="Upland" src="https://logo.clearbit.com/uplandsoftware.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Upland</span></div>
+      <div class="cc-logo" data-name="_VOIS"><img decoding="async" fetchpriority="low" alt="_VOIS" src="https://logo.clearbit.com/vodafone.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>_VOIS</span></div>
+      <div class="cc-logo" data-name="Walmart"><img decoding="async" fetchpriority="low" alt="Walmart" src="https://logo.clearbit.com/walmart.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Walmart</span></div>
+      <div class="cc-logo" data-name="Xplor"><img decoding="async" fetchpriority="low" alt="Xplor" src="https://logo.clearbit.com/xplortechnologies.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Xplor</span></div>
+      <div class="cc-logo" data-name="XPO"><img decoding="async" fetchpriority="low" alt="XPO" src="https://logo.clearbit.com/xpo.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>XPO</span></div>
+      <div class="cc-logo" data-name="Zendesk"><img decoding="async" fetchpriority="low" alt="Zendesk" src="https://logo.clearbit.com/zendesk.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Zendesk</span></div>
+      <div class="cc-logo" data-name="ZS"><img decoding="async" fetchpriority="low" alt="ZS" src="https://logo.clearbit.com/zs.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>ZS</span></div>
+
+      <!-- Set B — duplicate for seamless loop -->
+      <div class="cc-logo" data-name="Novartis"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/novartis.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Novartis</span></div>
+      <div class="cc-logo" data-name="Qualcomm"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/qualcomm.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Qualcomm</span></div>
+      <div class="cc-logo" data-name="Redaptive"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/redaptive.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Redaptive</span></div>
+      <div class="cc-logo" data-name="Roquette"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/roquette.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Roquette</span></div>
+      <div class="cc-logo" data-name="Simplify"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/simplify.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Simplify</span></div>
+      <div class="cc-logo" data-name="SKF"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/skf.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>SKF</span></div>
+      <div class="cc-logo" data-name="SLB"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/slb.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>SLB</span></div>
+      <div class="cc-logo" data-name="Smith &amp; Nephew"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/smith-nephew.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Smith &amp; Nephew</span></div>
+      <div class="cc-logo" data-name="Sulzer"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/sulzer.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Sulzer</span></div>
+      <div class="cc-logo" data-name="Syensqo"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/syensqo.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Syensqo</span></div>
+      <div class="cc-logo" data-name="Syngenta"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/syngenta.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Syngenta</span></div>
+      <div class="cc-logo" data-name="TomTom"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/tomtom.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>TomTom</span></div>
+      <div class="cc-logo" data-name="UPL"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/upl-ltd.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>UPL</span></div>
+      <div class="cc-logo" data-name="Upland"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/uplandsoftware.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Upland</span></div>
+      <div class="cc-logo" data-name="_VOIS"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/vodafone.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>_VOIS</span></div>
+      <div class="cc-logo" data-name="Walmart"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/walmart.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Walmart</span></div>
+      <div class="cc-logo" data-name="Xplor"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/xplortechnologies.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Xplor</span></div>
+      <div class="cc-logo" data-name="XPO"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/xpo.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>XPO</span></div>
+      <div class="cc-logo" data-name="Zendesk"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/zendesk.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>Zendesk</span></div>
+      <div class="cc-logo" data-name="ZS"><img decoding="async" fetchpriority="low" alt="" src="https://logo.clearbit.com/zs.com?size=128" onerror="this.parentElement.classList.add('cc-logo--fallback');this.remove();"><span>ZS</span></div>
+    </div>
+  </div>
+
+  <div class="cc-wrap cc-foot">
+    <span class="cc-foot-note">Logos shown are indicative &middot; each brand belongs to its respective owner &middot; participation confirmed as of the latest attendee roster.</span>
+  </div>
+
+  <style>
+    /* ============ Confirmed Companies · scoped styles ============ */
+    #confirmed-companies{
+      background:linear-gradient(180deg,#F4F5F2 0%,#EAECE6 100%);
+      padding:64px 0 56px;
+      border-top:1px solid #E4E6E0;
+      border-bottom:1px solid #E4E6E0;
+      overflow:hidden;
+    }
+    #confirmed-companies .cc-wrap{
+      max-width:1180px; margin:0 auto; padding:0 28px;
+    }
+    #confirmed-companies .cc-head{ text-align:center; margin-bottom:36px; }
+    #confirmed-companies .cc-kicker{
+      display:inline-block; font-size:11px; letter-spacing:3px; font-weight:700;
+      color:#7A5F2A; padding:6px 14px; border:1px solid #C8B27A;
+      border-radius:30px; background:#fff; margin-bottom:16px;
+    }
+    #confirmed-companies .cc-title{
+      font-family:'Playfair Display',Georgia,serif;
+      font-size:34px; font-weight:800; color:#0A1628;
+      line-height:1.18; margin:0 0 10px;
+    }
+    #confirmed-companies .cc-sub{
+      font-size:15px; line-height:1.6; color:#3a4756;
+      max-width:720px; margin:0 auto;
+    }
+
+    /* Marquee rails */
+    #confirmed-companies .cc-marquee{
+      position:relative; overflow:hidden; margin:14px 0;
+      -webkit-mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%);
+              mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%);
+    }
+    #confirmed-companies .cc-track{
+      display:flex; align-items:center; gap:32px;
+      width:max-content;
+      will-change:transform;
+    }
+    #confirmed-companies .cc-marquee--ltr .cc-track{
+      animation:cc-scroll-ltr 60s linear infinite;
+    }
+    #confirmed-companies .cc-marquee--rtl .cc-track{
+      animation:cc-scroll-rtl 65s linear infinite;
+    }
+    #confirmed-companies .cc-marquee:hover .cc-track{ animation-play-state:paused; }
+    @keyframes cc-scroll-ltr{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+    @keyframes cc-scroll-rtl{ from{transform:translateX(-50%);} to{transform:translateX(0);} }
+    @media (prefers-reduced-motion: reduce){
+      #confirmed-companies .cc-marquee--ltr .cc-track,
+      #confirmed-companies .cc-marquee--rtl .cc-track{ animation:none; }
+    }
+
+    /* Logo tile — full colour + always-visible company name */
+    #confirmed-companies .cc-logo{
+      flex:0 0 auto; height:128px; min-width:180px; max-width:220px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:10px;
+      background:linear-gradient(180deg,#FFFFFF 0%,#FAFBF7 100%);
+      border:1px solid #E4E6E0; border-radius:14px;
+      padding:16px 20px 14px;
+      box-shadow:
+        0 1px 2px rgba(10,22,40,0.04),
+        0 6px 18px rgba(10,22,40,0.06);
+      transition:transform .35s cubic-bezier(.2,.7,.3,1),
+                 box-shadow .35s ease,
+                 border-color .3s ease,
+                 background .3s ease;
+    }
+    #confirmed-companies .cc-logo::after{
+      content:""; position:absolute; inset:0; border-radius:14px;
+      pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    #confirmed-companies .cc-logo{ position:relative; }
+    #confirmed-companies .cc-logo img{
+      max-height:52px; max-width:160px; width:auto; height:auto;
+      display:block; object-fit:contain;
+      /* Full brand colour — no grayscale, no opacity dim */
+    }
+    #confirmed-companies .cc-logo span{
+      display:block;
+      font-family:'DM Sans','Inter',system-ui,sans-serif;
+      font-size:12px; font-weight:600; color:#3a4756;
+      letter-spacing:0.2px;
+      white-space:nowrap; text-align:center; line-height:1.15;
+      max-width:100%;
+      overflow:hidden; text-overflow:ellipsis;
+    }
+    #confirmed-companies .cc-logo--fallback{
+      background:linear-gradient(135deg,#14365B 0%,#0A1628 100%);
+      border-color:#14365B;
+    }
+    #confirmed-companies .cc-logo--fallback span{
+      color:#fff;
+      font-family:'Playfair Display',Georgia,serif;
+      font-size:15px; font-weight:700;
+    }
+    #confirmed-companies .cc-logo:hover{
+      transform:translateY(-4px);
+      box-shadow:0 14px 32px rgba(10,22,40,0.14);
+      border-color:#C8B27A;
+    }
+    #confirmed-companies .cc-logo:hover span{
+      color:#0A1628;
+    }
+    #confirmed-companies .cc-logo--fallback:hover{
+      background:linear-gradient(135deg,#7A5F2A 0%,#5A3F0A 100%);
+      border-color:#7A5F2A;
+    }
+    #confirmed-companies .cc-logo--fallback:hover span{
+      color:#fff;
+    }
+
+    #confirmed-companies .cc-foot{
+      text-align:center; margin-top:24px;
+    }
+    #confirmed-companies .cc-foot-note{
+      font-size:11px; color:#7d8a96; letter-spacing:0.2px; line-height:1.5;
+    }
+
+    /* Responsive */
+    @media (max-width:720px){
+      #confirmed-companies{ padding:48px 0 40px; }
+      #confirmed-companies .cc-title{ font-size:26px; }
+      #confirmed-companies .cc-sub{ font-size:13.5px; }
+      #confirmed-companies .cc-logo{ height:110px; min-width:150px; padding:12px 14px; }
+      #confirmed-companies .cc-logo img{ max-height:42px; max-width:120px; }
+      #confirmed-companies .cc-track{ gap:22px; }
+      #confirmed-companies .cc-marquee--ltr .cc-track{ animation-duration:45s; }
+      #confirmed-companies .cc-marquee--rtl .cc-track{ animation-duration:50s; }
+    }
+
+    /* ============================================================
+       Per-brand treatment for logos that ship as a coloured-square
+       badge from the CDN (NIQ, Mercedes, Bosch, Brose, SLB, Ford,
+       LinkedIn, Metro).  Rounded corners + soft shadow reframes them
+       as intentional "app-icon" tiles so the coloured background
+       looks designed, not accidental.
+       ============================================================ */
+    #confirmed-companies .cc-logo[data-name="NIQ"] img,
+    #confirmed-companies .cc-logo[data-name="Mercedes-Benz"] img,
+    #confirmed-companies .cc-logo[data-name="Bosch"] img,
+    #confirmed-companies .cc-logo[data-name="Brose Group"] img,
+    #confirmed-companies .cc-logo[data-name="SLB"] img,
+    #confirmed-companies .cc-logo[data-name="Ford"] img,
+    #confirmed-companies .cc-logo[data-name="LinkedIn"] img,
+    #confirmed-companies .cc-logo[data-name="Metro"] img,
+    #confirmed-companies .cc-logo[data-name="Checkmarx"] img,
+    #confirmed-companies .cc-logo[data-name="Zendesk"] img,
+    #confirmed-companies .cc-logo[data-name="ZS"] img{
+      max-height:42px; max-width:130px;
+      border-radius:9px;
+      box-shadow:
+        0 3px 10px rgba(10,22,40,0.14),
+        0 0 0 1px rgba(10,22,40,0.05);
+    }
+    /* Smaller icons that need a bit more air (Mercedes star, LinkedIn 'in') */
+    #confirmed-companies .cc-logo[data-name="Mercedes-Benz"] img,
+    #confirmed-companies .cc-logo[data-name="LinkedIn"] img{
+      max-height:38px;
+    }
+    /* Wordmarks that shouldn't have rounded corners (they're transparent PNGs) */
+    #confirmed-companies .cc-logo[data-name="Ecolab"] img,
+    #confirmed-companies .cc-logo[data-name="Dohler"] img,
+    #confirmed-companies .cc-logo[data-name="Novartis"] img,
+    #confirmed-companies .cc-logo[data-name="Qualcomm"] img,
+    #confirmed-companies .cc-logo[data-name="Walmart"] img,
+    #confirmed-companies .cc-logo[data-name="Citi"] img{
+      border-radius:0;
+      box-shadow:none;
+      max-height:44px;
+    }
+  </style>
+
+  <script>
+    /* Two behaviours:
+       1) Reliable fallback chain: Clearbit primary -> Google favicon ->
+          styled text badge. All URLs are known-good CDNs, no guesswork.
+       2) Reorder: move this marquee before the Leaders section so the
+          flow is Pune poster -> Companies -> Leaders -> RSVP.
+    */
+    (function(){
+      var imgs = document.querySelectorAll('#confirmed-companies .cc-logo img');
+      for (var i = 0; i < imgs.length; i++){
+        (function(img){
+          // Extract the brand domain from the Clearbit URL on the img
+          var mc = /clearbit\.com\/([^?]+)/.exec(img.src || '');
+          var domain = mc ? mc[1] : '';
+          img.onerror = function(){
+            var self = this;
+            if (domain && !self.dataset.tried1){
+              self.dataset.tried1 = '1';
+              self.src = 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=128';
+              return;
+            }
+            var parent = self.parentElement;
+            if (parent && parent.classList){ parent.classList.add('cc-logo--fallback'); }
+            self.style.display = 'none';
+          };
+          // If the image already failed before this script ran, kick off retry
+          if (img.complete && (img.naturalWidth === 0 || img.naturalHeight === 0)){
+            img.onerror();
+          }
+        })(imgs[i]);
+      }
+
+      // Move the marquee section BEFORE the Leaders section
+      var comp = document.getElementById('confirmed-companies');
+      var att  = document.getElementById('confirmed-attendees');
+      if (comp && att && att.parentNode && comp !== att.previousElementSibling){
+        att.parentNode.insertBefore(comp, att);
+      }
+    })();
+  </script>
+</section>
+<!-- ===== END CONFIRMED COMPANIES ===== -->
 
 <!-- HERO -->
 <div class="hero">
