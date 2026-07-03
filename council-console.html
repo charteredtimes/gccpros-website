@@ -216,7 +216,7 @@
         <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v4 (2026-07-03)</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v5 (2026-07-03) · password reset</div>
   </div>
 </div>
 
@@ -251,12 +251,29 @@ async function api(action, params){
   }catch(err){ return {error:"network", message:(err&&err.message)?err.message:String(err)}; }
 }
 
+var RECOVERY=false;
+function isRecoveryUrl(){
+  try{ var qp=new URLSearchParams(location.search); if(qp.get("recovery")==="1") return true;
+       return (location.hash||"").indexOf("type=recovery")>=0; }catch(_){ return false; }
+}
 function boot(){
   try{
     if(typeof supabase==="undefined" || !supabase.createClient){ msg("mGate","Could not load the sign-in library. Check your connection and refresh.","bad"); showGate(); return; }
     sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-    sb.auth.getSession().then(function(r){ if(r&&r.data&&r.data.session){ enter(); } else { showGate(); } }).catch(function(){ showGate(); });
+    RECOVERY=isRecoveryUrl();
+    sb.auth.onAuthStateChange(function(evt){ if(evt==="PASSWORD_RECOVERY"){ RECOVERY=true; showRecovery(); } });
+    sb.auth.getSession().then(function(r){
+      if(RECOVERY){ showRecovery(); return; }
+      if(r&&r.data&&r.data.session){ enter(); } else { showGate(); }
+    }).catch(function(){ if(RECOVERY){ showRecovery(); } else { showGate(); } });
   }catch(err){ showGate(); msg("mGate","Startup error: "+((err&&err.message)?err.message:err),"bad"); }
+}
+/* Password-reset link landed here: let them set a new password, then continue. */
+function showRecovery(){
+  hide("gate"); hide("app"); hide("wizConfirm"); hide("wizPriorities"); show("wizPassword");
+  var hd=document.querySelector("#wizPassword .wizhead h2"); if(hd) hd.textContent="Set a new password";
+  var e=document.querySelector("#wizPassword .wizhead .e"); if(e) e.textContent="Password reset";
+  var p=document.querySelector("#wizPassword .wizhead p"); if(p) p.textContent="Choose a new password for your account. After saving, you'll go straight to your console.";
 }
 function showGate(){ hide("app"); hide("wizConfirm"); hide("wizPriorities"); hide("wizPassword"); show("gate");
   // First-time approved members have no password yet — open in code mode.
@@ -420,8 +437,10 @@ async function submitPassword(){
     var res=await sb.auth.updateUser({ password:a });
     if(res.error){ msg("mPwdSet","Could not set password: "+res.error.message,"bad"); return; }
   }catch(err){ msg("mPwdSet","Could not set password: "+((err&&err.message)?err.message:err),"bad"); return; }
-  await api("councilMarkPassword",{});
-  S.password_set=true; hide("wizPassword"); startData();
+  try{ await api("councilMarkPassword",{}); }catch(_){}
+  S.password_set=true; hide("wizPassword");
+  if(RECOVERY){ RECOVERY=false; try{ history.replaceState(null,"",location.pathname); }catch(_){} enter(); return; }
+  startData();
 }
 async function setPassword(){
   var pwd=prompt("Reset your password (at least 8 characters):","");

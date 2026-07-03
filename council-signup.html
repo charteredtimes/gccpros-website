@@ -222,6 +222,18 @@
     <p class="note">Access opens after approval — you'll sign in there with the same work email and a one-time code.</p>
   </div>
 
+  <!-- ALREADY REGISTERED -->
+  <div class="card hide" id="cardExists">
+    <h2>You're already registered</h2>
+    <p id="existsMsg">This work email is already in the community — no need to sign up again. Just sign in. Forgotten your password? Reset it below.</p>
+    <div class="btns">
+      <a href="./council-console.html"><button class="btn gold">Go to sign-in →</button></a>
+      <button class="btn alt" id="btnReset" onclick="sendReset()">Email me a password reset link</button>
+    </div>
+    <div id="mExists" class="msg"></div>
+    <p class="note">The reset link opens the console, where you set a new password. You can also sign in any time with a one-time email code.</p>
+  </div>
+
   <div class="muted" style="text-align:center;margin-top:8px">A community initiative · research &amp; benchmarking only · GCCPROS · Chartered Times LLP</div>
 </div>
 
@@ -279,10 +291,35 @@ async function verifyCode(){
     company:'', phone:$('i_phone').value.trim(), countryCode:$('i_cc').value,
     privacyConsent:$('i_consent').checked?'Yes':'No'
   });
-  if(r.error){ msg('mYou','Could not register: '+(r.message||r.error),'bad'); return; }
+  if(r.error){
+    if(r.error==='already_registered'){ showExists(r); return; }
+    msg('mYou','Could not register: '+(r.message||r.error),'bad'); return;
+  }
   ST.appId=r.application_id;
   $('s1').className='step done'; $('s2').className='step done'; $('s3').className='step on';
   hide('cardYou'); show('cardCompany'); $('i_search').focus();
+}
+
+/* Already-registered: one identity per email — route to sign-in / password reset */
+function showExists(r){
+  var tail = r && r.approved ? ' and your access is active' :
+             (r && r.application_status ? ' (current status: '+r.application_status+')' : '');
+  var el=$('existsMsg');
+  if(el) el.textContent='This work email is already registered'+tail+'. You don’t need to sign up again — just sign in. Forgotten your password? Reset it below.';
+  hide('cardYou'); show('cardExists');
+  var s1=$('s1'),s2=$('s2'); if(s1)s1.className='step done'; if(s2)s2.className='step done';
+}
+async function sendReset(){
+  var email=(ST.email||'').trim();
+  if(!email){ msg('mExists','Please enter your work email on the first step first.','bad'); return; }
+  var b=$('btnReset'); if(b) b.disabled=true;
+  msg('mExists','Sending a password reset link to '+email+'…','info');
+  try{
+    var res=await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://www.gccpros.com/council-console.html?recovery=1' });
+    if(b) b.disabled=false;
+    if(res && res.error){ msg('mExists','Could not send reset link: '+res.error.message,'bad'); return; }
+    msg('mExists','Done — check your inbox (and Spam) for the reset link. Open it to set a new password.','ok');
+  }catch(e){ if(b) b.disabled=false; msg('mExists','Could not send reset link: '+((e&&e.message)?e.message:e),'bad'); }
 }
 
 /* Step 3: company search (all sectors); sector is derived from the pick */
