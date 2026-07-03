@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>GCC Leaders' Community — Benchmark Console</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
@@ -68,6 +71,9 @@
   .rc label{display:inline;font-weight:normal;color:#33415c;margin:0}
   .prichip{display:inline-block;font-size:12px;border:1px solid var(--line);background:#F4F7FB;color:var(--navy);border-radius:999px;padding:4px 11px;margin:3px 4px 0 0;cursor:pointer}
   .prichip:hover{background:#E5EEFB}
+  .segmented{display:flex;background:var(--pale);border:1px solid var(--line);border-radius:10px;padding:4px;gap:4px}
+  .seg{flex:1;background:transparent;color:var(--grey);border:none;border-radius:7px;padding:9px 8px;font-size:13px;font-weight:bold}
+  .seg.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(40,60,110,.14)}
 </style>
 </head>
 <body oncontextmenu="return false">
@@ -84,29 +90,41 @@
   <div id="gate" class="gate">
     <div class="card">
       <h1>Member sign-in</h1>
-      <p>Welcome back. Sign in with the <b>work email</b> you joined with, and we will email you a one-time code.</p>
-      <div id="loginStep">
-        <label style="text-align:left">Work email</label>
-        <input id="i_email" type="email" placeholder="you@yourcompany.com">
+      <p>Welcome back. Sign in with the <b>work email</b> you joined with.</p>
+
+      <label style="text-align:left">Work email</label>
+      <input id="i_email" type="email" placeholder="you@yourcompany.com">
+
+      <!-- Mode toggle: password vs. one-time code -->
+      <div class="segmented" style="margin-top:14px">
+        <button type="button" id="tabPwd" class="seg active" onclick="setMode('pwd')">Password</button>
+        <button type="button" id="tabCode" class="seg" onclick="setMode('code')">Email me a code</button>
+      </div>
+
+      <!-- PASSWORD MODE (default) -->
+      <div id="pwdStep" style="margin-top:12px">
+        <label style="text-align:left">Password</label>
+        <input id="i_pwd" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')pwdLogin()">
+        <div class="btns" style="justify-content:center"><button class="btn" onclick="pwdLogin()" style="width:100%;padding:14px;font-size:16px">Sign in</button></div>
+        <p class="muted" style="text-align:center;margin-top:8px"><a href="#" onclick="setMode('code');return false;">Forgot password? Sign in with an email code instead</a></p>
+      </div>
+
+      <!-- CODE MODE -->
+      <div id="loginStep" class="hide" style="margin-top:12px">
         <div class="btns" style="justify-content:center"><button class="btn" id="btnSend" onclick="sendCode()" style="width:100%;padding:14px;font-size:16px">Send me a sign-in code</button></div>
       </div>
-      <div id="otpStep" class="hide">
+      <div id="otpStep" class="hide" style="margin-top:12px">
         <label style="text-align:left">6-digit code</label>
-        <input id="i_otp" inputmode="numeric" maxlength="8" placeholder="123456">
+        <input id="i_otp" inputmode="numeric" maxlength="8" placeholder="123456" onkeydown="if(event.key==='Enter')verifyCode()">
         <div class="btns" style="justify-content:center"><button class="btn" onclick="verifyCode()" style="width:100%;padding:14px;font-size:16px">Verify &amp; sign in</button></div>
         <div class="muted" style="margin-top:8px">Not in your inbox? Check <b>Spam/Junk</b> or ask IT to allowlist our sender. Always use the newest code.</div>
       </div>
-      <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
-        <div class="muted" style="text-align:center;margin-bottom:8px">Or sign in another way</div>
+
+      <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+        <div class="muted" style="text-align:center;margin-bottom:8px">Or continue with</div>
         <div class="btns" style="justify-content:center;gap:8px">
-          <button class="btn alt" onclick="ssoLogin('google')">Continue with Google</button>
-          <button class="btn alt" onclick="ssoLogin('azure')">Continue with Microsoft</button>
-        </div>
-        <p class="muted" style="text-align:center;margin-top:10px"><a href="#" onclick="togglePwd();return false;">Have a password? Sign in with password</a></p>
-        <div id="pwdStep" class="hide">
-          <label style="text-align:left">Password</label>
-          <input id="i_pwd" type="password" placeholder="Your password">
-          <div class="btns" style="justify-content:center"><button class="btn" onclick="pwdLogin()">Sign in with password</button></div>
+          <button class="btn alt" onclick="ssoLogin('google')">Google</button>
+          <button class="btn alt" onclick="ssoLogin('azure')">Microsoft</button>
         </div>
       </div>
       <div id="mGate" class="msg"></div>
@@ -198,7 +216,7 @@
         <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v3 stable</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v4 (2026-07-03)</div>
   </div>
 </div>
 
@@ -240,7 +258,12 @@ function boot(){
     sb.auth.getSession().then(function(r){ if(r&&r.data&&r.data.session){ enter(); } else { showGate(); } }).catch(function(){ showGate(); });
   }catch(err){ showGate(); msg("mGate","Startup error: "+((err&&err.message)?err.message:err),"bad"); }
 }
-function showGate(){ hide("app"); hide("wizConfirm"); hide("wizPriorities"); hide("wizPassword"); show("gate"); }
+function showGate(){ hide("app"); hide("wizConfirm"); hide("wizPriorities"); hide("wizPassword"); show("gate");
+  // First-time approved members have no password yet — open in code mode.
+  try{ var qp=new URLSearchParams(location.search); var m=(qp.get("mode")||"").toLowerCase();
+    if(m==="code"||qp.get("first")==="1") setMode("code"); else setMode("pwd");
+  }catch(_){ setMode("pwd"); }
+}
 
 async function sendCode(){
   var email=($("i_email").value||"").trim().toLowerCase();
@@ -267,14 +290,24 @@ async function ssoLogin(provider){
   try{ await sb.auth.signInWithOAuth({ provider:provider, options:{ redirectTo: location.origin+location.pathname } }); }
   catch(err){ msg("mGate","Could not start sign-in: "+((err&&err.message)?err.message:err),"bad"); }
 }
-function togglePwd(){ var e=$("pwdStep"); if(e) e.classList.toggle("hide"); }
+function setMode(mode){
+  var pwd = mode==="pwd";
+  $("tabPwd").classList.toggle("active", pwd);
+  $("tabCode").classList.toggle("active", !pwd);
+  $("pwdStep").classList.toggle("hide", !pwd);
+  $("loginStep").classList.toggle("hide", pwd);
+  // leaving code mode? hide the OTP entry until they send a fresh code
+  if(pwd) $("otpStep").classList.add("hide");
+  msg("mGate","","info"); $("mGate").className="msg";
+  if(pwd){ if($("i_pwd")) $("i_pwd").focus(); }
+}
 async function pwdLogin(){
   var email=($("i_email").value||"").trim().toLowerCase(); var pwd=$("i_pwd").value||"";
   if(!email||!pwd){ msg("mGate","Enter your work email and password.","bad"); return; }
   msg("mGate","Signing in...","info");
   try{
     var r=await sb.auth.signInWithPassword({ email:email, password:pwd });
-    if(r.error){ msg("mGate","Sign-in failed. If you have not set a password yet, use the code option above. ("+r.error.message+")","bad"); return; }
+    if(r.error){ msg("mGate","Sign-in failed. If you haven't set a password yet, switch to “Email me a code”. ("+r.error.message+")","bad"); return; }
     enter();
   }catch(err){ msg("mGate","Sign-in failed: "+((err&&err.message)?err.message:err),"bad"); }
 }
