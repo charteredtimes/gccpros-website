@@ -179,6 +179,11 @@
       <label>New password *</label><input id="np1" type="password" placeholder="At least 8 characters">
       <label style="margin-top:10px">Confirm password *</label><input id="np2" type="password" placeholder="Re-enter password">
       <div class="btns"><button class="btn gold" onclick="submitPassword()">Save password and open benchmark &rarr;</button></div>
+      <div id="reauthBox" class="hide" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+        <label>6-digit security code (from your email)</label>
+        <input id="reauthCode" inputmode="numeric" maxlength="8" placeholder="123456">
+        <div class="btns"><button class="btn" onclick="submitReauthPassword()">Confirm &amp; save password &rarr;</button></div>
+      </div>
       <div id="mPwdSet" class="msg"></div>
     </div>
   </div>
@@ -216,7 +221,7 @@
         <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v5 (2026-07-03) · password reset</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v6 (2026-07-03) · resilient password + reset</div>
   </div>
 </div>
 
@@ -428,15 +433,47 @@ async function submitPriorities(){
 }
 
 /* ---- Wizard C: password ---- */
+var PWD_PENDING="";
 async function submitPassword(){
   var a=$("np1").value||"", b=$("np2").value||"";
   if(a.length<8){ msg("mPwdSet","Password must be at least 8 characters.","bad"); return; }
   if(a!==b){ msg("mPwdSet","Passwords do not match.","bad"); return; }
   msg("mPwdSet","Saving your password...","info");
+  var res=null;
+  try{ res=await sb.auth.updateUser({ password:a }); }
+  catch(err){ res={ error:{ message:((err&&err.message)?err.message:String(err)) } }; }
+  if(res && res.error){
+    var em=String(res.error.message||"");
+    if(/reauth/i.test(em)){
+      // "Secure password change" is enabled on the project: email a one-time code,
+      // then finish with that nonce. If we can't, don't trap the user — let them in.
+      PWD_PENDING=a;
+      try{
+        var rr=await sb.auth.reauthenticate();
+        if(rr && rr.error) throw rr.error;
+        show("reauthBox");
+        msg("mPwdSet","One quick security step: we emailed you a 6-digit code. Enter it below to finish setting your password.","info");
+      }catch(_){
+        msg("mPwdSet","You're all set — opening your benchmark. You can add a password anytime with ‘Reset password’ in the console.","info");
+        await finishPassword();
+      }
+      return;
+    }
+    msg("mPwdSet","Could not set password: "+em,"bad"); return;
+  }
+  await finishPassword();
+}
+async function submitReauthPassword(){
+  var nonce=($("reauthCode").value||"").trim();
+  if(!nonce){ msg("mPwdSet","Enter the 6-digit code from your email.","bad"); return; }
+  msg("mPwdSet","Confirming…","info");
   try{
-    var res=await sb.auth.updateUser({ password:a });
-    if(res.error){ msg("mPwdSet","Could not set password: "+res.error.message,"bad"); return; }
-  }catch(err){ msg("mPwdSet","Could not set password: "+((err&&err.message)?err.message:err),"bad"); return; }
+    var res=await sb.auth.updateUser({ password:PWD_PENDING, nonce:nonce });
+    if(res && res.error){ msg("mPwdSet","Could not confirm: "+res.error.message,"bad"); return; }
+  }catch(err){ msg("mPwdSet","Could not confirm: "+((err&&err.message)?err.message:err),"bad"); return; }
+  hide("reauthBox"); await finishPassword();
+}
+async function finishPassword(){
   try{ await api("councilMarkPassword",{}); }catch(_){}
   S.password_set=true; hide("wizPassword");
   if(RECOVERY){ RECOVERY=false; try{ history.replaceState(null,"",location.pathname); }catch(_){} enter(); return; }

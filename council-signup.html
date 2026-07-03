@@ -347,12 +347,45 @@ async function pick(id){
   if(r.error){ msg('mCompany',r.message||r.error,'bad'); return; }
   finishUp();
 }
-async function notListed(){
+/* Curated 33-sector taxonomy — same list as the admin panel, independent of the
+   database, so every sector (incl. all Software / Technology ones) always shows. */
+var CANON_SECTORS=[
+  "Software / Technology — Enterprise Applications",
+  "Software / Technology — Platform, Developer & Productivity",
+  "Software / Technology — Vertical / Industry SaaS",
+  "Software / Technology — Horizontal & Other Products",
+  "Software / Technology — Data, Analytics & AI",
+  "Software / Technology — Cloud & IT Infrastructure",
+  "Software / Technology — Cybersecurity",
+  "Software / Technology — Semiconductors & Chip Design",
+  "Software / Technology — Electronics & Hardware",
+  "BFSI — Banking & Financial Services",
+  "BFSI — Capital Markets & Investment Mgmt",
+  "BFSI — FinTech, Payments & Lending",
+  "BFSI — Insurance & InsurTech",
+  "Healthcare & Life Sciences — Pharma & Biotech",
+  "Healthcare & Life Sciences — Medical Devices & Diagnostics",
+  "Healthcare & Life Sciences — Providers & MedTech",
+  "Industrial & Manufacturing — Engineering & Mfg",
+  "Industrial & Manufacturing — Automation & Electrical",
+  "Automotive & Mobility","Aerospace, Defense & Aviation",
+  "Energy, Oil & Gas & Utilities","Chemicals & Materials","Metals & Mining",
+  "Consumer, Food & Agriculture","Retail & E-commerce",
+  "Logistics, Transport & Travel","Telecom & Networking",
+  "Media, Gaming & Advertising","Professional, Legal & Business Services",
+  "Real Estate, Construction & Building","Education & EdTech",
+  "Public Sector & Government","Conglomerate / Diversified"
+];
+function sectorOptionsHtml(){
+  var groups={}, order=[];
+  CANON_SECTORS.forEach(function(s){ var p=s.indexOf(" — "); var g=(p>0)?s.slice(0,p):"Other sectors"; if(!groups[g]){groups[g]=[];order.push(g);} groups[g].push(s); });
+  var h='<option value="">Select your sector…</option>';
+  order.forEach(function(g){ h+='<optgroup label="'+esc(g)+'">'; groups[g].forEach(function(s){ var p=s.indexOf(" — "); var lbl=(p>0)?s.slice(p+3):s; h+='<option value="'+esc(s)+'">'+esc(lbl)+'</option>'; }); h+='</optgroup>'; });
+  return h;
+}
+function notListed(){
   hide('cardCompany'); show('cardNewGcc');
-  var r=await api('councilIndustries',{});
-  var sel=$('ng_industry');
-  if(r&&r.industries){ sel.innerHTML='<option value="">Select your sector…</option>'+r.industries.map(function(i){return '<option value="'+esc(i)+'">'+esc(i)+'</option>';}).join(''); }
-  else { sel.innerHTML='<option value="">Could not load sectors</option>'; }
+  var sel=$('ng_industry'); if(sel) sel.innerHTML=sectorOptionsHtml();
 }
 function backToSearch(){ hide('cardNewGcc'); show('cardCompany'); }
 async function submitNewGcc(){
