@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<!-- GCCPROs Insights & Events · build: 2026-06-18-v11-poster-centered-500k -->
+<!-- GCCPROs Insights & Events · build: 2026-06-18-v12-hero-fresh-rebuild -->
 <html lang="en">
 <head>
 <!-- Google Analytics -->
@@ -339,7 +339,322 @@ html.menu-open{overflow:hidden;}
   <a href="opportunities">GCC Opportunities</a>
 </div>
 
-<!-- ===== PUNE FEATURED EVENT (added) ===== -->
+<!-- ===== FRESH PUNE SUMMIT HERO · v12 rebuild ===== -->
+<style>
+  /* Pune Summit — clean single-column rebuild, mobile-first,
+     unique #pune-summit-2026 + ps-* prefix to avoid ANY collision
+     with the legacy #pune-feature CSS (which is kept but hidden). */
+  #pune-summit-2026{
+    position:relative;
+    overflow:hidden;
+    padding:clamp(60px, 8vw, 110px) 0 clamp(50px, 6vw, 90px);
+    font-family:'DM Sans','Inter',system-ui,sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(20,58,107,.65), transparent 60%),
+      linear-gradient(180deg, #0a1628 0%, #0e1f3a 55%, #143a6b 120%);
+    isolation:isolate;
+  }
+  #pune-summit-2026::before{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background:
+      radial-gradient(500px 260px at 15% 30%, rgba(240,200,122,0.08) 0%, transparent 55%),
+      radial-gradient(600px 320px at 85% 75%, rgba(127,194,234,0.09) 0%, transparent 55%);
+    pointer-events:none;
+  }
+  #pune-summit-2026::after{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    opacity:0.55;
+    pointer-events:none;
+  }
+  #pune-summit-2026 .ps-wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 clamp(20px, 4vw, 40px);
+    text-align:center;
+    position:relative; z-index:1;
+  }
+  /* Kicker */
+  #pune-summit-2026 .ps-badge{
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(240,200,122,.10);
+    border:1px solid rgba(240,200,122,.42);
+    color:#F0C87A;
+    font-weight:700; font-size:11.5px; letter-spacing:2.6px;
+    text-transform:uppercase;
+    padding:9px 18px; border-radius:999px;
+    margin-bottom:clamp(20px, 3vw, 30px);
+  }
+  #pune-summit-2026 .ps-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:#F0C87A;
+    box-shadow:0 0 0 4px rgba(240,200,122,.20);
+    animation:psDotPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes psDotPulse{
+    0%,100%{ box-shadow:0 0 0 4px rgba(240,200,122,.20); }
+    50%   { box-shadow:0 0 0 9px rgba(240,200,122,.08); }
+  }
+  /* Title */
+  #pune-summit-2026 .ps-title{
+    font-family:'Playfair Display', Georgia, serif;
+    color:#fff;
+    font-weight:900;
+    line-height:1.02;
+    letter-spacing:-1.5px;
+    font-size:clamp(38px, 7.5vw, 82px);
+    margin:0 0 clamp(12px, 2vw, 20px);
+  }
+  #pune-summit-2026 .ps-title em{
+    display:block; font-style:italic;
+    background:linear-gradient(180deg,#F7D68E 0%,#F0C87A 45%,#DDA83A 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 60px rgba(240,200,122,0.22);
+  }
+  /* Tagline */
+  #pune-summit-2026 .ps-lead{
+    color:#8ECEEC;
+    font-weight:700;
+    font-size:clamp(17px, 2.4vw, 24px);
+    letter-spacing:-0.2px;
+    margin:0 0 clamp(24px, 3.5vw, 32px);
+    line-height:1.35;
+  }
+  /* Meta chips */
+  #pune-summit-2026 .ps-meta{
+    display:inline-flex; flex-wrap:wrap; justify-content:center;
+    gap:10px 12px;
+    margin:0 0 clamp(24px, 3.5vw, 34px);
+  }
+  #pune-summit-2026 .ps-meta span{
+    display:inline-flex; align-items:center; gap:9px;
+    color:#E6EEF8; font-size:14.5px; font-weight:600;
+    padding:9px 18px;
+    background:rgba(255,255,255,0.045);
+    border:1px solid rgba(255,255,255,0.09);
+    border-radius:999px;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  #pune-summit-2026 .ps-meta svg{ flex:0 0 auto; color:#F0C87A; }
+  /* Description */
+  #pune-summit-2026 .ps-desc{
+    color:#B7C5D8;
+    font-size:clamp(15px, 1.6vw, 17.5px);
+    line-height:1.6;
+    max-width:640px;
+    margin:0 auto clamp(28px, 4vw, 42px);
+  }
+  /* 3-pillar proof strip */
+  #pune-summit-2026 .ps-stats{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:0;
+    max-width:720px;
+    margin:0 auto clamp(28px, 4vw, 42px);
+    border-top:1px solid rgba(240,200,122,0.18);
+    border-bottom:1px solid rgba(240,200,122,0.18);
+    padding:clamp(18px, 2.5vw, 26px) 0;
+  }
+  #pune-summit-2026 .ps-stat{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    padding:0 clamp(8px, 2vw, 18px);
+    position:relative;
+  }
+  #pune-summit-2026 .ps-stat + .ps-stat::before{
+    content:""; position:absolute; left:0; top:18%; bottom:18%;
+    width:1px; background:rgba(255,255,255,0.10);
+  }
+  #pune-summit-2026 .ps-stat-num{
+    font-family:'Playfair Display', Georgia, serif;
+    font-size:clamp(28px, 4vw, 42px);
+    font-weight:800;
+    color:#F0C87A;
+    line-height:1;
+    letter-spacing:-1px;
+  }
+  #pune-summit-2026 .ps-stat-lbl{
+    font-size:10.5px; letter-spacing:2px; text-transform:uppercase;
+    color:#8DA1BA; font-weight:600;
+  }
+  /* Agenda */
+  #pune-summit-2026 .ps-agenda-title{
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:#8DA1BA; font-weight:700;
+    margin:0 0 14px;
+  }
+  #pune-summit-2026 .ps-agenda{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:10px;
+    max-width:820px;
+    margin:0 auto clamp(28px, 4vw, 40px);
+  }
+  #pune-summit-2026 .ps-agenda-item{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:9px 16px 9px 10px;
+    background:linear-gradient(180deg, rgba(127,194,234,0.10), rgba(127,194,234,0.04));
+    border:1px solid rgba(127,194,234,0.28);
+    border-radius:999px;
+    color:#DCE9F7; font-size:13.5px; font-weight:600;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+  }
+  #pune-summit-2026 .ps-agenda-item:hover{
+    transform:translateY(-2px);
+    border-color:rgba(127,194,234,0.55);
+    background:linear-gradient(180deg, rgba(127,194,234,0.20), rgba(127,194,234,0.08));
+  }
+  #pune-summit-2026 .ps-agenda-num{
+    font-family:'IBM Plex Mono','SF Mono',ui-monospace,monospace;
+    font-size:10.5px; font-weight:700;
+    color:#0A1628;
+    background:#F0C87A;
+    width:22px; height:22px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    flex:0 0 auto;
+  }
+  /* CTAs */
+  #pune-summit-2026 .ps-cta{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:14px;
+    margin-bottom:clamp(22px, 3vw, 30px);
+  }
+  #pune-summit-2026 .ps-btn{
+    display:inline-flex; align-items:center; gap:10px;
+    text-decoration:none; font-weight:700;
+    font-size:15px; letter-spacing:0.2px;
+    padding:15px 32px; border-radius:12px;
+    transition:transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease;
+  }
+  #pune-summit-2026 .ps-primary{
+    background:linear-gradient(180deg,#F7D68E 0%,#EABF5A 55%,#DDA83A 100%);
+    color:#0a1628;
+    box-shadow:
+      0 10px 28px rgba(232,185,79,0.38),
+      inset 0 1px 0 rgba(255,255,255,0.55),
+      inset 0 -1px 0 rgba(150,100,30,0.3);
+  }
+  #pune-summit-2026 .ps-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:
+      0 16px 40px rgba(232,185,79,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.6),
+      inset 0 -1px 0 rgba(150,100,30,0.35);
+  }
+  #pune-summit-2026 .ps-ghost{
+    background:rgba(127,194,234,0.03);
+    color:#fff;
+    border:1.6px solid rgba(127,194,234,0.55);
+  }
+  #pune-summit-2026 .ps-ghost:hover{
+    transform:translateY(-3px);
+    border-color:#7FC2EA;
+    background:rgba(127,194,234,0.10);
+  }
+  /* Fine print */
+  #pune-summit-2026 .ps-note{
+    color:#8AA0BD;
+    font-size:12.5px;
+    line-height:1.65;
+    letter-spacing:0.2px;
+    max-width:620px;
+    margin:0 auto;
+  }
+  #pune-summit-2026 .ps-note strong{
+    color:#F0C87A;
+    font-weight:700;
+  }
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    #pune-summit-2026 .ps-dot{ animation:none; }
+    #pune-summit-2026 .ps-agenda-item:hover,
+    #pune-summit-2026 .ps-btn:hover{ transform:none; }
+  }
+  /* Mobile refinements */
+  @media (max-width:720px){
+    #pune-summit-2026 .ps-stats{
+      grid-template-columns:1fr;
+      gap:22px;
+      padding:22px 0;
+    }
+    #pune-summit-2026 .ps-stat + .ps-stat::before{ content:none; }
+    #pune-summit-2026 .ps-meta span{ font-size:13px; padding:8px 14px; }
+    #pune-summit-2026 .ps-agenda-item{ font-size:12.5px; padding:8px 14px 8px 9px; }
+    #pune-summit-2026 .ps-cta{ flex-direction:column; align-items:stretch; }
+    #pune-summit-2026 .ps-btn{ justify-content:center; }
+  }
+</style>
+
+<section id="pune-summit-2026" aria-label="GCC Leadership Summit — Featured event">
+  <div class="ps-wrap">
+
+    <span class="ps-badge"><span class="ps-dot"></span>Featured Event &middot; Pune</span>
+
+    <h2 class="ps-title">GCC Leadership <em>Summit</em></h2>
+
+    <p class="ps-lead">100 GCC leaders. One room. One day.</p>
+
+    <div class="ps-meta">
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Friday, 24 July 2026
+      </span>
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Pune, India
+      </span>
+    </div>
+
+    <p class="ps-desc">After two successful insider editions, this is our biggest gathering yet. A full working day of candid conversation on what is actually moving the GCC industry forward.</p>
+
+    <div class="ps-stats" role="list">
+      <div class="ps-stat" role="listitem">
+        <span class="ps-stat-num">100</span>
+        <span class="ps-stat-lbl">GCC Leaders</span>
+      </div>
+      <div class="ps-stat" role="listitem">
+        <span class="ps-stat-num">5 L</span>
+        <span class="ps-stat-lbl">Database Benefits</span>
+      </div>
+      <div class="ps-stat" role="listitem">
+        <span class="ps-stat-num">5</span>
+        <span class="ps-stat-lbl">Agenda Themes</span>
+      </div>
+    </div>
+
+    <div class="ps-agenda-title">On the agenda</div>
+    <div class="ps-agenda" role="list">
+      <span class="ps-agenda-item" role="listitem"><span class="ps-agenda-num">01</span>Innovation in GCCs</span>
+      <span class="ps-agenda-item" role="listitem"><span class="ps-agenda-num">02</span>Talent: Roles &amp; Bottlenecks</span>
+      <span class="ps-agenda-item" role="listitem"><span class="ps-agenda-num">03</span>Emerging Industries</span>
+      <span class="ps-agenda-item" role="listitem"><span class="ps-agenda-num">04</span>The GCC Maturity Model</span>
+      <span class="ps-agenda-item" role="listitem"><span class="ps-agenda-num">05</span>AI vs Human</span>
+    </div>
+
+    <div class="ps-cta">
+      <a class="ps-btn ps-primary" href="#rsvp-summit" onclick="var c=document.querySelector(&quot;#rsvp-summit .summit-event-card[data-event='pune']&quot;);if(c){c.click();}else if(window.openRsvpModal){window.openRsvpModal();}return false;">
+        Register now
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a class="ps-btn ps-ghost" href="mailto:admin@gccpros.com?subject=Speaking%20%26%20Sponsorship%20-%20Pune%20GCC%20Leadership%20Summit%20(24%20July%202026)">Speaking &amp; sponsorship</a>
+    </div>
+
+    <p class="ps-note"><strong>Limited to 100 seats.</strong> Curated database benefits worth Rs. 5,00,000 per leader, beyond the room. Register at www.gccpros.com &middot; Speaking &amp; sponsorship: admin@gccpros.com</p>
+
+  </div>
+</section>
+<!-- ===== /FRESH PUNE SUMMIT HERO ===== -->
+
+
+<!-- ===== PUNE FEATURED EVENT (added) [hidden — kept for rollback safety] ===== -->
 <style>
 #pune-feature{position:relative;overflow:hidden;font-family:'DM Sans',sans-serif;
   background:radial-gradient(1200px 600px at 80% -10%,rgba(20,58,107,.55),transparent 60%),linear-gradient(135deg,#0a1628 0%,#0e1f3a 55%,#143a6b 120%);
@@ -520,7 +835,7 @@ html.menu-open{overflow:hidden;}
 }
 
 </style>
-<section id="pune-feature">
+<section id="pune-feature" hidden aria-hidden="true" style="display:none !important;">
   <div class="pf-wrap">
     <div class="pf-info">
       <span class="pf-badge"><span class="pf-dot"></span>Featured Event &middot; Pune</span>
