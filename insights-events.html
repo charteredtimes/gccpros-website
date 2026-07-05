@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<!-- GCCPROs Insights & Events · build: 2026-06-18-v14-17-more-leaders -->
+<!-- GCCPROs Insights & Events · build: 2026-06-18-v15-mobile-polish-500k -->
 <html lang="en">
 <head>
 <!-- Google Analytics -->
@@ -474,11 +474,12 @@ html.menu-open{overflow:hidden;}
   }
   #pune-summit-2026 .ps-stat-num{
     font-family:'Playfair Display', Georgia, serif;
-    font-size:clamp(28px, 4vw, 42px);
+    font-size:clamp(24px, 3.6vw, 40px);
     font-weight:800;
     color:#F0C87A;
     line-height:1;
-    letter-spacing:-1px;
+    letter-spacing:-0.8px;
+    white-space:nowrap;
   }
   #pune-summit-2026 .ps-stat-lbl{
     font-size:10.5px; letter-spacing:2px; text-transform:uppercase;
@@ -578,18 +579,91 @@ html.menu-open{overflow:hidden;}
     #pune-summit-2026 .ps-agenda-item:hover,
     #pune-summit-2026 .ps-btn:hover{ transform:none; }
   }
-  /* Mobile refinements */
-  @media (max-width:720px){
-    #pune-summit-2026 .ps-stats{
-      grid-template-columns:1fr;
-      gap:22px;
-      padding:22px 0;
+  /* ========== Mobile / tablet refinements ========== */
+  @media (max-width:900px){
+    #pune-summit-2026{
+      padding:clamp(48px, 8vw, 80px) 0 clamp(40px, 6vw, 60px);
     }
-    #pune-summit-2026 .ps-stat + .ps-stat::before{ content:none; }
-    #pune-summit-2026 .ps-meta span{ font-size:13px; padding:8px 14px; }
-    #pune-summit-2026 .ps-agenda-item{ font-size:12.5px; padding:8px 14px 8px 9px; }
-    #pune-summit-2026 .ps-cta{ flex-direction:column; align-items:stretch; }
-    #pune-summit-2026 .ps-btn{ justify-content:center; }
+    #pune-summit-2026 .ps-wrap{
+      padding:0 clamp(18px, 5vw, 32px);
+    }
+    #pune-summit-2026 .ps-title{
+      font-size:clamp(34px, 8.5vw, 60px);
+      letter-spacing:-1px;
+      line-height:1.05;
+    }
+    #pune-summit-2026 .ps-lead{
+      font-size:clamp(15px, 3.4vw, 20px);
+    }
+    #pune-summit-2026 .ps-desc{
+      font-size:14.5px; line-height:1.65;
+    }
+    #pune-summit-2026 .ps-stats{
+      max-width:520px;
+    }
+    #pune-summit-2026 .ps-stat-num{
+      font-size:clamp(22px, 5vw, 34px);
+    }
+    #pune-summit-2026 .ps-stat-lbl{
+      font-size:9px; letter-spacing:1.5px;
+    }
+  }
+  @media (max-width:640px){
+    #pune-summit-2026 .ps-badge{
+      font-size:10.5px; letter-spacing:2.2px; padding:8px 15px;
+    }
+    #pune-summit-2026 .ps-title{
+      font-size:clamp(30px, 9vw, 44px);
+    }
+    #pune-summit-2026 .ps-lead{
+      font-size:15px; margin-bottom:22px;
+    }
+    #pune-summit-2026 .ps-meta{ gap:8px 10px; margin-bottom:22px; }
+    #pune-summit-2026 .ps-meta span{
+      font-size:12.5px; padding:7px 13px; gap:7px;
+    }
+    #pune-summit-2026 .ps-meta svg{ width:14px; height:14px; }
+    #pune-summit-2026 .ps-desc{
+      font-size:14px; margin-bottom:26px;
+    }
+    /* Keep the 3-pillar row horizontal on phones — labels compress but
+       the visual triad reads better than a stacked list here */
+    #pune-summit-2026 .ps-stats{
+      grid-template-columns:repeat(3, 1fr);
+      padding:16px 0;
+      margin-bottom:26px;
+    }
+    #pune-summit-2026 .ps-stat{ padding:0 6px; }
+    #pune-summit-2026 .ps-stat-num{
+      font-size:22px; letter-spacing:-0.5px;
+    }
+    #pune-summit-2026 .ps-stat-lbl{
+      font-size:8.5px; letter-spacing:1.2px; line-height:1.25;
+      margin-top:4px;
+    }
+    #pune-summit-2026 .ps-agenda-title{ font-size:10px; letter-spacing:2.4px; }
+    #pune-summit-2026 .ps-agenda{ gap:7px; margin-bottom:26px; }
+    #pune-summit-2026 .ps-agenda-item{
+      font-size:12px; padding:7px 13px 7px 8px; gap:7px;
+    }
+    #pune-summit-2026 .ps-agenda-num{
+      width:19px; height:19px; font-size:9.5px;
+    }
+    #pune-summit-2026 .ps-cta{
+      flex-direction:column; align-items:stretch; gap:11px;
+    }
+    #pune-summit-2026 .ps-btn{
+      justify-content:center; font-size:14.5px; padding:14px 24px;
+    }
+    #pune-summit-2026 .ps-note{
+      font-size:11.5px; line-height:1.6;
+    }
+  }
+  @media (max-width:420px){
+    #pune-summit-2026 .ps-title{ font-size:30px; }
+    #pune-summit-2026 .ps-stat-num{ font-size:19px; }
+    #pune-summit-2026 .ps-stat-lbl{ font-size:7.5px; letter-spacing:1px; }
+    #pune-summit-2026 .ps-stat + .ps-stat::before{ top:22%; bottom:22%; }
   }
 </style>
 
@@ -621,7 +695,7 @@ html.menu-open{overflow:hidden;}
         <span class="ps-stat-lbl">GCC Leaders</span>
       </div>
       <div class="ps-stat" role="listitem">
-        <span class="ps-stat-num">5 L</span>
+        <span class="ps-stat-num">&#8377;5,00,000</span>
         <span class="ps-stat-lbl">Database Benefits</span>
       </div>
       <div class="ps-stat" role="listitem">
