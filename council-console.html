@@ -150,21 +150,16 @@
   <!-- WIZARD B: priorities -->
   <div id="wizPriorities" class="hide">
     <div class="wizhead"><div class="e">Step 2 of 3</div>
-      <h2>Your top 3 priorities for the next 12 months</h2>
+      <h2>Your priorities for the next 12 months</h2>
       <p id="priNote">Shared with the community in aggregate so leaders can see where the sector is heading. Kept against your masked profile, never published with your name.</p></div>
     <div class="card">
-      <label>Priority 1 *</label><input id="p1" placeholder="e.g. Scale AI/ML engineering charter">
-      <label style="margin-top:10px">Priority 2 *</label><input id="p2" placeholder="e.g. Move up the value chain to product ownership">
-      <label style="margin-top:10px">Priority 3 *</label><input id="p3" placeholder="e.g. Build a stronger leadership bench locally">
-      <div style="margin-top:10px">
-        <span class="muted">Quick picks:</span><br>
-        <span class="prichip" onclick="addPri('Scale AI/GenAI capability')">Scale AI/GenAI</span>
-        <span class="prichip" onclick="addPri('Move from services to product ownership')">Product ownership</span>
-        <span class="prichip" onclick="addPri('Talent attraction and retention')">Talent &amp; retention</span>
-        <span class="prichip" onclick="addPri('Cost efficiency and productivity')">Cost &amp; productivity</span>
-        <span class="prichip" onclick="addPri('Expand global mandate / new charters')">Expand mandate</span>
-        <span class="prichip" onclick="addPri('Leadership bench and succession')">Leadership bench</span>
+      <div class="researchbar" style="margin-bottom:14px"><span>&#128274;</span>
+        <div>These inputs are collected for <b>research and benchmarking purposes only</b>. They are aggregated and anonymised, never published against your name, and never sold or used for outreach.</div>
       </div>
+      <label>Tech Priorities *</label><input id="p1" placeholder="e.g. Scale product engineering &amp; platform modernisation">
+      <label style="margin-top:10px">Growth Priorities *</label><input id="p2" placeholder="e.g. Expand global mandate / move up the value chain">
+      <label style="margin-top:10px">Financial Priorities *</label><input id="p3" placeholder="e.g. Cost efficiency, productivity &amp; value delivered">
+      <label style="margin-top:10px">AI / Optimization Push *</label><input id="p4" placeholder="e.g. GenAI adoption, automation &amp; process optimization">
       <div class="btns"><button class="btn gold" onclick="submitPriorities()">Continue &rarr;</button></div>
       <div id="mPri" class="msg"></div>
     </div>
@@ -221,7 +216,7 @@
         <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v6 (2026-07-03) · resilient password + reset</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v7 (2026-07-03) · 4 priority themes</div>
   </div>
 </div>
 
@@ -417,17 +412,18 @@ async function submitConfirm(){
 
 /* ---- Wizard B: priorities ---- */
 function prefillPriorities(){
-  var pr=S.priorities||{}; if($("p1"))$("p1").value=pr.p1||""; if($("p2"))$("p2").value=pr.p2||""; if($("p3"))$("p3").value=pr.p3||"";
+  var pr=S.priorities||{};
+  if($("p1"))$("p1").value=pr.p1||""; if($("p2"))$("p2").value=pr.p2||"";
+  if($("p3"))$("p3").value=pr.p3||""; if($("p4"))$("p4").value=pr.p4||"";
   var note=$("priNote"); if(note){
     if(pr.set_at){ var d=new Date(pr.set_at); note.innerHTML="These are your last saved priorities"+(isNaN(d)?"":(" (updated "+d.toLocaleDateString()+")"))+". Confirm they still hold, or update them, then continue."; }
   }
 }
-function addPri(t){ if($("p1")&&!$("p1").value){$("p1").value=t;} else if($("p2")&&!$("p2").value){$("p2").value=t;} else if($("p3")&&!$("p3").value){$("p3").value=t;} }
 async function submitPriorities(){
-  var p1=($("p1").value||"").trim(),p2=($("p2").value||"").trim(),p3=($("p3").value||"").trim();
-  if(!p1||!p2||!p3){ msg("mPri","Please share all three priorities.","bad"); return; }
+  var p1=($("p1").value||"").trim(),p2=($("p2").value||"").trim(),p3=($("p3").value||"").trim(),p4=(($("p4")&&$("p4").value)||"").trim();
+  if(!p1||!p2||!p3||!p4){ msg("mPri","Please fill all four priority areas.","bad"); return; }
   msg("mPri","Saving...","info");
-  var r=await api("councilSetPriorities",{ p1:p1,p2:p2,p3:p3 });
+  var r=await api("councilSetPriorities",{ p1:p1,p2:p2,p3:p3,p4:p4 });
   if(r.error){ msg("mPri",r.message||r.error,"bad"); return; }
   hide("wizPriorities"); if(!S.password_set){ show("wizPassword"); } else { startData(); }
 }

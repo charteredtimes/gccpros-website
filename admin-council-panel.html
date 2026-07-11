@@ -49,7 +49,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v9 · 2026-07-03 · full delete (revoke access + traces)</span></div>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v10 · 2026-07-03 · 4 priority themes</span></div>
   <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
 </header>
 
@@ -118,7 +118,7 @@
       </div>
       <div id="mMem" class="msg"></div>
       <div style="overflow-x:auto"><table id="mtbl"><thead><tr>
-        <th>Leader</th><th>Email</th><th>Sector</th><th>Top 3 priorities</th><th>Onboarded</th><th>Last login</th><th>Logins</th><th>Status</th><th>Actions</th>
+        <th>Leader</th><th>Email</th><th>Sector</th><th>Priorities (Tech / Growth / Financial / AI)</th><th>Onboarded</th><th>Last login</th><th>Logins</th><th>Status</th><th>Actions</th>
       </tr></thead><tbody></tbody></table></div>
       <p class="muted"><b>Suspend</b> = temporary block (can reinstate). <b>Revoke</b> = end membership. <b>Reinstate</b> = set back to approved. A suspended/revoked member cannot sign in or see any data.</p>
     </div>
@@ -390,7 +390,7 @@ async function loadMembers(){
     actions+=' <button class="btn sm" style="background:#6b7280;color:#fff" onclick="dm('+i+')">Delete</button>';
     h+='<tr><td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div></td>'
       +'<td>'+esc(x.email||'')+'</td><td>'+esc(x.industry_locked||'')+'</td>'
-      +'<td class="muted" style="max-width:260px;font-size:11.5px">'+[x.priority_1,x.priority_2,x.priority_3].filter(Boolean).map(function(pp,k){return (k+1)+'. '+esc(pp);}).join('<br>')+'</td>'
+      +'<td class="muted" style="max-width:280px;font-size:11.5px">'+[['Tech',x.priority_1],['Growth',x.priority_2],['Financial',x.priority_3],['AI/Opt',x.priority_4]].filter(function(pp){return pp[1];}).map(function(pp){return '<b>'+pp[0]+':</b> '+esc(pp[1]);}).join('<br>')+'</td>'
       +'<td>'+(x.onboarding_complete?'✓':'—')+'</td><td class="muted">'+esc(fmtDT(x.last_login))+'</td><td>'+(x.login_count||0)+'</td>'
       +'<td><span class="pill p-'+esc(x.status)+'">'+esc(x.status)+'</span></td>'
       +'<td><div class="row">'+actions+'</div></td></tr>';
