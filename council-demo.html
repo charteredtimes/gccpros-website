@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>GCCPROS Admin — Demo / Sign in as user</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
+  header{background:var(--dark);color:#fff;padding:14px 24px;font-family:Georgia,serif;font-size:19px;font-weight:bold}
+  header small{display:block;font-family:Calibri,sans-serif;font-size:12px;color:var(--ice);font-weight:normal;margin-top:2px}
+  .wrap{max-width:680px;margin:0 auto;padding:22px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 2px 8px rgba(40,60,110,.06);padding:20px 22px;margin-bottom:16px}
+  .card h2{font-family:Georgia,serif;font-size:17px;color:var(--navy);margin:0 0 10px}
+  label{display:block;font-size:12px;font-weight:bold;color:var(--grey);margin:12px 0 4px}
+  input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff}
+  button{cursor:pointer;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:bold;font-family:inherit}
+  .btn{background:var(--navy);color:#fff}.btn:hover{background:var(--steel)}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .muted{color:var(--grey);font-size:12px;margin:8px 0}
+  .warn{background:#FFF4DC;border:1px solid #E9D48A;color:#6b5312;border-radius:10px;padding:11px 14px;font-size:12.5px;margin:6px 0 14px}
+  .msg{font-size:13px;font-weight:bold;padding:9px 12px;border-radius:8px;margin-top:12px;display:none}
+  .msg.ok{background:#E4F4EA;color:var(--ok);display:block}.msg.bad{background:#FBE7E5;color:var(--bad);display:block}.msg.info{background:var(--pale);color:var(--navy);display:block}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<header>GCCPROS Admin · Demo / Sign in as user
+  <small>Enter the live console as any registered leader to test their experience</small>
+</header>
+<div class="wrap">
+  <div class="card">
+    <h2>Sign in as a registered user</h2>
+    <div class="warn"><b>This is a live demo.</b> You will enter the real console as the chosen leader. Anything you do — confirming their GCC, saving priorities, setting a password, searching — <b>writes to their real account</b>. For experiments, pick a test user you created for this purpose.</div>
+
+    <div id="gate">
+      <label>Admin key</label>
+      <div class="row"><input id="adminkey" type="password" placeholder="Your GCC_ADMIN_KEY" style="flex:1"><button class="btn" onclick="connect()">Connect</button></div>
+    </div>
+
+    <div id="picker" class="hide">
+      <label>Choose a registered user</label>
+      <select id="userSel"><option value="">Loading members…</option></select>
+      <div class="muted">…or type any registered email (e.g. an applicant not yet approved)</div>
+      <input id="userEmail" placeholder="user@company.com">
+      <div class="row" style="margin-top:14px">
+        <button class="btn gold" onclick="enterAs()">Enter console as this user &rarr;</button>
+        <button class="btn" style="background:#6b7280" onclick="reconnect()">Change admin key</button>
+      </div>
+    </div>
+    <div id="msg" class="msg"></div>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+var SUPABASE_URL      = "https://fufnvnvufmrhrzhcoeil.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
+var API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api";
+/* ================== */
+
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var KEY = "";
+function $(id){ return document.getElementById(id); }
+function msg(t,c){ var e=$("msg"); e.textContent=t; e.className="msg "+(c||"info"); }
+
+async function adminApi(action, params){
+  try{
+    var res=await fetch(API_BASE,{ method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-key":KEY },
+      body:JSON.stringify(Object.assign({action:action}, params||{})) });
+    return await res.json();
+  }catch(err){ return { error:"network", message:(err&&err.message)?err.message:String(err) }; }
+}
+
+async function connect(){
+  KEY=($("adminkey").value||"").trim();
+  if(KEY.length<20){ msg("Enter your admin key (same one the admin panel uses).","bad"); return; }
+  try{ sessionStorage.setItem("GCC_ADMIN_KEY", KEY); }catch(_){}
+  msg("Loading members…","info");
+  var r=await adminApi("adminCouncilMembers",{});
+  if(r.error){ msg("Could not connect: "+(r.message||r.error),"bad"); return; }
+  var rows=r.rows||[];
+  var opts='<option value="">— select a member —</option>'+rows.map(function(x){
+    var lbl=(x.full_name||"(no name)")+" — "+x.email+" ["+(x.status||"")+"]";
+    return '<option value="'+x.email+'">'+lbl.replace(/</g,"&lt;")+'</option>';
+  }).join("");
+  $("userSel").innerHTML=opts;
+  $("gate").classList.add("hide"); $("picker").classList.remove("hide");
+  msg(rows.length+" members loaded. Pick one, or type an email, then enter.","ok");
+}
+function reconnect(){ $("picker").classList.add("hide"); $("gate").classList.remove("hide"); msg("",""); $("msg").className="msg"; }
+
+async function enterAs(){
+  var email=(($("userEmail").value||"").trim() || ($("userSel").value||"").trim()).toLowerCase();
+  if(!email){ msg("Pick a member or type an email first.","bad"); return; }
+  msg("Preparing a demo session for "+email+"…","info");
+  var r=await adminApi("adminCouncilImpersonate",{ email:email });
+  if(r.error){
+    var hint = r.error==="unknown_action" ? " (deploy the v7.9.37 edge first)" : (r.error==="not_registered" ? " — this email isn't registered." : "");
+    msg("Could not start demo: "+(r.message||r.error)+hint,"bad"); return;
+  }
+  try{
+    try{ await sb.auth.signOut(); }catch(_){}
+    var res=await sb.auth.verifyOtp({ token_hash:r.token_hash, type:"magiclink" });
+    if(res && res.error){ msg("Could not open session: "+res.error.message,"bad"); return; }
+    try{ sessionStorage.setItem("GCC_DEMO", email); }catch(_){}
+    msg("Signed in as "+email+" — opening the console…","ok");
+    location.href="council-console.html?demo=1";
+  }catch(err){ msg("Could not open session: "+((err&&err.message)?err.message:err),"bad"); }
+}
+
+/* Prefill admin key if the admin panel already stored it this session */
+try{ var k=sessionStorage.getItem("GCC_ADMIN_KEY"); if(k){ $("adminkey").value=k; } }catch(_){}
+</script>
+</body>
+</html>

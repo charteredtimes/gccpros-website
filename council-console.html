@@ -78,6 +78,10 @@
 </head>
 <body oncontextmenu="return false">
 <div id="wm" class="wm"></div>
+<div id="demoBar" class="hide" style="background:#8a5a12;color:#fff;padding:8px 16px;font-size:13px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <span id="demoBarText">DEMO MODE</span>
+  <button onclick="exitDemo()" style="background:#fff;color:#8a5a12;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:bold;cursor:pointer">Exit demo</button>
+</div>
 <header>
   <div class="brand">GCC Leaders' Community <span class="gold">&middot;</span> Benchmark Console
     <small>By leaders, for leaders &middot; research &amp; benchmarking &middot; no export</small>
@@ -216,7 +220,7 @@
         <button class="btn alt" onclick="nextPage()">Next &rsaquo;</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v7 (2026-07-03) · 4 priority themes</div>
+    <div class="muted" style="text-align:center">GCC Leaders' Community &middot; industry-locked research console &middot; build council-v8 (2026-07-03) · 4 priorities + demo mode</div>
   </div>
 </div>
 
@@ -252,6 +256,19 @@ async function api(action, params){
 }
 
 var RECOVERY=false;
+/* Demo mode: admin launched this console "as" a user from council-demo.html */
+function demoEmail(){ try{ return sessionStorage.getItem("GCC_DEMO")||""; }catch(_){ return ""; } }
+function initDemoBar(){
+  var em=demoEmail(); if(!em) return;
+  var bar=$("demoBar"), t=$("demoBarText");
+  if(t) t.textContent="DEMO — signed in as "+em+" (admin). Anything you do writes to this user's real account.";
+  if(bar) bar.classList.remove("hide");
+}
+function exitDemo(){
+  try{ sessionStorage.removeItem("GCC_DEMO"); }catch(_){}
+  try{ sb.auth.signOut().then(function(){ location.href="council-demo.html"; }); }
+  catch(_){ location.href="council-demo.html"; }
+}
 function isRecoveryUrl(){
   try{ var qp=new URLSearchParams(location.search); if(qp.get("recovery")==="1") return true;
        return (location.hash||"").indexOf("type=recovery")>=0; }catch(_){ return false; }
@@ -260,6 +277,7 @@ function boot(){
   try{
     if(typeof supabase==="undefined" || !supabase.createClient){ msg("mGate","Could not load the sign-in library. Check your connection and refresh.","bad"); showGate(); return; }
     sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    initDemoBar();
     RECOVERY=isRecoveryUrl();
     sb.auth.onAuthStateChange(function(evt){ if(evt==="PASSWORD_RECOVERY"){ RECOVERY=true; showRecovery(); } });
     sb.auth.getSession().then(function(r){
