@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<!-- GCCPROs Newsroom · build: 2026-06-18-v1-launch -->
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1K276GXQK6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1K276GXQK6');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsroom | GCCPROs, In the News</title>
+<meta name="description" content="GCCPROs in the news, press coverage, official communications, and community updates from India's GCC industry network.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        #0A1628;
+    --ink-soft:   #142540;
+    --navy:       #14213D;
+    --navy-soft:  #1F3864;
+    --gold:       #E07A1F;
+    --gold-deep:  #A24E08;
+    --gold-soft:  #FFE2C2;
+    --gold-glow:  rgba(224,122,31,0.18);
+    --cream:      #FAF6F0;
+    --paper:      #FFFFFF;
+    --muted:      #8DA1BA;
+    --muted-2:    #B7C5D8;
+    --line:       rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'DM Sans','Inter',system-ui,sans-serif;
+    color:#E6EEF8;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(20,58,107,.55), transparent 60%),
+      linear-gradient(180deg, #0A1628 0%, #0E1F3A 55%, #143a6b 200%);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ====== NAV ====== */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,22,40,0.92);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+  }
+  .nav-brand{
+    display:flex; align-items:center; gap:9px;
+    font-family:'Playfair Display',serif; font-weight:700;
+    color:#fff; font-size:19px; letter-spacing:0.6px;
+  }
+  .nav-brand-mark{
+    width:28px; height:28px; border-radius:50%;
+    background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:15px;
+  }
+  .nav-links{ display:flex; gap:26px; align-items:center; }
+  .nav-links a{
+    font-size:14px; font-weight:500; color:#B7C5D8;
+    transition:color .2s ease;
+  }
+  .nav-links a:hover, .nav-links a.active{ color:var(--gold); }
+  .nav-mobile-btn{
+    display:none; background:none; border:none; color:#fff; cursor:pointer;
+    padding:6px;
+  }
+  @media (max-width:820px){
+    .nav-links{ display:none; position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; gap:0; background:rgba(10,22,40,0.98);
+      border-bottom:1px solid var(--line); padding:12px 0; }
+    .nav-links.open{ display:flex; }
+    .nav-links a{ padding:12px 28px; }
+    .nav-mobile-btn{ display:block; }
+  }
+
+  /* ====== HERO ====== */
+  .hero{
+    position:relative; overflow:hidden;
+    padding:clamp(60px,8vw,100px) 0 clamp(46px,6vw,72px);
+    text-align:center;
+  }
+  .hero::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(500px 260px at 15% 30%, rgba(224,122,31,0.10) 0%, transparent 55%),
+      radial-gradient(600px 320px at 85% 75%, rgba(127,194,234,0.10) 0%, transparent 55%);
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    opacity:0.5;
+  }
+  .hero-wrap{
+    max-width:900px; margin:0 auto; padding:0 clamp(20px,4vw,40px);
+    position:relative; z-index:1;
+  }
+  .hero-kicker{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:7px 15px; border-radius:999px;
+    background:rgba(224,122,31,0.10);
+    border:1px solid rgba(224,122,31,0.42);
+    color:var(--gold);
+    font-size:11px; letter-spacing:2.4px; font-weight:700;
+    text-transform:uppercase;
+    margin-bottom:22px;
+  }
+  .hero-kicker::before{
+    content:""; width:7px; height:7px; border-radius:50%; background:var(--gold);
+  }
+  .hero-title{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:900; color:#fff;
+    font-size:clamp(38px,7vw,72px);
+    line-height:1.02;
+    letter-spacing:-1.4px;
+    margin-bottom:16px;
+  }
+  .hero-title em{
+    font-style:italic;
+    background:linear-gradient(180deg,#F09141 0%,#E07A1F 45%,#A24E08 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .hero-sub{
+    font-size:clamp(15px,1.8vw,18px);
+    color:var(--muted-2);
+    max-width:640px; margin:0 auto 26px;
+    line-height:1.65;
+  }
+  .hero-stats{
+    display:inline-flex; flex-wrap:wrap; gap:10px 14px;
+    justify-content:center;
+  }
+  .hero-stat{
+    padding:8px 15px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:999px;
+    font-size:12.5px; font-weight:600; color:#E6EEF8;
+    letter-spacing:0.3px;
+  }
+  .hero-stat strong{ color:var(--gold); font-weight:700; }
+
+  /* ====== FILTER STRIP ====== */
+  .filters{
+    max-width:1180px; margin:0 auto; padding:20px 28px 8px;
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+  }
+  .filter-btn{
+    padding:7px 15px;
+    font-family:inherit; font-size:12px; font-weight:600;
+    letter-spacing:0.3px;
+    color:var(--muted-2);
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .25s ease;
+  }
+  .filter-btn:hover{
+    color:#fff; border-color:rgba(224,122,31,0.5);
+  }
+  .filter-btn.active{
+    color:var(--ink); background:var(--gold);
+    border-color:var(--gold);
+  }
+
+  /* ====== COVERAGE GRID ====== */
+  /* Desktop: 4 in one row · Tablet: 2 x 2 · Phone: 1 per row */
+  .coverage{
+    max-width:1240px; margin:0 auto;
+    padding:20px 28px 40px;
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:18px;
+  }
+  @media (max-width:1100px){
+    .coverage{ grid-template-columns:repeat(2, 1fr); gap:20px; }
+  }
+  @media (max-width:640px){
+    .coverage{ grid-template-columns:1fr; gap:16px; padding:16px 20px 32px; }
+  }
+  .news-card{
+    background:linear-gradient(180deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.02) 100%);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    position:relative;
+    transition:transform .35s cubic-bezier(.2,.7,.3,1), border-color .3s ease, box-shadow .35s ease;
+  }
+  .news-card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg,var(--gold),var(--gold-deep));
+    opacity:0.7;
+    transition:opacity .3s ease, width .3s ease;
+  }
+  .news-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(224,122,31,0.35);
+    box-shadow:0 18px 44px rgba(10,22,40,0.35);
+  }
+  .news-card:hover::before{ opacity:1; width:4px; }
+
+  .news-thumb{
+    aspect-ratio: 16/9;
+    background:linear-gradient(135deg,#14213D 0%,#0A1628 100%);
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .news-thumb .pub-name{
+    font-family:'Playfair Display',serif;
+    font-size:26px; font-weight:800; color:#fff;
+    letter-spacing:-0.5px;
+    text-shadow:0 2px 20px rgba(0,0,0,0.7);
+    position:relative; z-index:2;
+  }
+  .news-thumb.thumb-yourstory{
+    background:linear-gradient(135deg,#B01F27 0%,#8B1A20 100%);
+  }
+  .news-thumb.thumb-upgov{
+    background:linear-gradient(135deg,#8B4513 0%,#5A2D0A 100%);
+  }
+  .news-thumb.thumb-jagran{
+    background:linear-gradient(135deg,#003366 0%,#001F42 100%);
+  }
+  .news-thumb.thumb-linkedin{
+    background:linear-gradient(135deg,#0A66C2 0%,#004182 100%);
+  }
+  /* Background source image behind the pub name (fetched from source CDN) */
+  .news-thumb-bg{
+    position:absolute; inset:0; z-index:0;
+    background-size:cover; background-position:center;
+    filter:brightness(0.45) saturate(1.1);
+    transition:filter .4s ease, transform .5s ease;
+  }
+  .news-card:hover .news-thumb-bg{
+    filter:brightness(0.6) saturate(1.15);
+    transform:scale(1.04);
+  }
+  .news-thumb-overlay{
+    position:absolute; bottom:12px; left:14px; z-index:2;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 10px;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    border-radius:999px;
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    font-weight:700; color:#fff;
+  }
+  .news-thumb-overlay::before{
+    content:""; width:6px; height:6px; border-radius:50%; background:var(--gold);
+  }
+  /* PDF preview iframe treatment (UP Government) */
+  .news-thumb-pdf{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%;
+    border:none; pointer-events:none;
+    background:#fff;
+    transform:scale(1.02);
+  }
+  .news-thumb-pdf-veil{
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, rgba(10,22,40,0) 0%, rgba(10,22,40,0.75) 60%, rgba(10,22,40,0.92) 100%);
+    pointer-events:none;
+  }
+  /* Newspaper mockup styling (Jagran) */
+  .news-thumb-paper{
+    position:absolute; inset:0; z-index:0;
+    background:#F6F1E7;
+    padding:14px 16px 0;
+    overflow:hidden;
+  }
+  .news-thumb-paper .paper-mast{
+    font-family:'Playfair Display',serif;
+    font-size:15px; font-weight:900; color:#0A1628;
+    letter-spacing:-0.3px;
+    padding-bottom:5px;
+    border-bottom:2px solid #0A1628;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .news-thumb-paper .paper-mast small{
+    font-family:'DM Sans',sans-serif; font-size:7px; font-weight:600;
+    color:#8B6914; letter-spacing:1.5px; text-transform:uppercase;
+  }
+  .news-thumb-paper .paper-cols{
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:8px; margin-top:8px;
+  }
+  .news-thumb-paper .paper-col{
+    display:flex; flex-direction:column; gap:3px;
+  }
+  .news-thumb-paper .paper-h{
+    height:6px; background:#0A1628; border-radius:1px; opacity:0.85;
+    width:90%;
+  }
+  .news-thumb-paper .paper-h.short{ width:60%; }
+  .news-thumb-paper .paper-l{
+    height:2px; background:#0A1628; border-radius:1px; opacity:0.35;
+  }
+  .news-thumb-paper .paper-l.w1{ width:96%; }
+  .news-thumb-paper .paper-l.w2{ width:88%; }
+  .news-thumb-paper .paper-l.w3{ width:72%; }
+  .news-thumb-paper-veil{
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, rgba(10,22,40,0) 45%, rgba(10,22,40,0.88) 100%);
+    pointer-events:none;
+  }
+  /* LinkedIn card styling */
+  .news-thumb-linkedin{
+    position:absolute; inset:0; z-index:0;
+    background:linear-gradient(135deg,#0A66C2 0%,#004182 100%);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .news-thumb-linkedin::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.10) 0%, transparent 40%);
+  }
+  .news-thumb-linkedin .li-mark{
+    width:64px; height:64px; border-radius:12px;
+    background:#fff; color:#0A66C2;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'DM Sans',sans-serif; font-weight:900; font-size:34px;
+    box-shadow:0 8px 26px rgba(0,0,0,0.28);
+    position:relative; z-index:1;
+  }
+
+  .news-body{
+    padding:22px 22px 20px;
+    flex:1; display:flex; flex-direction:column; gap:12px;
+  }
+  .news-meta{
+    display:flex; align-items:center; gap:10px;
+    font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase;
+    color:var(--muted); font-weight:700;
+  }
+  .news-meta-dot{
+    width:3px; height:3px; border-radius:50%; background:var(--muted);
+  }
+  .news-pub{ color:var(--gold); }
+  .news-title{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:19px; font-weight:800; color:#fff;
+    line-height:1.25; letter-spacing:-0.2px;
+  }
+  .news-excerpt{
+    font-size:13.5px; line-height:1.6; color:var(--muted-2);
+    flex:1;
+  }
+  .news-cta{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:700; color:var(--gold);
+    padding-top:4px;
+    letter-spacing:0.3px;
+    transition:gap .25s ease, color .25s ease;
+  }
+  .news-cta:hover{ color:#F09141; gap:11px; }
+  .news-cta svg{ transition:transform .25s ease; }
+  .news-cta:hover svg{ transform:translateX(3px); }
+
+  /* ====== FEATURE / PIN ROW ====== */
+  .feature-row{
+    max-width:1180px; margin:0 auto; padding:0 28px 12px;
+  }
+  .feature-title{
+    font-size:11px; letter-spacing:2.6px; text-transform:uppercase;
+    color:var(--muted); font-weight:700;
+    padding-left:9px; border-left:3px solid var(--gold);
+    margin-bottom:14px;
+  }
+
+  /* ====== PRESS CONTACT STRIP ====== */
+  .press{
+    max-width:1180px; margin:20px auto 0; padding:0 28px 60px;
+  }
+  .press-card{
+    background:linear-gradient(135deg,rgba(224,122,31,0.10) 0%,rgba(162,78,8,0.05) 100%);
+    border:1px solid rgba(224,122,31,0.28);
+    border-radius:14px;
+    padding:28px 32px;
+    display:flex; justify-content:space-between; align-items:center; gap:24px;
+    flex-wrap:wrap;
+  }
+  .press-title{
+    font-family:'Playfair Display',serif;
+    font-size:22px; font-weight:800; color:#fff;
+    margin-bottom:6px;
+  }
+  .press-sub{
+    font-size:13.5px; color:var(--muted-2); line-height:1.55;
+    max-width:520px;
+  }
+  .press-cta{
+    display:inline-flex; align-items:center; gap:9px;
+    background:var(--gold); color:var(--ink);
+    padding:13px 26px; border-radius:999px;
+    font-size:14px; font-weight:700; letter-spacing:0.3px;
+    box-shadow:0 8px 22px rgba(224,122,31,0.32);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .press-cta:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px rgba(224,122,31,0.44);
+  }
+
+  /* ====== FOOTER ====== */
+  .foot{
+    max-width:1180px; margin:0 auto;
+    padding:36px 28px 40px;
+    text-align:center;
+    font-size:12px; color:var(--muted);
+    border-top:1px solid var(--line);
+  }
+  .foot-links{
+    display:flex; justify-content:center; gap:20px; flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .foot-links a{
+    color:var(--muted-2); font-size:12px;
+    transition:color .2s ease;
+  }
+  .foot-links a:hover{ color:var(--gold); }
+
+  /* ====== Tighten card sizing for 4-across desktop layout ====== */
+  @media (min-width:1101px){
+    .news-title{ font-size:16px; line-height:1.3; }
+    .news-excerpt{ font-size:12.5px; line-height:1.55; }
+    .news-body{ padding:18px 18px 16px; gap:9px; }
+    .news-thumb .pub-name{ font-size:22px; }
+    .news-thumb-overlay{ font-size:9px; padding:4px 9px; letter-spacing:1.3px; }
+    .news-meta{ font-size:9.5px; letter-spacing:1.5px; }
+    .news-cta{ font-size:12px; }
+  }
+  /* Tablet — 2 per row */
+  @media (max-width:1100px) and (min-width:641px){
+    .news-title{ font-size:18px; line-height:1.28; }
+    .news-excerpt{ font-size:13px; }
+    .news-thumb .pub-name{ font-size:26px; }
+  }
+  /* Phone refinements — Android + iOS safe */
+  @media (max-width:640px){
+    .nav-inner{ padding:14px 20px; }
+    .nav-brand{ font-size:17px; }
+    .hero{ padding:52px 0 40px; }
+    .hero-title{ font-size:34px; letter-spacing:-1px; }
+    .hero-sub{ font-size:14.5px; }
+    .hero-stat{ font-size:11.5px; padding:7px 12px; }
+    .filters{ padding:16px 16px 4px; gap:6px; }
+    .filter-btn{ font-size:11.5px; padding:6px 12px; }
+    .feature-row{ padding:0 20px 10px; }
+    .feature-title{ font-size:10px; letter-spacing:2.2px; }
+    .news-body{ padding:18px 20px 18px; }
+    .news-title{ font-size:17px; }
+    .news-excerpt{ font-size:13px; }
+    .news-thumb .pub-name{ font-size:22px; }
+    .press{ padding:0 20px 44px; }
+    .press-card{ padding:22px; text-align:center; }
+    .press-title{ font-size:19px; }
+    .press-cta{ margin:0 auto; }
+    .foot{ padding:28px 20px 32px; }
+  }
+  /* Very small screens (iPhone SE etc) */
+  @media (max-width:380px){
+    .hero-title{ font-size:30px; }
+    .hero-stats{ gap:6px 8px; }
+    .hero-stat{ font-size:10.5px; padding:6px 10px; }
+    .news-title{ font-size:16px; }
+    .news-thumb .pub-name{ font-size:20px; }
+  }
+  /* iOS Safari safe-area for bottom notch on newer iPhones */
+  @supports (padding: max(0px)){
+    .foot{ padding-bottom:max(32px, env(safe-area-inset-bottom)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand-mark">G</span>
+      GCCPROs
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="insights-events.html">Insights &amp; Events</a>
+      <a href="industry-council.html">Industry Council</a>
+      <a href="database-pro.html">GCC Database</a>
+      <a href="opportunities.html">GCC Opportunities</a>
+      <a href="newsroom.html" class="active">Newsroom</a>
+    </div>
+    <button class="nav-mobile-btn" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero-wrap">
+    <span class="hero-kicker">Newsroom</span>
+    <h1 class="hero-title">GCCPROs <em>in the news</em></h1>
+    <p class="hero-sub">Press coverage, official communications, and public conversations featuring GCCPROs and the community we build for India's Global Capability Centres.</p>
+    <div class="hero-stats">
+      <span class="hero-stat"><strong>4</strong> recent features</span>
+      <span class="hero-stat">National + State press</span>
+      <span class="hero-stat">Government communications</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FILTER STRIP ==================== -->
+<div class="filters" role="tablist" aria-label="Filter coverage by type">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="press">Press</button>
+  <button class="filter-btn" data-filter="government">Government</button>
+  <button class="filter-btn" data-filter="community">Community</button>
+</div>
+
+<!-- ==================== FEATURED / RECENT ==================== -->
+<div class="feature-row">
+  <div class="feature-title">Recent Coverage</div>
+</div>
+
+<!-- ==================== COVERAGE GRID ==================== -->
+<div class="coverage" id="coverageGrid">
+
+  <!-- Card 1: YourStory -->
+  <article class="news-card" data-type="press">
+    <div class="news-thumb thumb-yourstory">
+      <div class="news-thumb-bg" style="background-image:url('https://images.yourstory.com/cs/2/21ccd920843c11ec88170b5512a0f9d5/Kyndryl-FeatureImage1-1773136974826.png');"></div>
+      <span class="pub-name">YourStory</span>
+      <span class="news-thumb-overlay">Feature Article</span>
+    </div>
+    <div class="news-body">
+      <div class="news-meta">
+        <span class="news-pub">YourStory</span>
+        <span class="news-meta-dot"></span>
+        <span>11 March 2026</span>
+      </div>
+      <h2 class="news-title">From pilots to production: What it really takes to scale AI in GCCs</h2>
+      <p class="news-excerpt">GCCPROs Founder Shammi Prabhakar joined leaders from NielsenIQ, Vertiv, XPO, Kimberly-Clark, Ecolab, Sulzer, Kyndryl, Quess Corp and Allvue Systems at a YourStory roundtable in Pune. The closed-door session unpacked what is actually standing between AI pilots and enterprise-scale deployment in India's GCCs, infrastructure gaps, governance, business ownership, and the widening talent chasm.</p>
+      <a class="news-cta" href="https://yourstory.com/2026/03/pilots-to-production-what-really-takes-scale-ai-in-gccs" target="_blank" rel="noopener noreferrer">
+        Read the coverage
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- Card 2: UP Invest / State Government -->
+  <article class="news-card" data-type="government">
+    <div class="news-thumb thumb-upgov">
+      <iframe class="news-thumb-pdf" src="https://invest.up.gov.in/wp-content/uploads/2026/07/1-%E0%A4%B8%E0%A5%8D%E0%A4%9F%E0%A5%87%E0%A4%9F_090726.pdf#toolbar=0&navpanes=0&view=FitH&page=1" title="UP State Communication PDF preview" loading="lazy"></iframe>
+      <div class="news-thumb-pdf-veil"></div>
+      <span class="pub-name">Invest UP</span>
+      <span class="news-thumb-overlay">Government Communication</span>
+    </div>
+    <div class="news-body">
+      <div class="news-meta">
+        <span class="news-pub">Government of Uttar Pradesh</span>
+        <span class="news-meta-dot"></span>
+        <span>9 July 2026</span>
+      </div>
+      <h2 class="news-title">Official State Communication on the GCC agenda</h2>
+      <p class="news-excerpt">Official document released by the Government of Uttar Pradesh, published on the Invest UP portal, referencing GCCPROs and the state's engagement with the Global Capability Centres community. Part of the broader UP transformation agenda under the leadership of the CM's office and the State Transformation Commission.</p>
+      <a class="news-cta" href="https://invest.up.gov.in/wp-content/uploads/2026/07/1-%E0%A4%B8%E0%A5%8D%E0%A4%9F%E0%A5%87%E0%A4%9F_090726.pdf" target="_blank" rel="noopener noreferrer">
+        Read the document
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- Card 3: Dainik Jagran -->
+  <article class="news-card" data-type="press">
+    <div class="news-thumb thumb-jagran">
+      <div class="news-thumb-paper">
+        <div class="paper-mast">
+          दैनिक जागरण
+          <small>Lucknow &middot; 09 July 2026 &middot; Page 11</small>
+        </div>
+        <div class="paper-cols">
+          <div class="paper-col">
+            <div class="paper-h"></div>
+            <div class="paper-l w1"></div>
+            <div class="paper-l w2"></div>
+            <div class="paper-l w3"></div>
+            <div class="paper-l w1"></div>
+            <div class="paper-l w2"></div>
+          </div>
+          <div class="paper-col">
+            <div class="paper-h short"></div>
+            <div class="paper-l w2"></div>
+            <div class="paper-l w1"></div>
+            <div class="paper-l w3"></div>
+            <div class="paper-l w2"></div>
+            <div class="paper-l w1"></div>
+          </div>
+          <div class="paper-col">
+            <div class="paper-h"></div>
+            <div class="paper-l w1"></div>
+            <div class="paper-l w3"></div>
+            <div class="paper-l w2"></div>
+            <div class="paper-l w1"></div>
+            <div class="paper-l w2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="news-thumb-paper-veil"></div>
+      <span class="pub-name">Dainik Jagran</span>
+      <span class="news-thumb-overlay">Newspaper Feature</span>
+    </div>
+    <div class="news-body">
+      <div class="news-meta">
+        <span class="news-pub">Dainik Jagran, Lucknow Edition</span>
+        <span class="news-meta-dot"></span>
+        <span>9 July 2026</span>
+      </div>
+      <h2 class="news-title">GCCPROs featured in Dainik Jagran's Lucknow edition</h2>
+      <p class="news-excerpt">Coverage in one of India's largest Hindi-language dailies. Featured on Page 11 of the Lucknow edition, the piece situates GCCPROs within the state's active push to attract Global Capability Centre investment to Uttar Pradesh's emerging tech corridors.</p>
+      <a class="news-cta" href="https://epaper.jagran.com/epaper/image-09-Jul-2026-edition-lucknow-page_11-4635-111-11.html" target="_blank" rel="noopener noreferrer">
+        Read the coverage
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- Card 4: LinkedIn Post -->
+  <article class="news-card" data-type="community">
+    <div class="news-thumb thumb-linkedin">
+      <div class="news-thumb-bg" style="background-image:url('GCC%20Leaders_Pune%20Event/Devendra%20Fadnavis.jpg.jpeg');background-position:center 20%;"></div>
+      <span class="pub-name">LinkedIn</span>
+      <span class="news-thumb-overlay">Community Post</span>
+    </div>
+    <div class="news-body">
+      <div class="news-meta">
+        <span class="news-pub">LinkedIn</span>
+        <span class="news-meta-dot"></span>
+        <span>2026</span>
+      </div>
+      <h2 class="news-title">GCCPROs Founder meets Hon'ble Chief Minister of Maharashtra</h2>
+      <p class="news-excerpt">GCCPROs Founder Shammi Prabhakar Singh met Hon'ble Shri Devendra Fadnavis, Chief Minister of Maharashtra, to discuss the state's investment strategy for the Global Capability Centres ecosystem and the road ahead for Pune as a national GCC hub. The meeting resulted in the Government of Maharashtra extending patronage to the GCC Leadership Summit 2026.</p>
+      <a class="news-cta" href="https://www.linkedin.com/feed/update/urn:li:activity:7467467713515327489/" target="_blank" rel="noopener noreferrer">
+        View the post
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </article>
+
+</div>
+
+<!-- ==================== PRESS CONTACT ==================== -->
+<div class="press">
+  <div class="press-card">
+    <div>
+      <div class="press-title">Media &amp; press enquiries</div>
+      <div class="press-sub">Journalists, analysts, and researchers, for interviews, quotes, data on India's GCC industry, or an on-record view from GCCPROs Founder Shammi Prabhakar, write in and we will respond within one working day.</div>
+    </div>
+    <a class="press-cta" href="mailto:admin@gccpros.com?subject=Media%20enquiry%20-%20GCCPROs">
+      admin@gccpros.com
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="foot">
+  <div class="foot-links">
+    <a href="index.html">Home</a>
+    <a href="insights-events.html">Insights &amp; Events</a>
+    <a href="industry-council.html">Industry Council</a>
+    <a href="database-pro.html">GCC Database</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="mailto:admin@gccpros.com">Contact</a>
+  </div>
+  <div>GCCPROs, Chartered Times LLP, admin@gccpros.com, www.gccpros.com</div>
+</footer>
+
+<!-- ==================== FILTER SCRIPT ==================== -->
+<script>
+  (function(){
+    var btns = document.querySelectorAll('.filter-btn');
+    var cards = document.querySelectorAll('#coverageGrid .news-card');
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var filter = btn.getAttribute('data-filter');
+        btns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        cards.forEach(function(card){
+          if (filter === 'all' || card.getAttribute('data-type') === filter){
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
