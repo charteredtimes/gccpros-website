@@ -362,6 +362,53 @@ button{
   #customFilterRows{grid-template-columns:1fr}
 }
 
+
+/* ===== v6.10 My usage — fix overlap + cosmetic polish ===== */
+.statgrid{
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+  margin-top:2px;
+}
+.stat{
+  padding:16px 18px 14px;
+  min-width:0;
+  overflow:hidden;
+  position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:82px;
+}
+.stat::before{
+  content:"";position:absolute;left:14px;right:14px;top:0;height:2px;
+  background:linear-gradient(90deg,var(--steel) 0%, var(--navy) 55%, var(--gold) 100%);
+  opacity:.42;border-radius:0 0 2px 2px;
+}
+.stat .n{
+  font-size:clamp(17px,2.1vw,22px);
+  line-height:1.15;
+  word-break:break-word;
+  overflow-wrap:break-word;
+  hyphens:none;
+  letter-spacing:.1px;
+  color:var(--navy);
+  margin-bottom:4px;
+}
+.stat .l{
+  font-size:11.5px;
+  color:#5B6472;
+  letter-spacing:.25px;
+  line-height:1.35;
+  margin-top:2px;
+}
+/* Slightly compress ENTERPRISE-style all-caps tier name so it fits on one line */
+.stat .n.tier{
+  font-size:clamp(15px,1.6vw,18px);
+  font-family:Calibri,Segoe UI,Arial,sans-serif;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  font-weight:800;
+  color:var(--navy);
+}
+
 </style>
 </head>
 <body>
@@ -515,7 +562,7 @@ button{
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.9 (sidebar layout · canonical HQ · custom filters · usage-fixed)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.10 (sidebar layout · usage tile polish)</div>
     </main>
     </div>
   </div>
@@ -771,7 +818,7 @@ function loadUsage(silent){
                  : (quota ? num(Math.max(0, quota-used)) : '—');
     var rate    = (r.rate_limit_per_min!=null) ? (r.rate_limit_per_min+'/min') : '—';
     body.innerHTML =
-      stat((r.tier||'').toUpperCase() || '—','Your access tier')+
+      stat2((r.tier||'').toUpperCase() || '—','Your access tier','tier')+
       stat(seats,'Seats used (plan)')+
       stat(concur,'Users active now (max)')+
       stat(num(used),'Records pulled this month')+
@@ -785,6 +832,7 @@ function loadUsage(silent){
   });
 }
 function stat(n,l){return '<div class="stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
+function stat2(n,l,cls){return '<div class="stat"><div class="n '+esc(cls||'')+'">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
 function loadStats(){
   badge('Loading stats…','idle');
   var p=qs(); ['gcc_city','domain','headcount_band','confidence','q'].forEach(function(k){p.delete(k);});
