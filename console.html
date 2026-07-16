@@ -173,8 +173,8 @@
         <span class="chip" onclick="chipSet({headcount_band:'1001-5000'})">1,001–5,000</span>
         <span class="chip" onclick="chipSet({headcount_band:'5000+'})">5,000+</span>
         <span class="chips-label">Parent HQ</span>
-        <span class="chip" onclick="chipSet({hq_country:'USA'})">US</span>
-        <span class="chip" onclick="chipSet({hq_country:'UK'})">UK</span>
+        <span class="chip" onclick="chipSet({hq_country:'United States'})">United States</span>
+        <span class="chip" onclick="chipSet({hq_country:'United Kingdom'})">United Kingdom</span>
         <span class="chip" onclick="chipSet({hq_country:'Germany'})">Germany</span>
         <span class="chip" onclick="chipSet({hq_country:'Japan'})">Japan</span>
         <span class="chip" onclick="chipSet({hq_country:'France'})">France</span>
@@ -183,17 +183,24 @@
         <span class="chip" onclick="chipSet({hq_country:'Sweden'})">Sweden</span>
         <span class="chip" onclick="chipSet({hq_country:'Israel'})">Israel</span>
         <span class="chip" onclick="chipSet({hq_country:'Singapore'})">Singapore</span>
-        <span class="chip" onclick="chipSet({hq_country:'UAE'})">UAE</span>
+        <span class="chip" onclick="chipSet({hq_country:'United Arab Emirates'})">United Arab Emirates</span>
         <span class="chip" onclick="chipSet({hq_country:'Canada'})">Canada</span>
         <span class="chips-label">Confidence</span>
         <span class="chip" onclick="chipSet({confidence:'High'})">High</span>
         <span class="chip" onclick="chipSet({confidence:'Medium'})">Medium</span>
       </div>
+      <div id="customFilters" style="border:1px dashed rgba(11,26,51,.12);border-radius:10px;padding:12px 14px;margin:0 0 14px;background:rgba(112,181,249,.05)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#5A6B82">Custom filters</span>
+          <span class="muted" style="font-size:12px">Pick any header and enter a value. Empty rows are ignored.</span>
+        </div>
+        <div id="customFilterRows" style="display:grid;grid-template-columns:1fr 1fr;gap:8px 10px"></div>
+      </div>
         <div><label>Country</label><input id="f_country" value="India"></div>
         <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
         <div><label>Industry contains</label><input id="f_industry" placeholder="BFSI, Retail…"></div>
         <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI…"></div>
-        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="USA, Germany…"></div>
+        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="United States, Germany…"></div>
         <div><label>Headcount band</label><input id="f_headcount_band" list="hcbands" placeholder="any">
           <datalist id="hcbands"><option value="1-100"><option value="101-500"><option value="501-1000"><option value="1001-5000"><option value="5000+"></datalist></div>
         <div><label>Confidence</label><select id="f_confidence"><option value="">Any</option><option>High</option><option>Medium</option></select></div>
@@ -226,7 +233,7 @@
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.6 SSO (sector filters)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.7 (canonical HQ names + 3 custom filters)</div>
   </div>
 </div>
 
@@ -305,10 +312,64 @@ function qs(){
   var ids=['country','gcc_city','industry','domain','hq_country','headcount_band','confidence','q'];
   var p=new URLSearchParams();
   ids.forEach(function(k){var el=$('f_'+k); var v=el?el.value:''; if(v&&v.trim())p.set(k,v.trim());});
+  /* v6.7: additive custom-filter rows (empty rows send nothing) */
+  try {
+    var rows=document.querySelectorAll('#customFilterRows .cf-row');
+    rows.forEach(function(row){
+      var f=row.querySelector('.cf-field');
+      var v=row.querySelector('.cf-value');
+      if(!f||!v) return;
+      var key=(f.value||'').trim(), val=(v.value||'').trim();
+      if(key && val && !p.has(key)) p.set(key,val);
+    });
+  } catch(e) { /* never break search */ }
   return p;
 }
 function resetPage(){S.offset=0;}
-function clearFilters(){['gcc_city','industry','domain','hq_country','headcount_band','q'].forEach(function(k){$('f_'+k).value='';});$('f_country').value='India';$('f_confidence').value='';}
+function clearFilters(){
+  ['gcc_city','industry','domain','hq_country','headcount_band','q'].forEach(function(k){$('f_'+k).value='';});
+  $('f_country').value='India';$('f_confidence').value='';
+  try { document.querySelectorAll('#customFilterRows .cf-value').forEach(function(el){ el.value=''; }); } catch(e){}
+}
+/* v6.7: allow-list of headers offered in the custom-filter dropdowns */
+var CUSTOM_FIELDS=[
+  ['group_company',            'Group / parent company', 'e.g. Deutsche Bank AG'],
+  ['state_province',           'State',                   'e.g. Karnataka'],
+  ['year_established',         'Established (year)',      'e.g. 2015'],
+  ['setup_model',              'Setup model',             'Captive | BOT | GIC'],
+  ['maturity_level',           'Maturity level',          'e.g. Mature'],
+  ['gptw_certified',           'GPTW certified',          'Yes | No'],
+  ['glassdoor_rating',         'Glassdoor rating (>=)',   'e.g. 4.0'],
+  ['sez_stpi_peza',            'SEZ / STPI',              'e.g. SEZ'],
+  ['tech_stack',               'Tech stack contains',     'e.g. Java, AWS'],
+  ['legal_structure',          'Legal structure',         'e.g. Pvt Ltd'],
+  ['site_head',                'India site head',         'name contains'],
+  ['office_addresses',         'Office address contains', 'e.g. Whitefield'],
+  ['finance_domain_active',    'Finance domain active',   'Yes | No']
+];
+function buildCustomFilters(){
+  var host=$('customFilterRows'); if(!host) return;
+  var opts='<option value="">— pick a header —</option>' + CUSTOM_FIELDS.map(function(f){
+    return '<option value="'+f[0]+'">'+f[1]+'</option>';
+  }).join('');
+  var html='';
+  for(var i=0;i<3;i++){
+    html+='<div class="cf-row" style="display:flex;gap:6px;align-items:center">'
+        +'<select class="cf-field" style="flex:1 1 55%;min-width:0" onchange="onCustomFieldChange(this)">'+opts+'</select>'
+        +'<input class="cf-value" style="flex:1 1 45%;min-width:0" placeholder="value…" onkeydown="if(event.key===\'Enter\'){resetPage();search();}">'
+        +'</div>';
+  }
+  host.innerHTML=html;
+}
+function onCustomFieldChange(sel){
+  var row=sel.closest('.cf-row'); if(!row) return;
+  var inp=row.querySelector('.cf-value'); if(!inp) return;
+  var f=CUSTOM_FIELDS.find(function(x){return x[0]===sel.value;});
+  inp.placeholder = f ? (f[2]||'value…') : 'value…';
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', buildCustomFilters);
+} else { buildCustomFilters(); }
 
 function search(){
   badge('Searching…','idle');
