@@ -89,6 +89,272 @@
 .gdet dl{margin:0;display:grid;grid-template-columns:132px 1fr;gap:4px 10px;font-size:12px}
 .gdet dt{font-weight:bold;color:var(--navy)}
 .gdet dd{margin:0;color:#33415c;word-break:break-word;overflow-wrap:anywhere}
+
+/* ===== Custom filters (v6.7 premium redesign) ===== */
+#customFilters{grid-column:1/-1;background:linear-gradient(135deg,#F9FBFF 0%,#EEF3FB 100%);border:1px solid #D9E1F2;border-radius:12px;padding:16px 18px 18px;margin:8px 0 12px;box-shadow:0 1px 3px rgba(31,56,100,.06)}
+#customFilters .cf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+#customFilters .cf-head-left{display:flex;align-items:center;gap:12px}
+#customFilters .cf-head-title{font-family:Georgia,serif;font-size:15px;color:var(--navy);font-weight:bold;line-height:1.15}
+#customFilters .cf-head-sub{font-size:11.5px;color:var(--grey);margin-top:2px}
+#customFilters .cf-head-badge{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:#8a6d12;font-weight:bold;background:#FFF8E5;border:1px solid #E7D89A;padding:4px 10px;border-radius:999px;white-space:nowrap}
+#customFilterRows{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cf-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px 11px;transition:border-color .2s,box-shadow .2s}
+.cf-row:hover{border-color:#A8C2E8;box-shadow:0 2px 6px rgba(31,56,100,.08)}
+.cf-row.filled{border-color:var(--navy);box-shadow:0 2px 8px rgba(31,56,100,.10)}
+.cf-row label{font-size:10.5px;font-weight:bold;color:var(--grey);letter-spacing:0.6px;text-transform:uppercase;margin:0 0 6px;display:flex;align-items:center;gap:6px}
+.cf-row label .cf-num{width:18px;height:18px;border-radius:50%;background:var(--pale);color:var(--navy);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;letter-spacing:0}
+.cf-row .cf-field, .cf-row .cf-value{font-size:13px;padding:7px 10px}
+.cf-row .cf-field{margin-bottom:6px}
+.cf-row .cf-value::placeholder{color:#9AA6BC;font-style:italic}
+@media (max-width:900px){#customFilterRows{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){#customFilterRows{grid-template-columns:1fr}}
+
+
+/* ========================================================
+   v6.7 PREMIUM POLISH — Overrides for a $1M-company feel
+   (appended late so it wins the cascade; no DOM changes)
+   ======================================================== */
+:root{
+  --gold-2:#B98F1A;
+  --gold-soft:#F7EFC4;
+  --ink:#0F1E38;
+  --line-soft:#E5ECF7;
+  --pale-2:#F6F9FE;
+  --shadow-1:0 1px 2px rgba(15,30,56,.05), 0 4px 12px rgba(15,30,56,.06);
+  --shadow-2:0 2px 4px rgba(15,30,56,.06), 0 8px 24px rgba(15,30,56,.10);
+  --shadow-btn:0 6px 16px rgba(31,56,100,.28);
+  --shadow-btn-hover:0 8px 22px rgba(31,56,100,.36);
+  --radius:14px;
+  --radius-sm:10px;
+  --ease:cubic-bezier(.2,.7,.3,1);
+}
+body{
+  background:
+    radial-gradient(1100px 520px at 12% -10%, rgba(31,56,100,.06) 0%, transparent 65%),
+    radial-gradient(900px 480px at 100% 12%, rgba(201,162,39,.06) 0%, transparent 65%),
+    #F4F7FC;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  background:linear-gradient(180deg,#14213D 0%, #1B3B72 90%, #14213D 100%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  box-shadow:0 6px 22px rgba(15,30,56,.20);
+  position:relative;
+  padding:18px 26px 20px;
+}
+header::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%, var(--gold) 20%, var(--gold-2) 50%, var(--gold) 80%, transparent 100%);
+  opacity:.55;
+}
+header .brand{font-size:22px;letter-spacing:.2px}
+header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
+
+/* Wrap breathing room */
+.wrap{padding:24px 22px 72px}
+
+/* Cards — softer, elevated, subtle top accent */
+.card{
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-1);
+  padding:20px 22px;
+  position:relative;
+  transition:box-shadow .35s var(--ease), transform .35s var(--ease);
+}
+.card::before{
+  content:"";position:absolute;top:0;left:24px;right:24px;height:2px;
+  background:linear-gradient(90deg,var(--gold) 0%, transparent 70%);
+  border-radius:2px 2px 0 0;
+  opacity:.42;
+}
+.card h2{
+  font-size:17px;letter-spacing:.15px;
+  padding-left:12px;position:relative;margin-bottom:16px;
+}
+.card h2::before{
+  content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  background:linear-gradient(180deg,var(--gold) 0%, var(--gold-2) 100%);
+  border-radius:2px;
+}
+
+/* Chips — silkier hover, active glow */
+.chips{gap:7px;margin-bottom:10px}
+.chip{
+  padding:6px 14px;
+  border:1px solid var(--line-soft);
+  background:#fff;
+  color:var(--navy);
+  transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease);
+  font-weight:600;
+}
+.chip:hover{
+  background:#F0F5FE;border-color:#A8C2E8;
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(31,56,100,.10);
+}
+.chip.active{
+  background:linear-gradient(135deg,var(--navy) 0%, var(--steel) 100%);
+  color:#fff;border-color:var(--navy);
+  box-shadow:0 4px 12px rgba(31,56,100,.25);
+}
+.chips-label{
+  font-size:11px;color:#4A5B75;
+  letter-spacing:1.2px;
+  margin:10px 0 6px;
+}
+.chips-label::before{
+  content:"";display:inline-block;width:6px;height:6px;
+  background:var(--gold);border-radius:50%;
+  margin-right:8px;vertical-align:2px;
+}
+
+/* Inputs & selects — softer focus glow */
+input,select{
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+  padding:9px 12px;
+  transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+  background:#fff;
+}
+input:hover,select:hover{border-color:#B7C7DB}
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--steel);
+  box-shadow:0 0 0 3px rgba(46,84,150,.14);
+  background:#fff;
+}
+label{
+  font-size:11.5px;letter-spacing:.4px;
+  color:#4A5B75;
+  margin-bottom:5px;
+}
+
+/* Buttons — premium primary + refined alts */
+button{
+  border-radius:var(--radius-sm);
+  padding:10px 18px;
+  font-weight:700;letter-spacing:.2px;
+  transition:transform .18s var(--ease), box-shadow .22s var(--ease), background .22s var(--ease), color .18s var(--ease);
+}
+.btn{
+  background:linear-gradient(180deg,var(--steel) 0%, var(--navy) 100%);
+  color:#fff;box-shadow:var(--shadow-btn);
+  position:relative;overflow:hidden;
+}
+.btn::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.20) 0%, transparent 55%);
+  pointer-events:none;opacity:.7;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-btn-hover)}
+.btn:active{transform:translateY(0)}
+.btn.alt{
+  background:#fff;color:var(--navy);border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(15,30,56,.04);
+}
+.btn.alt:hover{
+  background:var(--pale);border-color:#A8C2E8;
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(31,56,100,.10);
+}
+.btn.gold{
+  background:linear-gradient(180deg,#DBB63A 0%, var(--gold) 55%, var(--gold-2) 100%);
+  color:var(--ink);
+  box-shadow:0 6px 16px rgba(201,162,39,.30);
+}
+.btn.gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,162,39,.42)}
+.btns{gap:12px;margin-top:18px}
+
+/* Status pills — cleaner + subtle animation */
+.status{padding:5px 12px;font-size:11.5px;letter-spacing:.4px}
+.status.ok{background:linear-gradient(180deg,#E9F6EE 0%, #DDEEE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.15)}
+.status.bad{background:linear-gradient(180deg,#FBE7E5 0%, #F8DDDA 100%);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(179,38,30,.15)}
+.status.idle{background:#334A72;color:#CADCFC;box-shadow:inset 0 0 0 1px rgba(202,220,252,.10)}
+
+/* Result cards — softer, warmer hover */
+.cardgrid{gap:16px}
+.gcard{
+  border-radius:var(--radius);
+  border-color:var(--line-soft);
+  box-shadow:var(--shadow-1);
+  padding:16px 18px;
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  position:relative;
+}
+.gcard::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+  background:linear-gradient(90deg,var(--steel) 0%, var(--navy) 55%, var(--gold) 100%);
+  opacity:0;transition:opacity .3s var(--ease);
+}
+.gcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#A8C2E8}
+.gcard:hover::before{opacity:.85}
+.gcard.open{box-shadow:var(--shadow-2)}
+.gcard-name{font-size:15px;letter-spacing:.1px}
+.gcard-parent{font-size:12.5px}
+.gcard-meta .gm{
+  background:linear-gradient(180deg,#F6F9FE 0%, #EEF3FB 100%);
+  border-color:var(--line-soft);
+  padding:3px 10px;
+}
+.det-btn{border:1px solid var(--line-soft);color:var(--steel);transition:all .2s var(--ease)}
+.det-btn:hover{background:var(--pale);border-color:#A8C2E8}
+
+/* HIGH / MED confidence pills */
+.pill{padding:3px 10px;font-size:10.5px;letter-spacing:.6px}
+.pill.high{background:linear-gradient(180deg,#E9F6EE 0%, #DCEFE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.16)}
+.pill.med{background:linear-gradient(180deg,#FFF4DC 0%, #FBE9BE 100%);color:#8a6d12;box-shadow:inset 0 0 0 1px rgba(138,109,18,.18)}
+
+/* Notice / cfgwarn — softer */
+.cfgwarn{border:1px solid rgba(179,38,30,.20);box-shadow:0 2px 8px rgba(179,38,30,.06)}
+.notice{background:#FFF8E5;border:1px solid #F1E2A5;color:#7A5F12;padding:10px 14px;border-radius:10px;font-size:12.5px}
+
+/* Table — cleaner header */
+.restbl th{background:linear-gradient(180deg,#243d6d 0%, var(--navy) 100%)}
+
+/* Stats — refined */
+.stat{
+  background:linear-gradient(180deg,#F6F9FE 0%, var(--pale) 100%);
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+}
+.stat .n{color:var(--navy)}
+.bar .fill{background:linear-gradient(90deg,var(--steel) 0%, var(--navy) 100%)}
+
+/* Pager — cleaner */
+.pager{gap:12px}
+
+/* Muted footer text */
+.muted{letter-spacing:.15px}
+
+/* Header sign-in gate — premium touch */
+.gate .card{padding:38px 34px;box-shadow:0 4px 24px rgba(15,30,56,.10)}
+.gate h1{font-size:24px;letter-spacing:.1px}
+.sso button{
+  border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  transition:all .2s var(--ease);
+}
+.sso button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(31,56,100,.12);
+  background:var(--pale-2);
+}
+
+/* Subtle result-card fade-in when a search returns */
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.gcard{animation:cardIn .35s var(--ease) both}
+.gcard:nth-child(2){animation-delay:.03s}
+.gcard:nth-child(3){animation-delay:.06s}
+.gcard:nth-child(4){animation-delay:.09s}
+.gcard:nth-child(5){animation-delay:.12s}
+.gcard:nth-child(6){animation-delay:.15s}
+.gcard:nth-child(7){animation-delay:.18s}
+.gcard:nth-child(8){animation-delay:.21s}
+.gcard:nth-child(9){animation-delay:.24s}
+.gcard:nth-child(n+10){animation-delay:.27s}
+
 </style>
 </head>
 <body>
@@ -189,12 +455,18 @@
         <span class="chip" onclick="chipSet({confidence:'High'})">High</span>
         <span class="chip" onclick="chipSet({confidence:'Medium'})">Medium</span>
       </div>
-      <div id="customFilters" style="border:1px dashed rgba(11,26,51,.12);border-radius:10px;padding:12px 14px;margin:0 0 14px;background:rgba(112,181,249,.05)">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#5A6B82">Custom filters</span>
-          <span class="muted" style="font-size:12px">Pick any header and enter a value. Empty rows are ignored.</span>
+      <div id="customFilters">
+        <div class="cf-head">
+          <div class="cf-head-left">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+            <div>
+              <div class="cf-head-title">Custom filters</div>
+              <div class="cf-head-sub">Refine on any of the additional fields available in your plan. Empty rows are ignored.</div>
+            </div>
+          </div>
+          <span class="cf-head-badge">&#9679; Advanced</span>
         </div>
-        <div id="customFilterRows" style="display:grid;grid-template-columns:1fr 1fr;gap:8px 10px"></div>
+        <div id="customFilterRows"></div>
       </div>
         <div><label>Country</label><input id="f_country" value="India"></div>
         <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
@@ -354,18 +626,28 @@ function buildCustomFilters(){
   }).join('');
   var html='';
   for(var i=0;i<3;i++){
-    html+='<div class="cf-row" style="display:flex;gap:6px;align-items:center">'
-        +'<select class="cf-field" style="flex:1 1 55%;min-width:0" onchange="onCustomFieldChange(this)">'+opts+'</select>'
-        +'<input class="cf-value" style="flex:1 1 45%;min-width:0" placeholder="value…" onkeydown="if(event.key===\'Enter\'){resetPage();search();}">'
+    var n=i+1;
+    html+='<div class="cf-row" data-idx="'+n+'">'
+        +'<label>'
+          +'<span class="cf-num">'+n+'</span> Filter '+n
+        +'</label>'
+        +'<select class="cf-field" onchange="onCustomFieldChange(this)">'+opts+'</select>'
+        +'<input class="cf-value" placeholder="value…" oninput="onCustomValueChange(this)" onkeydown="if(event.key===\'Enter\'){resetPage();search();}">'
         +'</div>';
   }
   host.innerHTML=html;
+}
+function onCustomValueChange(inp){
+  var row=inp.closest('.cf-row'); if(!row) return;
+  var sel=row.querySelector('.cf-field');
+  row.classList.toggle('filled', !!(inp.value.trim() && sel && sel.value));
 }
 function onCustomFieldChange(sel){
   var row=sel.closest('.cf-row'); if(!row) return;
   var inp=row.querySelector('.cf-value'); if(!inp) return;
   var f=CUSTOM_FIELDS.find(function(x){return x[0]===sel.value;});
   inp.placeholder = f ? (f[2]||'value…') : 'value…';
+  row.classList.toggle('filled', !!(inp.value.trim() && sel.value));
 }
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded', buildCustomFilters);
