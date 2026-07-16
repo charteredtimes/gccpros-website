@@ -90,8 +90,8 @@
 .gdet dt{font-weight:bold;color:var(--navy)}
 .gdet dd{margin:0;color:#33415c;word-break:break-word;overflow-wrap:anywhere}
 
-/* ===== Custom filters (v6.7 premium redesign) ===== */
-#customFilters{grid-column:1/-1;background:linear-gradient(135deg,#F9FBFF 0%,#EEF3FB 100%);border:1px solid #D9E1F2;border-radius:12px;padding:16px 18px 18px;margin:8px 0 12px;box-shadow:0 1px 3px rgba(31,56,100,.06)}
+/* ===== Custom filters (v6.7 premium block) ===== */
+#customFilters{grid-column:1/-1;background:linear-gradient(135deg,#F9FBFF 0%,#EEF3FB 100%);border:1px solid #D9E1F2;border-radius:12px;padding:16px 18px 18px;margin:8px 0 14px;box-shadow:0 1px 3px rgba(31,56,100,.06)}
 #customFilters .cf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
 #customFilters .cf-head-left{display:flex;align-items:center;gap:12px}
 #customFilters .cf-head-title{font-family:Georgia,serif;font-size:15px;color:var(--navy);font-weight:bold;line-height:1.15}
@@ -109,14 +109,11 @@
 @media (max-width:900px){#customFilterRows{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){#customFilterRows{grid-template-columns:1fr}}
 
-
 /* ========================================================
-   v6.7 PREMIUM POLISH — Overrides for a $1M-company feel
-   (appended late so it wins the cascade; no DOM changes)
+   v6.7 PREMIUM POLISH  (overrides late in cascade)
    ======================================================== */
 :root{
   --gold-2:#B98F1A;
-  --gold-soft:#F7EFC4;
   --ink:#0F1E38;
   --line-soft:#E5ECF7;
   --pale-2:#F6F9FE;
@@ -150,11 +147,7 @@ header::after{
 }
 header .brand{font-size:22px;letter-spacing:.2px}
 header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
-
-/* Wrap breathing room */
 .wrap{padding:24px 22px 72px}
-
-/* Cards — softer, elevated, subtle top accent */
 .card{
   border:1px solid var(--line-soft);
   border-radius:var(--radius);
@@ -178,8 +171,6 @@ header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
   background:linear-gradient(180deg,var(--gold) 0%, var(--gold-2) 100%);
   border-radius:2px;
 }
-
-/* Chips — silkier hover, active glow */
 .chips{gap:7px;margin-bottom:10px}
 .chip{
   padding:6px 14px;
@@ -209,8 +200,6 @@ header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
   background:var(--gold);border-radius:50%;
   margin-right:8px;vertical-align:2px;
 }
-
-/* Inputs & selects — softer focus glow */
 input,select{
   border:1px solid var(--line-soft);
   border-radius:var(--radius-sm);
@@ -230,8 +219,6 @@ label{
   color:#4A5B75;
   margin-bottom:5px;
 }
-
-/* Buttons — premium primary + refined alts */
 button{
   border-radius:var(--radius-sm);
   padding:10px 18px;
@@ -266,14 +253,10 @@ button{
 }
 .btn.gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,162,39,.42)}
 .btns{gap:12px;margin-top:18px}
-
-/* Status pills — cleaner + subtle animation */
 .status{padding:5px 12px;font-size:11.5px;letter-spacing:.4px}
 .status.ok{background:linear-gradient(180deg,#E9F6EE 0%, #DDEEE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.15)}
 .status.bad{background:linear-gradient(180deg,#FBE7E5 0%, #F8DDDA 100%);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(179,38,30,.15)}
 .status.idle{background:#334A72;color:#CADCFC;box-shadow:inset 0 0 0 1px rgba(202,220,252,.10)}
-
-/* Result cards — softer, warmer hover */
 .cardgrid{gap:16px}
 .gcard{
   border-radius:var(--radius);
@@ -301,20 +284,12 @@ button{
 }
 .det-btn{border:1px solid var(--line-soft);color:var(--steel);transition:all .2s var(--ease)}
 .det-btn:hover{background:var(--pale);border-color:#A8C2E8}
-
-/* HIGH / MED confidence pills */
 .pill{padding:3px 10px;font-size:10.5px;letter-spacing:.6px}
 .pill.high{background:linear-gradient(180deg,#E9F6EE 0%, #DCEFE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.16)}
 .pill.med{background:linear-gradient(180deg,#FFF4DC 0%, #FBE9BE 100%);color:#8a6d12;box-shadow:inset 0 0 0 1px rgba(138,109,18,.18)}
-
-/* Notice / cfgwarn — softer */
 .cfgwarn{border:1px solid rgba(179,38,30,.20);box-shadow:0 2px 8px rgba(179,38,30,.06)}
 .notice{background:#FFF8E5;border:1px solid #F1E2A5;color:#7A5F12;padding:10px 14px;border-radius:10px;font-size:12.5px}
-
-/* Table — cleaner header */
 .restbl th{background:linear-gradient(180deg,#243d6d 0%, var(--navy) 100%)}
-
-/* Stats — refined */
 .stat{
   background:linear-gradient(180deg,#F6F9FE 0%, var(--pale) 100%);
   border:1px solid var(--line-soft);
@@ -322,14 +297,8 @@ button{
 }
 .stat .n{color:var(--navy)}
 .bar .fill{background:linear-gradient(90deg,var(--steel) 0%, var(--navy) 100%)}
-
-/* Pager — cleaner */
 .pager{gap:12px}
-
-/* Muted footer text */
 .muted{letter-spacing:.15px}
-
-/* Header sign-in gate — premium touch */
 .gate .card{padding:38px 34px;box-shadow:0 4px 24px rgba(15,30,56,.10)}
 .gate h1{font-size:24px;letter-spacing:.1px}
 .sso button{
@@ -341,8 +310,6 @@ button{
   box-shadow:0 4px 14px rgba(31,56,100,.12);
   background:var(--pale-2);
 }
-
-/* Subtle result-card fade-in when a search returns */
 @keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .gcard{animation:cardIn .35s var(--ease) both}
 .gcard:nth-child(2){animation-delay:.03s}
@@ -461,7 +428,7 @@ button{
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
             <div>
               <div class="cf-head-title">Custom filters</div>
-              <div class="cf-head-sub">Refine on any of the additional fields available in your plan. Empty rows are ignored.</div>
+              <div class="cf-head-sub">Refine on any additional field available in your plan. Empty rows are ignored.</div>
             </div>
           </div>
           <span class="cf-head-badge">&#9679; Advanced</span>
@@ -481,7 +448,6 @@ button{
       </div>
       <div class="btns">
         <button class="btn" onclick="resetPage();search()">Search</button>
-        <button class="btn alt" onclick="loadStats()">Market stats</button>
         <button class="btn alt" onclick="loadUsage()">My usage</button>
         <button class="btn alt" onclick="clearFilters()">Clear filters</button>
       </div>
@@ -505,7 +471,7 @@ button{
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.7 (canonical HQ names + 3 custom filters)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.8 (canonical HQ · custom filters · usage-fixed)</div>
   </div>
 </div>
 
@@ -602,6 +568,7 @@ function clearFilters(){
   ['gcc_city','industry','domain','hq_country','headcount_band','q'].forEach(function(k){$('f_'+k).value='';});
   $('f_country').value='India';$('f_confidence').value='';
   try { document.querySelectorAll('#customFilterRows .cf-value').forEach(function(el){ el.value=''; }); } catch(e){}
+  try { document.querySelectorAll('#customFilterRows .cf-row').forEach(function(r){ r.classList.remove('filled'); }); } catch(e){}
 }
 /* v6.7: allow-list of headers offered in the custom-filter dropdowns */
 var CUSTOM_FIELDS=[
@@ -621,33 +588,31 @@ var CUSTOM_FIELDS=[
 ];
 function buildCustomFilters(){
   var host=$('customFilterRows'); if(!host) return;
-  var opts='<option value="">— pick a header —</option>' + CUSTOM_FIELDS.map(function(f){
+  var opts='<option value="">- pick a header -</option>' + CUSTOM_FIELDS.map(function(f){
     return '<option value="'+f[0]+'">'+f[1]+'</option>';
   }).join('');
-  var html='';
+  var out='';
   for(var i=0;i<3;i++){
     var n=i+1;
-    html+='<div class="cf-row" data-idx="'+n+'">'
-        +'<label>'
-          +'<span class="cf-num">'+n+'</span> Filter '+n
-        +'</label>'
+    out+='<div class="cf-row" data-idx="'+n+'">'
+        +'<label><span class="cf-num">'+n+'</span> Filter '+n+'</label>'
         +'<select class="cf-field" onchange="onCustomFieldChange(this)">'+opts+'</select>'
-        +'<input class="cf-value" placeholder="value…" oninput="onCustomValueChange(this)" onkeydown="if(event.key===\'Enter\'){resetPage();search();}">'
+        +'<input class="cf-value" placeholder="value..." oninput="onCustomValueChange(this)" onkeydown="if(event.key===\'Enter\'){resetPage();search();}">'
         +'</div>';
   }
-  host.innerHTML=html;
-}
-function onCustomValueChange(inp){
-  var row=inp.closest('.cf-row'); if(!row) return;
-  var sel=row.querySelector('.cf-field');
-  row.classList.toggle('filled', !!(inp.value.trim() && sel && sel.value));
+  host.innerHTML=out;
 }
 function onCustomFieldChange(sel){
   var row=sel.closest('.cf-row'); if(!row) return;
   var inp=row.querySelector('.cf-value'); if(!inp) return;
   var f=CUSTOM_FIELDS.find(function(x){return x[0]===sel.value;});
-  inp.placeholder = f ? (f[2]||'value…') : 'value…';
+  inp.placeholder = f ? (f[2]||'value...') : 'value...';
   row.classList.toggle('filled', !!(inp.value.trim() && sel.value));
+}
+function onCustomValueChange(inp){
+  var row=inp.closest('.cf-row'); if(!row) return;
+  var sel=row.querySelector('.cf-field');
+  row.classList.toggle('filled', !!(inp.value.trim() && sel && sel.value));
 }
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded', buildCustomFilters);
@@ -725,19 +690,55 @@ function nextPage(){if(S.offset+S.limit<S.total){S.offset+=S.limit;search();}}
 function prevPage(){if(S.offset>0){S.offset=Math.max(0,S.offset-S.limit);search();}}
 
 function loadUsage(silent){
+  var card=$('usageCard'), body=$('usageBody');
+  if(!card||!body) return;
+  card.classList.remove('hide');
+  if(!silent){
+    badge('Loading usage...','idle');
+    body.innerHTML='<div class="stat"><div class="n">&hellip;</div><div class="l">Loading your usage</div></div>';
+    try { card.scrollIntoView({behavior:'smooth',block:'nearest'}); } catch(e){}
+  } else if(!body.innerHTML){
+    body.innerHTML='<div class="stat"><div class="n">&hellip;</div><div class="l">Loading your usage</div></div>';
+  }
   call('/v1/account').then(function(r){
-    if(!r.ok){if(!silent)badge('Error','bad');return;}
+    if(!r||!r.ok){
+      if(!silent) badge('Error','bad');
+      var msg = r ? friendly(r.code, r.message) : 'Server did not respond.';
+      body.innerHTML='<span style="color:#B3261E">'+esc(msg)+'</span>';
+      console.error('[loadUsage] server responded not-ok:', r);
+      return;
+    }
     S.tier=(r.tier||'').toLowerCase();
-    $('usageCard').classList.remove('hide');
-    var pct=r.monthly_row_quota?Math.round(100*r.rows_used_this_month/r.monthly_row_quota):0;
-    $('usageBody').innerHTML=
-      stat((r.tier||'').toUpperCase(),'Your access tier')+
-      stat((r.seats_used!=null?r.seats_used:'–')+' / '+(r.seat_limit!=null?r.seat_limit:'–'),'Seats used (plan)')+
-      stat((r.concurrent_active_now!=null?r.concurrent_active_now:'–')+' / '+(r.concurrent_limit!=null?r.concurrent_limit:'–'),'Users active now (max)')+
-      stat(r.rows_used_this_month.toLocaleString(),'Records pulled this month')+
-      stat(r.rows_remaining.toLocaleString(),'Records remaining ('+pct+'% used)')+
-      stat(r.rate_limit_per_min+'/min','Request speed limit');
-  }).catch(function(){});
+    var num = function(x){
+      if (x===null || x===undefined || x==='') return '—';
+      return (typeof x==='number') ? x.toLocaleString() : String(x);
+    };
+    var pair = function(a,b){
+      var A = (a===null||a===undefined) ? '–' : a;
+      var B = (b===null||b===undefined) ? '–' : b;
+      return A + ' / ' + B;
+    };
+    var quota   = (typeof r.monthly_row_quota==='number') ? r.monthly_row_quota : 0;
+    var used    = (typeof r.rows_used_this_month==='number') ? r.rows_used_this_month : 0;
+    var pct     = quota ? Math.round(100*used/quota) : 0;
+    var seats   = pair(r.seats_used, r.seat_limit);
+    var concur  = pair(r.concurrent_active_now, r.concurrent_limit);
+    var remains = (r.rows_remaining!=null) ? num(r.rows_remaining)
+                 : (quota ? num(Math.max(0, quota-used)) : '—');
+    var rate    = (r.rate_limit_per_min!=null) ? (r.rate_limit_per_min+'/min') : '—';
+    body.innerHTML =
+      stat((r.tier||'').toUpperCase() || '—','Your access tier')+
+      stat(seats,'Seats used (plan)')+
+      stat(concur,'Users active now (max)')+
+      stat(num(used),'Records pulled this month')+
+      stat(remains,'Records remaining ('+pct+'% used)')+
+      stat(rate,'Request speed limit');
+    if(!silent) badge('Connected · '+((r.tier||'').toUpperCase()||'—')+' tier','ok');
+  }).catch(function(err){
+    console.error('[loadUsage] fetch failed:', err);
+    if(!silent) badge('Error','bad');
+    body.innerHTML='<span style="color:#B3261E">Could not load usage right now. Please try again in a moment.</span>';
+  });
 }
 function stat(n,l){return '<div class="stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
 function loadStats(){
