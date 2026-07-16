@@ -91,14 +91,14 @@
 .gdet dd{margin:0;color:#33415c;word-break:break-word;overflow-wrap:anywhere}
 
 /* ===== Custom filters (v6.7 premium block) ===== */
-#customFilters{grid-column:1/-1;background:linear-gradient(135deg,#F9FBFF 0%,#EEF3FB 100%);border:1px solid #D9E1F2;border-radius:12px;padding:16px 18px 18px;margin:8px 0 14px;box-shadow:0 1px 3px rgba(31,56,100,.06)}
-#customFilters .cf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-#customFilters .cf-head-left{display:flex;align-items:center;gap:12px}
-#customFilters .cf-head-title{font-family:Georgia,serif;font-size:15px;color:var(--navy);font-weight:bold;line-height:1.15}
-#customFilters .cf-head-sub{font-size:11.5px;color:var(--grey);margin-top:2px}
-#customFilters .cf-head-badge{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:#8a6d12;font-weight:bold;background:#FFF8E5;border:1px solid #E7D89A;padding:4px 10px;border-radius:999px;white-space:nowrap}
-#customFilterRows{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.cf-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px 11px;transition:border-color .2s,box-shadow .2s}
+#customFilters{background:linear-gradient(135deg,#F9FBFF 0%,#EEF3FB 100%);border:1px solid #D9E1F2;border-radius:12px;padding:14px 14px 16px;margin:6px 0 14px;box-shadow:0 1px 3px rgba(31,56,100,.06)}
+#customFilters .cf-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+#customFilters .cf-head-left{display:flex;align-items:center;gap:10px}
+#customFilters .cf-head-title{font-family:Georgia,serif;font-size:14px;color:var(--navy);font-weight:bold;line-height:1.15}
+#customFilters .cf-head-sub{font-size:11px;color:var(--grey);margin-top:2px;line-height:1.35}
+#customFilters .cf-head-badge{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:#8a6d12;font-weight:bold;background:#FFF8E5;border:1px solid #E7D89A;padding:3px 8px;border-radius:999px;white-space:nowrap}
+#customFilterRows{display:grid;grid-template-columns:1fr;gap:10px}
+.cf-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px 10px;transition:border-color .2s,box-shadow .2s}
 .cf-row:hover{border-color:#A8C2E8;box-shadow:0 2px 6px rgba(31,56,100,.08)}
 .cf-row.filled{border-color:var(--navy);box-shadow:0 2px 8px rgba(31,56,100,.10)}
 .cf-row label{font-size:10.5px;font-weight:bold;color:var(--grey);letter-spacing:0.6px;text-transform:uppercase;margin:0 0 6px;display:flex;align-items:center;gap:6px}
@@ -106,11 +106,9 @@
 .cf-row .cf-field, .cf-row .cf-value{font-size:13px;padding:7px 10px}
 .cf-row .cf-field{margin-bottom:6px}
 .cf-row .cf-value::placeholder{color:#9AA6BC;font-style:italic}
-@media (max-width:900px){#customFilterRows{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){#customFilterRows{grid-template-columns:1fr}}
 
 /* ========================================================
-   v6.7 PREMIUM POLISH  (overrides late in cascade)
+   v6.9 PREMIUM POLISH  (overrides late in cascade)
    ======================================================== */
 :root{
   --gold-2:#B98F1A;
@@ -147,7 +145,25 @@ header::after{
 }
 header .brand{font-size:22px;letter-spacing:.2px}
 header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
-.wrap{padding:24px 22px 72px}
+.wrap{max-width:1440px;padding:22px 24px 72px}
+
+/* Sidebar / main layout */
+.console-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:22px;align-items:start}
+.filter-sidebar{position:sticky;top:22px;max-height:calc(100vh - 44px);overflow-y:auto;overflow-x:hidden;padding-right:4px}
+.filter-sidebar::-webkit-scrollbar{width:7px}
+.filter-sidebar::-webkit-scrollbar-thumb{background:rgba(31,56,100,.18);border-radius:6px}
+.filter-sidebar::-webkit-scrollbar-thumb:hover{background:rgba(31,56,100,.32)}
+.filter-sidebar .card{margin-bottom:0;padding:18px 18px 20px}
+.filter-sidebar .card h2{font-size:15px;margin-bottom:12px}
+.filter-sidebar .grid{grid-template-columns:1fr;gap:10px}
+.filter-sidebar .chips{gap:5px}
+.filter-sidebar .chip{padding:5px 11px;font-size:11.5px}
+.filter-sidebar .chips-label{margin:8px 0 4px}
+.filter-sidebar .btns{flex-direction:column;gap:8px;margin-top:16px}
+.filter-sidebar .btn, .filter-sidebar .btn.alt{width:100%;justify-content:center;text-align:center}
+.main-col{min-width:0}
+
+/* Cards */
 .card{
   border:1px solid var(--line-soft);
   border-radius:var(--radius);
@@ -171,9 +187,11 @@ header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
   background:linear-gradient(180deg,var(--gold) 0%, var(--gold-2) 100%);
   border-radius:2px;
 }
-.chips{gap:7px;margin-bottom:10px}
+
+/* Chips */
+.chips{gap:7px;margin-bottom:8px}
 .chip{
-  padding:6px 14px;
+  padding:6px 12px;
   border:1px solid var(--line-soft);
   background:#fff;
   color:var(--navy);
@@ -200,10 +218,12 @@ header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
   background:var(--gold);border-radius:50%;
   margin-right:8px;vertical-align:2px;
 }
+
+/* Inputs */
 input,select{
   border:1px solid var(--line-soft);
   border-radius:var(--radius-sm);
-  padding:9px 12px;
+  padding:8px 11px;
   transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
   background:#fff;
 }
@@ -217,11 +237,13 @@ input:focus,select:focus{
 label{
   font-size:11.5px;letter-spacing:.4px;
   color:#4A5B75;
-  margin-bottom:5px;
+  margin-bottom:4px;
 }
+
+/* Buttons */
 button{
   border-radius:var(--radius-sm);
-  padding:10px 18px;
+  padding:10px 16px;
   font-weight:700;letter-spacing:.2px;
   transition:transform .18s var(--ease), box-shadow .22s var(--ease), background .22s var(--ease), color .18s var(--ease);
 }
@@ -253,10 +275,14 @@ button{
 }
 .btn.gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,162,39,.42)}
 .btns{gap:12px;margin-top:18px}
+
+/* Status pills */
 .status{padding:5px 12px;font-size:11.5px;letter-spacing:.4px}
 .status.ok{background:linear-gradient(180deg,#E9F6EE 0%, #DDEEE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.15)}
 .status.bad{background:linear-gradient(180deg,#FBE7E5 0%, #F8DDDA 100%);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(179,38,30,.15)}
 .status.idle{background:#334A72;color:#CADCFC;box-shadow:inset 0 0 0 1px rgba(202,220,252,.10)}
+
+/* Result cards */
 .cardgrid{gap:16px}
 .gcard{
   border-radius:var(--radius);
@@ -322,6 +348,20 @@ button{
 .gcard:nth-child(9){animation-delay:.24s}
 .gcard:nth-child(n+10){animation-delay:.27s}
 
+/* Responsive: stack sidebar under main content on narrow viewports */
+@media (max-width:900px){
+  .console-layout{grid-template-columns:1fr;gap:14px}
+  .filter-sidebar{position:static;max-height:none;overflow:visible;padding-right:0}
+  .filter-sidebar .card{padding:20px 22px}
+  .filter-sidebar .grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  #customFilterRows{grid-template-columns:repeat(3,1fr)}
+  .filter-sidebar .btns{flex-direction:row}
+  .filter-sidebar .btn, .filter-sidebar .btn.alt{width:auto}
+}
+@media (max-width:640px){
+  #customFilterRows{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -354,6 +394,8 @@ button{
   </div>
 
   <div id="app" class="hide">
+    <div class="console-layout">
+    <aside class="filter-sidebar">
     <div class="card">
       <h2>Find GCCs</h2>
       <div class="grid">
@@ -425,7 +467,7 @@ button{
       <div id="customFilters">
         <div class="cf-head">
           <div class="cf-head-left">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F3864" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
             <div>
               <div class="cf-head-title">Custom filters</div>
               <div class="cf-head-sub">Refine on any additional field available in your plan. Empty rows are ignored.</div>
@@ -453,6 +495,8 @@ button{
       </div>
     </div>
 
+    </aside>
+    <main class="main-col">
     <div id="usageCard" class="card hide"><h2>My usage this month</h2><div id="usageBody" class="statgrid"></div></div>
     <div id="statsCard" class="card hide"><h2>Market snapshot</h2><div id="statsBody"></div></div>
 
@@ -471,7 +515,9 @@ button{
         <button class="btn alt" onclick="nextPage()">Next ›</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.8 (canonical HQ · custom filters · usage-fixed)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.9 (sidebar layout · canonical HQ · custom filters · usage-fixed)</div>
+    </main>
+    </div>
   </div>
 </div>
 
@@ -550,7 +596,6 @@ function qs(){
   var ids=['country','gcc_city','industry','domain','hq_country','headcount_band','confidence','q'];
   var p=new URLSearchParams();
   ids.forEach(function(k){var el=$('f_'+k); var v=el?el.value:''; if(v&&v.trim())p.set(k,v.trim());});
-  /* v6.7: additive custom-filter rows (empty rows send nothing) */
   try {
     var rows=document.querySelectorAll('#customFilterRows .cf-row');
     rows.forEach(function(row){
@@ -560,7 +605,7 @@ function qs(){
       var key=(f.value||'').trim(), val=(v.value||'').trim();
       if(key && val && !p.has(key)) p.set(key,val);
     });
-  } catch(e) { /* never break search */ }
+  } catch(e) {}
   return p;
 }
 function resetPage(){S.offset=0;}
@@ -570,7 +615,6 @@ function clearFilters(){
   try { document.querySelectorAll('#customFilterRows .cf-value').forEach(function(el){ el.value=''; }); } catch(e){}
   try { document.querySelectorAll('#customFilterRows .cf-row').forEach(function(r){ r.classList.remove('filled'); }); } catch(e){}
 }
-/* v6.7: allow-list of headers offered in the custom-filter dropdowns */
 var CUSTOM_FIELDS=[
   ['group_company',            'Group / parent company', 'e.g. Deutsche Bank AG'],
   ['state_province',           'State',                   'e.g. Karnataka'],
