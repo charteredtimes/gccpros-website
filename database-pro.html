@@ -1632,6 +1632,24 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 }
 
 
+
+/* ===== Members' report card ===== */
+.reports-card{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  border:1px solid var(--line-2,#DDE5F0);border-radius:4px;padding:16px 20px;margin:0 0 18px;
+  background:linear-gradient(135deg,#FFFDF7 0%,#FBF3E4 100%);box-shadow:0 2px 10px rgba(10,22,40,0.05);}
+.reports-card .rc-left{display:flex;align-items:center;gap:14px;min-width:0;}
+.reports-card .rc-icon{font-size:26px;line-height:1;flex-shrink:0;}
+.reports-card .rc-title{font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:700;color:#14213D;}
+.reports-card .rc-sub{font-size:12.5px;color:#6B5A3E;margin-top:2px;max-width:520px;}
+.reports-card .rc-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.reports-card .rc-btn{background:#E07A1F;color:#fff;border:none;border-radius:3px;padding:10px 20px;
+  font-size:13.5px;font-weight:700;letter-spacing:.3px;cursor:pointer;font-family:inherit;
+  transition:background .2s,transform .15s;}
+.reports-card .rc-btn:hover{background:#A24E08;transform:translateY(-1px);}
+.reports-card .rc-btn:disabled{opacity:.6;cursor:default;transform:none;}
+.reports-card .rc-note{font-size:11px;color:#8a7358;}
+@media (max-width:560px){.reports-card{flex-direction:column;align-items:flex-start;}
+  .reports-card .rc-right{align-items:flex-start;width:100%;}}
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -1864,6 +1882,21 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       </div>
 
       
+        <!-- ===== MEMBERS' REPORTS (gated download) ===== -->
+        <div id="reports-card" class="reports-card">
+          <div class="rc-left">
+            <div class="rc-icon" aria-hidden="true">&#128196;</div>
+            <div class="rc-text">
+              <div class="rc-title">GCCPROs YTD Complete List</div>
+              <div class="rc-sub">Our year-to-date master list of GCCs. Free for registered members of the database.</div>
+            </div>
+          </div>
+          <div class="rc-right">
+            <button id="rc-download-btn" class="rc-btn" onclick="downloadYtdReport()">Download PDF</button>
+            <div class="rc-note">Members only &middot; downloads are logged</div>
+          </div>
+        </div>
+
       <div id="results-wrap" class="results-area">
         <div class="state-box">
           <div class="sb-icon">Q</div>
@@ -4370,6 +4403,48 @@ function closeSignInModal() {
 // Top-right modal "Sign up" routes to the single working inline form (results-wrap)
 // instead of rendering a duplicate signup form in the modal (which collided on ids
 // like su-email/f-name and made the modal signup do nothing).
+// ===== Members' report download (gated + logged server-side) =====
+async function downloadYtdReport() {
+  var btn = document.getElementById('rc-download-btn');
+  var email = (typeof getToken === 'function') ? getToken() : '';
+  // Not signed in -> prompt registration/sign-in.
+  if (!email) {
+    showToast('Please register or sign in to download this report.', '#A24E08');
+    if (typeof goToInlineSignup === 'function') goToInlineSignup();
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
+  try {
+    var REPORT_API = SCRIPT_URL.replace(/\/gccpros-api\/?$/, '/report-gate');
+    var res = await apiFetch(REPORT_API + '?action=downloadReport&report=ytd-complete&email=' + encodeURIComponent(email) + '&_t=' + Date.now());
+    var data = await res.json();
+    if (data && data.status === 'ok' && data.signedUrl) {
+      // Trigger the download in a new tab (signed URL is short-lived).
+      var a = document.createElement('a');
+      a.href = data.signedUrl;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.download = data.filename || 'GCCPROs_YTD_Complete_list.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+      showToast('Your download is starting.', '#1E7E45');
+    } else if (data && data.error === 'not_registered') {
+      showToast('This email is not registered. Please sign up first.', '#A24E08');
+      if (typeof goToInlineSignup === 'function') goToInlineSignup();
+    } else if (data && data.error === 'not_approved') {
+      showToast('Your account is ' + (data.status || 'pending') + '. Downloads open once an admin approves you.', '#A24E08');
+    } else if (data && (data.error === 'not_logged_in')) {
+      showToast('Please register or sign in to download this report.', '#A24E08');
+      if (typeof goToInlineSignup === 'function') goToInlineSignup();
+    } else {
+      showToast('Could not prepare the download. Please try again.', '#B3261E');
+    }
+  } catch (err) {
+    showToast('Network error. Please try again.', '#B3261E');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Download PDF'; }
+  }
+}
+
 function goToInlineSignup() {
   closeSignInModal();
   switchMode('signup');
