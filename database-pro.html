@@ -1882,21 +1882,6 @@ body:not(.is-authed) .ent-pre-auth-teaser {
       </div>
 
       
-        <!-- ===== MEMBERS' REPORTS (gated download) ===== -->
-        <div id="reports-card" class="reports-card">
-          <div class="rc-left">
-            <div class="rc-icon" aria-hidden="true">&#128196;</div>
-            <div class="rc-text">
-              <div class="rc-title">GCCPROs YTD Complete List</div>
-              <div class="rc-sub">Our year-to-date master list of GCCs. Free for registered members of the database.</div>
-            </div>
-          </div>
-          <div class="rc-right">
-            <button id="rc-download-btn" class="rc-btn" onclick="downloadYtdReport()">Download PDF</button>
-            <div class="rc-note">Members only &middot; downloads are logged</div>
-          </div>
-        </div>
-
       <div id="results-wrap" class="results-area">
         <div class="state-box">
           <div class="sb-icon">Q</div>
@@ -2493,7 +2478,31 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </div>
 
-<footer class="site-footer">
+<!-- ===== MEMBERS' REPORT (bottom, gated download) ===== -->
+  <section id="member-report-section" style="padding:52px 20px;background:#FBF3E4;border-top:1px solid #EADFC6;">
+    <div style="max-width:820px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font-size:10px;letter-spacing:2px;color:#A24E08;font-weight:700;text-transform:uppercase;margin-bottom:8px;">Members' report</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:26px;color:#14213D;margin:0 0 6px;line-height:1.25;">GCCPROs YTD Complete List</h2>
+        <p style="font-size:13.5px;color:#6B5A3E;margin:0;line-height:1.6;">Our year-to-date master list of GCCs, free for registered members of the database.</p>
+      </div>
+      <div id="reports-card" class="reports-card">
+        <div class="rc-left">
+          <div class="rc-icon" aria-hidden="true">&#128196;</div>
+          <div class="rc-text">
+            <div class="rc-title">GCCPROs YTD Complete List (PDF)</div>
+            <div class="rc-sub">Sign in as a member to download. New here? Registration takes about a minute.</div>
+          </div>
+        </div>
+        <div class="rc-right">
+          <button id="rc-download-btn" class="rc-btn" onclick="downloadYtdReport()">Download PDF</button>
+          <div class="rc-note">Members only &middot; downloads are logged</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
   GCCPROs · <a href="https://www.gccpros.com" target="_blank">www.gccpros.com</a> · Confidential · Members only
   · <a href="javascript:void(0)" onclick="openCreditsFaq()" style="cursor:pointer;">Individual Credits FAQ</a>
   · <a href="https://www.gccpros.com/privacy" target="_blank" rel="noopener">Privacy &amp; DPDP</a>
@@ -4409,8 +4418,8 @@ async function downloadYtdReport() {
   var email = (typeof getToken === 'function') ? getToken() : '';
   // Not signed in -> prompt registration/sign-in.
   if (!email) {
-    showToast('Please register or sign in to download this report.', '#A24E08');
-    if (typeof goToInlineSignup === 'function') goToInlineSignup();
+    showToast('Sign in or register (both options) to download this report.', '#A24E08');
+    if (typeof openSignInModal === 'function') openSignInModal();
     return;
   }
   if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
@@ -4428,13 +4437,13 @@ async function downloadYtdReport() {
       document.body.appendChild(a); a.click(); a.remove();
       showToast('Your download is starting.', '#1E7E45');
     } else if (data && data.error === 'not_registered') {
-      showToast('This email is not registered. Please sign up first.', '#A24E08');
-      if (typeof goToInlineSignup === 'function') goToInlineSignup();
+      showToast('This email is not registered yet. Choose Sign up, or sign in with a registered account.', '#A24E08');
+      if (typeof openSignInModal === 'function') openSignInModal();
     } else if (data && data.error === 'not_approved') {
       showToast('Your account is ' + (data.status || 'pending') + '. Downloads open once an admin approves you.', '#A24E08');
     } else if (data && (data.error === 'not_logged_in')) {
-      showToast('Please register or sign in to download this report.', '#A24E08');
-      if (typeof goToInlineSignup === 'function') goToInlineSignup();
+      showToast('Sign in or register (both options) to download this report.', '#A24E08');
+      if (typeof openSignInModal === 'function') openSignInModal();
     } else {
       showToast('Could not prepare the download. Please try again.', '#B3261E');
     }
