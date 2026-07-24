@@ -4215,6 +4215,20 @@ body.rsvp-modal-locked {
   var launcher = document.getElementById('openSummitFormBtn');
   if (launcher) launcher.addEventListener('click', openModal);
 
+  // Deep-link: ?rsvp=pune (or bengaluru / delhi) auto-opens the RSVP form for that city.
+  try {
+    var _rp = new URLSearchParams(location.search).get('rsvp');
+    if (_rp) {
+      var _card = document.querySelector('#rsvp-summit .summit-event-card[data-event="' + _rp.toLowerCase() + '"]');
+      if (_card) {
+        setTimeout(function(){
+          try { _card.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
+          _card.click();
+        }, 400);
+      }
+    }
+  } catch(e) {}
+
   // Expose for other callers
   window.openRsvpModal = openModal;
   window.closeRsvpModal = closeModal;
