@@ -552,6 +552,32 @@ html.menu-open{overflow:hidden;}
       0 0 0 1px rgba(150,200,255,0.5),
       inset 0 1px 0 rgba(255,255,255,0.4);
   }
+  /* Awards "Nominate a leader" button — bigger, glowing gold */
+  #pune-summit-2026 .ps-nominate{
+    font-size:16px; font-weight:800; letter-spacing:.2px;
+    padding:16px 34px; gap:10px; color:#3A2606;
+    background:linear-gradient(180deg,#FBD974 0%,#EDBB49 50%,#C68F22 100%);
+    box-shadow:
+      0 12px 30px rgba(230,178,62,0.45),
+      0 0 0 1px rgba(255,228,150,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.55);
+    animation:ps-nomGlow 2.6s ease-in-out infinite;
+  }
+  #pune-summit-2026 .ps-nominate .ps-trophy{ margin-top:-1px; }
+  #pune-summit-2026 .ps-nominate:hover{
+    transform:translateY(-3px);
+    animation:none;
+    box-shadow:
+      0 18px 48px rgba(244,198,78,0.7),
+      0 0 26px rgba(244,198,78,0.55),
+      0 0 0 1px rgba(255,235,170,0.75),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  @keyframes ps-nomGlow{
+    0%,100%{ box-shadow:0 12px 30px rgba(230,178,62,0.40), 0 0 0 1px rgba(255,228,150,0.55), inset 0 1px 0 rgba(255,255,255,0.55); }
+    50%{     box-shadow:0 14px 44px rgba(244,198,78,0.78), 0 0 24px rgba(244,198,78,0.55), 0 0 0 1px rgba(255,238,175,0.8), inset 0 1px 0 rgba(255,255,255,0.62); }
+  }
+  @media (prefers-reduced-motion: reduce){ #pune-summit-2026 .ps-nominate{ animation:none; } }
   /* Summit banner masthead */
   #pune-summit-2026 .ps-banner{
     display:block; width:100%; max-width:900px;
@@ -724,8 +750,9 @@ html.menu-open{overflow:hidden;}
         GCC Leaders register here
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-      <a class="ps-btn ps-ghost ps-ghost-sep" href="awards-nominations.html">
-        &#9733; Nominate a leader
+      <a class="ps-btn ps-nominate ps-ghost-sep" href="awards-nominations.html">
+        <svg class="ps-trophy" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-2V2H7v1H5a2 2 0 0 0-2 2v2a4 4 0 0 0 4 4h.28A6 6 0 0 0 11 14.91V17H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2h-3v-2.09A6 6 0 0 0 16.72 11H17a4 4 0 0 0 4-4V5a2 2 0 0 0-2-2ZM5 7V5h2v4a2 2 0 0 1-2-2Zm14 0a2 2 0 0 1-2 2V5h2Z"/></svg>
+        Nominate a leader
       </a>
     </div>
 
