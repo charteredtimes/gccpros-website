@@ -35,7 +35,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
 :root {
   --ink: #141D22;
   --gold: #5BA3D6;
-  --gold-light: #E07A1F;
+  --gold-light: #17A2C4;
   --blue: #283339;
   --blue-mid: #2356A4;
   --blue-light: #EBF1FB;
@@ -360,7 +360,7 @@ html.menu-open{overflow:hidden;}
   #pune-summit-2026::before{
     content:""; position:absolute; inset:0; z-index:-1;
     background:
-      radial-gradient(500px 260px at 15% 30%, rgba(74,166,255,0.10) 0%, transparent 55%),
+      radial-gradient(500px 260px at 15% 30%, rgba(52, 198, 226,0.10) 0%, transparent 55%),
       radial-gradient(600px 320px at 85% 75%, rgba(127,194,234,0.09) 0%, transparent 55%);
     pointer-events:none;
   }
@@ -385,9 +385,9 @@ html.menu-open{overflow:hidden;}
   /* Kicker */
   #pune-summit-2026 .ps-badge{
     display:inline-flex; align-items:center; gap:10px;
-    background:rgba(224,122,31,.10);
-    border:1px solid rgba(224,122,31,.42);
-    color:#E07A1F;
+    background:rgba(23, 162, 196,.10);
+    border:1px solid rgba(23, 162, 196,.42);
+    color:#17A2C4;
     font-weight:700; font-size:11.5px; letter-spacing:2.6px;
     text-transform:uppercase;
     padding:9px 18px; border-radius:999px;
@@ -395,13 +395,13 @@ html.menu-open{overflow:hidden;}
   }
   #pune-summit-2026 .ps-dot{
     width:8px; height:8px; border-radius:50%;
-    background:#E07A1F;
-    box-shadow:0 0 0 4px rgba(224,122,31,.20);
+    background:#17A2C4;
+    box-shadow:0 0 0 4px rgba(23, 162, 196,.20);
     animation:psDotPulse 2.6s ease-in-out infinite;
   }
   @keyframes psDotPulse{
-    0%,100%{ box-shadow:0 0 0 4px rgba(224,122,31,.20); }
-    50%   { box-shadow:0 0 0 9px rgba(224,122,31,.08); }
+    0%,100%{ box-shadow:0 0 0 4px rgba(23, 162, 196,.20); }
+    50%   { box-shadow:0 0 0 9px rgba(23, 162, 196,.08); }
   }
   /* Title */
   #pune-summit-2026 .ps-title{
@@ -415,10 +415,10 @@ html.menu-open{overflow:hidden;}
   }
   #pune-summit-2026 .ps-title em{
     display:block; font-style:italic;
-    background:linear-gradient(180deg,#F09141 0%,#E07A1F 45%,#A24E08 100%);
+    background:linear-gradient(180deg,#34C6E2 0%,#17A2C4 45%,#0E7C93 100%);
     -webkit-background-clip:text; background-clip:text;
     -webkit-text-fill-color:transparent;
-    text-shadow:0 0 60px rgba(224,122,31,0.22);
+    text-shadow:0 0 60px rgba(23, 162, 196,0.22);
   }
   /* Tagline */
   #pune-summit-2026 .ps-lead{
@@ -445,7 +445,7 @@ html.menu-open{overflow:hidden;}
     backdrop-filter:blur(6px);
     -webkit-backdrop-filter:blur(6px);
   }
-  #pune-summit-2026 .ps-meta svg{ flex:0 0 auto; color:#E07A1F; }
+  #pune-summit-2026 .ps-meta svg{ flex:0 0 auto; color:#17A2C4; }
   /* Description */
   #pune-summit-2026 .ps-desc{
     color:#B7C5D8;
@@ -461,8 +461,8 @@ html.menu-open{overflow:hidden;}
     gap:0;
     max-width:460px;
     margin:0 auto clamp(28px, 4vw, 42px);
-    border-top:1px solid rgba(224,122,31,0.18);
-    border-bottom:1px solid rgba(224,122,31,0.18);
+    border-top:1px solid rgba(23, 162, 196,0.18);
+    border-bottom:1px solid rgba(23, 162, 196,0.18);
     padding:clamp(18px, 2.5vw, 26px) 0;
   }
   #pune-summit-2026 .ps-stat{
@@ -478,7 +478,7 @@ html.menu-open{overflow:hidden;}
     font-family:'Playfair Display', Georgia, serif;
     font-size:clamp(24px, 3.6vw, 40px);
     font-weight:800;
-    color:#E07A1F;
+    color:#17A2C4;
     line-height:1;
     letter-spacing:-0.8px;
     white-space:nowrap;
@@ -518,7 +518,7 @@ html.menu-open{overflow:hidden;}
     font-family:'IBM Plex Mono','SF Mono',ui-monospace,monospace;
     font-size:10.5px; font-weight:700;
     color:#0A1628;
-    background:#E07A1F;
+    background:#17A2C4;
     width:22px; height:22px;
     display:inline-flex; align-items:center; justify-content:center;
     border-radius:50%;
@@ -555,12 +555,12 @@ html.menu-open{overflow:hidden;}
   /* Awards "Nominate a leader" button — bigger, glowing gold */
   #pune-summit-2026 .ps-nominate{
     font-size:16px; font-weight:800; letter-spacing:.2px;
-    padding:16px 34px; gap:10px; color:#3A2606;
-    background:linear-gradient(180deg,#FBD974 0%,#EDBB49 50%,#C68F22 100%);
+    padding:16px 34px; gap:10px; color:#14213D;
+    background:#FFFFFF;
     box-shadow:
-      0 12px 30px rgba(230,178,62,0.45),
-      0 0 0 1px rgba(255,228,150,0.55),
-      inset 0 1px 0 rgba(255,255,255,0.55);
+      0 12px 30px rgba(255,255,255,0.22),
+      0 0 0 1px rgba(255,255,255,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.9);
     animation:ps-nomGlow 2.6s ease-in-out infinite;
   }
   #pune-summit-2026 .ps-nominate .ps-trophy{ margin-top:-1px; }
@@ -568,14 +568,14 @@ html.menu-open{overflow:hidden;}
     transform:translateY(-3px);
     animation:none;
     box-shadow:
-      0 18px 48px rgba(244,198,78,0.7),
-      0 0 26px rgba(244,198,78,0.55),
-      0 0 0 1px rgba(255,235,170,0.75),
-      inset 0 1px 0 rgba(255,255,255,0.6);
+      0 18px 48px rgba(255,255,255,0.42),
+      0 0 26px rgba(180,215,255,0.5),
+      0 0 0 1px rgba(255,255,255,0.85),
+      inset 0 1px 0 rgba(255,255,255,0.95);
   }
   @keyframes ps-nomGlow{
-    0%,100%{ box-shadow:0 12px 30px rgba(230,178,62,0.40), 0 0 0 1px rgba(255,228,150,0.55), inset 0 1px 0 rgba(255,255,255,0.55); }
-    50%{     box-shadow:0 14px 44px rgba(244,198,78,0.78), 0 0 24px rgba(244,198,78,0.55), 0 0 0 1px rgba(255,238,175,0.8), inset 0 1px 0 rgba(255,255,255,0.62); }
+    0%,100%{ box-shadow:0 12px 30px rgba(255,255,255,0.20), 0 0 0 1px rgba(255,255,255,0.62), inset 0 1px 0 rgba(255,255,255,0.9); }
+    50%{     box-shadow:0 14px 46px rgba(255,255,255,0.45), 0 0 26px rgba(180,215,255,0.55), 0 0 0 1px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.96); }
   }
   @media (prefers-reduced-motion: reduce){ #pune-summit-2026 .ps-nominate{ animation:none; } }
   /* Summit banner masthead */
@@ -605,7 +605,7 @@ html.menu-open{overflow:hidden;}
     margin:0 auto;
   }
   #pune-summit-2026 .ps-note strong{
-    color:#E07A1F;
+    color:#17A2C4;
     font-weight:700;
   }
   /* Reduced motion */
@@ -770,13 +770,13 @@ html.menu-open{overflow:hidden;}
   padding:72px 0 56px;}
 #pune-feature .pf-wrap{max-width:1180px;margin:0 auto;padding:0 40px;display:grid;
   grid-template-columns:1.05fr .95fr;gap:42px;align-items:start;}
-#pune-feature .pf-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(224,122,31,.12);
-  border:1px solid rgba(224,122,31,.45);color:#E07A1F;font-weight:700;font-size:12px;letter-spacing:2.5px;
+#pune-feature .pf-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(23, 162, 196,.12);
+  border:1px solid rgba(23, 162, 196,.45);color:#17A2C4;font-weight:700;font-size:12px;letter-spacing:2.5px;
   text-transform:uppercase;padding:8px 16px;border-radius:999px;margin-bottom:22px;}
-#pune-feature .pf-dot{width:8px;height:8px;border-radius:50%;background:#E07A1F;box-shadow:0 0 0 4px rgba(224,122,31,.18);}
+#pune-feature .pf-dot{width:8px;height:8px;border-radius:50%;background:#17A2C4;box-shadow:0 0 0 4px rgba(23, 162, 196,.18);}
 #pune-feature .pf-title{font-family:'Playfair Display',serif;color:#fff;font-weight:900;line-height:1.05;
   letter-spacing:-1px;font-size:clamp(34px,4.6vw,56px);margin:0 0 12px;}
-#pune-feature .pf-title em{font-style:italic;color:#E07A1F;}
+#pune-feature .pf-title em{font-style:italic;color:#17A2C4;}
 #pune-feature .pf-lead{color:#7FC2EA;font-weight:700;font-size:clamp(18px,2.2vw,23px);margin:0 0 22px;}
 #pune-feature .pf-meta{display:flex;flex-wrap:wrap;gap:14px 26px;margin:0 0 22px;}
 #pune-feature .pf-meta span{display:inline-flex;align-items:center;gap:9px;color:#E6EEF8;font-size:16px;font-weight:600;}
@@ -789,8 +789,8 @@ html.menu-open{overflow:hidden;}
 #pune-feature .pf-btn{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:700;
   font-size:16px;padding:15px 30px;border-radius:12px;transition:transform .15s ease,box-shadow .2s ease;}
 #pune-feature .pf-btn:hover{transform:translateY(-2px);}
-#pune-feature .pf-primary{background:linear-gradient(180deg,#ED8A2E,#C9611A);color:#0a1628;
-  box-shadow:0 12px 30px rgba(201,97,26,.35);}
+#pune-feature .pf-primary{background:linear-gradient(180deg,#22B2CE,#1592AC);color:#0a1628;
+  box-shadow:0 12px 30px rgba(30, 111, 224,.35);}
 #pune-feature .pf-ghost{background:transparent;color:#fff;border:1.6px solid rgba(127,194,234,.6);}
 #pune-feature .pf-ghost:hover{border-color:#7FC2EA;background:rgba(127,194,234,.08);}
 #pune-feature .pf-note{margin-top:18px;color:#8aa0bd;font-size:13.5px;letter-spacing:.3px;}
@@ -810,7 +810,7 @@ html.menu-open{overflow:hidden;}
 #pune-feature::before{
   content:""; position:absolute; inset:0; pointer-events:none;
   background:
-    radial-gradient(600px 300px at 12% 25%, rgba(74,166,255,0.10) 0%, transparent 55%),
+    radial-gradient(600px 300px at 12% 25%, rgba(52, 198, 226,0.10) 0%, transparent 55%),
     radial-gradient(700px 340px at 88% 82%, rgba(127,194,234,0.08) 0%, transparent 55%);
 }
 #pune-feature::after{
@@ -827,17 +827,17 @@ html.menu-open{overflow:hidden;}
 
 /* Kicker dot , soft breathing pulse */
 @keyframes pfDotPulse{
-  0%,100%{ box-shadow:0 0 0 4px rgba(224,122,31,.18);}
-  50%   { box-shadow:0 0 0 9px rgba(224,122,31,.08);}
+  0%,100%{ box-shadow:0 0 0 4px rgba(23, 162, 196,.18);}
+  50%   { box-shadow:0 0 0 9px rgba(23, 162, 196,.08);}
 }
 #pune-feature .pf-dot{ animation:pfDotPulse 2.6s ease-in-out infinite; }
 
 /* Title , subtle glow behind the italic accent */
 #pune-feature .pf-title em{
-  background:linear-gradient(180deg,#ED8A2E 0%,#C9611A 60%,#D6A73C 100%);
+  background:linear-gradient(180deg,#22B2CE 0%,#1592AC 60%,#D6A73C 100%);
   -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 40px rgba(224,122,31,0.18);
+  text-shadow:0 0 40px rgba(23, 162, 196,0.18);
 }
 
 /* Lead line , slightly refined weight + colour */
@@ -870,9 +870,9 @@ html.menu-open{overflow:hidden;}
 
 /* Primary CTA , richer shadow + inset highlight */
 #pune-feature .pf-primary{
-  background:linear-gradient(180deg,#F09141 0%,#EABF5A 55%,#A24E08 100%);
+  background:linear-gradient(180deg,#34C6E2 0%,#86DCEC 55%,#0E7C93 100%);
   box-shadow:
-    0 10px 28px rgba(201,97,26,0.38),
+    0 10px 28px rgba(30, 111, 224,0.38),
     inset 0 1px 0 rgba(255,255,255,0.55),
     inset 0 -1px 0 rgba(150,100,30,0.3);
   transition:transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease;
@@ -880,7 +880,7 @@ html.menu-open{overflow:hidden;}
 #pune-feature .pf-primary:hover{
   transform:translateY(-3px);
   box-shadow:
-    0 16px 40px rgba(201,97,26,0.5),
+    0 16px 40px rgba(30, 111, 224,0.5),
     inset 0 1px 0 rgba(255,255,255,0.6),
     inset 0 -1px 0 rgba(150,100,30,0.35);
 }
@@ -908,7 +908,7 @@ html.menu-open{overflow:hidden;}
 }
 #pune-feature .pf-poster::before{
   content:""; position:absolute; inset:-40px; z-index:-1;
-  background:radial-gradient(ellipse at center, rgba(224,122,31,0.18) 0%, transparent 62%);
+  background:radial-gradient(ellipse at center, rgba(23, 162, 196,0.18) 0%, transparent 62%);
   filter:blur(30px);
   pointer-events:none;
 }
@@ -925,18 +925,18 @@ html.menu-open{overflow:hidden;}
   transform:translateY(-10px) scale(1.015);
 }
 #pune-feature .pf-poster img{
-  border:1px solid rgba(224,122,31,0.22);
+  border:1px solid rgba(23, 162, 196,0.22);
   box-shadow:
     0 40px 90px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(224,122,31,0.12),
-    0 0 60px rgba(224,122,31,0.10);
+    0 0 0 1px rgba(23, 162, 196,0.12),
+    0 0 60px rgba(23, 162, 196,0.10);
   transition:box-shadow .45s ease;
 }
 #pune-feature .pf-poster > a:hover img{
   box-shadow:
     0 50px 110px rgba(0,0,0,0.6),
-    0 0 0 1px rgba(224,122,31,0.28),
-    0 0 90px rgba(224,122,31,0.18);
+    0 0 0 1px rgba(23, 162, 196,0.28),
+    0 0 90px rgba(23, 162, 196,0.18);
 }
 @media (prefers-reduced-motion: reduce){
   #pune-feature .pf-poster > a{ animation:none; }
@@ -951,8 +951,8 @@ html.menu-open{overflow:hidden;}
       <h2 class="pf-title">GCC Leadership <em>Summit</em></h2>
       <p class="pf-lead">100 GCC leaders. One room. One day.</p>
       <div class="pf-meta">
-        <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E07A1F" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Tuesday, 11 August 2026</span>
-        <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E07A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Pune, India</span>
+        <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17A2C4" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Tuesday, 11 August 2026</span>
+        <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17A2C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Pune, India</span>
       </div>
       <p class="pf-desc">After two successful insider editions, this is our biggest gathering yet. A full working day of candid conversation on what is actually moving the GCC industry forward.</p>
       <div class="pf-themes">
@@ -994,29 +994,29 @@ html.menu-open{overflow:hidden;}
           width:100%;max-width:380px;
           padding:14px 16px;
           background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-          border:1px solid rgba(224,122,31,.30);
+          border:1px solid rgba(23, 162, 196,.30);
           border-radius:14px;
           box-shadow:0 8px 24px rgba(0,0,0,.30),0 0 0 1px rgba(255,255,255,.03) inset;
           transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
         }
         #pune-feature .pf-credit:hover{
           transform:translateY(-2px);
-          border-color:rgba(224,122,31,.55);
-          box-shadow:0 14px 34px rgba(0,0,0,.45),0 0 24px rgba(224,122,31,.12),0 0 0 1px rgba(255,255,255,.05) inset;
+          border-color:rgba(23, 162, 196,.55);
+          box-shadow:0 14px 34px rgba(0,0,0,.45),0 0 24px rgba(23, 162, 196,.12),0 0 0 1px rgba(255,255,255,.05) inset;
         }
         #pune-feature .pf-credit-thumb{
           flex:0 0 auto;width:78px;height:78px;border-radius:10px;
           object-fit:cover;object-position:center 30%;
-          border:1.5px solid rgba(224,122,31,.45);
+          border:1.5px solid rgba(23, 162, 196,.45);
           box-shadow:0 4px 12px rgba(0,0,0,.35);
         }
         #pune-feature .pf-credit-body{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto;}
         #pune-feature .pf-credit-kicker{
           display:inline-flex;align-items:center;gap:6px;
           font-family:'DM Sans',sans-serif;font-size:9.5px;letter-spacing:2px;
-          font-weight:700;color:#E07A1F;text-transform:uppercase;
+          font-weight:700;color:#17A2C4;text-transform:uppercase;
         }
-        #pune-feature .pf-credit-star{font-size:11px;line-height:1;color:#E07A1F;}
+        #pune-feature .pf-credit-star{font-size:11px;line-height:1;color:#17A2C4;}
         #pune-feature .pf-credit-name{
           font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;
           color:#fff;line-height:1.25;letter-spacing:.2px;
@@ -1160,7 +1160,7 @@ html.menu-open{overflow:hidden;}
     }
     #confirmed-attendees .ca-gate::before{
       content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
-      background:linear-gradient(180deg,#D9A23C 0%,#6B2E00 100%);
+      background:linear-gradient(180deg,#D9A23C 0%,#0A5566 100%);
     }
     #confirmed-attendees .ca-gate-row{
       display:flex; align-items:flex-start; gap:18px;
@@ -1169,7 +1169,7 @@ html.menu-open{overflow:hidden;}
       flex:0 0 auto; width:40px; height:40px;
       display:flex; align-items:center; justify-content:center;
       background:rgba(217,162,60,0.16);
-      color:#E07A1F; border-radius:50%;
+      color:#17A2C4; border-radius:50%;
       font-size:18px; line-height:1;
     }
     #confirmed-attendees .ca-gate-text{ flex:1 1 auto; min-width:0; }
@@ -1183,7 +1183,7 @@ html.menu-open{overflow:hidden;}
       color:rgba(255,255,255,0.82);
     }
     #confirmed-attendees .ca-gate-body strong{
-      color:#E07A1F; font-weight:600;
+      color:#17A2C4; font-weight:600;
     }
     #confirmed-attendees .ca-gate-tags{
       display:flex; flex-wrap:wrap; gap:8px;
@@ -1196,7 +1196,7 @@ html.menu-open{overflow:hidden;}
       letter-spacing:1.4px; font-weight:700; text-transform:uppercase;
       color:rgba(255,255,255,0.88);
       background:rgba(255,255,255,0.06);
-      border:1px solid rgba(224,122,31,0.32);
+      border:1px solid rgba(23, 162, 196,0.32);
       border-radius:14px; padding:5px 11px;
     }
     #confirmed-attendees .ca-gate-chip--no{
@@ -1234,7 +1234,7 @@ html.menu-open{overflow:hidden;}
     }
     #confirmed-attendees .ca-honor-tag{
       display:inline-block; font-size:11px; letter-spacing:2px;
-      font-weight:700; color:#6B2E00;
+      font-weight:700; color:#0A5566;
       background:#FBF7EE; padding:5px 12px; border-radius:20px;
       align-self:flex-start; margin-bottom:14px;
     }
@@ -1458,7 +1458,7 @@ html.menu-open{overflow:hidden;}
     }
     #confirmed-attendees .ca-guestlist-more-num{
       font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:800;
-      color:#F09141; line-height:1;
+      color:#34C6E2; line-height:1;
     }
     #confirmed-attendees .ca-guestlist-more-cap{ font-size:15px; font-weight:600; }
     #confirmed-attendees .ca-guestlist-more-foot{
@@ -1744,7 +1744,7 @@ html.menu-open{overflow:hidden;}
     #confirmed-companies .cc-head{ text-align:center; margin-bottom:36px; }
     #confirmed-companies .cc-kicker{
       display:inline-block; font-size:11px; letter-spacing:3px; font-weight:700;
-      color:#6B2E00; padding:6px 14px; border:1px solid #C8B27A;
+      color:#0A5566; padding:6px 14px; border:1px solid #8FD3E0;
       border-radius:30px; background:#fff; margin-bottom:16px;
     }
     #confirmed-companies .cc-title{
@@ -1830,14 +1830,14 @@ html.menu-open{overflow:hidden;}
     #confirmed-companies .cc-logo:hover{
       transform:translateY(-4px);
       box-shadow:0 14px 32px rgba(10,22,40,0.14);
-      border-color:#C8B27A;
+      border-color:#8FD3E0;
     }
     #confirmed-companies .cc-logo:hover span{
       color:#0A1628;
     }
     #confirmed-companies .cc-logo--fallback:hover{
-      background:linear-gradient(135deg,#6B2E00 0%,#5A3F0A 100%);
-      border-color:#6B2E00;
+      background:linear-gradient(135deg,#0A5566 0%,#5A3F0A 100%);
+      border-color:#0A5566;
     }
     #confirmed-companies .cc-logo--fallback:hover span{
       color:#fff;
@@ -1988,9 +1988,9 @@ html.menu-open{overflow:hidden;}
   <style>
     #event-partners{ background:#FFFFFF; padding:72px 0 84px; border-bottom:1px solid #E4E6E0; }
     #event-partners .ep-wrap{ max-width:1080px; margin:0 auto; padding:0 24px; text-align:center; }
-    #event-partners .ep-kicker{ display:inline-block; font-size:12px; letter-spacing:2.4px; font-weight:700; color:#A24E08; text-transform:uppercase; margin-bottom:14px; }
+    #event-partners .ep-kicker{ display:inline-block; font-size:12px; letter-spacing:2.4px; font-weight:700; color:#0E7C93; text-transform:uppercase; margin-bottom:14px; }
     #event-partners .ep-title{ font-family:'Playfair Display',Georgia,serif; font-size:clamp(28px,4vw,42px); color:#14213D; font-weight:800; margin:0 0 12px; line-height:1.1; }
-    #event-partners .ep-title em{ font-style:italic; color:#E07A1F; }
+    #event-partners .ep-title em{ font-style:italic; color:#17A2C4; }
     #event-partners .ep-sub{ font-size:15.5px; color:#5B6472; max-width:640px; margin:0 auto 34px; line-height:1.6; }
     #event-partners .ep-soon{
       max-width:560px; margin:0 auto; padding:40px 32px;
@@ -1998,11 +1998,11 @@ html.menu-open{overflow:hidden;}
       background:linear-gradient(135deg,#FFFDF7 0%,#FBF3E4 100%);
       box-shadow:0 12px 34px rgba(160,120,20,0.08);
     }
-    #event-partners .ep-soon-badge{ font-size:26px; color:#E07A1F; margin-bottom:10px; }
-    #event-partners .ep-soon-title{ font-family:'Playfair Display',Georgia,serif; font-size:24px; font-weight:800; color:#A24E08; letter-spacing:.5px; margin-bottom:10px; text-transform:uppercase; }
+    #event-partners .ep-soon-badge{ font-size:26px; color:#17A2C4; margin-bottom:10px; }
+    #event-partners .ep-soon-title{ font-family:'Playfair Display',Georgia,serif; font-size:24px; font-weight:800; color:#0E7C93; letter-spacing:.5px; margin-bottom:10px; text-transform:uppercase; }
     #event-partners .ep-soon-body{ font-size:14.5px; color:#6B5A3E; line-height:1.6; }
-    #event-partners .ep-soon-body a{ color:#A24E08; font-weight:600; text-decoration:none; border-bottom:1px solid rgba(162,78,8,.35); }
-    #event-partners .ep-soon-body a:hover{ border-bottom-color:#A24E08; }
+    #event-partners .ep-soon-body a{ color:#0E7C93; font-weight:600; text-decoration:none; border-bottom:1px solid rgba(14, 124, 147,.35); }
+    #event-partners .ep-soon-body a:hover{ border-bottom-color:#0E7C93; }
 
     /* ===== Partner logo wall ===== */
     #event-partners .ep-logos{ display:flex; flex-direction:column; align-items:center; gap:24px; margin-top:8px; }
@@ -2025,8 +2025,8 @@ html.menu-open{overflow:hidden;}
     #event-partners img.ep-l-hs       { width:clamp(88px,17vw,118px)   !important; height:auto !important; }
     #event-partners img.ep-l-vip      { height:clamp(22px,3.2vw,30px)  !important; width:auto !important; }
     #event-partners .ep-foot{ font-size:13px; color:#6B5A3E; margin:32px 0 0; }
-    #event-partners .ep-foot a{ color:#A24E08; font-weight:600; text-decoration:none; border-bottom:1px solid rgba(162,78,8,.35); }
-    #event-partners .ep-foot a:hover{ border-bottom-color:#A24E08; }
+    #event-partners .ep-foot a{ color:#0E7C93; font-weight:600; text-decoration:none; border-bottom:1px solid rgba(14, 124, 147,.35); }
+    #event-partners .ep-foot a:hover{ border-bottom-color:#0E7C93; }
     @media (max-width:640px){ #event-partners .ep-logo{ padding:14px 20px; } #event-partners .ep-tier-1 .ep-logo{ padding:18px 26px; } }
 
   </style>
