@@ -710,7 +710,7 @@ function renderBookOrders() {
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
       + '<td><b>' + esc(x.buyer_name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
       + '<td>' + esc(x.address) + '</td><td>' + esc(x.city) + '</td><td>' + esc(x.state) + '</td><td>' + esc(x.pincode) + '</td>'
-      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td>' + esc(x.razorpay_payment_id) + '</td><td>' + esc(x.ship_status) + '</td></tr>';
+      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td>' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
@@ -723,6 +723,15 @@ function exportBookOrders() {
   const blob = new Blob([csv], { type: 'text/csv' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'GCCPROs_Book_Orders_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+}
+async function markBookDispatched(id) {
+  if (!confirm('Mark this order as dispatched and email the buyer?')) return;
+  try {
+    const r = await fetch(BOOK_URL + '?action=markDispatched', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY }, body: JSON.stringify({ id: id }) });
+    const j = await r.json();
+    if (j.status === 'ok') { toast(j.emailed ? 'Dispatched \u00b7 email sent to buyer' : 'Dispatched (email not sent)', 'ok'); loadBookOrders(); }
+    else { toast('Failed: ' + (j.error || 'error'), 'err'); }
+  } catch (e) { toast('Network error', 'err'); }
 }
 
 function showSubTab(ev, domain, sub) {
