@@ -204,17 +204,11 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
 /* ===== THE BOOK ===== */
 #book{padding:clamp(80px,11vw,130px) 0;background:linear-gradient(180deg,#0b1728,#0a1424)}
 #book .book-in{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(30px,5vw,66px);align-items:center}
-.book3d{width:min(300px,74vw);aspect-ratio:3/4.25;border-radius:5px 12px 12px 5px;position:relative;justify-self:center;
-  background:linear-gradient(135deg,#0e2740,#123a5e 55%,#0d2138);transform:rotateY(-13deg);
-  box-shadow:0 44px 90px rgba(0,0,0,.6),inset 8px 0 0 rgba(255,255,255,.05),inset 14px 0 18px rgba(0,0,0,.45);
-  padding:34px 30px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
-.book3d::after{content:"";position:absolute;left:0;top:0;bottom:0;width:16px;background:linear-gradient(90deg,rgba(0,0,0,.5),transparent);border-radius:5px 0 0 5px}
-.book3d .bk-kick{font-size:10.5px;letter-spacing:2.6px;text-transform:uppercase;color:var(--teal-lite);font-weight:700}
-.book3d .bk-t{font-family:'Playfair Display',serif;font-weight:800;font-size:clamp(28px,4.4vw,38px);color:#fff;line-height:1.04;margin-top:8px}
-.book3d .bk-t em{font-style:italic;color:var(--teal-lite)}
-.book3d .bk-rule{height:2px;width:54px;background:var(--teal-lite);margin:14px 0;border-radius:2px}
-.book3d .bk-sub{font-size:12.5px;color:#B7C9DF;line-height:1.5}
-.book3d .bk-by{font-size:11px;color:#8CA4C0;letter-spacing:1px;text-transform:uppercase}
+.book-visual{display:flex;flex-direction:column;align-items:center;gap:18px}
+.book-cover{width:min(300px,74vw);border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06)}
+.book-launch{margin:0;max-width:min(360px,82vw)}
+.book-launch img{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.book-launch figcaption{margin-top:9px;font-size:12px;color:var(--mut);line-height:1.45;text-align:center}
 #book .book-copy .eyebrow{margin-bottom:12px}
 #book .book-copy h2{font-weight:800;font-size:clamp(28px,4.4vw,50px);line-height:1.08;letter-spacing:-.6px}
 #book .book-copy h2 em{font-style:italic;color:var(--teal-lite)}
@@ -388,14 +382,12 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
 <!-- THE BOOK -->
 <section id="book">
   <div class="wrap book-in">
-    <div class="book3d" aria-hidden="true">
-      <div>
-        <div class="bk-kick">New from GCCPROs</div>
-        <div class="bk-t">GCC Industry <em>@ 2030</em></div>
-        <div class="bk-rule"></div>
-        <div class="bk-sub">The definitive outlook on India&rsquo;s Global Capability Centres and where the industry is headed by 2030.</div>
-      </div>
-      <div class="bk-by">GCCPROs &middot; Chartered Times LLP</div>
+    <div class="book-visual reveal">
+      <img class="book-cover" src="__BOOK_COVER__" alt="GCC Industry @ 2030 book cover">
+      <figure class="book-launch">
+        <img src="__BOOK_LAUNCH__" alt="GCC Industry @ 2030 unveiled at the GCC Leadership Summit, Pune" loading="lazy">
+        <figcaption>Unveiled at the GCC Leadership Summit, Pune, in the presence of Hon&rsquo;ble CM Devendra Fadnavis and Dy CM Sunetra Pawar.</figcaption>
+      </figure>
     </div>
     <div class="book-copy reveal">
       <div class="eyebrow">The book</div>
@@ -411,8 +403,8 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
         <span class="sale">&#8377;999</span>
         <span class="off">60% OFF</span>
       </div>
-      <p class="ship-note">Physical copy shipped to your address within 15 days. Secure payment via Razorpay.</p>
-      <div class="book-buy"><button class="btn btn-primary" id="buyBook" type="button">Buy now &middot; ships in 15 days &rarr;</button></div>
+      <p class="ship-note">Dispatched within 3 working days. Secure payment via Razorpay.</p>
+      <div class="book-buy"><button class="btn btn-primary" id="buyBook" type="button">Buy now &middot; ships in 3 working days &rarr;</button></div>
     </div>
   </div>
 </section>
@@ -506,7 +498,7 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
         <div><label for="bk_city">City</label><input id="bk_city" type="text" autocomplete="address-level2"></div>
         <div><label for="bk_state">State</label><input id="bk_state" type="text" autocomplete="address-level1"></div>
         <div><label for="bk_pincode">PIN code</label><input id="bk_pincode" type="text" inputmode="numeric" autocomplete="postal-code" required></div>
-        <div><label>&nbsp;</label><div style="font-size:12px;color:var(--mut);padding-top:11px">Ships within 15 days</div></div>
+        <div><label>&nbsp;</label><div style="font-size:12px;color:var(--mut);padding-top:11px">Dispatched in 3 working days</div></div>
         <div class="bk-msg" id="bkMsg"></div>
         <button class="bk-submit" id="bkSubmit" type="submit">Pay &#8377;999 &rarr;</button>
       </form>
@@ -514,7 +506,7 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
     <div class="bk-done" id="bkDone" style="display:none">
       <div class="tick">&#10003;</div>
       <h3>Order confirmed</h3>
-      <p>Thank you. Your copy of <b>GCC Industry @ 2030</b> will be shipped to your address within 15 days. A confirmation will be sent to your email.</p>
+      <p>Thank you. Your copy of <b>GCC Industry @ 2030</b> will be dispatched within 3 working days. A confirmation will be sent to your email.</p>
     </div>
   </div>
 </div>
@@ -546,7 +538,7 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
       if(typeof Razorpay==='undefined'){ fail('Payment library did not load. Please refresh and try again.'); return; }
       var rzp=new Razorpay({
         key:j.key_id, amount:j.amount, currency:j.currency, order_id:j.order_id,
-        name:'GCCPROs', description:'GCC Industry @ 2030 (ships in 15 days)',
+        name:'GCCPROs', description:'GCC Industry @ 2030 (ships in 3 working days)',
         prefill:{ name:d.buyer_name, email:d.email, contact:d.phone },
         notes:{ pincode:d.pincode }, theme:{ color:'#17A2C4' },
         handler: async function(resp){
