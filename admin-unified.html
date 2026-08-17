@@ -197,6 +197,12 @@ td.actions { white-space:nowrap; }
       <p>GCC Industry @ 2030 sales, shipping details &amp; payment status.</p>
       <div class="pills"><span>Orders</span><span>Shipping</span><span>Paid</span></div>
     </div>
+    <div class="domain-card consult" onclick="pickDomain('consult')" id="card-consult">
+      <div class="icon">&#128172;</div>
+      <h2>Consulting Leads</h2>
+      <p>Chat-bot enquiries from the GCC Consulting page: intent, focus, company &amp; the full Q&amp;A.</p>
+      <div class="pills"><span>New</span><span>Existing</span><span>Q&amp;A</span></div>
+    </div>
   </div>
 
   <!-- DATABASE DOMAIN -->
@@ -498,6 +504,30 @@ td.actions { white-space:nowrap; }
     </div>
   </div>
 
+  <!-- CONSULTING LEADS DOMAIN -->
+  <div id="domain-consult" class="domain-section" style="display:none;">
+    <style>
+      #consult-box table{width:100%;border-collapse:collapse;font-size:12.5px}
+      #consult-box th{background:#14213D;color:#fff;text-align:left;padding:8px 9px;white-space:nowrap;position:sticky;top:0}
+      #consult-box td{padding:8px 9px;border-bottom:1px solid #e5e9f0;vertical-align:top;max-width:320px;word-break:break-word}
+      #consult-box tr:nth-child(even) td{background:#f8fbff}
+      #consult-box details summary{cursor:pointer;color:#2E86F0;font-weight:600}
+      #consult-box .qa{margin:6px 0 0;padding:8px 10px;background:#f4f7fc;border:1px solid #e5e9f0;border-radius:8px}
+      #consult-box .qa .q{color:#5b6b84}#consult-box .qa .a{font-weight:600}
+      .pill-int{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF5FF;color:#125BD0;border:1px solid #CFE2FB}
+    </style>
+    <div class="card">
+      <h3>Consulting Leads &middot; GCC Consulting chat bot</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 8px">
+        <button class="btn" onclick="loadConsultLeads()">&#8635; Refresh</button>
+        <button class="btn" onclick="exportConsultLeads()">&#128202; Export CSV</button>
+        <input type="text" id="consult-q" placeholder="Filter company, email, focus, summary" oninput="renderConsultLeads()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
+        <span id="consult-stats" style="font-size:13px;color:#5B6B84"></span>
+      </div>
+      <div id="consult-box" style="overflow:auto;max-height:70vh"><p class="loading">Click Refresh to load.</p></div>
+    </div>
+  </div>
+
   <!-- BOOK ORDERS DOMAIN -->
   <div id="domain-book" class="domain-section" style="display:none;">
     <style>
@@ -617,6 +647,8 @@ let INSIDER = [], COUNCIL = [];
 let RSVPS = [], RSVPS_ALL = [];
 let BOOK_ROWS = [];
 const BOOK_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/book-order';
+let CONSULT_ROWS = [];
+const CONSULT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/consult-lead';
 let CURRENT_JOB_FILTER = null;
 let CURRENT_DOMAIN = 'opportunities';
 
@@ -667,12 +699,13 @@ function showGateResult(msg, ok) { const r = document.getElementById('gate-resul
 
 function pickDomain(name) {
   CURRENT_DOMAIN = name;
-  ['database','opportunities','community','book'].forEach(d => {
+  ['database','opportunities','community','book','consult'].forEach(d => {
     document.getElementById('card-' + d).classList.toggle('active', d === name);
     document.getElementById('domain-' + d).style.display = (d === name) ? '' : 'none';
   });
   if (name === 'database' && typeof DB_USERS !== 'undefined' && !DB_USERS.length) dbLoadUsers();
   if (name === 'book' && !BOOK_ROWS.length) loadBookOrders();
+  if (name === 'consult' && !CONSULT_ROWS.length) loadConsultLeads();
 }
 
 async function loadBookOrders() {
@@ -732,6 +765,56 @@ async function markBookDispatched(id) {
     if (j.status === 'ok') { toast(j.emailed ? 'Dispatched \u00b7 email sent to buyer' : 'Dispatched (email not sent)', 'ok'); loadBookOrders(); }
     else { toast('Failed: ' + (j.error || 'error'), 'err'); }
   } catch (e) { toast('Network error', 'err'); }
+}
+async function loadConsultLeads() {
+  const box = document.getElementById('consult-box');
+  box.innerHTML = '<p class="loading">Loading\u2026</p>';
+  try {
+    const r = await fetch(CONSULT_URL + '?action=adminLeads&_t=' + Date.now(), { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    const j = await r.json();
+    if (j.error) { box.innerHTML = '<p class="loading">' + esc(j.error === 'unauthorized' ? 'Key rejected.' : j.error) + '</p>'; return; }
+    CONSULT_ROWS = j.rows || []; renderConsultLeads();
+  } catch (e) { box.innerHTML = '<p class="loading">Network error.</p>'; }
+}
+function consultFiltered() {
+  const q = (document.getElementById('consult-q').value || '').trim().toLowerCase();
+  if (!q) return CONSULT_ROWS;
+  return CONSULT_ROWS.filter(x => [x.company, x.email, x.focus, x.intent, x.summary].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+}
+function transcriptText(t) {
+  if (!Array.isArray(t)) return '';
+  return t.map(x => 'Q: ' + (x.q || '') + ' | A: ' + (x.a || '')).join('  ||  ');
+}
+function renderConsultLeads() {
+  const rows = consultFiltered();
+  const st = document.getElementById('consult-stats');
+  if (st) st.textContent = rows.length + ' / ' + CONSULT_ROWS.length + ' leads';
+  const box = document.getElementById('consult-box');
+  if (!CONSULT_ROWS.length) { box.innerHTML = '<p class="loading">No leads yet.</p>'; return; }
+  let h = '<table><thead><tr><th>When</th><th>Company</th><th>Email</th><th>Type</th><th>Focus</th><th>Summary</th><th>Conversation</th></tr></thead><tbody>';
+  rows.forEach(x => {
+    const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
+    let qa = '';
+    if (Array.isArray(x.transcript)) {
+      qa = '<details><summary>' + x.transcript.length + ' exchanges</summary>' +
+        x.transcript.map(e => '<div class="qa"><div class="q">' + esc(e.q || '') + '</div><div class="a">' + esc(e.a || '') + '</div></div>').join('') +
+        (x.extra ? '<div class="qa"><div class="q">Also noted</div><div class="a">' + esc(x.extra) + '</div></div>' : '') + '</details>';
+    }
+    h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
+      + '<td><b>' + esc(x.company) + '</b></td><td>' + esc(x.email) + '</td>'
+      + '<td><span class="pill-int">' + esc(x.intent) + '</span></td><td>' + esc(x.focus) + '</td>'
+      + '<td>' + esc(x.summary) + '</td><td>' + qa + '</td></tr>';
+  });
+  box.innerHTML = h + '</tbody></table>';
+}
+function exportConsultLeads() {
+  if (!CONSULT_ROWS.length) { alert('Nothing to export yet.'); return; }
+  const cols = [['When','created_at'],['Company','company'],['Email','email'],['Intent','intent'],['Focus','focus'],['Summary','summary'],['Extra','extra'],['Transcript','transcript']];
+  const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+  let csv = cols.map(c => c[0]).join(',') + '\n';
+  CONSULT_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'transcript') v = transcriptText(v); if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
+  const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_Consulting_Leads_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
 
 function showSubTab(ev, domain, sub) {
