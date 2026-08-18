@@ -63,7 +63,7 @@ img{display:block;max-width:100%}
 /* CHAT BOT */
 .bot{position:relative;background:linear-gradient(180deg,rgba(18,28,48,.9),rgba(11,18,32,.92));
   border:1px solid rgba(87,208,230,.28);border-radius:22px;box-shadow:0 40px 90px rgba(0,0,0,.55);overflow:hidden;
-  display:flex;flex-direction:column;height:min(560px,calc(100dvh - 150px))}
+  display:flex;flex-direction:column;height:min(560px,calc(100vh - 160px))}
 
 .bot-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
 .bot-ava{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal-lite),var(--indigo));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;color:#06121f;flex:none}
@@ -71,6 +71,7 @@ img{display:block;max-width:100%}
 .bot-head .s{font-size:12px;color:#7ee0a0;display:flex;align-items:center;gap:6px}
 .bot-head .s i{width:7px;height:7px;border-radius:50%;background:#3fbf6b;box-shadow:0 0 0 3px rgba(63,191,107,.2)}
 .bot-msgs{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msgs-spacer{margin-top:auto;flex:0 0 auto;height:0}
 .msg{max-width:84%;flex:0 0 auto;font-size:14.5px;line-height:1.5;padding:11px 14px;border-radius:14px;animation:pop .25s ease}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .msg.bot{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:5px}
@@ -180,7 +181,7 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
         <div class="bot-ava">G</div>
         <div><div class="t">GCCPROs Assistant</div><div class="s"><i></i> online now</div></div>
       </div>
-      <div class="bot-msgs" id="botMsgs" aria-live="polite"></div>
+      <div class="bot-msgs" id="botMsgs" aria-live="polite"><div class="msgs-spacer"></div></div>
       <div class="bot-opts" id="botOpts"></div>
       <form class="bot-input" id="botForm" autocomplete="off">
         <input id="botInput" type="text" placeholder="Type your reply..." disabled aria-label="Your reply">
