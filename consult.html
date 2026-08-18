@@ -73,7 +73,7 @@ img{display:block;max-width:100%}
 .bot-msgs{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:20px;display:flex;flex-direction:column;justify-content:flex-start;gap:12px}
 .msg{max-width:84%;flex:0 0 auto;font-size:14.5px;line-height:1.5;padding:11px 14px;border-radius:14px;animation:pop .25s ease}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.msg.bot{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.asst{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:5px}
 .msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--teal),var(--indigo));color:#fff;border-bottom-right-radius:5px}
 .typing{align-self:flex-start;flex:0 0 auto;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;border-bottom-left-radius:5px;padding:13px 16px;display:inline-flex;gap:5px}
 .typing i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:bl 1.2s infinite}
@@ -283,8 +283,8 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
   var S={intent:'',focus:'',probe:'',scale:'',company:'',email:'',extra:'',transcript:[]};
   var i=0, current=null, busy=false, done=false;
 
-  function scroll(){ requestAnimationFrame(function(){ msgs.scrollTop = msgs.scrollHeight; }); }
-  function addBot(text){ var d=document.createElement('div'); d.className='msg bot'; d.textContent=text; msgs.appendChild(d); scroll(); }
+  function scroll(){ requestAnimationFrame(function(){ msgs.scrollTop = msgs.scrollHeight; requestAnimationFrame(function(){ msgs.scrollTop = msgs.scrollHeight; }); }); }
+  function addBot(text){ var d=document.createElement('div'); d.className='msg asst'; d.textContent=text; msgs.appendChild(d); scroll(); }
   function addUser(text){ var d=document.createElement('div'); d.className='msg user'; d.textContent=text; msgs.appendChild(d); scroll(); }
   function typing(on){
     var t=document.getElementById('botTyping');
@@ -344,7 +344,7 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
         setInput(true, current.email?'name@company.com':(current.optional?'Type here, or leave blank':'Type your reply...'));
         if(current.skip){ var sk=document.createElement('button'); sk.type='button'; sk.className='opt'; sk.textContent='Skip'; sk.addEventListener('click',function(){ answer('Skipped',''); }); optsBox.appendChild(sk); }
       }
-      busy=false;
+      busy=false; scroll();
     }, 650);
   }
 
@@ -398,7 +398,7 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
     } else {
       addBot("Thanks! I've noted everything. If you don't hear from us shortly, please email admin@gccpros.com and we'll pick it up right away.");
     }
-    var d=document.createElement('div'); d.className='msg bot'; d.style.background='rgba(63,191,107,.12)'; d.style.borderColor='rgba(63,191,107,.4)';
+    var d=document.createElement('div'); d.className='msg asst'; d.style.background='rgba(63,191,107,.12)'; d.style.borderColor='rgba(63,191,107,.4)';
     d.innerHTML='&#10003; Enquiry captured &middot; '+summarise().replace(/</g,'&lt;'); msgs.appendChild(d); scroll();
   }
 
