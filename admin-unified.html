@@ -743,13 +743,13 @@ function renderBookOrders() {
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
       + '<td><b>' + esc(x.buyer_name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
       + '<td>' + esc(x.address) + '</td><td>' + esc(x.city) + '</td><td>' + esc(x.state) + '</td><td>' + esc(x.pincode) + '</td>'
-      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td>' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
+      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td>' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
 function exportBookOrders() {
   if (!BOOK_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status']];
+  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status'],['Courier','courier'],['Tracking','tracking_number']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
   BOOK_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'amount_paise') v = (v || 0) / 100; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
@@ -758,11 +758,16 @@ function exportBookOrders() {
   a.download = 'GCCPROs_Book_Orders_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
 async function markBookDispatched(id) {
-  if (!confirm('Mark this order as dispatched and email the buyer?')) return;
+  const courier = prompt('Shipping company / courier name (e.g. Blue Dart, Delhivery, DTDC, India Post):');
+  if (courier === null) return;
+  const tracking = prompt('Courier tracking / AWB number:');
+  if (tracking === null) return;
+  const c = courier.trim(), t = tracking.trim();
+  if (!confirm('Mark this order as dispatched and email the buyer' + (t ? (' with tracking ' + t + (c ? ' (' + c + ')' : '')) : ' (no tracking number)') + '?')) return;
   try {
-    const r = await fetch(BOOK_URL + '?action=markDispatched', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY }, body: JSON.stringify({ id: id }) });
+    const r = await fetch(BOOK_URL + '?action=markDispatched', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY }, body: JSON.stringify({ id: id, courier: c, tracking: t }) });
     const j = await r.json();
-    if (j.status === 'ok') { toast(j.emailed ? 'Dispatched \u00b7 email sent to buyer' : 'Dispatched (email not sent)', 'ok'); loadBookOrders(); }
+    if (j.status === 'ok') { toast(j.emailed ? 'Dispatched \u00b7 tracking email sent to buyer' : 'Dispatched (email not sent)', 'ok'); loadBookOrders(); }
     else { toast('Failed: ' + (j.error || 'error'), 'err'); }
   } catch (e) { toast('Network error', 'err'); }
 }
