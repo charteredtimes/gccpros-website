@@ -735,15 +735,18 @@ function renderBookOrders() {
   if (st) st.textContent = rows.length + ' / ' + BOOK_ROWS.length + ' orders \u00b7 Paid ' + paidRows.length + ' \u00b7 \u20b9' + rev.toLocaleString('en-IN');
   const box = document.getElementById('book-box');
   if (!BOOK_ROWS.length) { box.innerHTML = '<p class="loading">No orders yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>City</th><th>State</th><th>PIN</th><th>Amount</th><th>Payment ID</th><th>Ship</th></tr></thead><tbody>';
+  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Buyer</th><th>Ship to (full address)</th><th>Amount</th><th>Payment ID</th><th>Ship</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
     const paid = x.status === 'paid';
+    const addrLine = [esc(x.address), esc(x.city), esc(x.state)].filter(function(v){return v && v.trim();}).join(', ');
+    const shipTo = (addrLine ? addrLine : '<span style="color:#b00">no address</span>')
+      + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>';
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
-      + '<td><b>' + esc(x.buyer_name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
-      + '<td>' + esc(x.address) + '</td><td>' + esc(x.city) + '</td><td>' + esc(x.state) + '</td><td>' + esc(x.pincode) + '</td>'
-      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td>' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
+      + '<td style="min-width:170px"><b>' + esc(x.buyer_name) + '</b><br><span style="font-size:12px;color:#5b6b84">' + esc(x.email) + '<br>' + esc(x.phone) + '</span></td>'
+      + '<td style="min-width:250px;white-space:normal;line-height:1.45">' + shipTo + '</td>'
+      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
