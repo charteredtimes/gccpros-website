@@ -735,7 +735,7 @@ function renderBookOrders() {
   if (st) st.textContent = rows.length + ' / ' + BOOK_ROWS.length + ' orders \u00b7 Paid ' + paidRows.length + ' \u00b7 \u20b9' + rev.toLocaleString('en-IN');
   const box = document.getElementById('book-box');
   if (!BOOK_ROWS.length) { box.innerHTML = '<p class="loading">No orders yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Buyer</th><th>Ship to (full address)</th><th>Amount</th><th>Payment ID</th><th>Ship</th></tr></thead><tbody>';
+  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Buyer</th><th>Ship to (full address)</th><th>Amount</th><th>Payment ID</th><th>Docs</th><th>Ship</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
     const paid = x.status === 'paid';
@@ -746,7 +746,9 @@ function renderBookOrders() {
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
       + '<td style="min-width:170px"><b>' + esc(x.buyer_name) + '</b><br><span style="font-size:12px;color:#5b6b84">' + esc(x.email) + '<br>' + esc(x.phone) + '</span></td>'
       + '<td style="min-width:250px;white-space:normal;line-height:1.45">' + shipTo + '</td>'
-      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td><td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
+      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td>'
+      + '<td style="white-space:nowrap"><button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'label\')">Label</button> <button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'invoice\')">Invoice</button></td>'
+      + '<td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
@@ -774,6 +776,72 @@ async function markBookDispatched(id) {
     else { toast('Failed: ' + (j.error || 'error'), 'err'); }
   } catch (e) { toast('Network error', 'err'); }
 }
+/* ===== Book order documents: printable shipping label + invoice ===== */
+var BOOK_SENDER_HTML = 'GCCPROs<br><span style="font-weight:400">A venture by Chartered Times</span><br>WeWork, 2nd floor, Tower 5, World Trade Center,<br>Kharadi, Pune, Maharashtra - 411014';
+function _bkAddr(x){
+  var parts=[x.address,x.city,x.state].filter(function(v){return v && (''+v).trim();}).map(function(v){return esc(v);}).join(', ');
+  return parts + (x.pincode ? (' - <b>'+esc(x.pincode)+'</b>') : '');
+}
+function _bkINR(n){ return (n||0).toLocaleString('en-IN'); }
+function bookLabelHTML(x){
+  var dt = x.created_at ? new Date(x.created_at).toLocaleDateString('en-IN') : '';
+  var oid = esc((x.id||'').slice(0,8).toUpperCase());
+  var track = (x.courier||x.tracking_number)
+    ? '<div class="row meta"><div><b>Courier:</b> '+esc(x.courier||'-')+'</div><div class="mono"><b>AWB:</b> '+esc(x.tracking_number||'-')+'</div></div>' : '';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Shipping Label '+esc(x.buyer_name||'')+'</title><style>'
+    +'*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:16px;color:#111}'
+    +'.label{border:2px solid #111;border-radius:6px;max-width:520px;margin:0 auto}'
+    +'.row{padding:14px 18px;border-bottom:1px dashed #999}.row:last-child{border-bottom:0}'
+    +'.cap{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:5px}'
+    +'.to-name{font-size:22px;font-weight:800}.to-addr{font-size:16px;line-height:1.5;margin-top:4px}'
+    +'.from{font-size:12.5px;line-height:1.5;color:#333}.meta{display:flex;justify-content:space-between;font-size:12px;color:#333;flex-wrap:wrap;gap:8px}'
+    +'.mono{font-family:Courier New,monospace}.toolbar{max-width:520px;margin:0 auto 14px;text-align:center}'
+    +'button{padding:9px 18px;font-size:14px;border:0;border-radius:8px;background:#14213D;color:#fff;cursor:pointer}'
+    +'@media print{.toolbar{display:none}body{padding:0}}</style></head><body>'
+    +'<div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button></div>'
+    +'<div class="label">'
+    +'<div class="row"><div class="cap">Deliver to</div><div class="to-name">'+esc(x.buyer_name||'')+'</div>'
+      +'<div class="to-addr">'+_bkAddr(x)+'</div><div class="to-addr" style="font-size:14px">Phone: '+esc(x.phone||'')+'</div></div>'
+    +'<div class="row"><div class="cap">If undelivered, return to</div><div class="from">'+BOOK_SENDER_HTML+'</div></div>'
+    +'<div class="row meta"><div><b>Order:</b> '+oid+'</div><div><b>Item:</b> GCC Industry @ 2030 &times; '+(x.qty||1)+'</div><div><b>Date:</b> '+dt+'</div></div>'
+    +track+'</div>'
+    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt></body></html>';
+}
+function bookInvoiceHTML(x){
+  var total=(x.amount_paise||0)/100, qty=x.qty||1, unit=qty?total/qty:total;
+  var dt=(x.paid_at||x.created_at)? new Date(x.paid_at||x.created_at).toLocaleDateString('en-IN') : '';
+  var inv='INV-'+(x.id||'').slice(0,8).toUpperCase();
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Invoice '+inv+'</title><style>'
+    +'*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:28px;color:#1a2233}.inv{max-width:720px;margin:0 auto}'
+    +'.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #14213D;padding-bottom:16px;gap:20px}'
+    +'.brand{font-size:24px;font-weight:800;color:#14213D}.brand span{display:block;font-size:12px;font-weight:600;color:#5b6b84;margin-top:2px}'
+    +'.from{font-size:12.5px;color:#444;line-height:1.5;margin-top:8px}.h{text-align:right}.h h1{margin:0;font-size:26px;letter-spacing:2px;color:#14213D}.h div{font-size:13px;color:#555;margin-top:4px}'
+    +'.grid{display:flex;justify-content:space-between;margin:22px 0;gap:20px;flex-wrap:wrap}.cap{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:5px}.bill{font-size:14px;line-height:1.55}'
+    +'table{width:100%;border-collapse:collapse;margin-top:10px}th{background:#14213D;color:#fff;text-align:left;padding:10px 12px;font-size:12.5px}td{padding:11px 12px;border-bottom:1px solid #e5e9f0;font-size:13.5px}.right{text-align:right}'
+    +'.tot{margin-top:14px;margin-left:auto;width:280px;font-size:14px}.tot .r{display:flex;justify-content:space-between;padding:6px 0}.tot .grand{border-top:2px solid #14213D;font-weight:800;font-size:16px;padding-top:8px}'
+    +'.note{margin-top:24px;font-size:12px;color:#5b6b84;line-height:1.6;border-top:1px solid #e5e9f0;padding-top:14px}.toolbar{max-width:720px;margin:0 auto 16px;text-align:right}'
+    +'button{padding:9px 18px;font-size:14px;border:0;border-radius:8px;background:#14213D;color:#fff;cursor:pointer}@media print{.toolbar{display:none}body{padding:0}}</style></head><body>'
+    +'<div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button></div>'
+    +'<div class="inv"><div class="top"><div><div class="brand">GCCPROs<span>A venture by Chartered Times</span></div>'
+      +'<div class="from">WeWork, 2nd floor, Tower 5, World Trade Center,<br>Kharadi, Pune, Maharashtra - 411014<br>admin@gccpros.com</div></div>'
+      +'<div class="h"><h1>INVOICE</h1><div>'+inv+'</div><div>Date: '+dt+'</div><div>Status: '+(x.status==="paid"?"PAID":esc(x.status||""))+'</div></div></div>'
+    +'<div class="grid"><div><div class="cap">Bill to</div><div class="bill"><b>'+esc(x.buyer_name||"")+'</b><br>'+_bkAddr(x)+'<br>'+esc(x.phone||"")+'<br>'+esc(x.email||"")+'</div></div>'
+      +'<div><div class="cap">Payment</div><div class="bill">Razorpay<br>'+esc(x.razorpay_payment_id||"-")+'</div></div></div>'
+    +'<table><thead><tr><th>Description</th><th class="right">Qty</th><th class="right">Unit (Rs.)</th><th class="right">Amount (Rs.)</th></tr></thead>'
+    +'<tbody><tr><td>GCC Industry @ 2030 , physical book</td><td class="right">'+qty+'</td><td class="right">'+_bkINR(unit)+'</td><td class="right">'+_bkINR(total)+'</td></tr></tbody></table>'
+    +'<div class="tot"><div class="r"><span>Subtotal</span><span>Rs. '+_bkINR(total)+'</span></div><div class="r grand"><span>Total</span><span>Rs. '+_bkINR(total)+'</span></div></div>'
+    +'<div class="note">Amount is inclusive of all applicable taxes and shipping. This is a computer-generated invoice issued by Chartered Times LLP (brand: GCCPROs). Thank you for your order.</div></div>'
+    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt></body></html>';
+}
+function printBookDoc(id, kind){
+  var x=(BOOK_ROWS||[]).find(function(o){return o.id===id;});
+  if(!x){ toast('Order not found','err'); return; }
+  var html = kind==='label' ? bookLabelHTML(x) : bookInvoiceHTML(x);
+  var w = window.open('', '_blank');
+  if(!w){ toast('Allow pop-ups to open the document','err'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
 async function loadConsultLeads() {
   const box = document.getElementById('consult-box');
   box.innerHTML = '<p class="loading">Loading\u2026</p>';
