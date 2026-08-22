@@ -735,19 +735,22 @@ function renderBookOrders() {
   if (st) st.textContent = rows.length + ' / ' + BOOK_ROWS.length + ' orders \u00b7 Paid ' + paidRows.length + ' \u00b7 \u20b9' + rev.toLocaleString('en-IN');
   const box = document.getElementById('book-box');
   if (!BOOK_ROWS.length) { box.innerHTML = '<p class="loading">No orders yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Buyer</th><th>Ship to (full address)</th><th>Amount</th><th>Payment ID</th><th>Docs</th><th>Ship</th></tr></thead><tbody>';
+  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Buyer</th><th>Ship to (full address)</th><th>Type</th><th>Delivery window</th><th>Amount</th><th>Payment ID</th><th>Docs</th><th>Ship</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
     const paid = x.status === 'paid';
     const addrLine = [esc(x.address), esc(x.city), esc(x.state)].filter(function(v){return v && v.trim();}).join(', ');
     const shipTo = (addrLine ? addrLine : '<span style="color:#b00">no address</span>')
-      + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>'
-      + (x.address_type ? ' <span style="font-size:11px;background:#eef2fb;color:#33507d;border-radius:4px;padding:1px 6px">' + esc(x.address_type) + '</span>' : '')
-      + ((x.delivery_days || x.delivery_time) ? '<br><span style="font-size:11px;color:#5b6b84">Deliver: ' + esc(x.delivery_days || 'Any day') + (x.delivery_time ? ', ' + esc(x.delivery_time) : '') + '</span>' : '');
+      + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>';
+    const dash = '<span style="color:#aaa">—</span>';
+    const typeCell = x.address_type ? '<span style="font-size:12px;background:#eef2fb;color:#33507d;border-radius:5px;padding:2px 8px;white-space:nowrap">' + esc(x.address_type) + '</span>' : dash;
+    const delivCell = (x.delivery_days || x.delivery_time) ? ('<b>' + esc(x.delivery_days || 'Any day') + '</b>' + (x.delivery_time ? '<br><span style="font-size:12px;color:#5b6b84">' + esc(x.delivery_time) + '</span>' : '')) : dash;
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
       + '<td style="min-width:170px"><b>' + esc(x.buyer_name) + '</b><br><span style="font-size:12px;color:#5b6b84">' + esc(x.email) + '<br>' + esc(x.phone) + '</span></td>'
-      + '<td style="min-width:250px;white-space:normal;line-height:1.45">' + shipTo + '</td>'
+      + '<td style="min-width:230px;white-space:normal;line-height:1.45">' + shipTo + '</td>'
+      + '<td>' + typeCell + '</td>'
+      + '<td style="min-width:120px;white-space:normal;line-height:1.4">' + delivCell + '</td>'
       + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td>'
       + '<td style="white-space:nowrap"><button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'label\')">Label</button> <button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'invoice\')">Invoice</button></td>'
       + '<td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
