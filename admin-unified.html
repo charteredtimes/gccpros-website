@@ -741,7 +741,9 @@ function renderBookOrders() {
     const paid = x.status === 'paid';
     const addrLine = [esc(x.address), esc(x.city), esc(x.state)].filter(function(v){return v && v.trim();}).join(', ');
     const shipTo = (addrLine ? addrLine : '<span style="color:#b00">no address</span>')
-      + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>';
+      + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>'
+      + (x.address_type ? ' <span style="font-size:11px;background:#eef2fb;color:#33507d;border-radius:4px;padding:1px 6px">' + esc(x.address_type) + '</span>' : '')
+      + ((x.delivery_days || x.delivery_time) ? '<br><span style="font-size:11px;color:#5b6b84">Deliver: ' + esc(x.delivery_days || 'Any day') + (x.delivery_time ? ', ' + esc(x.delivery_time) : '') + '</span>' : '');
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
       + '<td>' + (paid ? '<b style="color:#1C7C3C">PAID</b>' : esc((x.status || 'pending'))) + '</td>'
       + '<td style="min-width:170px"><b>' + esc(x.buyer_name) + '</b><br><span style="font-size:12px;color:#5b6b84">' + esc(x.email) + '<br>' + esc(x.phone) + '</span></td>'
@@ -754,7 +756,7 @@ function renderBookOrders() {
 }
 function exportBookOrders() {
   if (!BOOK_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status'],['Courier','courier'],['Tracking','tracking_number']];
+  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status'],['Courier','courier'],['Tracking','tracking_number'],['Addr_Type','address_type'],['Delivery_Days','delivery_days'],['Delivery_Time','delivery_time']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
   BOOK_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'amount_paise') v = (v || 0) / 100; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
@@ -801,7 +803,8 @@ function bookLabelHTML(x){
     +'<div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button></div>'
     +'<div class="label">'
     +'<div class="row"><div class="cap">Deliver to</div><div class="to-name">'+esc(x.buyer_name||'')+'</div>'
-      +'<div class="to-addr">'+_bkAddr(x)+'</div><div class="to-addr" style="font-size:14px">Phone: '+esc(x.phone||'')+'</div></div>'
+      +'<div class="to-addr">'+_bkAddr(x)+'</div><div class="to-addr" style="font-size:14px">Phone: '+esc(x.phone||'')+'</div>'
+      +'<div class="to-addr" style="font-size:13px;margin-top:4px">Address type: <b>'+esc(x.address_type||'Home')+'</b> &nbsp;|&nbsp; Deliver: <b>'+esc(x.delivery_days||'Any day')+(x.delivery_time?', '+esc(x.delivery_time):'')+'</b></div></div>'
     +'<div class="row"><div class="cap">If undelivered, return to</div><div class="from">'+BOOK_SENDER_HTML+'</div></div>'
     +'<div class="row meta"><div><b>Order:</b> '+oid+'</div><div><b>Item:</b> GCC Industry @ 2030 &times; '+(x.qty||1)+'</div><div><b>Date:</b> '+dt+'</div></div>'
     +track+'</div>'

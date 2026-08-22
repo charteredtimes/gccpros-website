@@ -568,6 +568,9 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
         <div><label for="bk_city">City / District</label><select id="bk_city" autocomplete="address-level2" required disabled><option value="">Select state first</option></select></div>
         <div class="full" id="bk_city_other_wrap" style="display:none"><label for="bk_city_other">Enter your city / district</label><input id="bk_city_other" type="text" autocomplete="address-level2"></div>
         <div><label for="bk_pincode">PIN code</label><input id="bk_pincode" type="text" inputmode="numeric" maxlength="6" autocomplete="postal-code" required></div>
+        <div><label for="bk_addr_type">Address type</label><select id="bk_addr_type" required><option value="Home">Home</option><option value="Office">Office</option><option value="Other">Other</option></select></div>
+        <div><label for="bk_deliv_days">Preferred delivery days</label><select id="bk_deliv_days" required><option value="Any Day">Any day</option><option value="Monday to Friday">Monday to Friday</option><option value="Monday to Saturday">Monday to Saturday</option></select></div>
+        <div><label for="bk_deliv_time">Preferred delivery time</label><select id="bk_deliv_time" required><option value="9 AM to 9 PM">9 AM to 9 PM</option><option value="11 AM to 6 PM">11 AM to 6 PM</option></select></div>
         <div><label>&nbsp;</label><div style="font-size:12px;color:var(--mut);padding-top:11px">Dispatched in 3 working days</div></div>
         <div class="bk-msg" id="bkMsg"></div>
         <button class="bk-submit" id="bkSubmit" type="submit">Pay &#8377;999 &rarr;</button>
@@ -645,7 +648,7 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
   form.addEventListener('submit', async function(e){
     e.preventDefault(); msg.textContent=''; msg.className='bk-msg'; btn.disabled=true; btn.textContent='Processing...';
     var email=val('bk_email'), phone=val('bk_phone').replace(/\D/g,''), pincode=val('bk_pincode').replace(/\D/g,'');
-    var d={ buyer_name:val('bk_name'), email:email, phone:phone, address:val('bk_address'), city:getCity(), state:val('bk_state'), pincode:pincode };
+    var d={ buyer_name:val('bk_name'), email:email, phone:phone, address:val('bk_address'), city:getCity(), state:val('bk_state'), pincode:pincode, address_type:val('bk_addr_type'), delivery_days:val('bk_deliv_days'), delivery_time:val('bk_deliv_time') };
     if(!d.buyer_name){ fail('Please enter your full name.'); return; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ fail('Please enter a valid email address.'); return; }
     if(!/^[6-9]\d{9}$/.test(phone)){ fail('Enter a valid 10-digit Indian mobile number.'); return; }
