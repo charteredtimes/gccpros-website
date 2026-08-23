@@ -751,7 +751,7 @@ function renderBookOrders() {
       + '<td style="min-width:230px;white-space:normal;line-height:1.45">' + shipTo + '</td>'
       + '<td>' + typeCell + '</td>'
       + '<td style="min-width:120px;white-space:normal;line-height:1.4">' + delivCell + '</td>'
-      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td>'
+      + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + ((x.qty && x.qty > 1) ? '<br><span style="font-size:11px;color:#5b6b84">' + x.qty + ' copies</span>' : '') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td>'
       + '<td style="white-space:nowrap"><button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'label\')">Label</button> <button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'invoice\')">Invoice</button></td>'
       + '<td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
   });
@@ -759,7 +759,7 @@ function renderBookOrders() {
 }
 function exportBookOrders() {
   if (!BOOK_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status'],['Courier','courier'],['Tracking','tracking_number'],['Addr_Type','address_type'],['Delivery_Days','delivery_days'],['Delivery_Time','delivery_time']];
+  const cols = [['When','created_at'],['Status','status'],['Name','buyer_name'],['Email','email'],['Phone','phone'],['Address','address'],['City','city'],['State','state'],['PIN','pincode'],['Qty','qty'],['Amount_INR','amount_paise'],['Razorpay_Order','razorpay_order_id'],['Razorpay_Payment','razorpay_payment_id'],['Ship','ship_status'],['Courier','courier'],['Tracking','tracking_number'],['Addr_Type','address_type'],['Delivery_Days','delivery_days'],['Delivery_Time','delivery_time']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
   BOOK_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'amount_paise') v = (v || 0) / 100; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });

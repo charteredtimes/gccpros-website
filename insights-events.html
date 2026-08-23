@@ -560,6 +560,14 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
       <h3>Ship my copy</h3>
       <div class="bk-line">GCC Industry @ 2030 &middot; &#8377;999 (incl. shipping)</div>
       <form class="bk-form" id="bkForm" novalidate>
+        <div class="full" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#0b1526;border:1px solid var(--line);border-radius:11px;padding:11px 14px">
+          <label for="bk_qty" style="margin:0">Number of copies</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button type="button" id="bk_qminus" aria-label="Decrease quantity" style="width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line);background:#12203a;color:#EAF1FB;font-size:20px;line-height:1;cursor:pointer">&#8722;</button>
+            <input id="bk_qty" type="number" min="1" max="20" value="1" inputmode="numeric" aria-label="Number of copies" style="width:56px;text-align:center;font-family:inherit;font-size:15px;color:#EAF1FB;background:#0b1526;border:1.5px solid var(--line);border-radius:9px;padding:8px 6px">
+            <button type="button" id="bk_qplus" aria-label="Increase quantity" style="width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line);background:#12203a;color:#EAF1FB;font-size:20px;line-height:1;cursor:pointer">+</button>
+          </div>
+        </div>
         <div class="full"><label for="bk_name">Full name</label><input id="bk_name" type="text" autocomplete="name" required></div>
         <div><label for="bk_email">Email</label><input id="bk_email" type="email" autocomplete="email" required></div>
         <div><label for="bk_phone">Phone (10-digit mobile)</label><input id="bk_phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" required></div>
@@ -643,12 +651,22 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
   citySel.addEventListener('change', function(){ otherWrap.style.display = (citySel.value==='__other__') ? 'block' : 'none'; });
   function getCity(){ if(citySel.value==='__other__') return (document.getElementById('bk_city_other').value||'').trim(); return citySel.value; }
   function val(id){ var e=document.getElementById(id); return e?(e.value||'').trim():''; }
-  function reset(){ btn.disabled=false; btn.innerHTML='Pay &#8377;999 &rarr;'; }
+  var PRICE_INR=999, qtyEl=document.getElementById('bk_qty');
+  function getQty(){ var q=parseInt((qtyEl&&qtyEl.value)||'1',10); if(isNaN(q)||q<1)q=1; if(q>20)q=20; return q; }
+  function updatePrice(){ btn.innerHTML='Pay ₹'+(PRICE_INR*getQty()).toLocaleString('en-IN')+' →'; }
+  function stepQty(n){ var q=getQty()+n; if(q<1)q=1; if(q>20)q=20; if(qtyEl) qtyEl.value=q; updatePrice(); }
+  (function(){ var mi=document.getElementById('bk_qminus'), pl=document.getElementById('bk_qplus');
+    if(mi) mi.addEventListener('click',function(){ stepQty(-1); });
+    if(pl) pl.addEventListener('click',function(){ stepQty(1); });
+    if(qtyEl){ qtyEl.addEventListener('input',updatePrice); qtyEl.addEventListener('change',function(){ if(qtyEl.value!=='') qtyEl.value=getQty(); updatePrice(); }); }
+    updatePrice();
+  })();
+  function reset(){ btn.disabled=false; updatePrice(); }
   function fail(t){ msg.textContent=t; msg.className='bk-msg err'; reset(); }
   form.addEventListener('submit', async function(e){
     e.preventDefault(); msg.textContent=''; msg.className='bk-msg'; btn.disabled=true; btn.textContent='Processing...';
     var email=val('bk_email'), phone=val('bk_phone').replace(/\D/g,''), pincode=val('bk_pincode').replace(/\D/g,'');
-    var d={ buyer_name:val('bk_name'), email:email, phone:phone, address:val('bk_address'), city:getCity(), state:val('bk_state'), pincode:pincode, address_type:val('bk_addr_type'), delivery_days:val('bk_deliv_days'), delivery_time:val('bk_deliv_time') };
+    var d={ buyer_name:val('bk_name'), email:email, phone:phone, address:val('bk_address'), city:getCity(), state:val('bk_state'), pincode:pincode, address_type:val('bk_addr_type'), delivery_days:val('bk_deliv_days'), delivery_time:val('bk_deliv_time'), qty:getQty() };
     if(!d.buyer_name){ fail('Please enter your full name.'); return; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ fail('Please enter a valid email address.'); return; }
     if(!/^[6-9]\d{9}$/.test(phone)){ fail('Enter a valid 10-digit Indian mobile number.'); return; }
