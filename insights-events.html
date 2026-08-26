@@ -695,7 +695,7 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
         },
         modal:{ ondismiss:function(){ reset(); } }
       });
-      rzp.on('payment.failed', function(){ fail('Payment failed or was cancelled. Please try again.'); });
+      rzp.on('payment.failed', function(){ fail('The payment did not complete. If any amount was debited, please do NOT pay again — it auto-refunds, or if it went through we will confirm your order by email shortly. Otherwise you may retry.'); });
       rzp.open(); reset();
     }catch(err){ fail('Network error. Please try again.'); }
   });

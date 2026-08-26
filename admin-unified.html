@@ -540,6 +540,7 @@ td.actions { white-space:nowrap; }
       <h3>Book Orders &middot; GCC Industry @ 2030</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 8px">
         <button class="btn" onclick="loadBookOrders()">&#8635; Refresh</button>
+        <button class="btn" onclick="reconcileBookPayments()" title="Ask Razorpay whether any pending orders were actually paid, and recover them">&#128260; Reconcile payments</button>
         <button class="btn" onclick="exportBookOrders()">&#128202; Export CSV</button>
         <label style="font-size:13px;display:inline-flex;align-items:center;gap:6px"><input type="checkbox" id="book-paid-only" onchange="renderBookOrders()"> Paid only</label>
         <input type="text" id="book-q" placeholder="Filter name, email, city, PIN, payment id" oninput="renderBookOrders()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
@@ -753,7 +754,7 @@ function renderBookOrders() {
       + '<td style="min-width:120px;white-space:normal;line-height:1.4">' + delivCell + '</td>'
       + '<td>\u20b9' + ((x.amount_paise || 0) / 100).toLocaleString('en-IN') + ((x.qty && x.qty > 1) ? '<br><span style="font-size:11px;color:#5b6b84">' + x.qty + ' copies</span>' : '') + '</td><td style="font-size:12px">' + esc(x.razorpay_payment_id) + '</td>'
       + '<td style="white-space:nowrap"><button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'label\')">Label</button> <button class="btn" style="padding:4px 8px;font-size:11px" onclick="printBookDoc(\''+x.id+'\',\'invoice\')">Invoice</button></td>'
-      + '<td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : esc(x.ship_status))) + '</td></tr>';
+      + '<td>' + (x.ship_status==='dispatched' ? '<b style="color:#1C7C3C">Dispatched</b>' + (x.tracking_number ? '<br><span style="font-size:11px;color:#5b6b84">' + esc(x.courier||'') + ' ' + esc(x.tracking_number) + '</span>' : '') : (x.status==='paid' ? '<button class="btn" style="padding:5px 10px;font-size:12px" onclick="markBookDispatched(\''+x.id+'\')">Mark dispatched</button>' : (esc(x.ship_status) + (x.razorpay_order_id ? '<br><button class="btn" style="padding:4px 8px;font-size:11px;margin-top:4px" onclick="markBookVerify(\''+x.id+'\')">Check payment</button>' : '')))) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
@@ -848,6 +849,25 @@ function printBookDoc(id, kind){
   w.document.open(); w.document.write(html); w.document.close();
 }
 
+async function reconcileBookPayments(){
+  if(!confirm('Ask Razorpay whether any pending orders were actually paid, and recover them?')) return;
+  toast('Reconciling with Razorpay…','ok');
+  try{
+    const r=await fetch(BOOK_URL+'?action=reconcile',{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},body:'{}'});
+    const j=await r.json();
+    if(j.status==='ok'){ toast('Checked '+j.checked+' pending · recovered '+j.recovered,'ok'); loadBookOrders(); }
+    else { toast('Failed: '+(j.error||'error'),'err'); }
+  }catch(e){ toast('Network error','err'); }
+}
+async function markBookVerify(id){
+  toast('Checking this order with Razorpay…','ok');
+  try{
+    const r=await fetch(BOOK_URL+'?action=reconcile',{method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},body:JSON.stringify({id:id})});
+    const j=await r.json();
+    if(j.status==='ok'){ toast(j.result==='recovered'?'Recovered · marked paid':(j.result==='already_paid'?'Already paid':'No captured payment found'), j.result==='no_capture'?'err':'ok'); loadBookOrders(); }
+    else { toast('Failed: '+(j.error||'error'),'err'); }
+  }catch(e){ toast('Network error','err'); }
+}
 async function loadConsultLeads() {
   const box = document.getElementById('consult-box');
   box.innerHTML = '<p class="loading">Loading\u2026</p>';
