@@ -448,6 +448,113 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
   </div>
 </section>
 
+<style>
+.rsvp{padding:clamp(60px,9vw,100px) 0;background:linear-gradient(180deg,#0b1728,#0a1424)}
+.rsvp-card{max-width:760px;margin:0 auto;background:#0e1b30;border:1px solid var(--line);border-radius:20px;padding:clamp(24px,4vw,40px)}
+.rsvp-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+@media(max-width:600px){.rsvp-form{grid-template-columns:1fr}}
+.rsvp-form .full{grid-column:1 / -1}
+.rsvp-form label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.3px;color:#B7C9DF;margin-bottom:5px}
+.rsvp-form input,.rsvp-form select,.rsvp-form textarea{width:100%;font-family:inherit;font-size:14px;color:#EAF1FB;background:#0b1526;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
+.rsvp-form textarea{min-height:74px;resize:vertical}
+.rsvp-form input:focus,.rsvp-form select:focus,.rsvp-form textarea:focus{outline:none;border-color:var(--teal-lite)}
+.rsvp-sub{grid-column:1 / -1;margin-top:6px;border:none;cursor:pointer;font-weight:700;font-size:15px;color:#06121f;background:linear-gradient(180deg,var(--teal-lite),var(--teal));padding:14px;border-radius:11px}
+.rsvp-sub:disabled{opacity:.6;cursor:default}
+.rsvp-msg{grid-column:1 / -1;font-size:13px;font-weight:600;margin-top:4px}
+.rsvp-msg.err{color:#ff9c9c}.rsvp-msg.ok{color:#7ee0a0}
+.rsvp-done{display:none;text-align:center;padding:20px 0}
+.rsvp-done h3{font-family:'Playfair Display',Georgia,serif;color:#fff;font-size:24px;margin:0 0 8px}
+.rsvp-done p{color:var(--mut);margin:0}
+</style>
+<style>
+.cncl{padding:clamp(60px,9vw,100px) 0;background:linear-gradient(180deg,#0a1424,#0b1728)}
+.cncl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:920px;margin:8px auto 34px}
+@media(max-width:720px){.cncl-grid{grid-template-columns:1fr}}
+.cncl-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:16px;padding:22px}
+.cncl-card h3{font-family:'Space Grotesk',system-ui,sans-serif;font-size:16.5px;color:#fff;margin:0 0 8px}
+.cncl-card p{color:var(--mut);font-size:13.8px;line-height:1.55;margin:0}
+.cncl-cta{text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cncl-btn{display:inline-flex;align-items:center;font-weight:700;font-size:14.5px;border-radius:11px;padding:13px 22px}
+.cncl-primary{color:#06121f;background:linear-gradient(135deg,var(--teal-lite),var(--indigo))}
+.cncl-ghost{color:var(--teal-lite);border:1.5px solid var(--teal-lite)}
+</style>
+<!-- INDUSTRY COUNCIL (merged) -->
+<section class="cncl" id="council">
+  <div class="wrap">
+    <div class="shead reveal">
+      <div class="eyebrow">Community</div>
+      <h2 class="serif">The GCC Industry <em>Council</em></h2>
+      <p>An invite-only council of 35+ working GCC leaders across Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR and beyond. Peer-to-peer, employer-neutral, and free of any vendor agenda, connected through events, advisory groups and this community.</p>
+    </div>
+    <div class="cncl-grid reveal">
+      <div class="cncl-card"><h3>Peer-to-peer only</h3><p>No consulting engagements, no vendor relationships and no commercial introductions through the Council.</p></div>
+      <div class="cncl-card"><h3>Employer-neutral</h3><p>Members participate as individual professionals, not as representatives of their organisations.</p></div>
+      <div class="cncl-card"><h3>Members-only discretion</h3><p>Discussions are shared among members in good faith, with professional discretion expected.</p></div>
+    </div>
+    <div class="cncl-cta reveal">
+      <a class="cncl-btn cncl-primary" href="council-signup.html">Apply to the Council &rarr;</a>
+      <a class="cncl-btn cncl-ghost" href="community-insider">Meet GCC Insiders</a>
+    </div>
+  </div>
+</section>
+
+<!-- RSVP INTEREST -->
+<section class="rsvp" id="rsvp">
+  <div class="wrap">
+    <div class="shead reveal">
+      <div class="eyebrow">Be in the room next time</div>
+      <h2 class="serif">Register your <em>interest</em></h2>
+      <p>We run curated, invite-only roundtables and focused GCC events across India. Tell us where you are and what you care about, and we will bring the right room to you.</p>
+    </div>
+    <div class="rsvp-card reveal">
+      <form class="rsvp-form" id="rsvpForm" novalidate>
+        <div><label for="rv_name">Full name</label><input id="rv_name" type="text" autocomplete="name" required></div>
+        <div><label for="rv_email">Work email</label><input id="rv_email" type="email" autocomplete="email" required></div>
+        <div><label for="rv_phone">Phone (mobile)</label><input id="rv_phone" type="tel" inputmode="numeric" autocomplete="tel"></div>
+        <div><label for="rv_company">Company</label><input id="rv_company" type="text" autocomplete="organization"></div>
+        <div><label for="rv_desig">Designation</label><input id="rv_desig" type="text" autocomplete="organization-title"></div>
+        <div><label for="rv_city">Preferred city</label><select id="rv_city" required><option value="">Select a city</option><option value="Bengaluru">Bengaluru</option><option value="Hyderabad">Hyderabad</option><option value="Pune">Pune</option><option value="Chennai">Chennai</option><option value="Delhi NCR">Delhi NCR</option><option value="Mumbai">Mumbai</option><option value="Kolkata">Kolkata</option><option value="Ahmedabad">Ahmedabad</option><option value="Coimbatore">Coimbatore</option><option value="Kochi">Kochi</option><option value="Chandigarh">Chandigarh</option><option value="Jaipur">Jaipur</option><option value="Gurugram">Gurugram</option><option value="Noida">Noida</option><option value="Other">Other</option></select></div>
+        <div class="full"><label for="rv_interest">Interested in</label><select id="rv_interest" required><option value="Curated roundtable">Curated roundtable (leaders of your choice)</option><option value="Focused event">Focused event / summit</option><option value="Both">Both</option></select></div>
+        <div class="full"><label for="rv_topics">Topics you care about (optional)</label><textarea id="rv_topics" placeholder="e.g. location strategy, talent, AI adoption, GCC setup, incentives"></textarea></div>
+        <div class="rsvp-msg" id="rvMsg"></div>
+        <button class="rsvp-sub" id="rvSubmit" type="submit">Register my interest &rarr;</button>
+      </form>
+      <div class="rsvp-done" id="rvDone">
+        <h3>You&rsquo;re on the list</h3>
+        <p>Thank you. We&rsquo;ll reach out with details as we plan the next roundtables and events near you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/rsvp-lead';
+  var form=document.getElementById('rsvpForm'), msg=document.getElementById('rvMsg'),
+      done=document.getElementById('rvDone'), btn=document.getElementById('rvSubmit');
+  if(!form) return;
+  function val(id){ var el=document.getElementById(id); return (el&&el.value||'').trim(); }
+  function fail(t){ msg.textContent=t; msg.className='rsvp-msg err'; btn.disabled=false; btn.innerHTML='Register my interest &rarr;'; }
+  form.addEventListener('submit', async function(e){
+    e.preventDefault(); msg.textContent=''; msg.className='rsvp-msg'; btn.disabled=true; btn.textContent='Submitting...';
+    var d={ name:val('rv_name'), email:val('rv_email'), phone:val('rv_phone').replace(/[^0-9+ ]/g,''),
+            company:val('rv_company'), designation:val('rv_desig'), city:val('rv_city'),
+            interest:val('rv_interest'), topics:val('rv_topics') };
+    if(!d.name){ fail('Please enter your name.'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)){ fail('Please enter a valid work email.'); return; }
+    if(!d.city){ fail('Please pick a preferred city.'); return; }
+    try{
+      var r=await fetch(API+'?action=submitRSVP',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+      var j=await r.json();
+      if(j&&j.status==='ok'){
+        try{ if(window.gccTrack) gccTrack('rsvp_submit',{city:d.city,interest:d.interest}); }catch(_){ }
+        form.style.display='none'; done.style.display='block';
+      } else { fail(j&&j.error==='invalid_email'?'Please enter a valid work email.':'Could not submit. Please try again or email admin@gccpros.com.'); }
+    }catch(err){ fail('Network error. Please try again.'); }
+  });
+})();
+</script>
+
 <!-- THE BOOK -->
 <section id="book">
   <div class="wrap book-in">

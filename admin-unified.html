@@ -203,6 +203,12 @@ td.actions { white-space:nowrap; }
       <p>Chat-bot enquiries from the GCC Consulting page: intent, focus, company &amp; the full Q&amp;A.</p>
       <div class="pills"><span>New</span><span>Existing</span><span>Q&amp;A</span></div>
     </div>
+    <div class="domain-card rsvp" onclick="pickDomain('rsvp')" id="card-rsvp">
+      <div class="icon">&#128197;</div>
+      <h2>Roundtable RSVPs</h2>
+      <p>Interest captured from the Insights &amp; Events page: city, company, designation &amp; topics.</p>
+      <div class="pills"><span>City</span><span>Interest</span><span>Topics</span></div>
+    </div>
   </div>
 
   <!-- DATABASE DOMAIN -->
@@ -528,6 +534,27 @@ td.actions { white-space:nowrap; }
     </div>
   </div>
 
+  <!-- RSVP DOMAIN -->
+  <div id="domain-rsvp" class="domain-section" style="display:none;">
+    <style>
+      #rsvp-box table{width:100%;border-collapse:collapse;font-size:12.5px}
+      #rsvp-box th{background:#14213D;color:#fff;text-align:left;padding:8px 9px;white-space:nowrap;position:sticky;top:0}
+      #rsvp-box td{padding:8px 9px;border-bottom:1px solid #e5e9f0;vertical-align:top;max-width:320px;word-break:break-word}
+      #rsvp-box tr:nth-child(even) td{background:#f8fbff}
+      #rsvp-box .pill-city{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF5FF;color:#125BD0;border:1px solid #CFE2FB}
+    </style>
+    <div class="card">
+      <h3>Roundtable / Event RSVPs &middot; Insights &amp; Events</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 8px">
+        <button class="btn" onclick="loadRSVPs()">&#8635; Refresh</button>
+        <button class="btn" onclick="exportRSVPs()">&#128202; Export CSV</button>
+        <input type="text" id="rsvp-q" placeholder="Filter name, email, company, city, topics" oninput="renderRSVPs()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
+        <span id="rsvp-stats" style="font-size:13px;color:#5B6B84"></span>
+      </div>
+      <div id="rsvp-box" style="overflow:auto;max-height:70vh"><p class="loading">Click Refresh to load.</p></div>
+    </div>
+  </div>
+
   <!-- BOOK ORDERS DOMAIN -->
   <div id="domain-book" class="domain-section" style="display:none;">
     <style>
@@ -649,7 +676,9 @@ let RSVPS = [], RSVPS_ALL = [];
 let BOOK_ROWS = [];
 const BOOK_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/book-order';
 let CONSULT_ROWS = [];
+let RSVP_ROWS = [];
 const CONSULT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/consult-lead';
+const RSVP_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/rsvp-lead';
 let CURRENT_JOB_FILTER = null;
 let CURRENT_DOMAIN = 'opportunities';
 
@@ -700,13 +729,14 @@ function showGateResult(msg, ok) { const r = document.getElementById('gate-resul
 
 function pickDomain(name) {
   CURRENT_DOMAIN = name;
-  ['database','opportunities','community','book','consult'].forEach(d => {
+  ['database','opportunities','community','book','consult','rsvp'].forEach(d => {
     document.getElementById('card-' + d).classList.toggle('active', d === name);
     document.getElementById('domain-' + d).style.display = (d === name) ? '' : 'none';
   });
   if (name === 'database' && typeof DB_USERS !== 'undefined' && !DB_USERS.length) dbLoadUsers();
   if (name === 'book' && !BOOK_ROWS.length) loadBookOrders();
   if (name === 'consult' && !CONSULT_ROWS.length) loadConsultLeads();
+  if (name === 'rsvp' && !RSVP_ROWS.length) loadRSVPs();
 }
 
 async function loadBookOrders() {
@@ -917,6 +947,48 @@ function exportConsultLeads() {
   CONSULT_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'transcript') v = transcriptText(v); if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
   const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_Consulting_Leads_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+}
+
+async function loadRSVPs() {
+  const box = document.getElementById('rsvp-box');
+  box.innerHTML = '<p class="loading">Loading\u2026</p>';
+  try {
+    const r = await fetch(RSVP_URL + '?action=adminRSVPs&_t=' + Date.now(), { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    const j = await r.json();
+    if (j.error) { box.innerHTML = '<p class="loading">' + esc(j.error === 'unauthorized' ? 'Key rejected.' : j.error) + '</p>'; return; }
+    RSVP_ROWS = j.rows || []; renderRSVPs();
+  } catch (e) { box.innerHTML = '<p class="loading">Network error.</p>'; }
+}
+function rsvpFiltered() {
+  const q = (document.getElementById('rsvp-q').value || '').trim().toLowerCase();
+  if (!q) return RSVP_ROWS;
+  return RSVP_ROWS.filter(x => [x.name, x.email, x.company, x.city, x.designation, x.topics, x.interest].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+}
+function renderRSVPs() {
+  const rows = rsvpFiltered();
+  const st = document.getElementById('rsvp-stats');
+  if (st) st.textContent = rows.length + ' / ' + RSVP_ROWS.length + ' RSVPs';
+  const box = document.getElementById('rsvp-box');
+  if (!RSVP_ROWS.length) { box.innerHTML = '<p class="loading">No RSVPs yet.</p>'; return; }
+  let h = '<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Designation</th><th>City</th><th>Interest</th><th>Topics</th></tr></thead><tbody>';
+  rows.forEach(x => {
+    const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
+    h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
+      + '<td><b>' + esc(x.name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
+      + '<td>' + esc(x.company) + '</td><td>' + esc(x.designation) + '</td>'
+      + '<td><span class="pill-city">' + esc(x.city) + '</span></td><td>' + esc(x.interest) + '</td>'
+      + '<td>' + esc(x.topics) + '</td></tr>';
+  });
+  box.innerHTML = h + '</tbody></table>';
+}
+function exportRSVPs() {
+  if (!RSVP_ROWS.length) { alert('Nothing to export yet.'); return; }
+  const cols = [['When','created_at'],['Name','name'],['Email','email'],['Phone','phone'],['Company','company'],['Designation','designation'],['City','city'],['Interest','interest'],['Topics','topics']];
+  const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+  let csv = cols.map(c => c[0]).join(',') + '\n';
+  RSVP_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
+  const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_RSVPs_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
 
 function showSubTab(ev, domain, sub) {
