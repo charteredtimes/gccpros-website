@@ -689,18 +689,20 @@ footer{background:#060c16;border-top:1px solid var(--line);padding:60px 0 34px;c
             var v=await fetch(API+'?action=verifyPayment',{method:'POST',headers:{'Content-Type':'application/json'},
               body:JSON.stringify({razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
             var vj=await v.json();
-            if(vj.status==='ok'){ wrap.style.display='none'; done.style.display='block'; }
+            if(vj.status==='ok'){ wrap.style.display='none'; done.style.display='block'; try{ if(window.gccTrack) gccTrack('purchase',{currency:'INR',value:(j.amount||0)/100,transaction_id:resp.razorpay_payment_id,quantity:getQty(),items:[{item_name:'GCC Industry @ 2030'}]}); }catch(_){ } }
             else { fail('Payment received but verification failed. We will contact you. Ref: '+resp.razorpay_payment_id); }
           }catch(err){ fail('Verification error. Ref: '+resp.razorpay_payment_id); }
         },
         modal:{ ondismiss:function(){ reset(); } }
       });
       rzp.on('payment.failed', function(){ fail('The payment did not complete. If any amount was debited, please do NOT pay again — it auto-refunds, or if it went through we will confirm your order by email shortly. Otherwise you may retry.'); });
+      try{ if(window.gccTrack) gccTrack('begin_checkout',{currency:'INR',value:(j.amount||0)/100,quantity:getQty(),items:[{item_name:'GCC Industry @ 2030'}]}); }catch(_){ }
       rzp.open(); reset();
     }catch(err){ fail('Network error. Please try again.'); }
   });
 })();
 </script>
 <script async src="https://www.instagram.com/embed.js"></script>
+  <script defer src="/analytics.js"></script>
 </body>
 </html>

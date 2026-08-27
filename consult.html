@@ -448,6 +448,7 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
     }catch(e){}
     typing(false);
     if(ok){
+      try{ if(window.gccTrack) gccTrack('enquiry_submit',{intent:S.intent,focus:S.focus,company:S.company,page:'consult'}); }catch(_){ }
       addBot("Thank you"+(S.company?", "+S.company:"")+"! I've shared this with our consulting team. You'll hear from us at "+S.email+" shortly. A confirmation is on its way to your inbox.");
     } else {
       addBot("Thanks! I've noted everything. If you don't hear from us shortly, please email admin@gccpros.com and we'll pick it up right away.");
@@ -460,5 +461,6 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
   setTimeout(ask, 900);
 })();
 </script>
+  <script defer src="/analytics.js"></script>
 </body>
 </html>
