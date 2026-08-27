@@ -1353,7 +1353,7 @@ footer.site-footer {
     <li><a href="/">Home</a></li>
     <li><a href="consult.html">GCC Consulting</a></li>
     <li><a href="insights-events">Insights &amp; Events</a></li>
-    <li><a href="industry-council">Industry Council</a></li>
+    <li></li>
     <li><a href="database-pro.html">GCC Database</a></li>
     <li><a href="newsroom.html">Newsroom</a></li>
     <li><a href="opportunities">Opportunities</a></li>
@@ -1366,7 +1366,7 @@ footer.site-footer {
   <a href="/">Home</a>
   <a href="consult.html">GCC Consulting</a>
   <a href="insights-events">Insights &amp; Events</a>
-  <a href="industry-council">Industry Council</a>
+  
   <a href="database-pro.html">GCC Database</a>
   <a href="newsroom.html">Newsroom</a>
   <a href="opportunities">Opportunities</a>
@@ -1936,6 +1936,37 @@ footer.site-footer {
 </section>
 
 <!-- ═══ FOOTER ═══ -->
+<!-- FOLLOW / SOCIAL -->
+<style>
+.soc{padding:72px 20px;background:linear-gradient(180deg,#0b1526,#0d1730)}
+.soc-in{max-width:1000px;margin:0 auto;text-align:center}
+.soc .k{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#70B5F9}
+.soc h2{font-family:Georgia,'Playfair Display',serif;color:#fff;font-size:clamp(26px,4vw,36px);margin:12px 0 8px}
+.soc p.sub{color:#CADCFC;font-size:15px;max-width:560px;margin:0 auto 22px}
+.soc-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.soc-btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:14.5px;border-radius:11px;padding:13px 22px;color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.18)}
+.soc-btn.li{background:#0A66C2;border-color:#0A66C2}
+.soc-btn.ig{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)}
+.soc-feed{margin-top:26px}
+</style>
+<section class="soc">
+  <div class="soc-in">
+    <div class="k">Stay in the loop</div>
+    <h2>Follow the movement</h2>
+    <p class="sub">New GCC research, leader conversations and event drops land first on our LinkedIn and Instagram. Follow along.</p>
+    <div class="soc-btns">
+      <a class="soc-btn li" href="https://www.linkedin.com/company/gccpros/" target="_blank" rel="noopener">in&nbsp; Follow on LinkedIn</a>
+      <a class="soc-btn ig" href="https://www.instagram.com/gcc.pros/" target="_blank" rel="noopener">Follow on Instagram</a>
+    </div>
+    <!-- ===== LIVE SOCIAL FEED SLOT =====================================
+         Paste your Elfsight (or LightWidget) embed code INSIDE the div
+         below. It will render your live LinkedIn / Instagram posts here.
+         Until then this stays empty and the Follow buttons above work.
+    ================================================================== -->
+    <div class="soc-feed" id="social-feed"><!-- ELFSIGHT / LIGHTWIDGET EMBED CODE GOES HERE --></div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="footer-top">
     <div class="footer-brand">
@@ -1959,7 +1990,7 @@ footer.site-footer {
     </div>
     <div class="footer-col">
       <h4>Community</h4>
-      <a href="industry-council">Industry Council</a>
+      
       <a href="community-insider">GCC Insiders</a>
       <a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu" target="_blank" rel="noopener">WhatsApp Group</a>
     </div>
