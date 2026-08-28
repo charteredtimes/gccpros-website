@@ -477,5 +477,25 @@ footer{background:#05090f;border-top:1px solid var(--line);padding:56px 0 32px;c
 })();
 </script>
   <script defer src="/analytics.js"></script>
+<script>
+/* talkToUsEngage: make the "Talk to us" nav button actually engage the assistant
+   instead of scrolling to a chat that is already at the top of the page. */
+(function(){
+  function engage(e){
+    var host=document.getElementById('gccbot'); if(!host) return;
+    e.preventDefault();
+    try{ host.scrollIntoView({behavior:'smooth',block:'center'}); }catch(_){ host.scrollIntoView(); }
+    host.style.transition='box-shadow .35s ease';
+    host.style.boxShadow='0 0 0 3px rgba(87,208,230,.65)';
+    setTimeout(function(){ host.style.boxShadow=''; },1300);
+    try{
+      var inp=host.shadowRoot && host.shadowRoot.querySelector('input:not([disabled]),textarea:not([disabled])');
+      if(inp) setTimeout(function(){ try{ inp.focus(); }catch(_){}} ,450);
+    }catch(_){}
+  }
+  function wire(){ document.querySelectorAll('a[href="#chat"]').forEach(function(a){ a.addEventListener('click',engage); }); }
+  if(document.readyState!=='loading') wire(); else document.addEventListener('DOMContentLoaded',wire);
+})();
+</script>
 </body>
 </html>
