@@ -1973,34 +1973,35 @@ footer.site-footer {
         <button type="button" class="soc-tab active" data-t="li">LinkedIn</button>
         <button type="button" class="soc-tab" data-t="ig">Instagram</button>
       </div>
-      <div class="soc-pane" data-p="li"><div id="sk-li" class="sk-ww-linkedin-page-post"></div></div>
-      <div class="soc-pane" data-p="ig" hidden><div id="sk-ig" class="sk-ww-instagram-feed"></div></div>
-      <p class="soc-empty" id="soc-empty">Live posts appear here once the feed is connected.</p>
+      <div class="soc-pane" data-p="li">
+        <!-- LinkedIn feed via SociableKIT (live) -->
+        <div class="sk-ww-linkedin-page-post" data-embed-id="25709061"></div>
+        <script src="https://widgets.sociablekit.com/linkedin-page-posts/widget.js" defer></script>
+      </div>
+      <div class="soc-pane" data-p="ig" hidden>
+        <!-- Instagram feed via LightWidget. Paste your LightWidget hash into IG_LW in the script below. -->
+        <iframe id="lw-ig" src="" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;min-height:440px;display:none"></iframe>
+        <p class="soc-empty" id="ig-empty">Instagram feed connects shortly.</p>
+      </div>
     </div>
     <script>
-    /* ===== SociableKIT live LinkedIn + Instagram feed =====================
-       ONE-TIME SETUP (5 min):
-       1. Go to sociablekit.com -> create a free "LinkedIn Page Posts" widget,
-          connect your GCCPROs LinkedIn Page (OAuth, read-only, revocable).
-          Copy the Embed ID (the number in the embed code's data-embed-id).
-       2. Repeat for an "Instagram Feed" widget for your Instagram account.
-       3. Paste those two numbers below (LI_ID / IG_ID). That's it - the feed
-          goes live. Until then the Follow buttons above still work.
+    /* ===== Social feed wiring =============================================
+       LinkedIn = SociableKIT (already live, embed id 25709061).
+       Instagram = LightWidget (free). ONE-TIME SETUP:
+         1. Go to lightwidget.com -> Sign up (free) -> New widget.
+         2. Connect your GCCPROs Instagram (OAuth, read-only, revocable).
+         3. Save. Copy the widget hash from its embed code -- it is the part
+            in the iframe src:  //lightwidget.com/widgets/<HASH>.html
+         4. Paste just that <HASH> into IG_LW below. Done.
     ===================================================================== */
     (function(){
-      var LI_ID='';   // <-- paste LinkedIn SociableKIT Embed ID (numbers only)
-      var IG_ID='';   // <-- paste Instagram SociableKIT Embed ID (numbers only)
-      function mount(elId, id, src){
-        var el=document.getElementById(elId);
-        if(!el || !id) return false;
-        el.setAttribute('data-embed-id', id);
-        var sc=document.createElement('script'); sc.src=src; sc.defer=true; document.body.appendChild(sc);
-        return true;
+      var IG_LW='';   // <-- paste your LightWidget hash here (e.g. a1b2c3d4e5f6...)
+      var f=document.getElementById('lw-ig'), ie=document.getElementById('ig-empty');
+      if(f && IG_LW){
+        f.src='https://cdn.lightwidget.com/widgets/'+IG_LW+'.html';
+        f.style.display='block'; if(ie) ie.style.display='none';
+        var lw=document.createElement('script'); lw.src='https://cdn.lightwidget.com/widgets/lightwidget.js'; lw.async=true; document.body.appendChild(lw);
       }
-      var any=false;
-      any = mount('sk-li', LI_ID, 'https://widgets.sociablekit.com/linkedin-page-posts/widget.js') || any;
-      any = mount('sk-ig', IG_ID, 'https://widgets.sociablekit.com/instagram-feed/widget.js') || any;
-      var empty=document.getElementById('soc-empty'); if(any && empty) empty.style.display='none';
       // tab switch
       document.querySelectorAll('.soc-tab').forEach(function(btn){
         btn.addEventListener('click', function(){
