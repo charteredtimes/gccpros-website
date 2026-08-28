@@ -1948,6 +1948,11 @@ footer.site-footer {
 .soc-btn.li{background:#0A66C2;border-color:#0A66C2}
 .soc-btn.ig{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)}
 .soc-feed{margin-top:26px}
+.soc-tabs{display:inline-flex;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:5px;margin-bottom:18px}
+.soc-tab{font:inherit;font-size:13.5px;font-weight:700;color:#CADCFC;background:transparent;border:0;border-radius:9px;padding:8px 18px;cursor:pointer}
+.soc-tab.active{background:#70B5F9;color:#0b1526}
+.soc-pane{max-width:760px;margin:0 auto}
+.soc-empty{color:#7f93b0;font-size:13px;margin-top:14px}
 </style>
 <section class="soc">
   <div class="soc-in">
@@ -1963,7 +1968,49 @@ footer.site-footer {
          below. It will render your live LinkedIn / Instagram posts here.
          Until then this stays empty and the Follow buttons above work.
     ================================================================== -->
-    <div class="soc-feed" id="social-feed"><!-- ELFSIGHT / LIGHTWIDGET EMBED CODE GOES HERE --></div>
+    <div class="soc-feed" id="social-feed">
+      <div class="soc-tabs">
+        <button type="button" class="soc-tab active" data-t="li">LinkedIn</button>
+        <button type="button" class="soc-tab" data-t="ig">Instagram</button>
+      </div>
+      <div class="soc-pane" data-p="li"><div id="sk-li" class="sk-ww-linkedin-page-post"></div></div>
+      <div class="soc-pane" data-p="ig" hidden><div id="sk-ig" class="sk-ww-instagram-feed"></div></div>
+      <p class="soc-empty" id="soc-empty">Live posts appear here once the feed is connected.</p>
+    </div>
+    <script>
+    /* ===== SociableKIT live LinkedIn + Instagram feed =====================
+       ONE-TIME SETUP (5 min):
+       1. Go to sociablekit.com -> create a free "LinkedIn Page Posts" widget,
+          connect your GCCPROs LinkedIn Page (OAuth, read-only, revocable).
+          Copy the Embed ID (the number in the embed code's data-embed-id).
+       2. Repeat for an "Instagram Feed" widget for your Instagram account.
+       3. Paste those two numbers below (LI_ID / IG_ID). That's it - the feed
+          goes live. Until then the Follow buttons above still work.
+    ===================================================================== */
+    (function(){
+      var LI_ID='';   // <-- paste LinkedIn SociableKIT Embed ID (numbers only)
+      var IG_ID='';   // <-- paste Instagram SociableKIT Embed ID (numbers only)
+      function mount(elId, id, src){
+        var el=document.getElementById(elId);
+        if(!el || !id) return false;
+        el.setAttribute('data-embed-id', id);
+        var sc=document.createElement('script'); sc.src=src; sc.defer=true; document.body.appendChild(sc);
+        return true;
+      }
+      var any=false;
+      any = mount('sk-li', LI_ID, 'https://widgets.sociablekit.com/linkedin-page-posts/widget.js') || any;
+      any = mount('sk-ig', IG_ID, 'https://widgets.sociablekit.com/instagram-feed/widget.js') || any;
+      var empty=document.getElementById('soc-empty'); if(any && empty) empty.style.display='none';
+      // tab switch
+      document.querySelectorAll('.soc-tab').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.soc-tab').forEach(function(b){ b.classList.toggle('active', b===btn); });
+          var t=btn.getAttribute('data-t');
+          document.querySelectorAll('.soc-pane').forEach(function(p){ p.hidden = (p.getAttribute('data-p')!==t); });
+        });
+      });
+    })();
+    </script>
   </div>
 </section>
 
