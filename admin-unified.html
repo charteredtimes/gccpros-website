@@ -962,7 +962,7 @@ async function loadRSVPs() {
 function rsvpFiltered() {
   const q = (document.getElementById('rsvp-q').value || '').trim().toLowerCase();
   if (!q) return RSVP_ROWS;
-  return RSVP_ROWS.filter(x => [x.name, x.email, x.company, x.city, x.designation, x.topics, x.interest].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+  return RSVP_ROWS.filter(x => [x.name, x.email, x.company, x.city, x.designation, x.topics, x.interest, x.event, x.org_type].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
 }
 function renderRSVPs() {
   const rows = rsvpFiltered();
@@ -970,12 +970,14 @@ function renderRSVPs() {
   if (st) st.textContent = rows.length + ' / ' + RSVP_ROWS.length + ' RSVPs';
   const box = document.getElementById('rsvp-box');
   if (!RSVP_ROWS.length) { box.innerHTML = '<p class="loading">No RSVPs yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Designation</th><th>City</th><th>Interest</th><th>Topics</th></tr></thead><tbody>';
+  let h = '<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Company</th><th>Designation</th><th>Type</th><th>Event</th><th>City</th><th>Interest</th><th>Topics</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
       + '<td><b>' + esc(x.name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
       + '<td>' + esc(x.company) + '</td><td>' + esc(x.designation) + '</td>'
+      + '<td>' + esc(x.org_type || '-') + '</td>'
+      + '<td>' + (x.event && x.event !== 'General interest' ? '<b>' + esc(x.event) + '</b>' : esc(x.event || 'General interest')) + '</td>'
       + '<td><span class="pill-city">' + esc(x.city) + '</span></td><td>' + esc(x.interest) + '</td>'
       + '<td>' + esc(x.topics) + '</td></tr>';
   });
@@ -983,7 +985,7 @@ function renderRSVPs() {
 }
 function exportRSVPs() {
   if (!RSVP_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Name','name'],['Email','email'],['Phone','phone'],['Company','company'],['Designation','designation'],['City','city'],['Interest','interest'],['Topics','topics']];
+  const cols = [['When','created_at'],['Name','name'],['Email','email'],['WhatsApp','phone'],['Company','company'],['Designation','designation'],['Company type','org_type'],['Event','event'],['City','city'],['Interest','interest'],['Topics','topics']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
   RSVP_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
