@@ -44,7 +44,7 @@
 }
 
 * , *::before , *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
+html, html { overflow-x: hidden; } body { height: 100%; overflow-x: hidden; max-width: 100%; }
 body {
   font-family: var(--sans);
   background: var(--cream);
@@ -247,7 +247,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   justify-content: space-between;
   align-items: flex-end;
   gap: 32px;
-  max-width: 1440px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
 }
@@ -299,7 +299,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 /* ── MAIN GRID ──────────────────────────────────────────────── */
 .main {
-  max-width: 1440px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 32px 36px 48px;
 }
@@ -2226,7 +2226,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
      SECTION 3:SLIM REPORT 2026 STRIP (was full #full-report) (v7.0)
      Compact horizontal band. Preserves buyReport() + redeemReportWithCredits().
      ═══════════════════════════════════════════════════════════════════════════ -->
-<section id="full-report" style="background:#0A1628;padding:34px 20px;border-top:1px solid var(--gold-soft);">
+<section id="full-report" style="display:none;background:#0A1628;padding:34px 20px;border-top:1px solid var(--gold-soft);">
   <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:22px;">
     <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:64px;height:84px;background:linear-gradient(160deg,#152338,#1C2D4A);border:1px solid rgba(203,228,254,0.18);border-radius:4px;font-size:8.5px;letter-spacing:1px;color:var(--gold-soft);text-align:center;line-height:1.4;font-weight:600;">REPORT<br>2026<br>COVER</div>
     <div style="flex:1 1 320px;min-width:240px;">
