@@ -5420,5 +5420,6 @@ function _entMsgShow(kind, text) {
 }
 </script>
   <script defer src="/analytics.js"></script>
+<script>window.addEventListener('load',function(){try{var qs=new URLSearchParams(location.search);var want=qs.get('auth');if(!want&&qs.get('signup'))want='signup';if(want!=='signup'&&want!=='signin')return;setTimeout(function(){try{var u=(window.firebase&&firebase.auth&&firebase.auth().currentUser);if(u)return;if(typeof openSignInModal==='function'){openSignInModal();if(typeof switchMode==='function')switchMode(want);}}catch(_){}},600);}catch(_){}});</script>
 </body>
 </html>
