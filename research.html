@@ -221,7 +221,7 @@
 <script>
 try{
   firebase.initializeApp({apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",authDomain:"gccpros-9aadb.firebaseapp.com",projectId:"gccpros-9aadb",storageBucket:"gccpros-9aadb.firebasestorage.app",messagingSenderId:"764592723192",appId:"1:764592723192:web:002a03f217b57d47f0570d"});
-  try{ firebase.appCheck().activate(new firebase.appCheck.ReCaptchaV3Provider("6LfzVs0sAAAAADk_q6RhB0hIU6TCZK6ZfJv2_HVn"), true); }catch(_){}
+  /* App Check activation removed: it was blocking Firebase Auth on this page (auth/network-request-failed) */
   window.__auth=firebase.auth();
 }catch(e){ window.__authErr=e&&e.message; }
 </script>
