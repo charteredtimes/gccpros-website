@@ -128,7 +128,43 @@
 .doc-share button{font:inherit;font-size:10.5px;font-weight:700;color:#9FC2F0;background:rgba(112,181,249,.1);border:1px solid rgba(112,181,249,.3);border-radius:6px;padding:4px 8px;cursor:pointer}
 .doc-share button:hover{background:rgba(112,181,249,.2);color:#fff}
 #rtoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0e1b30;color:#EAF1FB;border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-size:13px;z-index:300;display:none}
+
+.doc-thumb .cover{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:12px;background:linear-gradient(150deg,#12233f 0%,#0b1526 60%,#0e2748 100%);box-sizing:border-box}
+.doc-thumb .cover .cv-k{font:700 8.5px/1.4 'JetBrains Mono',monospace;letter-spacing:1.5px;color:#6f9fd8;text-transform:uppercase}
+.doc-thumb .cover .cv-t{font-weight:800;font-size:15px;color:#EAF1FB;line-height:1.15;margin-top:auto}
+.doc-thumb .cover .cv-s{font-size:11px;color:#9fb6d6}
+.si-modal{position:fixed;inset:0;background:rgba(4,10,20,.72);z-index:400;display:none;align-items:center;justify-content:center;padding:18px}
+.si-card{position:relative;width:min(400px,96vw);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px 24px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+.si-card h3{margin:0 0 4px;font-size:19px;color:#EAF1FB}
+.si-card .si-sub{margin:0 0 16px;font-size:13px;color:#8fa6c4}
+.si-card label{display:block;font-size:12px;color:#9fb6d6;margin:10px 0 5px;font-weight:600}
+.si-card input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:11px 12px;color:#EAF1FB;font-size:14px}
+.si-card input:focus{outline:none;border-color:var(--blue)}
+.si-err{min-height:16px;color:#ff9a9a;font-size:12.5px;margin:9px 0}
+.si-x{position:absolute;top:12px;right:14px;background:none;border:0;color:#8fa6c4;font-size:22px;cursor:pointer;line-height:1}
+.si-links{display:flex;justify-content:space-between;margin-top:14px;font-size:12.5px}
+.si-links a{color:#9FC2F0;text-decoration:none;cursor:pointer}
+.si-links a:hover{text-decoration:underline}
 </style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GCCPROs">
+<meta property="og:title" content="GCC Research & Intelligence | GCCPROs">
+<meta property="og:description" content="Member research hub: full GCC industry reports, state GCC policy handbooks and a research assistant grounded in the book GCC Industry @ 2030.">
+<meta property="og:url" content="https://www.gccpros.com/research.html">
+<meta property="og:image" content="https://www.gccpros.com/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GCC Research & Intelligence | GCCPROs">
+<meta name="twitter:description" content="Member research hub for Global Capability Centre leaders. Reports, policy handbooks and a GCC research assistant.">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+<script>
+try{
+  firebase.initializeApp({apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",authDomain:"gccpros-9aadb.firebaseapp.com",projectId:"gccpros-9aadb",storageBucket:"gccpros-9aadb.firebasestorage.app",messagingSenderId:"764592723192",appId:"1:764592723192:web:002a03f217b57d47f0570d"});
+  try{ firebase.appCheck().activate(new firebase.appCheck.ReCaptchaV3Provider("6LfzVs0sAAAAADk_q6RhB0hIU6TCZK6ZfJv2_HVn"), true); }catch(_){}
+  window.__auth=firebase.auth();
+}catch(e){ window.__authErr=e&&e.message; }
+</script>
 </head>
 <body>
 
@@ -171,6 +207,20 @@
   <div class="g-note">Uses your existing GCC Database login. One account, every GCCPROs tool.</div>
 </div></div>
 
+<!-- INLINE SIGN-IN -->
+<div id="siModal" class="si-modal" role="dialog" aria-modal="true"><div class="si-card">
+  <button class="si-x" onclick="closeSignin()" aria-label="Close">&times;</button>
+  <h3>Sign in to GCCPROs Research</h3>
+  <p class="si-sub">Use your GCCPROs Database account. One login, every tool.</p>
+  <label for="siEmail">Email</label>
+  <input id="siEmail" type="email" autocomplete="username" placeholder="you@company.com">
+  <label for="siPass">Password</label>
+  <input id="siPass" type="password" autocomplete="current-password" placeholder="Your password" onkeydown="if(event.key==='Enter')doResearchSignin()">
+  <div id="siErr" class="si-err"></div>
+  <button id="siBtn" class="btn btn-primary" style="width:100%;justify-content:center" onclick="doResearchSignin()">Sign in</button>
+  <div class="si-links"><a onclick="doResearchReset();return false;">Forgot password?</a><a id="siCreate">Create free account</a></div>
+</div></div>
+
 <!-- HUB (signed in) -->
 <main class="wrap" id="hub">
   <div class="memberbar">
@@ -184,7 +234,7 @@
       <div class="ic">&#128202;</div>
       <h3>GCC Industry Intelligence</h3>
       <p>Full-length research on where the GCC industry is heading: growth, talent, AI, location strategy and operating models. Read comfortably, in the browser.</p>
-      <div class="doc-grid"><div class="doc-card" onclick="openSecureDoc('magazine')"><div class="doc-thumb"><canvas data-key="magazine"></canvas></div><div class="doc-meta"><div class="doc-title">2026 GCC Wave, YTD Magazine</div><div class="doc-upd">Updated Sep 2026</div><div class="doc-share"><button title="Share on WhatsApp" onclick="event.stopPropagation();shareDoc('wa','magazine')">WhatsApp</button><button title="Share on LinkedIn" onclick="event.stopPropagation();shareDoc('li','magazine')">LinkedIn</button><button title="Copy link" onclick="event.stopPropagation();shareDoc('copy','magazine')">Copy</button></div></div></div></div>
+      <div class="doc-grid"><div class="doc-card" onclick="openSecureDoc('magazine')"><div class="doc-thumb"><div class="cover" data-cover="magazine"><span class="cv-k">GCCPROS Research</span><span class="cv-t">2026 GCC Wave</span><span class="cv-s">YTD Magazine</span></div><canvas data-key="magazine" style="display:none"></canvas></div><div class="doc-meta"><div class="doc-title">2026 GCC Wave, YTD Magazine</div><div class="doc-upd">Updated Sep 2026</div><div class="doc-share"><button title="Share on WhatsApp" onclick="event.stopPropagation();shareDoc('wa','magazine')">WhatsApp</button><button title="Share on LinkedIn" onclick="event.stopPropagation();shareDoc('li','magazine')">LinkedIn</button><button title="Copy link" onclick="event.stopPropagation();shareDoc('copy','magazine')">Copy</button></div></div></div></div>
     </div>
 
     <!-- 2: State Policies Simplified -->
@@ -192,7 +242,7 @@
       <div class="ic">&#127963;</div>
       <h3>State Policies, Simplified</h3>
       <p>India&rsquo;s GCC-friendly state policies, decoded into plain language you can act on.</p>
-      <div class="doc-grid"><div class="doc-card" onclick="openSecureDoc('maharashtra')"><div class="doc-thumb"><canvas data-key="maharashtra"></canvas></div><div class="doc-meta"><div class="doc-title">Maharashtra</div><div class="doc-upd">Updated Sep 2026</div><div class="doc-share"><button title="Share on WhatsApp" onclick="event.stopPropagation();shareDoc('wa','maharashtra')">WhatsApp</button><button title="Share on LinkedIn" onclick="event.stopPropagation();shareDoc('li','maharashtra')">LinkedIn</button><button title="Copy link" onclick="event.stopPropagation();shareDoc('copy','maharashtra')">Copy</button></div></div></div><div class="doc-card soon-card"><div class="doc-thumb soon-thumb"><span>Coming soon</span></div><div class="doc-meta"><div class="doc-title">Uttar Pradesh</div><div class="doc-upd">Stay tuned</div></div></div></div>
+      <div class="doc-grid"><div class="doc-card" onclick="openSecureDoc('maharashtra')"><div class="doc-thumb"><div class="cover" data-cover="maharashtra"><span class="cv-k">GCCPROS Research</span><span class="cv-t">Maharashtra</span><span class="cv-s">GCC Policy, Simplified</span></div><canvas data-key="maharashtra" style="display:none"></canvas></div><div class="doc-meta"><div class="doc-title">Maharashtra</div><div class="doc-upd">Updated Sep 2026</div><div class="doc-share"><button title="Share on WhatsApp" onclick="event.stopPropagation();shareDoc('wa','maharashtra')">WhatsApp</button><button title="Share on LinkedIn" onclick="event.stopPropagation();shareDoc('li','maharashtra')">LinkedIn</button><button title="Copy link" onclick="event.stopPropagation();shareDoc('copy','maharashtra')">Copy</button></div></div></div><div class="doc-card soon-card"><div class="doc-thumb soon-thumb"><span>Coming soon</span></div><div class="doc-meta"><div class="doc-title">Uttar Pradesh</div><div class="doc-upd">Stay tuned</div></div></div></div>
     </div>
 
     <!-- 3: Podcasts -->
@@ -268,11 +318,12 @@
   var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/research-hub';
   var PORTAL='database-pro.html';
   var DOCS={magazine:{url:'/GCCPROs_YTD_Magazine.pdf',title:'2026 GCC Wave (YTD) - GCC Industry @ 2030',short:'2026 GCC Wave (YTD Magazine)'},maharashtra:{url:'/Maharashtra_GCC_Company_Benefits_and_Application_Guide.pdf',title:'Maharashtra - GCC Policy, Simplified',short:'Maharashtra GCC Policy, Simplified'}};
-  function docUrl(key){return fetch(API+'?action=doc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,email:token()})}).then(function(r){return r.json();}).then(function(j){return j&&j.url;}).catch(function(){return null;});}
+  async function docUrl(key){ try{ var cu=(window.__auth&&window.__auth.currentUser)?window.__auth.currentUser:await waitUser(4500); var tok=cu?await cu.getIdToken():''; var r=await fetch(API+'?action=doc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key, idToken:tok, email:token()})}); var j=await r.json(); return j&&j.url; }catch(e){ return null; } }
+  function waitUser(ms){ return new Promise(function(res){ var t0=Date.now(); (function chk(){ if(window.__auth&&window.__auth.currentUser) return res(window.__auth.currentUser); if(Date.now()-t0>ms) return res(null); setTimeout(chk,200); })(); }); }
   window.openSecureDoc=async function(key){var d=DOCS[key]||{};try{var u=await docUrl(key);openDoc(u||'', d.title||'Document');}catch(e){openDoc('', d.title||'Document');}};
-  window.shareDoc=function(kind,key){var d=DOCS[key];if(!d)return;var url=location.origin+'/research.html?doc='+key;try{logAct('share',key+'/'+kind);}catch(_){}if(kind==='wa'){window.open('https://wa.me/?text='+encodeURIComponent('GCCPROs Research, '+d.short+': '+url),'_blank');}else if(kind==='li'){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url),'_blank');}else{try{navigator.clipboard.writeText(url);rtoast('Link copied. Recipients sign in to view.');}catch(e){rtoast(url);}}};
+  window.shareDoc=function(kind,key){var d=DOCS[key];if(!d)return;var url=location.origin+'/r.html?d='+key;try{logAct('share',key+'/'+kind);}catch(_){}if(kind==='wa'){window.open('https://wa.me/?text='+encodeURIComponent('GCCPROs Research, '+d.short+': '+url),'_blank');}else if(kind==='li'){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url),'_blank');}else{try{navigator.clipboard.writeText(url);rtoast('Link copied. Recipients sign in to view.');}catch(e){rtoast(url);}}};
   function rtoast(m){var el=document.getElementById('rtoast');if(!el){el=document.createElement('div');el.id='rtoast';document.body.appendChild(el);}el.textContent=m;el.style.display='block';clearTimeout(window.__rt);window.__rt=setTimeout(function(){el.style.display='none';},2600);}
-  async function renderThumbs(){var cvs=[].slice.call(document.querySelectorAll('canvas[data-key]'));if(!cvs.length)return;var lib;try{lib=await ensurePdfjs();}catch(e){return;}for(var i=0;i<cvs.length;i++){var c=cvs[i];if(c.dataset.done)continue;c.dataset.done='1';try{var _u=await docUrl(c.getAttribute('data-key'));if(!_u){continue;}var doc=await lib.getDocument(_u).promise;var page=await doc.getPage(1);var w=c.clientWidth||200;var v0=page.getViewport({scale:1});var sc=(w/v0.width)*(window.devicePixelRatio||1);var vp=page.getViewport({scale:sc});c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;}catch(e){}}}
+  async function renderThumbs(){var cvs=[].slice.call(document.querySelectorAll('canvas[data-key]'));if(!cvs.length)return;var lib;try{lib=await ensurePdfjs();}catch(e){return;}for(var i=0;i<cvs.length;i++){var c=cvs[i];if(c.dataset.done)continue;c.dataset.done='1';try{var key=c.getAttribute('data-key');var _u=await docUrl(key);if(!_u){continue;}var ab=await (await fetch(_u)).arrayBuffer();var doc=await lib.getDocument({data:new Uint8Array(ab)}).promise;var page=await doc.getPage(1);var w=(c.parentNode&&c.parentNode.clientWidth)||200;var v0=page.getViewport({scale:1});var vp=page.getViewport({scale:(w/v0.width)*(window.devicePixelRatio||1)});c.width=vp.width;c.height=vp.height;await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;c.style.display='block';var cov=c.parentNode&&c.parentNode.querySelector('[data-cover]');if(cov)cov.style.display='none';}catch(e){}}}
   function autoOpenDoc(){try{var _d=new URLSearchParams(location.search).get('doc');if(_d&&DOCS[_d])setTimeout(function(){openSecureDoc(_d);},500);}catch(_){}}
 
   document.getElementById('yr').textContent=new Date().getFullYear();
@@ -305,10 +356,16 @@
     document.getElementById('hub').style.display='block';
     document.getElementById('botfab').style.display='block';
     document.getElementById('whoEmail').textContent=EMAIL||'member';
-    logAct('view','hub'); try{renderThumbs();}catch(_){} autoOpenDoc();
+    logAct('view','hub'); try{renderThumbs();}catch(_){} autoOpenDoc(); setTimeout(function(){try{var v=document.getElementById('viewer'); if(!(v&&v.style.display==='flex')) toggleBot(true);}catch(_){}},1000);
   }
   var nextParam='?next='+encodeURIComponent('research.html'+(location.search||''));
-  document.getElementById('btnSignin').href=PORTAL+nextParam;
+  // ---- inline sign-in (no redirect to the database page) ----
+  window.openSignin=function(){ var m=document.getElementById('siModal'); if(m){ m.style.display='flex'; var f=document.getElementById('siEmail'); if(f) setTimeout(function(){f.focus();},60); } };
+  window.closeSignin=function(){ var m=document.getElementById('siModal'); if(m) m.style.display='none'; };
+  (function(){ var _si=document.getElementById('btnSignin'); if(_si){ _si.removeAttribute('href'); _si.style.cursor='pointer'; _si.addEventListener('click',function(e){ e.preventDefault(); openSignin(); }); } var _cr=document.getElementById('siCreate'); if(_cr){ _cr.setAttribute('href', PORTAL+nextParam+'&signup=1'); } var _md=document.getElementById('siModal'); if(_md){ _md.addEventListener('click',function(e){ if(e.target===_md) closeSignin(); }); } })();
+  window.doResearchReset=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var er=document.getElementById('siErr'); if(!em){ er.style.color=''; er.textContent='Enter your email first, then tap Forgot password.'; return; } if(!window.__auth){ er.textContent='Auth is still loading, please retry.'; return; } window.__auth.sendPasswordResetEmail(em).then(function(){ er.style.color='#7CE0B0'; er.textContent='Reset link sent. Check your inbox.'; }).catch(function(e){ er.style.color=''; er.textContent=(e&&e.message||'Could not send reset link').replace('Firebase: ',''); }); };
+  window.doResearchSignin=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var pw=document.getElementById('siPass').value||''; var er=document.getElementById('siErr'); er.style.color=''; er.textContent=''; if(!em||!pw){ er.textContent='Enter your email and password.'; return; } if(!window.__auth){ er.textContent='Sign-in is still loading, please retry in a moment.'; return; } var btn=document.getElementById('siBtn'); btn.disabled=true; btn.textContent='Signing in...'; window.__auth.signInWithEmailAndPassword(em,pw).then(function(){}).catch(function(e){ er.textContent=(e&&e.message||'Sign-in failed').replace('Firebase: ',''); }).then(function(){ btn.disabled=false; btn.textContent='Sign in'; }); };
+  if(window.__auth){ window.__auth.onAuthStateChanged(function(u){ if(u&&u.email){ try{localStorage.setItem('gcc_token',u.email);}catch(_){} EMAIL=u.email; try{closeSignin();}catch(_){} if(document.getElementById('hub').style.display!=='block'){ showHub(); } } }); }
   document.getElementById('btnSignup').href=PORTAL+nextParam+'&signup=1';
   document.getElementById('signOut').addEventListener('click',function(){
     try{ localStorage.removeItem('gcc_token'); }catch(_){}
