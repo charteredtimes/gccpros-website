@@ -209,6 +209,12 @@ td.actions { white-space:nowrap; }
       <p>Interest captured from the Insights &amp; Events page: city, company, designation &amp; topics.</p>
       <div class="pills"><span>City</span><span>Interest</span><span>Topics</span></div>
     </div>
+    <div class="domain-card research" onclick="pickDomain('research')" id="card-research">
+      <div class="icon">&#128218;</div>
+      <h2>Research Activity</h2>
+      <p>Member activity in the gated Research &amp; Intelligence hub: sign-ins, tile &amp; document opens, and assistant questions.</p>
+      <div class="pills"><span>Views</span><span>Docs</span><span>Bot asks</span></div>
+    </div>
   </div>
 
   <!-- DATABASE DOMAIN -->
@@ -555,6 +561,26 @@ td.actions { white-space:nowrap; }
     </div>
   </div>
 
+  <div id="domain-research" class="domain-section" style="display:none;">
+    <style>
+      #research-box table{width:100%;border-collapse:collapse;font-size:12.5px}
+      #research-box th{background:#14213D;color:#fff;text-align:left;padding:8px 9px;white-space:nowrap;position:sticky;top:0}
+      #research-box td{padding:8px 9px;border-bottom:1px solid #e5e9f0;vertical-align:top;max-width:320px;word-break:break-word}
+      #research-box tr:nth-child(even) td{background:#f8fbff}
+      #research-box .pill-ev{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF5FF;color:#125BD0;border:1px solid #CFE2FB}
+    </style>
+    <div class="card">
+      <h3>Research &amp; Intelligence &middot; Member Activity Log</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 8px">
+        <button class="btn" onclick="loadResearch()">&#8635; Refresh</button>
+        <button class="btn" onclick="exportResearch()">&#128202; Export CSV</button>
+        <input type="text" id="research-q" placeholder="Filter email, event, detail" oninput="renderResearch()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
+        <span id="research-stats" style="font-size:13px;color:#5B6B84"></span>
+      </div>
+      <div id="research-box" style="overflow:auto;max-height:70vh"><p class="loading">Click Refresh to load.</p></div>
+    </div>
+  </div>
+
   <!-- BOOK ORDERS DOMAIN -->
   <div id="domain-book" class="domain-section" style="display:none;">
     <style>
@@ -679,6 +705,8 @@ let CONSULT_ROWS = [];
 let RSVP_ROWS = [];
 const CONSULT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/consult-lead';
 const RSVP_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/rsvp-lead';
+const RESEARCH_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/research-hub';
+let RESEARCH_ROWS = [];
 let CURRENT_JOB_FILTER = null;
 let CURRENT_DOMAIN = 'opportunities';
 
@@ -729,7 +757,7 @@ function showGateResult(msg, ok) { const r = document.getElementById('gate-resul
 
 function pickDomain(name) {
   CURRENT_DOMAIN = name;
-  ['database','opportunities','community','book','consult','rsvp'].forEach(d => {
+  ['database','opportunities','community','book','consult','rsvp','research'].forEach(d => {
     document.getElementById('card-' + d).classList.toggle('active', d === name);
     document.getElementById('domain-' + d).style.display = (d === name) ? '' : 'none';
   });
@@ -737,6 +765,7 @@ function pickDomain(name) {
   if (name === 'book' && !BOOK_ROWS.length) loadBookOrders();
   if (name === 'consult' && !CONSULT_ROWS.length) loadConsultLeads();
   if (name === 'rsvp' && !RSVP_ROWS.length) loadRSVPs();
+  if (name === 'research' && !RESEARCH_ROWS.length) loadResearch();
 }
 
 async function loadBookOrders() {
@@ -991,6 +1020,46 @@ function exportRSVPs() {
   RSVP_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
   const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_RSVPs_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+}
+
+async function loadResearch() {
+  const box = document.getElementById('research-box');
+  box.innerHTML = '<p class="loading">Loading...</p>';
+  try {
+    const r = await fetch(RESEARCH_URL + '?action=adminActivity&_t=' + Date.now(), { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    const j = await r.json();
+    RESEARCH_ROWS = j.rows || []; renderResearch();
+  } catch (e) { box.innerHTML = '<p class="loading">Network error.</p>'; }
+}
+function researchFiltered() {
+  const q = (document.getElementById('research-q').value || '').trim().toLowerCase();
+  if (!q) return RESEARCH_ROWS;
+  return RESEARCH_ROWS.filter(x => [x.email, x.event, x.detail, x.path].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+}
+function renderResearch() {
+  const rows = researchFiltered();
+  const st = document.getElementById('research-stats');
+  if (st) st.textContent = rows.length + ' / ' + RESEARCH_ROWS.length + ' events';
+  const box = document.getElementById('research-box');
+  if (!RESEARCH_ROWS.length) { box.innerHTML = '<p class="loading">No activity yet.</p>'; return; }
+  let h = '<table><thead><tr><th>When</th><th>Member</th><th>Event</th><th>Detail</th></tr></thead><tbody>';
+  rows.forEach(x => {
+    const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
+    h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
+      + '<td>' + esc(x.email || '-') + '</td>'
+      + '<td><span class="pill-ev">' + esc(x.event || '-') + '</span></td>'
+      + '<td>' + esc(x.detail || '') + '</td></tr>';
+  });
+  box.innerHTML = h + '</tbody></table>';
+}
+function exportResearch() {
+  if (!RESEARCH_ROWS.length) { alert('Nothing to export yet.'); return; }
+  const cols = [['When','created_at'],['Member','email'],['Event','event'],['Detail','detail'],['Path','path'],['IP','ip']];
+  const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+  let csv = cols.map(c => c[0]).join(',') + '\n';
+  RESEARCH_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
+  const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_ResearchActivity_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
 
 function showSubTab(ev, domain, sub) {

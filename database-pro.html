@@ -265,7 +265,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   letter-spacing: -0.5px;
   line-height: 1.15;
 }
-.hero-title em { color: var(--gold-soft); font-style: normal; }
+.hero-title em { color: var(--gold); font-style: normal; }
 .hero-sub {
   font-size: 14px;
   color: rgba(255,255,255,0.7);
@@ -2724,6 +2724,9 @@ auth.onAuthStateChanged(u => {
     document.getElementById('user-pill').textContent =
       (u.displayName || u.email.split('@')[0]) + ' - Sign out';
     closeSignInModal();
+    // Research hub (and other tools) can send members here to sign in and
+    // bounce them straight back via ?next=<page>.html (same-origin only).
+    try{ var _n=new URLSearchParams(location.search).get('next'); if(_n && /^[A-Za-z0-9_\-]+\.html$/.test(_n)){ location.replace(_n); return; } }catch(_){}
     fetchCreditBalance();
   } else {
     // Firebase has no session. If we also have no cached email, show

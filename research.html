@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research &amp; Intelligence · GCCPROs</title>
+<meta name="description" content="GCCPROs Research & Intelligence: GCC industry intelligence, simplified state policies, podcasts and deep reports for GCC leaders. Member access.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://www.gccpros.com/research.html">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script defer src="analytics.js"></script>
+<style>
+  :root{
+    --ink:#0a1424; --panel:#0e1b30; --panel2:#12213b; --line:rgba(255,255,255,.12);
+    --blue:#70B5F9; --blue2:#8FD0FF; --teal:#57D0E6; --gold:#F5B301;
+    --txt:#EAF1FB; --mut:#9DB0C9;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden}
+  body{font-family:'DM Sans',system-ui,Arial,sans-serif;background:linear-gradient(180deg,#080f1c,#0b1526);color:var(--txt);min-height:100vh}
+  a{color:inherit}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+
+  /* NAV (site-synced) */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(9,17,32,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px;text-decoration:none;color:#fff;font-size:18px}
+  .brand .mk{display:inline-flex;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#8FD0FF,#5BA3E8);color:#08111f;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:800;font-size:18px}
+  .nav-links{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .nav-links a{color:#CADCFC;text-decoration:none;font-size:14.5px;font-weight:500;white-space:nowrap}
+  .nav-links a:hover{color:#fff}
+  .nav-links a.active{color:#fff;font-weight:700}
+  .nav-cta{background:linear-gradient(180deg,#8FD0FF,#5BA3E8);color:#08111f !important;font-weight:700;border-radius:10px;padding:9px 16px}
+  .nav-tog{display:none;background:none;border:0;color:#fff;font-size:24px;cursor:pointer}
+  @media(max-width:940px){
+    .nav-links{position:fixed;inset:60px 0 auto 0;flex-direction:column;background:#0b1526;border-bottom:1px solid var(--line);padding:16px 20px;display:none}
+    .nav-links.open{display:flex}
+    .nav-tog{display:block}
+  }
+
+  /* HERO */
+  .rhero{padding:64px 0 34px;text-align:center}
+  .rhero .k{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--blue)}
+  .rhero h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(34px,6vw,58px);margin:12px 0 10px;line-height:1.02}
+  .rhero h1 em{font-style:italic;color:var(--blue)}
+  .rhero p{color:var(--mut);max-width:640px;margin:0 auto;font-size:16px;line-height:1.7}
+
+  /* GATE */
+  #gate{display:none;max-width:520px;margin:40px auto 90px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:36px 30px;text-align:center}
+  #gate h2{font-family:'Playfair Display',serif;font-size:26px;margin:6px 0 8px}
+  #gate p{color:var(--mut);font-size:14.5px;line-height:1.65;margin:0 0 22px}
+  #gate .lock{font-size:30px}
+  .g-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;border-radius:11px;padding:13px 22px;text-decoration:none;cursor:pointer;border:0}
+  .btn-primary{background:linear-gradient(180deg,#8FD0FF,#5BA3E8);color:#08111f}
+  .btn-ghost{background:transparent;border:1.5px solid var(--line);color:#EAF1FB}
+  .g-note{margin-top:16px;color:#7f93b0;font-size:12.5px}
+
+  /* HUB */
+  #hub{display:none;padding-bottom:90px}
+  .memberbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0 30px}
+  .memberbar .who{font-size:13.5px;color:var(--mut)}
+  .memberbar .who b{color:#fff}
+  .memberbar .out{font-size:13px;color:var(--blue);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:900px){.tiles{grid-template-columns:1fr}}
+  .tile{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:18px;padding:26px 22px;position:relative;overflow:hidden;min-height:230px;display:flex;flex-direction:column}
+  .tile .ic{width:46px;height:46px;border-radius:12px;background:rgba(112,181,249,.14);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+  .tile h3{font-family:'Playfair Display',serif;font-size:21px;margin:0 0 8px}
+  .tile p{color:var(--mut);font-size:13.8px;line-height:1.6;margin:0 0 14px;flex:1}
+  .soon{display:inline-block;align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);background:rgba(245,179,1,.1);border:1px solid rgba(245,179,1,.35);border-radius:999px;padding:6px 12px}
+  .state-list{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+  .state{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:11px 13px;cursor:pointer}
+  .state:hover{border-color:var(--blue)}
+  .state .nm{font-weight:600;font-size:14px}
+  .state .go{font-size:12px;color:var(--blue)}
+
+  /* READ-ONLY VIEWER */
+  #viewer{position:fixed;inset:0;z-index:200;background:rgba(4,9,18,.96);display:none;flex-direction:column}
+  .vtop{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:#0b1526}
+  .vtop .vt{font-weight:700;font-size:15px}
+  .vtop .vctrl{display:flex;align-items:center;gap:8px}
+  .vbtn{background:rgba(255,255,255,.08);border:1px solid var(--line);color:#EAF1FB;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer}
+  #vpages{flex:1;overflow:auto;padding:22px 12px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  #vpages canvas{max-width:min(900px,96vw);width:100%;height:auto;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);background:#fff}
+  .vmsg{color:var(--mut);font-size:14px;margin-top:40px;text-align:center;max-width:420px}
+  /* copy protection */
+  .noselect{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none}
+  #viewer .guard{position:absolute;inset:0;z-index:1;pointer-events:none}
+
+  /* CHATBOT */
+  #botfab{position:fixed;right:20px;bottom:20px;z-index:150;background:linear-gradient(180deg,#8FD0FF,#5BA3E8);color:#08111f;border:0;border-radius:999px;padding:14px 20px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.45);display:none}
+  #botwrap{position:fixed;right:20px;bottom:20px;z-index:151;width:min(380px,94vw);height:min(560px,80vh);background:var(--panel);border:1px solid var(--line);border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+  .bh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px;background:#0b1526;border-bottom:1px solid var(--line)}
+  .bh .t{font-weight:700;font-size:14.5px}
+  .bh .t small{display:block;color:var(--teal);font-weight:500;font-size:11px}
+  .bh .x{background:none;border:0;color:#9DB0C9;font-size:20px;cursor:pointer}
+  #bmsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:86%;padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.55}
+  .msg.bot{background:#16273f;color:#EAF1FB;align-self:flex-start;border-bottom-left-radius:4px}
+  .msg.me{background:linear-gradient(180deg,#8FD0FF,#5BA3E8);color:#08111f;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+  .msg .src{display:block;margin-top:6px;font-size:11px;color:var(--teal)}
+  .binput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+  .binput input{flex:1;background:#0b1526;border:1px solid var(--line);border-radius:10px;color:#fff;padding:11px 12px;font:inherit;font-size:13.5px}
+  .binput button{background:linear-gradient(180deg,#8FD0FF,#5BA3E8);color:#08111f;border:0;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
+  .qchip{font-size:12px;color:var(--blue);background:rgba(112,181,249,.08);border:1px solid rgba(112,181,249,.3);border-radius:999px;padding:6px 11px;cursor:pointer;margin:2px 4px 2px 0;display:inline-block}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);background:#081221;padding:40px 20px}
+  .foot-in{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:26px}
+  @media(max-width:760px){.foot-in{grid-template-columns:1fr}}
+  .foot-in h4{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#7f93b0;margin:0 0 12px}
+  .foot-in a{display:block;color:#CADCFC;text-decoration:none;font-size:14px;margin-bottom:8px}
+  .foot-addr{color:#9DB0C9;font-size:13.5px;line-height:1.7}
+  .foot-copy{max-width:1160px;margin:26px auto 0;color:#66798f;font-size:12.5px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html"><span class="mk">G</span> GCCPROS</a>
+    <button class="nav-tog" id="navTog" aria-label="Menu">&#9776;</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="consult.html">GCC Consulting</a>
+      <a href="insights-events.html">Insights &amp; Events</a>
+      <a href="database-pro.html">GCC Database</a>
+      <a href="research.html" class="active">Research &amp; Intelligence</a>
+      <a href="newsroom.html">Newsroom</a>
+      <a href="opportunities.html">Opportunities</a>
+      <a href="consult.html" class="nav-cta">Talk to us</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="rhero">
+  <div class="wrap">
+    <div class="k">Members only &middot; Research &amp; Intelligence</div>
+    <h1>The GCC <em>knowledge vault</em></h1>
+    <p>Deep industry intelligence, simplified state policies, and podcasts for GCC leaders. Read our reports in full, ask the assistant, and stay ahead of where the industry is going.</p>
+  </div>
+</section>
+
+<!-- GATE (signed out) -->
+<div class="wrap"><div id="gate">
+  <div class="lock">&#128274;</div>
+  <h2>Members-only access</h2>
+  <p>This vault is open to GCCPROs Database members. Sign in with your GCCPROs account, or create a free account, to unlock the reports, handbooks and podcasts.</p>
+  <div class="g-actions">
+    <a class="btn btn-primary" id="btnSignin">Sign in</a>
+    <a class="btn btn-ghost" id="btnSignup">Create free account</a>
+  </div>
+  <div class="g-note">Uses your existing GCC Database login. One account, every GCCPROs tool.</div>
+</div></div>
+
+<!-- HUB (signed in) -->
+<main class="wrap" id="hub">
+  <div class="memberbar">
+    <div class="who">Signed in as <b id="whoEmail">member</b></div>
+    <div class="out" id="signOut">Sign out</div>
+  </div>
+
+  <div class="tiles">
+    <!-- 1: GCC Industry Intelligence -->
+    <div class="tile">
+      <div class="ic">&#128202;</div>
+      <h3>GCC Industry Intelligence</h3>
+      <p>Full-length research on where the GCC industry is heading: growth, talent, AI, location strategy and operating models. Read comfortably, in the browser.</p>
+      <span class="soon">Coming soon, stay tuned</span>
+    </div>
+
+    <!-- 2: State Policies Simplified -->
+    <div class="tile">
+      <div class="ic">&#127963;</div>
+      <h3>State Policies, Simplified</h3>
+      <p>India&rsquo;s GCC-friendly state policies, decoded into plain language you can act on.</p>
+      <div class="state-list">
+        <div class="state" data-state="Maharashtra" onclick="openState('Maharashtra')"><span class="nm">Maharashtra</span><span class="go">View handbook &rarr;</span></div>
+        <div class="state" data-state="Uttar Pradesh" onclick="openState('Uttar Pradesh')"><span class="nm">Uttar Pradesh</span><span class="go">View handbook &rarr;</span></div>
+      </div>
+    </div>
+
+    <!-- 3: Podcasts -->
+    <div class="tile">
+      <div class="ic">&#127911;</div>
+      <h3>Podcasts</h3>
+      <p>Candid conversations with GCC leaders on what is working, and what is not. Watch and listen, on demand.</p>
+      <span class="soon">Coming soon, stay tuned</span>
+    </div>
+  </div>
+</main>
+
+<!-- READ-ONLY VIEWER -->
+<div id="viewer" class="noselect">
+  <div class="vtop">
+    <div class="vt" id="vTitle">Document</div>
+    <div class="vctrl">
+      <button class="vbtn" onclick="vZoom(-1)">&minus;</button>
+      <button class="vbtn" onclick="vZoom(1)">+</button>
+      <button class="vbtn" onclick="closeViewer()">Close &times;</button>
+    </div>
+  </div>
+  <div id="vpages"><div class="guard"></div></div>
+</div>
+
+<!-- CHATBOT -->
+<button id="botfab" onclick="toggleBot(true)">&#128172; Ask the GCC assistant</button>
+<section id="botwrap" aria-label="GCC research assistant">
+  <div class="bh">
+    <div class="t">GCC Research Assistant<small>Answers from GCCPROs research</small></div>
+    <button class="x" onclick="toggleBot(false)">&times;</button>
+  </div>
+  <div id="bmsgs"></div>
+  <div class="binput">
+    <input id="bq" type="text" placeholder="Ask about GCC growth, talent, hubs, setup..." autocomplete="off">
+    <button onclick="botAsk()">&uarr;</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div>
+      <a class="brand" href="index.html" style="margin-bottom:12px"><span class="mk">G</span> GCCPROS</a>
+      <div class="foot-addr">
+        GCCPROs (A venture by Chartered Times)<br>
+        WeWork, 2nd floor, Tower 5,<br>
+        World Trade Center, Kharadi,<br>
+        Pune - 411014<br>
+        <a href="mailto:admin@gccpros.com" style="display:inline;color:var(--blue)">admin@gccpros.com</a>
+      </div>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="consult.html">GCC Consulting</a>
+      <a href="database-pro.html">GCC Database</a>
+      <a href="research.html">Research &amp; Intelligence</a>
+      <a href="insights-events.html">Insights &amp; Events</a>
+    </div>
+    <div>
+      <h4>More</h4>
+      <a href="newsroom.html">Newsroom</a>
+      <a href="opportunities.html">Opportunities</a>
+      <a href="faq.html">FAQ</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <div class="foot-copy">&copy; <span id="yr"></span> Chartered Times LLP &middot; GCCPROs. All rights reserved.</div>
+</footer>
+
+<script>
+(function(){
+  var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/research-hub';
+  var PORTAL='database-pro.html';
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  // ---- nav toggle ----
+  var tog=document.getElementById('navTog'), links=document.getElementById('navLinks');
+  if(tog) tog.addEventListener('click',function(){ links.classList.toggle('open'); });
+
+  // ---- session (shared with the GCC Database portal) ----
+  function token(){ try{ return localStorage.getItem('gcc_token')||''; }catch(_){ return ''; } }
+  var EMAIL=token();
+
+  // ---- activity logging ----
+  function logAct(event, detail){
+    try{
+      fetch(API+'?action=logActivity',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email:EMAIL, event:event, detail:detail||'', path:'research.html'})});
+    }catch(_){}
+    try{ if(window.gccTrack) gccTrack('research_'+event,{detail:detail||''}); }catch(_){}
+  }
+
+  // ---- gate vs hub ----
+  function showGate(){
+    document.getElementById('gate').style.display='block';
+    document.getElementById('hub').style.display='none';
+    document.getElementById('botfab').style.display='none';
+  }
+  function showHub(){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('hub').style.display='block';
+    document.getElementById('botfab').style.display='block';
+    document.getElementById('whoEmail').textContent=EMAIL||'member';
+    logAct('view','hub');
+  }
+  var nextParam='?next='+encodeURIComponent('research.html');
+  document.getElementById('btnSignin').href=PORTAL+nextParam;
+  document.getElementById('btnSignup').href=PORTAL+nextParam+'&signup=1';
+  document.getElementById('signOut').addEventListener('click',function(){
+    try{ localStorage.removeItem('gcc_token'); }catch(_){}
+    location.reload();
+  });
+  if(EMAIL) showHub(); else showGate();
+
+  // ---- copy / print protection on member content ----
+  function block(e){ e.preventDefault(); return false; }
+  ['contextmenu','copy','cut','dragstart','selectstart'].forEach(function(ev){
+    document.addEventListener(ev,function(e){
+      var v=document.getElementById('viewer');
+      if(v && v.style.display==='flex'){ block(e); }
+    });
+  });
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if((e.ctrlKey||e.metaKey) && (k==='p'||k==='s'||k==='u')){ e.preventDefault(); }
+    if((e.ctrlKey||e.metaKey) && k==='c'){ var v=document.getElementById('viewer'); if(v&&v.style.display==='flex') e.preventDefault(); }
+  });
+
+  // ---- read-only PDF viewer (PDF.js, canvas render = not selectable) ----
+  var PDFJS_SRC='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  var PDFJS_WORKER='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var pdfjsReady=null, curScale=1.25, curDoc=null;
+  function ensurePdfjs(){
+    if(pdfjsReady) return pdfjsReady;
+    pdfjsReady=new Promise(function(res,rej){
+      var s=document.createElement('script'); s.src=PDFJS_SRC;
+      s.onload=function(){ try{ window['pdfjsLib'].GlobalWorkerOptions.workerSrc=PDFJS_WORKER; res(window['pdfjsLib']); }catch(e){ rej(e); } };
+      s.onerror=rej; document.head.appendChild(s);
+    });
+    return pdfjsReady;
+  }
+  window.openDoc=async function(url, title){
+    var v=document.getElementById('viewer'), pages=document.getElementById('vpages');
+    document.getElementById('vTitle').textContent=title||'Document';
+    v.style.display='flex'; pages.innerHTML='<div class="guard"></div>';
+    logAct('open_doc', title||url);
+    if(!url){ pages.innerHTML='<div class="guard"></div><p class="vmsg">This document is coming soon. We are putting the finishing touches on it. Check back shortly.</p>'; return; }
+    try{
+      var lib=await ensurePdfjs();
+      curDoc=await lib.getDocument(url).promise;
+      renderAll();
+    }catch(e){
+      pages.innerHTML='<div class="guard"></div><p class="vmsg">Could not open this document right now. Please try again.</p>';
+    }
+  };
+  async function renderAll(){
+    var pages=document.getElementById('vpages'); pages.innerHTML='<div class="guard"></div>';
+    if(!curDoc) return;
+    for(var n=1;n<=curDoc.numPages;n++){
+      var page=await curDoc.getPage(n);
+      var vp=page.getViewport({scale:curScale*(window.devicePixelRatio||1)});
+      var c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+      c.style.width=(vp.width/(window.devicePixelRatio||1))+'px';
+      pages.appendChild(c);
+      await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+    }
+  }
+  window.vZoom=function(dir){ curScale=Math.min(2.4,Math.max(0.8,curScale+dir*0.2)); if(curDoc) renderAll(); };
+  window.closeViewer=function(){ document.getElementById('viewer').style.display='none'; curDoc=null; };
+
+  // ---- state handbooks (docs coming soon; states are live) ----
+  var STATE_DOCS={ 'Maharashtra':'', 'Uttar Pradesh':'' }; // add PDF URLs here when ready
+  window.openState=function(name){
+    logAct('open_state', name);
+    openDoc(STATE_DOCS[name]||'', name+' · GCC Policy, Simplified');
+  };
+
+  // ---- chatbot ----
+  var botStarted=false;
+  window.toggleBot=function(open){
+    document.getElementById('botwrap').style.display=open?'flex':'none';
+    document.getElementById('botfab').style.display=open?'none':'block';
+    if(open && !botStarted){ botStarted=true; botSay('Hi! I can answer quick questions about GCCs from our research. Ask me anything, and I will point you to the source report.', 'GCC Industry @ 2030'); botChips(); document.getElementById('bq').focus(); }
+  };
+  function botSay(t, src){
+    var m=document.createElement('div'); m.className='msg bot'; m.textContent=t;
+    if(src){ var s=document.createElement('span'); s.className='src'; s.textContent='Source: '+src; m.appendChild(s); }
+    var box=document.getElementById('bmsgs'); box.appendChild(m); box.scrollTop=box.scrollHeight;
+  }
+  function botMe(t){ var m=document.createElement('div'); m.className='msg me'; m.textContent=t; var box=document.getElementById('bmsgs'); box.appendChild(m); box.scrollTop=box.scrollHeight; }
+  function botChips(){
+    var box=document.getElementById('bmsgs'); var wrap=document.createElement('div');
+    ['How big will GCCs get by 2030?','Which cities are the top GCC hubs?','GCC vs outsourcing?','How do I set up a GCC?'].forEach(function(q){
+      var c=document.createElement('span'); c.className='qchip'; c.textContent=q;
+      c.onclick=function(){ document.getElementById('bq').value=q; botAsk(); };
+      wrap.appendChild(c);
+    });
+    box.appendChild(wrap); box.scrollTop=box.scrollHeight;
+  }
+  window.botAsk=async function(){
+    var inp=document.getElementById('bq'); var q=(inp.value||'').trim(); if(!q) return;
+    botMe(q); inp.value=''; logAct('bot_ask', q.slice(0,140));
+    try{
+      var r=await fetch(API+'?action=bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})});
+      var j=await r.json();
+      if(j&&j.answer) botSay(j.answer, j.source||'GCC Industry @ 2030');
+      else botSay('I could not find that in our research yet. Try asking about GCC growth, talent, hubs, AI or setup.', 'GCC Industry @ 2030');
+    }catch(_){ botSay('Network hiccup. Please ask again in a moment.', ''); }
+  };
+  var bqEl=document.getElementById('bq');
+  if(bqEl) bqEl.addEventListener('keydown',function(e){ if(e.key==='Enter') botAsk(); });
+})();
+</script>
+</body>
+</html>
