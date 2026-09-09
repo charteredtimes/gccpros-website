@@ -145,6 +145,10 @@
 .si-links{display:flex;justify-content:space-between;margin-top:14px;font-size:12.5px}
 .si-links a{color:#9FC2F0;text-decoration:none;cursor:pointer}
 .si-links a:hover{text-decoration:underline}
+.si-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;background:#fff;color:#1a1a2e;border:0;border-radius:9px;padding:11px 12px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:2px}
+.si-google:hover{background:#eef1f6}
+.si-or{display:flex;align-items:center;gap:10px;color:#7f93b0;font-size:12px;margin:14px 0 4px}
+.si-or:before,.si-or:after{content:"";flex:1;height:1px;background:var(--line)}
 </style>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GCCPROs">
@@ -211,7 +215,9 @@ try{
 <div id="siModal" class="si-modal" role="dialog" aria-modal="true"><div class="si-card">
   <button class="si-x" onclick="closeSignin()" aria-label="Close">&times;</button>
   <h3>Sign in to GCCPROs Research</h3>
-  <p class="si-sub">Use your GCCPROs Database account. One login, every tool.</p>
+  <p class="si-sub">Use your GCCPROs Database account. One login, every tool (except talent).</p>
+  <button type="button" id="siGoogle" class="si-google" onclick="doGoogleSignin()"><svg width="17" height="17" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22 22-9.8 22-22c0-1.3-.1-2.5-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 46c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.6 36.5 26.9 37.5 24 37.5c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.5 41.6 16.2 46 24 46z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.3l6.6 5.6C41.9 36 46 30.5 46 24c0-1.3-.1-2.5-.4-3.5z"/></svg> Continue with Google</button>
+  <div class="si-or"><span>or use email</span></div>
   <label for="siEmail">Email</label>
   <input id="siEmail" type="email" autocomplete="username" placeholder="you@company.com">
   <label for="siPass">Password</label>
@@ -364,6 +370,8 @@ try{
   window.closeSignin=function(){ var m=document.getElementById('siModal'); if(m) m.style.display='none'; };
   (function(){ var _si=document.getElementById('btnSignin'); if(_si){ _si.removeAttribute('href'); _si.style.cursor='pointer'; _si.addEventListener('click',function(e){ e.preventDefault(); openSignin(); }); } var _cr=document.getElementById('siCreate'); if(_cr){ _cr.setAttribute('href', PORTAL+nextParam+'&signup=1'); } var _md=document.getElementById('siModal'); if(_md){ _md.addEventListener('click',function(e){ if(e.target===_md) closeSignin(); }); } })();
   window.doResearchReset=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var er=document.getElementById('siErr'); if(!em){ er.style.color=''; er.textContent='Enter your email first, then tap Forgot password.'; return; } if(!window.__auth){ er.textContent='Auth is still loading, please retry.'; return; } window.__auth.sendPasswordResetEmail(em).then(function(){ er.style.color='#7CE0B0'; er.textContent='Reset link sent. Check your inbox.'; }).catch(function(e){ er.style.color=''; er.textContent=(e&&e.message||'Could not send reset link').replace('Firebase: ',''); }); };
+  window.doGoogleSignin=function(){ var er=document.getElementById('siErr'); if(er){er.style.color='';er.textContent='';} if(!window.__auth){ if(er)er.textContent='Sign-in is still loading, please retry.'; return; } var prov=new firebase.auth.GoogleAuthProvider(); window.__auth.signInWithPopup(prov).catch(function(e){ var c=(e&&e.code)||''; if(c.indexOf('popup')>=0||c.indexOf('operation-not-supported')>=0){ try{ window.__auth.signInWithRedirect(prov); }catch(_){ if(er)er.textContent='Google sign-in failed. Please use email.'; } } else if(c!=='auth/cancelled-popup-request'){ if(er)er.textContent=(e&&e.message||'Google sign-in failed').replace('Firebase: ',''); } }); };
+  try{ if(window.__auth) window.__auth.getRedirectResult().catch(function(){}); }catch(_){}
   window.doResearchSignin=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var pw=document.getElementById('siPass').value||''; var er=document.getElementById('siErr'); er.style.color=''; er.textContent=''; if(!em||!pw){ er.textContent='Enter your email and password.'; return; } if(!window.__auth){ er.textContent='Sign-in is still loading, please retry in a moment.'; return; } var btn=document.getElementById('siBtn'); btn.disabled=true; btn.textContent='Signing in...'; window.__auth.signInWithEmailAndPassword(em,pw).then(function(){}).catch(function(e){ er.textContent=(e&&e.message||'Sign-in failed').replace('Firebase: ',''); }).then(function(){ btn.disabled=false; btn.textContent='Sign in'; }); };
   if(window.__auth){ window.__auth.onAuthStateChanged(function(u){ if(u&&u.email){ try{localStorage.setItem('gcc_token',u.email);}catch(_){} EMAIL=u.email; try{closeSignin();}catch(_){} if(document.getElementById('hub').style.display!=='block'){ showHub(); } if(window.__pendingDoc){ var _k=window.__pendingDoc; window.__pendingDoc=null; setTimeout(function(){ try{window.openSecureDoc(_k);}catch(_){} }, 500); } } }); }
   document.getElementById('btnSignup').href=PORTAL+nextParam+'&signup=1';
@@ -463,7 +471,7 @@ try{
   function botReply(j){ var ans=j.answer||''; var src=j.source||'GCCPROs'; if(j.linkedin){ var safe=ans.split('<').join('&lt;'); var link=j.linkedin.split('<').join('&lt;'); botSayHtml(safe.split(link).join('<a href="'+j.linkedin+'" target="_blank" rel="noopener" style="color:#9FC2F0">'+j.linkedin+'</a>'), src); } else { botSay(ans, src); } if(j.nav){ botNav(j.nav, j.navLabel); } }
   window.botAsk=async function(){
     var inp=document.getElementById('bq'); var q=(inp.value||'').trim(); if(!q) return;
-    botMe(q); inp.value=''; logAct('bot_ask', q.slice(0,140));
+    if(!token()){ inp.value=''; try{openSignin();}catch(_){} return; } botMe(q); inp.value=''; logAct('bot_ask', q.slice(0,140));
     try{
       var r=await fetch(API+'?action=bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})});
       var j=await r.json();
