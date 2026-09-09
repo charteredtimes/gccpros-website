@@ -154,7 +154,7 @@
 #book,.bk-modal{--teal-lite:#5BA9FF}
 #book .reveal,#book.reveal,.book-visual.reveal,.book-copy.reveal,.bk-modal .reveal{opacity:1 !important;transform:none !important}
 /* ===== THE BOOK ===== */
-#book{padding:clamp(80px,11vw,130px) 0;background:linear-gradient(180deg,#0b1728,#0a1424)}
+#book{padding:24px 0 clamp(70px,9vw,110px);background:linear-gradient(180deg,#0b1728,#0a1424)}
 #book .book-in{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(30px,5vw,66px);align-items:center}
 .book-visual{display:flex;flex-direction:column;align-items:center;gap:18px}
 .book-cover{width:min(300px,74vw);border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06)}
@@ -579,7 +579,7 @@ try{
   window.toggleBot=function(open){
     document.getElementById('botwrap').style.display=open?'flex':'none';
     document.getElementById('botfab').style.display=open?'none':'block';
-    if(open && !botStarted){ botStarted=true; botSay('Hi! I can answer quick questions about GCCs from our research. Ask me anything, and I will point you to the source report.', 'GCC Industry @ 2030'); botChips(); document.getElementById('bq').focus(); }
+    if(open && !botStarted){ botStarted=true; botSay('Hi! I can answer quick questions about GCCs from our research. Ask me anything about GCCs, and I will answer from our research.', 'GCC Industry @ 2030'); botChips(); document.getElementById('bq').focus(); }
   };
   function botSay(t, src){
     var m=document.createElement('div'); m.className='msg bot'; m.textContent=t;
@@ -589,7 +589,7 @@ try{
   function botMe(t){ var m=document.createElement('div'); m.className='msg me'; m.textContent=t; var box=document.getElementById('bmsgs'); box.appendChild(m); box.scrollTop=box.scrollHeight; }
   function botChips(){
     var box=document.getElementById('bmsgs'); var wrap=document.createElement('div');
-    ['How big will GCCs get by 2030?','Which cities are the top GCC hubs?','GCC vs outsourcing?','How do I set up a GCC?'].forEach(function(q){
+    ['Define GCC','Which cities are the top GCC hubs?','GCC vs outsourcing?','How do I set up a GCC?'].forEach(function(q){
       var c=document.createElement('span'); c.className='qchip'; c.textContent=q;
       c.onclick=function(){ document.getElementById('bq').value=q; botAsk(); };
       wrap.appendChild(c);
@@ -598,14 +598,14 @@ try{
   }
   function botSayHtml(html, src){ var m=document.createElement('div'); m.className='msg bot'; m.innerHTML=html; if(src){ var sp=document.createElement('span'); sp.className='src'; sp.textContent='Source: '+src; m.appendChild(sp);} var box=document.getElementById('bmsgs'); box.appendChild(m); box.scrollTop=box.scrollHeight; }
   function botNav(url,label){ var box=document.getElementById('bmsgs'); var w=document.createElement('div'); var b=document.createElement('span'); b.className='qchip'; b.style.cursor='pointer'; b.textContent=(label||'Open')+' \u2192'; b.onclick=function(){ location.href=url; }; w.appendChild(b); box.appendChild(w); box.scrollTop=box.scrollHeight; setTimeout(function(){ location.href=url; }, 2400); }
-  function botReply(j){ var ans=j.answer||''; var src=j.source||'GCCPROs'; if(j.linkedin){ var safe=ans.split('<').join('&lt;'); var link=j.linkedin.split('<').join('&lt;'); botSayHtml(safe.split(link).join('<a href="'+j.linkedin+'" target="_blank" rel="noopener" style="color:#9FC2F0">'+j.linkedin+'</a>'), src); } else { botSay(ans, src); } if(j.nav){ botNav(j.nav, j.navLabel); } }
+  function botReply(j){ try{window.__lastA=j.answer||'';}catch(_){} var ans=j.answer||''; var src=j.source||'GCCPROs'; if(j.linkedin){ var safe=ans.split('<').join('&lt;'); var link=j.linkedin.split('<').join('&lt;'); botSayHtml(safe.split(link).join('<a href="'+j.linkedin+'" target="_blank" rel="noopener" style="color:#9FC2F0">'+j.linkedin+'</a>'), src); } else { botSay(ans, src); } if(j.nav){ botNav(j.nav, j.navLabel); } }
   window.botAsk=async function(){
     var inp=document.getElementById('bq'); var q=(inp.value||'').trim(); if(!q) return;
     if(!token()){ inp.value=''; try{openSignin();}catch(_){} return; } botMe(q); inp.value=''; logAct('bot_ask', q.slice(0,140));
     try{
-      var r=await fetch(API+'?action=bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})});
+      var r=await fetch(API+'?action=bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q, prev:(window.__lastQ||''), exclude:(window.__lastA||'')})});
       var j=await r.json();
-      if(j&&j.answer) botReply(j);
+      if(j&&j.answer){ botReply(j); window.__lastQ=q; }
       else botSay('I could not find that in our research yet. Try asking about GCC growth, talent, hubs, AI or setup.', 'GCC Industry @ 2030');
     }catch(_){ botSay('Network hiccup. Please ask again in a moment.', ''); }
   };
