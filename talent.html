@@ -376,6 +376,9 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .ts-cta-text{max-width:600px;}
 .ts-cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
 .ts-cta-actions.center{justify-content:center;}
+.ts-cta-actions.leader{gap:14px;align-items:stretch;}
+.leader-btn{white-space:normal;line-height:1.25;text-align:center;flex:1 1 240px;max-width:300px;min-width:220px;justify-content:center;}
+@media(max-width:560px){.leader-btn{flex:1 1 100%;max-width:100%;}}
 .ts-marketing .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
 .ts-hero .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
 html{scroll-behavior:smooth;}
@@ -442,9 +445,9 @@ html{scroll-behavior:smooth;}
 
   <section class="ts-panel" id="panel-employer">
     <div class="ts-proof"><div class="container ts-proof-row">
-      <div class="ts-stat"><div class="ts-stat-n">2,400+</div><div class="ts-stat-l">GCCs in our intelligence database</div></div>
+      <div class="ts-stat"><div class="ts-stat-n">4,370+</div><div class="ts-stat-l">GCCs in our intelligence database</div></div>
       <div class="ts-stat"><div class="ts-stat-n">9</div><div class="ts-stat-l">talent domains covered</div></div>
-      <div class="ts-stat"><div class="ts-stat-n">15+ yrs</div><div class="ts-stat-l">average experience, insider network</div></div>
+      <div class="ts-stat"><div class="ts-stat-n">70+</div><div class="ts-stat-l">verified partners in the network</div></div>
       <div class="ts-stat"><div class="ts-stat-n">100%</div><div class="ts-stat-l">identity protected sourcing</div></div>
     </div></div>
     <div class="ts-pillars"><div class="container">
@@ -507,8 +510,9 @@ html{scroll-behavior:smooth;}
           <li>Flexible schedule, multiple earning streams</li>
         </ul>
         <div class="ts-tbadge orange"><strong>Earn up to ₹5,00,000 per placement.</strong> Plus ₹1,000 partner referral coins.</div>
-        <div class="ts-cta-actions center">
-          <button class="ts-btn ts-btn-orange" onclick="openPartnerSignup()">Become a Partner</button>
+        <div class="ts-cta-actions center leader">
+          <button class="ts-btn ts-btn-orange leader-btn" onclick="openPartnerSignup()">Apply for Partner enrollment</button>
+          <button class="ts-btn ts-btn-ghost dark leader-btn" onclick="setLoginRole('partner');openLoginModal()">Refer someone you have worked with</button>
         </div>
       </div>
     </div></div>
