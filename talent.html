@@ -9,14 +9,14 @@
        6. Backend cleanup via schema_v10_2 + Edge Function v7.6 patches.
        7. Job Seeker auto-approved server-side; Partner stays pending + sees pending banner.
        8. Partner-only widgets (KYC / Earnings) gated behind partner role.
-       9. Pill text: Seeker | Partner | Both — accurate from oppsCheckUserStatus.
+       9. Pill text: Seeker | Partner | Both, accurate from oppsCheckUserStatus.
       10. Application form: PAN/IFSC regex, date min today, qualification + notice + work-mode dropdowns.
-      11. Apply modal: direct CV file upload (Supabase Storage signed) — no Google Drive link.
+      11. Apply modal: direct CV file upload (Supabase Storage signed), no Google Drive link.
       12. Apply modal: phone/email/LinkedIn prefilled from profile, override allowed, posted to admin.
       13. Jobs grid auto-filtered to seeker's domain with All Domains pill always available.
      v8.19-fix patches (2026-06-08):
       F1. showResult: scrollIntoView so error messages are visible regardless of modal scroll position.
-      F2. renderJobCard: replaced esc()+replace() with jsSafe() for onclick params — fixes Apply button
+      F2. renderJobCard: replaced esc()+replace() with jsSafe() for onclick params, fixes Apply button
           for any job whose title/company contains an apostrophe (e.g. "McDonald's", "O'Brien").
       F3. openJobDetail: same jsSafe() fix as F2.
       F4. openApplyModal: designation prefill now tries pf.designation || pf.current_designation || pf.currentDesignation.
@@ -29,7 +29,7 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="index,follow">
-<meta name="description" content="GCCPROs Opportunities — curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centers. Sign in to apply or refer talent.">
+<meta name="description" content="GCCPROs Talent Solutions: curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centres. Sign in to apply or refer talent.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E40AF'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' text-anchor='middle' fill='white'%3EG%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GCCPROs">
@@ -291,6 +291,97 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .guest-teaser p{font-size:13.5px;color:var(--muted);margin-bottom:14px;max-width:420px;}
 @media(max-width:640px){.b2b-inner{flex-direction:column;text-align:center;align-items:center;}.b2b-text p{margin:0 auto;}}
 </style>
+<style id="ts-redesign">
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+:root{--ts-azure:#0A66C2;--ts-azure2:#3E8BEE;--ts-orange:#FF6A1A;--ts-orange2:#E85D04;--ts-ink:#0E1726;--ts-slate:#5A6B85;--ts-line:#E7ECF4;--ts-cream:#F6F8FC;}
+.ts-h1,.ts-h2,.ts-pill h3,.ts-aud-t,.ts-stat-n{font-family:'Sora','Inter',sans-serif;letter-spacing:-.02em;}
+.ts-eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--ts-azure);text-transform:uppercase;margin-bottom:12px;}
+.ts-eyebrow.dark{color:var(--ts-orange2);}
+/* HERO compact */
+.ts-hero{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 15% 0%,#12245C 0%,#0A1533 55%,#070E24 100%);color:#fff;padding:66px 0 56px;isolation:isolate;}
+.ts-hero .container{position:relative;z-index:3;}
+.ts-aurora{position:absolute;inset:-20% -10% auto -10%;height:130%;z-index:1;filter:blur(60px);opacity:.5;background:radial-gradient(40% 55% at 20% 25%,rgba(62,139,238,.9),transparent 70%),radial-gradient(35% 50% at 82% 20%,rgba(255,106,26,.7),transparent 70%),radial-gradient(45% 60% at 65% 85%,rgba(10,102,194,.8),transparent 70%);animation:tsFloat 16s ease-in-out infinite alternate;}
+@keyframes tsFloat{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(0,-22px,0) scale(1.08)}}
+.ts-grid-ovl{position:absolute;inset:0;z-index:2;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:52px 52px;-webkit-mask-image:radial-gradient(80% 70% at 50% 25%,#000,transparent 85%);mask-image:radial-gradient(80% 70% at 50% 25%,#000,transparent 85%);}
+.ts-hero-inner{max-width:1000px;}
+.ts-h1{font-size:clamp(30px,5vw,52px);line-height:1.05;font-weight:800;margin:0 0 14px;}
+.ts-grad{background:linear-gradient(92deg,#8CC2FF 0%,#4F9BF0 40%,#FF8A3D 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ts-hero-sub{font-size:clamp(15px,1.6vw,18px);line-height:1.55;color:#C6D3EA;max-width:640px;margin:0 0 28px;}
+/* audience boxes */
+.ts-aud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.ts-aud{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:6px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.16);border-radius:16px;padding:20px 20px 22px;cursor:pointer;color:#fff;font-family:inherit;transition:transform .16s ease,border-color .16s,background .16s,box-shadow .16s;}
+.ts-aud:hover{transform:translateY(-3px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.32);}
+.ts-aud.sel{background:linear-gradient(160deg,rgba(62,139,238,.28),rgba(255,106,26,.18));border-color:#4F9BF0;box-shadow:0 16px 40px -18px rgba(10,102,194,.8);}
+.ts-aud-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);color:#fff;margin-bottom:4px;}
+.ts-aud-ic svg{width:24px;height:24px;}
+.ts-aud-k{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:#9CC3F5;}
+.ts-aud.sel .ts-aud-k{color:#FFC59A;}
+.ts-aud-t{font-size:18px;font-weight:800;}
+.ts-aud-s{font-size:13px;color:#C6D3EA;}
+.ts-hero.is-signedin .ts-eyebrow,.ts-hero.is-signedin .ts-hero-sub,.ts-hero.is-signedin .ts-aud-grid{display:none;}
+.ts-hero.is-signedin{padding:26px 0;}
+/* buttons */
+.ts-btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:13px 24px;border-radius:12px;cursor:pointer;border:1px solid transparent;text-decoration:none;font-family:inherit;transition:transform .16s ease,box-shadow .16s,background .16s;line-height:1;}
+.ts-btn-primary{background:linear-gradient(92deg,#2E7BE0,#0A66C2);color:#fff;box-shadow:0 12px 28px -12px rgba(10,102,194,.8);}
+.ts-btn-orange{background:linear-gradient(92deg,#FF7A1A,#E85D04);color:#fff;box-shadow:0 12px 28px -12px rgba(232,93,4,.7);}
+.ts-btn-primary:hover,.ts-btn-orange:hover{transform:translateY(-2px);}
+.ts-btn-ghost{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.28);}
+.ts-btn-ghost:hover{background:rgba(255,255,255,.14);}
+.ts-btn-ghost.dark{color:var(--ts-azure);border-color:var(--ts-azure);background:#fff;}
+.ts-btn-ghost.dark:hover{background:var(--ts-cream);}
+/* proof compact */
+.ts-proof{background:#0C1E4A;color:#fff;padding:28px 0;}
+.ts-proof-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;}
+.ts-stat-n{font-size:clamp(24px,3vw,34px);font-weight:800;background:linear-gradient(92deg,#8CC2FF,#FF9A56);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ts-stat-l{font-size:12.5px;color:#AFC0DE;margin-top:5px;line-height:1.35;}
+/* section heads */
+.ts-sec-head{max-width:720px;margin:0 auto 32px;text-align:center;}
+.ts-h2{font-size:clamp(24px,3.4vw,36px);line-height:1.12;font-weight:800;color:var(--ts-ink);margin:0 0 12px;}
+.ts-h2.light{color:#fff;}
+.ts-lede{font-size:15.5px;line-height:1.55;color:var(--ts-slate);margin:0;}
+.ts-lede.light{color:#C6D3EA;}
+/* pillars compact */
+.ts-pillars{padding:52px 0;background:linear-gradient(180deg,#fff,var(--ts-cream));}
+.ts-pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.ts-pill{background:#fff;border:1px solid var(--ts-line);border-radius:16px;padding:22px 22px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s;position:relative;overflow:hidden;}
+.ts-pill:before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(92deg,var(--ts-azure),var(--ts-orange));transform:scaleX(0);transform-origin:left;transition:transform .25s ease;}
+.ts-pill:hover{transform:translateY(-4px);box-shadow:0 20px 44px -24px rgba(10,25,60,.35);border-color:transparent;}
+.ts-pill:hover:before{transform:scaleX(1);}
+.ts-picon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--ts-azure);background:linear-gradient(160deg,rgba(10,102,194,.12),rgba(255,106,26,.12));margin-bottom:12px;}
+.ts-picon svg{width:23px;height:23px;}
+.ts-pill h3{font-size:17px;font-weight:700;color:var(--ts-ink);margin:0 0 7px;font-family:'Sora',sans-serif;}
+.ts-pill p{font-size:13.5px;line-height:1.5;color:var(--ts-slate);margin:0;}
+/* diff compact */
+.ts-diff{padding:52px 0;background:radial-gradient(120% 120% at 80% 0%,#12245C,#0A1533 70%);color:#fff;}
+.ts-diff-head{max-width:680px;margin:0 auto 28px;text-align:center;}
+.ts-diff-rows{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:11px;}
+.ts-diff-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 20px;}
+.ts-old{color:#93A3C4;text-align:right;font-size:14px;}
+.ts-new{color:#fff;font-weight:600;font-size:14.5px;}
+.ts-arrow{color:var(--ts-orange);font-weight:800;font-size:18px;}
+/* solo panels (seeker/leader) */
+.ts-tracks{padding:52px 0;background:var(--ts-cream);}
+.ts-tracks.alt{background:linear-gradient(180deg,var(--ts-cream),#FFF7F1);}
+.ts-solo{max-width:720px;margin:0 auto;}
+.ts-ul{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:10px;}
+.ts-ul.two{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;}
+.ts-ul li{position:relative;padding-left:28px;font-size:14.5px;color:#33415C;line-height:1.4;}
+.ts-ul li:before{content:"";position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;background:linear-gradient(160deg,var(--ts-azure),var(--ts-azure2));box-shadow:inset 0 0 0 6px rgba(255,255,255,.85);}
+.ts-ul.alt li:before{background:linear-gradient(160deg,var(--ts-orange),var(--ts-orange2));}
+.ts-tbadge{font-size:13px;color:#3a4a66;background:#EEF3FB;border:1px dashed #C7D6EE;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;}
+.ts-tbadge.orange{background:#FFF1E6;border-color:#F3C89E;}
+/* cta */
+.ts-cta{padding:48px 0;background:linear-gradient(100deg,#0A66C2 0%,#0C1E4A 55%,#0A1533 100%);color:#fff;}
+.ts-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+.ts-cta-text{max-width:600px;}
+.ts-cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.ts-cta-actions.center{justify-content:center;}
+.ts-marketing .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
+.ts-hero .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
+html{scroll-behavior:smooth;}
+@media(max-width:900px){.ts-aud-grid{grid-template-columns:1fr;}.ts-pgrid{grid-template-columns:1fr 1fr;}.ts-proof-row{grid-template-columns:1fr 1fr;gap:22px 14px;}.ts-cta-inner{flex-direction:column;align-items:flex-start;}}
+@media(max-width:600px){.ts-pgrid{grid-template-columns:1fr;}.ts-ul.two{grid-template-columns:1fr;}.ts-diff-row{grid-template-columns:1fr;text-align:center;gap:6px;}.ts-old,.ts-new{text-align:center;}.ts-arrow{transform:rotate(90deg);}}
+</style>
 </head>
 <body>
 
@@ -316,72 +407,114 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
   </div>
 </header>
 
-<section class="hero" id="hero-section">
-  <div class="container">
-    <div class="hero-eyebrow">The GCC Talent Network</div>
-    <h1 id="hero-h1">Your Career, Elevated</h1>
-    <p class="hero-tagline">By the GCC Community. For the GCC Community.</p>
-    <p class="hero-subtitle">A community-led talent service for India's Global Capability Centres &mdash; built by GCC insiders, powered by trust, and delivering a very different quality of hire than the traditional talent model.</p>
-    <button class="hero-cta" id="hero-cta" onclick="document.getElementById('get-started').scrollIntoView({behavior:'smooth'})">Start Your Journey</button>
-  </div>
-</section>
 
-<section class="trust-strip">
-  <div class="container trust-row">
-    <div class="trust-item"><span>✓</span> Verified Global Capability Centres</div>
-    <div class="trust-item"><span>✓</span> Identity-protected referrals</div>
-    <div class="trust-item"><span>✓</span> Curated, not crowdsourced</div>
-    <div class="trust-item"><span>✓</span> Built by GCC insiders</div>
-  </div>
-</section>
-
-<section class="two-track" id="get-started">
-  <div class="container">
-    <div class="section-intro">
-      <h2>Two Paths, One Community</h2>
-      <p>Built by GCC professionals, for GCC professionals.</p>
+<section class="hero ts-hero" id="hero-section">
+  <div class="ts-aurora"></div>
+  <div class="ts-grid-ovl"></div>
+  <div class="container ts-hero-inner">
+    <div class="ts-eyebrow">GCC TALENT SOLUTIONS</div>
+    <h1 id="hero-h1" class="ts-h1">The talent engine for India&#39;s <span class="ts-grad">Global Capability Centres.</span></h1>
+    <p class="ts-hero-sub">Tell us who you are. We&#39;ll take you straight to what matters for you.</p>
+    <div class="ts-aud-grid">
+      <button type="button" class="ts-aud sel" id="aud-employer" onclick="selectAudience('employer')">
+        <span class="ts-aud-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 8h.01M15 8h.01M9 12h.01M15 12h.01M9 16h.01M15 16h.01"/></svg></span>
+        <span class="ts-aud-k">I&#39;M HIRING</span>
+        <span class="ts-aud-t">A Company / Employer</span>
+        <span class="ts-aud-s">Build or scale your GCC team.</span>
+      </button>
+      <button type="button" class="ts-aud" id="aud-seeker" onclick="selectAudience('seeker')">
+        <span class="ts-aud-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+        <span class="ts-aud-k">I&#39;M LOOKING</span>
+        <span class="ts-aud-t">A Job Seeker</span>
+        <span class="ts-aud-s">Find your next GCC role.</span>
+      </button>
+      <button type="button" class="ts-aud" id="aud-leader" onclick="selectAudience('leader')">
+        <span class="ts-aud-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9 6.8 19l1-5.8L3.6 9.1l5.8-.8L12 3z"/></svg></span>
+        <span class="ts-aud-k">I&#39;M EXPERIENCED</span>
+        <span class="ts-aud-t">A Senior Industry Leader</span>
+        <span class="ts-aud-s">15+ years. Advise, refer, earn.</span>
+      </button>
     </div>
-    <div class="tile-grid">
-      <div class="tile seeker">
-        <div class="tile-label">EXPLORE OPPORTUNITIES</div>
-        <h3>For Job Seekers</h3>
-        <p class="tile-sub">Access curated GCC roles across 9 domains with direct application and status tracking.</p>
-        <ul>
-          <li>Browse verified GCC roles across domains</li>
-          <li>Connect directly with global companies</li>
-          <li>Personalized domain-based matching</li>
-          <li>Real-time application status tracking</li>
-        </ul>
-        <div class="tile-badge"><strong>FREE for early registrations</strong> &middot; Early-bird access to all features</div>
-        <button class="btn tile-cta" onclick="openJobSeekerSignup()">Register as Job Seeker</button>
+  </div>
+</section>
+
+<div id="get-started" class="ts-marketing">
+
+  <section class="ts-panel" id="panel-employer">
+    <div class="ts-proof"><div class="container ts-proof-row">
+      <div class="ts-stat"><div class="ts-stat-n">2,400+</div><div class="ts-stat-l">GCCs in our intelligence database</div></div>
+      <div class="ts-stat"><div class="ts-stat-n">9</div><div class="ts-stat-l">talent domains covered</div></div>
+      <div class="ts-stat"><div class="ts-stat-n">15+ yrs</div><div class="ts-stat-l">average experience, insider network</div></div>
+      <div class="ts-stat"><div class="ts-stat-n">100%</div><div class="ts-stat-l">identity protected sourcing</div></div>
+    </div></div>
+    <div class="ts-pillars"><div class="container">
+      <div class="ts-sec-head">
+        <div class="ts-eyebrow dark">WHAT WE DO</div>
+        <h2 class="ts-h2">A complete talent engine for your GCC</h2>
+        <p class="ts-lede">The roles job boards can&#39;t reach, the scale agencies can&#39;t sustain, and market intelligence no one else has.</p>
       </div>
-      <div class="tile partner">
-        <div class="tile-label">EARN &amp; ENGAGE</div>
-        <h3>For Senior Professionals</h3>
-        <p class="tile-sub">15+ years of corporate experience? Earn through referrals, training, and mentoring.</p>
-        <ul>
-          <li>Earn through referrals, corporate training &amp; mentoring</li>
-          <li>Offer workshops, webinars &amp; advisory engagements</li>
-          <li>Complete identity protection guaranteed</li>
+      <div class="ts-pgrid">
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-7 5 7 4-3-2 11H5L3 8z"/></svg></div><h3>Executive &amp; Leadership Search</h3><p>Country heads, functional leaders and founding GCC teams, headhunted from operators who have already scaled centres in India.</p></article>
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></div><h3>Niche &amp; Hard to Fill Roles</h3><p>AI/ML, cyber, quant, silicon, actuarial and product. The specialist talent mass job boards simply cannot surface.</p></article>
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="7" height="11" rx="1"/><rect x="14" y="4" width="7" height="17" rx="1"/></svg></div><h3>Embedded RPO &amp; Rapid Scale</h3><p>Stand up 50 to 500 seats fast with an embedded pod that owns your funnel end to end: source, screen, offer, onboard.</p></article>
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></div><h3>Talent Mapping &amp; Benchmarking</h3><p>Org blueprints, competitor talent maps and live compensation benchmarks from India&#39;s real GCC market.</p></article>
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Insider Referral Network</h3><p>Identity protected referrals from 15+ year GCC veterans. A quality of hire the agency model cannot match.</p></article>
+        <article class="ts-pill"><div class="ts-picon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div><h3>Market Intelligence, Built In</h3><p>Backed by our database of GCCs across India. Target the right pools, benchmark rivals, out hire your peers.</p></article>
+      </div>
+    </div></div>
+    <div class="ts-diff"><div class="container">
+      <div class="ts-diff-head"><div class="ts-eyebrow">WHY GCCPROS</div><h2 class="ts-h2 light">The traditional model was never built for GCCs.</h2></div>
+      <div class="ts-diff-rows">
+        <div class="ts-diff-row"><div class="ts-old">Junior agency recruiters</div><div class="ts-arrow">→</div><div class="ts-new">GCC operators and insiders</div></div>
+        <div class="ts-diff-row"><div class="ts-old">CV spray and volume submissions</div><div class="ts-arrow">→</div><div class="ts-new">Curated, identity protected shortlists</div></div>
+        <div class="ts-diff-row"><div class="ts-old">No view of the wider market</div><div class="ts-arrow">→</div><div class="ts-new">Backed by a full GCC intelligence database</div></div>
+        <div class="ts-diff-row"><div class="ts-old">One transaction, then gone</div><div class="ts-arrow">→</div><div class="ts-new">A partner for the long run</div></div>
+      </div>
+    </div></div>
+    <div class="ts-cta"><div class="container ts-cta-inner">
+      <div class="ts-cta-text"><div class="ts-eyebrow">READY TO HIRE?</div><h2 class="ts-h2 light">Build your GCC&#39;s talent engine.</h2><p class="ts-lede light">Post roles and manage your pipeline in a private workspace, or talk to us about a search or scale mandate.</p></div>
+      <div class="ts-cta-actions"><a class="ts-btn ts-btn-orange" href="/customer-portal-live.html">Employer login →</a><a class="ts-btn ts-btn-ghost" href="mailto:sp@gccpros.com?subject=GCC%20Talent%20Solutions%20enquiry">Talk to our talent team</a></div>
+    </div></div>
+  </section>
+
+  <section class="ts-panel" id="panel-seeker" style="display:none">
+    <div class="ts-tracks"><div class="container">
+      <div class="ts-sec-head"><div class="ts-eyebrow dark">FOR JOB SEEKERS</div><h2 class="ts-h2">Your next GCC role, curated for you.</h2><p class="ts-lede">Verified roles from global companies across 9 domains, with direct apply and live status tracking.</p></div>
+      <div class="ts-solo">
+        <ul class="ts-ul two">
+          <li>Curated GCC roles across 9 domains</li>
+          <li>Apply directly to global companies</li>
+          <li>Personalised, domain based matching</li>
+          <li>Real time application status tracking</li>
+        </ul>
+        <div class="ts-tbadge"><strong>FREE for early registrations.</strong> Early access to every feature.</div>
+        <div class="ts-cta-actions center">
+          <button class="ts-btn ts-btn-primary" onclick="(document.querySelector('.jobs-section')||document.body).scrollIntoView({behavior:'smooth'})">Explore live roles</button>
+          <button class="ts-btn ts-btn-ghost dark" onclick="openJobSeekerSignup()">Register as Job Seeker</button>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="ts-panel" id="panel-leader" style="display:none">
+    <div class="ts-tracks alt"><div class="container">
+      <div class="ts-sec-head"><div class="ts-eyebrow dark">FOR SENIOR INDUSTRY LEADERS</div><h2 class="ts-h2">Turn 15+ years into new earning streams.</h2><p class="ts-lede">Refer, train, mentor and advise across the GCC community, with your identity fully protected.</p></div>
+      <div class="ts-solo">
+        <ul class="ts-ul two alt">
+          <li>Earn through referrals, corporate training and mentoring</li>
+          <li>Offer workshops, webinars and advisory engagements</li>
+          <li>Complete identity protection, guaranteed</li>
           <li>Flexible schedule, multiple earning streams</li>
         </ul>
-        <div class="tile-badge"><strong>Earn up to &#8377;5,00,000 per placement</strong> &middot; Plus &#8377;1,000 partner-referral coins</div>
-        <button class="btn brand-orange tile-cta" onclick="openPartnerSignup()">Become a Partner</button>
+        <div class="ts-tbadge orange"><strong>Earn up to ₹5,00,000 per placement.</strong> Plus ₹1,000 partner referral coins.</div>
+        <div class="ts-cta-actions center">
+          <button class="ts-btn ts-btn-orange" onclick="openPartnerSignup()">Become a Partner</button>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </div></div>
+  </section>
 
-<section class="b2b-callout">
-  <div class="container b2b-inner">
-    <div class="b2b-text">
-      <div class="b2b-eyebrow">For Employers &amp; GCC Hiring Teams</div>
-      <h2>Hiring for your GCC? Enter the Talent Engine.</h2>
-      <p>Post roles, review AI-ranked applicants, and manage your hiring pipeline in your private, white-labeled workspace.</p>
-    </div>
-    <a class="b2b-btn" href="/customer-portal-live.html">🏢 Customer / B2B Login &rarr;</a>
-  </div>
-</section>
+</div>
 
 <section class="jobs-section">
   <div class="container">
@@ -398,8 +531,8 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <select id="f-location" onchange="renderJobs()"><option value="">All locations</option></select>
       <select id="f-experience" onchange="renderJobs()">
         <option value="">All experience</option>
-        <option>0&ndash;2 Years</option><option>2&ndash;5 Years</option><option>5&ndash;8 Years</option>
-        <option>8&ndash;12 Years</option><option>12+ Years</option>
+        <option>0-2 Years</option><option>2-5 Years</option><option>5-8 Years</option>
+        <option>8-12 Years</option><option>12+ Years</option>
       </select>
       <select id="f-mode" onchange="renderJobs()">
         <option value="">All modes</option><option>Remote</option><option>Hybrid</option><option>On-site</option>
@@ -446,7 +579,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <button class="btn" style="width:100%;margin-top:14px;" onclick="doEmailSignIn()">Sign in with email</button>
     <p style="text-align:center;margin-top:10px;"><a href="#" onclick="doForgotPassword();return false;" style="font-size:12px;color:var(--brand,#ea580c);font-weight:600;">Forgot password?</a></p>
     <div id="li-result" class="form-result"></div>
-    <p style="margin-top:14px;font-size:11.5px;color:var(--muted);text-align:center;">If you signed up via Google originally, you don't have a password &mdash; use the Google button above.<br>New here? Use the Register tiles on the main page.</p>
+    <p style="margin-top:14px;font-size:11.5px;color:var(--muted);text-align:center;">If you signed up via Google originally, you don't have a password: use the Google button above.<br>New here? Use the Register tiles on the main page.</p>
   </div>
 </div>
 
@@ -472,12 +605,12 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <div class="field"><label>Email <span class="required">*</span><span class="field-verified" id="js-email-verified" style="display:none;">&#10003; verified</span></label><input type="email" id="js-email" placeholder="Captured from Google"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Phone <span class="required">*</span></label><input type="tel" id="js-phone" pattern="[0-9]{10,15}"><div class="field-hint">10&ndash;15 digits, country code optional</div></div>
+        <div class="field"><label>Phone <span class="required">*</span></label><input type="tel" id="js-phone" pattern="[0-9]{10,15}"><div class="field-hint">10-15 digits, country code optional</div></div>
         <div class="field"><label>Alt Phone</label><input type="tel" id="js-altphone"></div>
       </div>
       <div class="field"><label>LinkedIn URL <span class="required">*</span></label><input type="url" id="js-linkedin" placeholder="https://linkedin.com/in/yourname"></div>
       <div class="field" id="js-otp-block">
-        <button type="button" class="btn secondary" id="js-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('js')">Verify email &mdash; send code</button>
+        <button type="button" class="btn secondary" id="js-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('js')">Verify email: send code</button>
         <div id="js-otp-row" style="display:none;margin-top:8px;">
           <input type="text" id="js-otp" placeholder="6-digit code" style="max-width:150px;display:inline-block;">
           <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('js')">Verify code</button>
@@ -491,7 +624,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
         <div id="js-pwd-hint" class="field-hint">Min 8 chars incl. upper, lower, number &amp; symbol.</div>
         <label style="margin-top:8px;">Confirm Password <span class="required">*</span></label>
         <input type="password" id="js-pwd2" autocomplete="new-password" placeholder="Re-enter password">
-        <div class="field-hint">Google sign-in users can skip this — your Google account is your login.</div>
+        <div class="field-hint">Google sign-in users can skip this, your Google account is your login.</div>
       </div>
       <button class="btn" style="width:100%;margin-top:18px;" onclick="jsStep1to2()">Next: Professional &rarr;</button>
       <div id="js-result-1" class="form-result"></div>
@@ -593,7 +726,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Email <span class="required">*</span><span class="field-verified" id="pt-email-verified" style="display:none;">&#10003; verified</span></label><input type="email" id="pt-email"></div>
     </div>
     <div class="field" id="pt-otp-block">
-      <button type="button" class="btn secondary" id="pt-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('pt')">Verify email &mdash; send code</button>
+      <button type="button" class="btn secondary" id="pt-otp-send" style="font-size:12px;padding:6px 12px;" onclick="sendOtp('pt')">Verify email: send code</button>
       <div id="pt-otp-row" style="display:none;margin-top:8px;">
         <input type="text" id="pt-otp" placeholder="6-digit code" style="max-width:150px;display:inline-block;">
         <button type="button" class="btn" style="font-size:12px;padding:6px 12px;margin-left:6px;" onclick="verifyOtp('pt')">Verify code</button>
@@ -607,7 +740,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div id="pt-pwd-hint" class="field-hint">Min 8 chars incl. upper, lower, number &amp; symbol.</div>
       <label style="margin-top:8px;">Confirm Password <span class="required">*</span></label>
       <input type="password" id="pt-pwd2" autocomplete="new-password" placeholder="Re-enter password">
-      <div class="field-hint">Google sign-in users can skip this — your Google account is your login.</div>
+      <div class="field-hint">Google sign-in users can skip this, your Google account is your login.</div>
     </div>
     <div class="field-row">
       <div class="field"><label>Phone <span class="required">*</span></label><input type="tel" id="pt-phone" pattern="[0-9]{10,15}"></div>
@@ -671,7 +804,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <input type="hidden" id="ap-jobid">
 
     <div style="background:var(--cream);padding:14px 16px;border-radius:6px;margin-bottom:14px;">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:6px;">Your contact (from profile &mdash; override below if needed)</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:6px;">Your contact (from profile: override below if needed)</div>
       <div class="field-row" style="margin-top:6px;">
         <div class="field" style="margin-top:0;"><label>Email <span class="field-verified">&#10003; auth&apos;d</span></label><input type="email" id="ap-email" readonly></div>
         <div class="field" style="margin-top:0;"><label>Phone <span class="required">*</span></label><input type="tel" id="ap-phone" pattern="[0-9]{10,15}" placeholder="10-digit mobile, +91 prefix optional"><div class="field-hint">Used for shortlist call. Indian numbers preferred.</div></div>
@@ -784,7 +917,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
       <div class="field"><label>Bank Name <span class="required">*</span></label><input type="text" id="kyc-bankname"></div>
       <div class="field"><label>IFSC Code <span class="required">*</span></label><input type="text" id="kyc-ifsc" maxlength="11" style="text-transform:uppercase;" placeholder="HDFC0001234"></div>
     </div>
-    <div class="field"><label>Bank Account &mdash; last 4 digits <span class="required">*</span></label><input type="text" id="kyc-last4" maxlength="4" inputmode="numeric"></div>
+    <div class="field"><label>Bank Account: last 4 digits <span class="required">*</span></label><input type="text" id="kyc-last4" maxlength="4" inputmode="numeric"></div>
     <div class="field"><label>Cancelled Cheque <span class="required">*</span></label><input type="file" id="kyc-cheque-file" accept="image/png,image/jpeg,application/pdf"><div class="field-hint">Upload a photo or PDF of a cancelled cheque (max 5 MB).</div></div>
     <button class="btn brand-orange" style="width:100%;margin-top:14px;" onclick="kycSubmit()">Submit KYC</button>
     <div id="kyc-result" class="form-result"></div>
@@ -798,7 +931,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
     <h3>Refer a Candidate</h3>
     <p class="modal-sub">Generate a token link to send to the candidate. You're tracked as the referrer for any placement.<br><strong style="color:var(--brand-orange);">Note:</strong> the candidate's email cannot already exist in our database.</p>
     <div class="field"><label>Target Job</label>
-      <select id="ref-job"><option value="">&mdash; general referral (no specific job) &mdash;</option></select>
+      <select id="ref-job"><option value="">General referral (no specific job)</option></select>
     </div>
     <div class="field"><label>Candidate Full Name <span class="required">*</span></label><input type="text" id="ref-name"></div>
     <div class="field-row">
@@ -928,7 +1061,7 @@ function renderApplySkillGrid(jobId) {
   const grid = document.getElementById('ap-skill-grid');
   if (!grid) return;
   if (!skills.length) {
-    grid.innerHTML = '<p class="field-hint" style="margin:6px;">No skills listed on this role — use the "Other skills" box below.</p>';
+    grid.innerHTML = '<p class="field-hint" style="margin:6px;">No skills listed on this role ,  use the "Other skills" box below.</p>';
     return;
   }
   grid.innerHTML = skills.map((s,i) => {
@@ -951,7 +1084,7 @@ function renderReferSkillAssessment(jobId) {
   const grid = document.getElementById('ref-skill-grid');
   if (!grid) return;
   if (!skills.length) {
-    grid.innerHTML = '<p class="field-hint">No specific skills listed on this job — rate on general competencies below.</p>' +
+    grid.innerHTML = '<p class="field-hint">No specific skills listed on this job ,  rate on general competencies below.</p>' +
       ['Communication','Domain expertise','Problem solving','Leadership'].map((s,i) => _skillRowHTML(s, 'general_'+i)).join('');
   } else {
     grid.innerHTML = skills.map((s,i) => _skillRowHTML(s, 'skill_'+i)).join('');
@@ -961,7 +1094,7 @@ function _skillRowHTML(label, id) {
   return '<div style="display:flex;align-items:center;gap:10px;">' +
     '<div style="flex:1;font-size:13px;font-weight:500;">' + esc(label) + '</div>' +
     '<select data-skill="' + esc(label) + '" id="ref-rate-' + esc(id) + '" required style="padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;">' +
-      '<option value="">Rate</option><option value="1">1 — Beginner</option><option value="2">2 — Working</option><option value="3">3 — Proficient</option><option value="4">4 — Strong</option><option value="5">5 — Expert</option>' +
+      '<option value="">Rate</option><option value="1">1 ,  Beginner</option><option value="2">2 ,  Working</option><option value="3">3 ,  Proficient</option><option value="4">4 ,  Strong</option><option value="5">5 ,  Expert</option>' +
     '</select></div>';
 }
 function _collectSkillRatings() {
@@ -1111,7 +1244,7 @@ function setSignedInChrome(signedIn) {
     if (dp) dp.style.display = '';
   } else {
     hero.classList.remove('is-signedin');
-    if (h1) h1.textContent = 'Your Career, Elevated';
+    if (h1) h1.innerHTML = "The talent engine for India&#39;s <span class=\"ts-grad\">Global Capability Centres.</span>";
     tiles.style.display = '';
     if (cta) cta.style.display = 'inline-block';
     if (fb) fb.style.display = 'none';
@@ -1270,15 +1403,15 @@ async function doEmailSignIn() {
   try {
     const vr = await fetch(SCRIPT_URL + '?action=verifyCaptcha&cfToken=' + encodeURIComponent(cf) + '&_t=' + Date.now());
     const vj = await vr.json();
-    if (!vj.ok) { try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){} return showResult('li-result', 'Puzzle verification failed — please retry.', false); }
+    if (!vj.ok) { try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){} return showResult('li-result', 'Puzzle verification failed ,  please retry.', false); }
   } catch (e) { return showResult('li-result', 'Could not verify the puzzle. Try again.', false); }
   try {
     await firebase.auth().signInWithEmailAndPassword(eIn, p);
   } catch (err) {
     const c = String(err.code || '');
     let msg = (c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-credential') || c.includes('invalid-login'))
-      ? ('Sign-in failed (' + c + '). The password is wrong OR this email has no password account — if you registered with Google use the Google button, otherwise use "Forgot password?" or register to set one.')
-      : (c + ' — ' + err.message);
+      ? ('Sign-in failed (' + c + '). The password is wrong OR this email has no password account ,  if you registered with Google use the Google button, otherwise use "Forgot password?" or register to set one.')
+      : (c + ' ,  ' + err.message);
     showResult('li-result', msg, false);
     try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){}
   }
@@ -1290,11 +1423,11 @@ async function doForgotPassword() {
   showResult('li-result', 'Sending reset link…', true);
   try {
     await firebase.auth().sendPasswordResetEmail(eIn);
-    showResult('li-result', '✓ Reset link sent to ' + eIn + ' — check inbox/spam. If nothing arrives, this email has no password account yet (register again, or use Google).', true);
+    showResult('li-result', '✓ Reset link sent to ' + eIn + ' ,  check inbox/spam. If nothing arrives, this email has no password account yet (register again, or use Google).', true);
   } catch (e) {
     const c = String(e.code || '');
     if (c.includes('user-not-found')) showResult('li-result', 'No password account exists for ' + eIn + '. Register to set a password, or use "Continue with Google".', false);
-    else showResult('li-result', 'Reset failed: ' + c + ' — ' + (e.message || ''), false);
+    else showResult('li-result', 'Reset failed: ' + c + ' ,  ' + (e.message || ''), false);
   }
 }
 
@@ -1396,8 +1529,8 @@ async function loadJobs() {
     populateFilters();
     renderJobs();
     const sel = document.getElementById('ref-job');
-    sel.innerHTML = '<option value="">— general referral —</option>' +
-      JOB_LIST.map(jr => '<option value="' + esc(jr.id) + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ' — ' + esc(jr.title) + (jr.location ? ' · ' + esc(jr.location) : '') + '</option>').join('');
+    sel.innerHTML = '<option value="">,  general referral , </option>' +
+      JOB_LIST.map(jr => '<option value="' + esc(jr.id) + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ' ,  ' + esc(jr.title) + (jr.location ? ' · ' + esc(jr.location) : '') + '</option>').join('');
   } catch (err) {
     document.getElementById('job-list').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--red);">Failed to load jobs: ' + esc(err.message) + '</p>';
   }
@@ -1493,7 +1626,7 @@ function renderJobCard(j, guest) {
   const urgent = (j.is_urgent === true || j.is_urgent === 'true') || String(j.status || '').toLowerCase() === 'urgent';
   const skills = splitToArr(j.skills);
   const ctcText = (j.ctc_min_inr || j.ctc_max_inr)
-    ? fmtINR(j.ctc_min_inr) + ' – ' + fmtINR(j.ctc_max_inr) + ' <small>LPA</small>'
+    ? fmtINR(j.ctc_min_inr) + ' - ' + fmtINR(j.ctc_max_inr) + ' <small>LPA</small>'
     : (j.budget_text ? esc(j.budget_text) : '<small style="color:var(--muted);">Competitive</small>');
   const desc = j.description ? esc(String(j.description).slice(0, 220)) + (String(j.description).length > 220 ? '…' : '') : '';
   const skillChips = skills.slice(0, 5).map(s => '<span class="skill-chip">' + esc(s) + '</span>').join('')
@@ -1501,7 +1634,7 @@ function renderJobCard(j, guest) {
   const referrerBlock = (CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0))
     ? '<span class="referral-coin">🪙 ' + fmtINR(j.referral_amount_inr) + ' referral</span>'
     : '<span></span>';
-  // v8.19-fix F2: Use jsSafe() for onclick params — esc() converts ' → &#39; which the browser
+  // v8.19-fix F2: Use jsSafe() for onclick params ,  esc() converts ' → &#39; which the browser
   // HTML-decodes back to ' inside the onclick attribute, breaking JS string literals for any
   // job title/company containing an apostrophe (e.g. "McDonald's", "O'Brien Global").
   const jsSafe = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
@@ -1559,7 +1692,7 @@ function openJobDetail(jobId) {
   const resp = splitToArr(j.responsibilities);
   const reqs = splitToArr(j.requirements);
   const ctcText = (j.ctc_min_inr || j.ctc_max_inr)
-    ? fmtINR(j.ctc_min_inr) + ' – ' + fmtINR(j.ctc_max_inr) + ' LPA'
+    ? fmtINR(j.ctc_min_inr) + ' - ' + fmtINR(j.ctc_max_inr) + ' LPA'
     : (j.budget_text || 'Competitive');
   const isPartner = CURRENT_ACTIVE_VIEW === 'partner';
   const isBoth    = false;
@@ -1696,7 +1829,7 @@ async function jsSubmit() {
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
     const j = await r.json();
     if (j.error === 'blacklisted') return showResult('js-result-3', 'This email/phone is blocked. Contact admin@gccpros.com.', false);
-    if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed — re-tick and retry.', false);
+    if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed ,  re-tick and retry.', false);
     if (j.error) throw new Error(j.error);
     if (!_isGoogleJS) {
       try {
@@ -1717,11 +1850,11 @@ async function jsSubmit() {
     });
     const uj = await ur.json();
     if (uj.error) {
-      const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      const detailMsg = [uj.error, uj.hint, uj.details ? ',  ' + uj.details : ''].filter(Boolean).join(' · ');
       console.error('[CV upload failed]', uj);
       showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
     }
-    else showResult('js-result-3', '✓ Registration complete. You are auto-approved — browse and apply.', true);
+    else showResult('js-result-3', '✓ Registration complete. You are auto-approved ,  browse and apply.', true);
     setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
@@ -1835,7 +1968,7 @@ function openApplyModal(jobId, title, company) {
   set('ap-altphone', pf.altPhone || pf.alt_phone || '');
   set('ap-linkedin', pf.linkedin || '');
   set('ap-curcompany', pf.currentCompany || pf.current_company || '');
-  // v8.19-fix F4: try multiple field aliases — profile may store designation under different keys
+  // v8.19-fix F4: try multiple field aliases ,  profile may store designation under different keys
   set('ap-curdesig', pf.designation || pf.current_designation || pf.currentDesignation || '');
   set('ap-curcity', pf.city || pf.current_city || '');
   set('ap-totalexp', pf.totalExp != null ? pf.totalExp : (pf.total_exp || ''));
@@ -1846,7 +1979,7 @@ function openApplyModal(jobId, title, company) {
       const info = document.getElementById('ap-cv-info');
       if (cv.files && cv.files[0]) {
         const f = cv.files[0];
-        info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB) — recruiters download via signed URL only.';
+        info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB) ,  recruiters download via signed URL only.';
         info.className = 'field-hint ' + (f.size > CV_MAX_BYTES ? 'err' : 'ok');
       }
     };
@@ -1888,7 +2021,7 @@ async function _apSubmitInner() {
     ['ap-ref1-name','Reference 1 Name'],['ap-ref1-title','Reference 1 Title'],['ap-ref1-email','Reference 1 Email'],['ap-ref1-phone','Reference 1 Phone'],['ap-ref1-relation','Reference 1 Relationship']
   ];
   for (const [id, lbl] of required) if (!v(id)) return showResult('ap-result', lbl + ' is required.', false);
-  if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number must be 10–15 digits.', false);
+  if (!PHONE_RX.test(v('ap-phone'))) return showResult('ap-result', 'Phone number must be 10-15 digits.', false);
   if (!LINKEDIN_RX.test(v('ap-linkedin'))) return showResult('ap-result', 'Enter a valid LinkedIn profile URL (https://linkedin.com/in/...).', false);
   if (!PAN_RX.test(v('ap-pan').toUpperCase())) return showResult('ap-result', 'PAN must be 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F).', false);
   const expN = parseFloat(v('ap-totalexp'));
@@ -1897,14 +2030,14 @@ async function _apSubmitInner() {
   if (isNaN(ctcCur) || ctcCur < 0) return showResult('ap-result', 'Current CTC must be a positive number (in LPA).', false);
   if (isNaN(ctcExp) || ctcExp < 0) return showResult('ap-result', 'Expected CTC must be a positive number (in LPA).', false);
   const skillsArr = collectApplySkills();
-  if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above) — you selected ' + skillsArr.length + '.', false);
+  if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above) ,  you selected ' + skillsArr.length + '.', false);
   const elgWords = v('ap-eligibility').split(/\s+/).filter(Boolean).length;
   if (elgWords < 20) return showResult('ap-result', '"Why you fit" needs at least 20 words (you have ' + elgWords + ').', false);
   const jd = new Date(v('ap-joindate'));
   const today = new Date(); today.setHours(0,0,0,0);
   if (isNaN(jd.getTime()) || jd < today) return showResult('ap-result', 'Earliest Join Date must be today or later.', false);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ap-ref1-email'))) return showResult('ap-result', 'Reference 1 Email looks invalid.', false);
-  if (!PHONE_RX.test(v('ap-ref1-phone'))) return showResult('ap-result', 'Reference 1 Phone must be 10–15 digits.', false);
+  if (!PHONE_RX.test(v('ap-ref1-phone'))) return showResult('ap-result', 'Reference 1 Phone must be 10-15 digits.', false);
   const cvFile = document.getElementById('ap-cv').files[0];
   if (!cvFile) return showResult('ap-result', 'CV upload is mandatory.', false);
   if (cvFile.size > CV_MAX_BYTES) return showResult('ap-result', 'CV exceeds 5 MB.', false);
@@ -1914,12 +2047,12 @@ async function _apSubmitInner() {
     const b64 = await fileToBase64(cvFile);
     const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL) + '&context=application', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      // v8.19-fix F5: mimeType fallback — some browsers return empty string for cvFile.type
+      // v8.19-fix F5: mimeType fallback ,  some browsers return empty string for cvFile.type
       body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type || 'application/octet-stream' })
     });
     const uj = await ur.json();
     if (uj.error) {
-      const detailMsg = [uj.error, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      const detailMsg = [uj.error, uj.hint, uj.details ? ',  ' + uj.details : ''].filter(Boolean).join(' · ');
       console.error('[CV upload failed]', uj);
       throw new Error('CV upload failed: ' + detailMsg);
     }
@@ -2024,7 +2157,7 @@ async function refSubmit() {
   if (!v('ref-email')) return showResult('ref-result', 'Candidate email is required.', false);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('ref-email'))) return showResult('ref-result', 'Candidate email format invalid.', false);
   if (!v('ref-phone')) return showResult('ref-result', 'Candidate phone is required.', false);
-  if (!PHONE_RX.test(v('ref-phone'))) return showResult('ref-result', 'Candidate phone must be 10–15 digits.', false);
+  if (!PHONE_RX.test(v('ref-phone'))) return showResult('ref-result', 'Candidate phone must be 10-15 digits.', false);
   if (!v('ref-linkedin')) return showResult('ref-result', 'Candidate LinkedIn URL is required.', false);
   if (!LINKEDIN_RX.test(v('ref-linkedin'))) return showResult('ref-result', 'Enter a valid LinkedIn profile URL (https://linkedin.com/in/...).', false);
   const whyWords = v('ref-whyfit').split(/\s+/).filter(Boolean).length;
@@ -2155,7 +2288,7 @@ function renderPartnerDashboard(d, jsData) {
 
 function renderRefTable(refs) {
   return '<table><thead><tr><th>Candidate</th><th>Status</th><th>Invited</th><th>Placed</th><th>Payout</th></tr></thead><tbody>' +
-    refs.map(r => `<tr><td>${esc(r.candidate_name || r.candidate_email || '')}</td><td><span class="badge b-${esc(r.referral_status || '')}">${esc(r.referral_status || '')}</span></td><td>${r.invited_at ? new Date(r.invited_at).toLocaleDateString() : ''}</td><td>${r.placed_at ? new Date(r.placed_at).toLocaleDateString() : ''}</td><td>${fmtINR(r.payout_inr) || '—'}</td></tr>`).join('') +
+    refs.map(r => `<tr><td>${esc(r.candidate_name || r.candidate_email || '')}</td><td><span class="badge b-${esc(r.referral_status || '')}">${esc(r.referral_status || '')}</span></td><td>${r.invited_at ? new Date(r.invited_at).toLocaleDateString() : ''}</td><td>${r.placed_at ? new Date(r.placed_at).toLocaleDateString() : ''}</td><td>${fmtINR(r.payout_inr) || ', '}</td></tr>`).join('') +
     '</tbody></table>';
 }
 function renderEarnTable(earn) {
@@ -2175,7 +2308,7 @@ function renderAppsTable(apps) {
   return '<table><thead><tr><th>Role</th><th>Source</th><th>Status</th><th>Applied</th></tr></thead><tbody>' +
     apps.map(a => {
       const job = JOB_LIST.find(j => j.id === a.job_id);
-      const roleLabel = job ? esc(job.job_code || '') + ' — ' + esc(job.title || '') : '<span style="font-family:monospace;font-size:11px;">' + esc((a.job_id || '').slice(0,8)) + '…</span>';
+      const roleLabel = job ? esc(job.job_code || '') + ' ,  ' + esc(job.title || '') : '<span style="font-family:monospace;font-size:11px;">' + esc((a.job_id || '').slice(0,8)) + '…</span>';
       return `<tr><td>${roleLabel}</td><td>${esc(a.source || '')}</td><td><span class="badge b-${esc(a.application_status || '')}">${esc(a.application_status || '')}</span></td><td>${a.applied_at ? new Date(a.applied_at).toLocaleDateString() : ''}</td></tr>`;
     }).join('') +
     '</tbody></table>';
@@ -2353,7 +2486,7 @@ function downloadAgreementDraft() {
 }
 
 function emailSignedAgreement() {
-  const subject = encodeURIComponent('Signed Partner Agreement — ' + (CURRENT_EMAIL || ''));
+  const subject = encodeURIComponent('Signed Partner Agreement ,  ' + (CURRENT_EMAIL || ''));
   const body = encodeURIComponent('Hi Admin,\n\nPlease find my signed partner agreement attached.\n\nName: ' + ((CURRENT_PROFILE && CURRENT_PROFILE.fullName) || '') + '\nEmail: ' + (CURRENT_EMAIL || '') + '\n');
   window.location.href = 'mailto:admin@gccpros.com?subject=' + subject + '&body=' + body;
 }
@@ -2391,7 +2524,7 @@ function renderSettingsTab() {
       '<div class="set-row"><span class="k">Email</span><span>' + esc(CURRENT_EMAIL || '') + '</span></div>' +
       '<div class="set-row"><span class="k">Role</span><span>' + role + '</span></div>' +
       '<div class="set-row"><span class="k">Approval status</span><span>' + esc(String(CURRENT_APPROVAL || 'pending')) + '</span></div>' +
-      '<div class="set-row"><span class="k">Primary domain</span><span>' + esc(String(CURRENT_PRIMARY_DOMAIN || '—')) + '</span></div>' +
+      '<div class="set-row"><span class="k">Primary domain</span><span>' + esc(String(CURRENT_PRIMARY_DOMAIN || ', ')) + '</span></div>' +
       '<div class="set-row"><span class="k">Sign-in</span><span>Google / email</span></div>' +
     '</div>' +
     '<p style="color:var(--muted);font-size:13px;margin:14px 0;">Need to change your email or delete your account? Contact admin@gccpros.com.</p>' +
@@ -2402,4 +2535,8 @@ function renderSettingsTab() {
 loadJobs();
 </script>
 </body>
+
+<script>
+function selectAudience(who){try{["employer","seeker","leader"].forEach(function(p){var el=document.getElementById("panel-"+p);if(el)el.style.display=(p===who)?"":"none";var bx=document.getElementById("aud-"+p);if(bx)bx.classList.toggle("sel",p===who);});var t=document.getElementById("panel-"+who);if(t){var y=t.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:"smooth"});}}catch(e){}}
+</script>
 </html>
