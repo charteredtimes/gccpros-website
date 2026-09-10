@@ -845,7 +845,7 @@ async function genShare(id){
 // Share an open role on WhatsApp + copy its public referral link (drives applicants & referrals)
 function shareJobWA(code, title){
   const company=((CUSTOMERS[SESSION.companyId]||{}).name)||'GCCPROS';
-  const link='https://www.gccpros.com/opportunities.html?job='+encodeURIComponent(code);
+  const link='https://www.gccpros.com/talent.html?job='+encodeURIComponent(code);
   const msg='🚀 We’re hiring: '+title+' at '+company+'.\n\nKnow someone great? Refer them on GCCPROS and earn a referral reward 👇\n'+link;
   try{ navigator.clipboard && navigator.clipboard.writeText(link); }catch(_){ }
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
