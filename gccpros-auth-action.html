@@ -69,7 +69,7 @@
       </div>
       <button class="primary" id="submit" disabled>Set new password</button>
     </div>
-    <a class="back" id="back" href="https://www.gccpros.com/opportunities">&larr; Back to login</a>
+    <a class="back" id="back" href="https://www.gccpros.com/talent">&larr; Back to login</a>
   </div>
 </div>
 <footer>
@@ -92,7 +92,7 @@ const $ = id => document.getElementById(id);
 const qp = new URLSearchParams(location.search);
 const mode = qp.get("mode") || "resetPassword";
 const oobCode = qp.get("oobCode") || "";
-const LOGIN_URL = "https://www.gccpros.com/opportunities";
+const LOGIN_URL = "https://www.gccpros.com/talent";
 $("back").href = LOGIN_URL;
 
 function err(m){ const e=$("err"); e.textContent=m; e.style.display = m ? "" : "none"; }
