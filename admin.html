@@ -217,7 +217,7 @@
     <!-- ═══════════════════════════════════════════════════════════════
          OPPORTUNITIES — JOBS · APPLICATIONS · PARTNERS · REFERRALS
          All four tabs talk to Supabase Edge Function endpoints prefixed
-         `opps*` (v7+). The Apps Script-backed opportunities.html is NOT
+         `opps*` (v7+). The Apps Script-backed talent.html is NOT
          affected — these tabs operate on the new opps_* Supabase tables
          that exist in parallel. Cutover happens at Phase D-6.
          ═══════════════════════════════════════════════════════════════ -->
@@ -226,7 +226,7 @@
     <div id="tab-oppsJobs" class="panel">
       <div class="card">
         <h2>Opportunities — Jobs</h2>
-        <p class="muted">Job postings stored in <code>opps_jobs</code>. These are the new Supabase-backed listings (parallel to the Apps Script Jobs sheet which still powers the live <code>opportunities.html</code>).</p>
+        <p class="muted">Job postings stored in <code>opps_jobs</code>. These are the new Supabase-backed listings (parallel to the Apps Script Jobs sheet which still powers the live <code>talent.html</code>).</p>
         <div class="filter-row">
           <select id="oppsJobs-status" onchange="oppsLoadJobs()">
             <option value="active" selected>Active only</option>
