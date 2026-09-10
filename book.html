@@ -591,7 +591,7 @@ try{
   window.toggleBot=function(open){
     document.getElementById('botwrap').style.display=open?'flex':'none';
     document.getElementById('botfab').style.display=open?'none':'block';
-    if(open && !botStarted){ botStarted=true; botSay('Hi! I can answer quick questions about GCCs from our research. Ask me anything about GCCs, and I will answer from our research.', 'GCC Industry @ 2030'); botChips(); document.getElementById('bq').focus(); }
+    if(open && !botStarted){ botStarted=true; botSay('Hi! Ask me anything about GCCs and I will answer from our research.', 'GCC Industry @ 2030'); botChips(); document.getElementById('bq').focus(); }
   };
   function botSay(t, src){
     var m=document.createElement('div'); m.className='msg bot'; m.textContent=t;
