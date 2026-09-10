@@ -154,8 +154,6 @@ td.actions { white-space:nowrap; }
   body { padding-top: env(safe-area-inset-top); }
 }
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -873,37 +871,7 @@ function bookLabelHTML(x){
     +'<div class="row"><div class="cap">If undelivered, return to</div><div class="from">'+BOOK_SENDER_HTML+'</div></div>'
     +'<div class="row meta"><div><b>Order:</b> '+oid+'</div><div><b>Item:</b> GCC Industry @ 2030 &times; '+(x.qty||1)+'</div><div><b>Date:</b> '+dt+'</div></div>'
     +track+'</div>'
-    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt><div id="ta-gate" style="position:fixed;inset:0;z-index:99999;background:#0e1726;display:flex;align-items:center;justify-content:center;font-family:system-ui,Arial,sans-serif">
-  <div style="background:#fff;color:#1a2233;max-width:380px;width:92%;padding:28px;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4)">
-    <div style="font-weight:800;font-size:13px;letter-spacing:.08em;color:#2E8BFF;text-transform:uppercase">GCCPROs</div>
-    <h2 style="margin:4px 0 6px;font-size:21px">Talent Admin</h2>
-    <p id="ta-sub" style="margin:0 0 18px;color:#5B6B84;font-size:13.5px">Sign in with your GCCPROs Talent team account.</p>
-    <button id="ta-google" style="width:100%;padding:11px;border:1px solid #d9dee7;border-radius:9px;background:#fff;cursor:pointer;font-size:14px;font-weight:600">Continue with Google</button>
-    <div style="text-align:center;margin:12px 0;color:#9aa6b8;font-size:12px">or use email</div>
-    <input id="ta-email" type="email" placeholder="you@gccpros.com" autocomplete="username" style="width:100%;padding:10px;border:1px solid #d9dee7;border-radius:9px;margin-bottom:8px;box-sizing:border-box">
-    <input id="ta-pass" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;padding:10px;border:1px solid #d9dee7;border-radius:9px;margin-bottom:10px;box-sizing:border-box">
-    <button id="ta-signin" style="width:100%;padding:11px;border:0;border-radius:9px;background:#2E8BFF;color:#fff;cursor:pointer;font-size:14px;font-weight:700">Sign in</button>
-    <div id="ta-err" style="color:#c0392b;font-size:13px;margin-top:10px;min-height:16px"></div>
-  </div>
-</div>
-<script>
-(function(){
-  var API_BASE="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api";
-  var BROKER="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/talent-admin-api";
-  var cfg={apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",authDomain:"gccpros-9aadb.firebaseapp.com",projectId:"gccpros-9aadb",appId:"1:764592723192:web:002a03f217b57d47f0570d"};
-  try{ firebase.initializeApp(cfg); }catch(_){}
-  var auth=firebase.auth(); window.__taAuth=auth; window.__taToken="";
-  var _f=window.fetch.bind(window);
-  window.fetch=async function(url,opts){ try{ if(typeof url==="string" && url.indexOf(API_BASE)===0){ url=BROKER+url.slice(API_BASE.length); opts=opts||{}; var h=opts.headers||{}; if(h && typeof h==="object" && !(h instanceof Headers)){ delete h["X-Admin-Key"]; delete h["x-admin-key"]; try{ if(auth.currentUser) window.__taToken=await auth.currentUser.getIdToken(); }catch(e){} h["X-TA-Token"]=window.__taToken||""; } opts.headers=h; } }catch(e){} return _f(url,opts); };
-  function err(m){ var e=document.getElementById("ta-err"); if(e)e.textContent=m||""; }
-  async function afterAuth(user){ try{ window.__taToken=await user.getIdToken(); var r=await _f(BROKER+"?action=taCheck",{method:"POST",headers:{"Content-Type":"application/json","X-TA-Token":window.__taToken},body:"{}"}); var j=await r.json().catch(function(){return{};}); if(!r.ok||!j.ok){ err("This account is not authorised for Talent admin."); await auth.signOut(); return; } document.getElementById("ta-gate").style.display="none"; var g=document.getElementById("gate"); if(g)g.style.display="none"; var app=document.getElementById("app"); if(app)app.style.display=""; var st=document.getElementById("admin-status"); if(st)st.textContent="Signed in \u00b7 "+(j.email||"")+" \u00b7 Talent"; var lo=document.getElementById("logout-btn"); if(lo){ lo.style.display=""; lo.textContent="Sign out"; lo.onclick=function(){ auth.signOut().then(function(){location.reload();}); }; } ["database","community","book","consult","rsvp","research"].forEach(function(d){ var c=document.getElementById("card-"+d); if(c)c.style.display="none"; }); var oc=document.getElementById("card-opportunities"); if(oc){ oc.style.cursor="default"; oc.onclick=null; } try{ document.querySelectorAll("#domain-opportunities .tabs .tab").forEach(function(b){ if(/partners/i.test(b.getAttribute("onclick")||"")) b.style.display="none"; }); }catch(e){} var pp=document.getElementById("opp-partners"); if(pp)pp.style.display="none"; window.loadPartners=function(){}; window.renderPartners=function(){}; try{ pickDomain("opportunities"); }catch(e){} try{ loadJobs(); }catch(e){} }catch(e){ err("Sign-in problem: "+(e&&e.message||e)); } }
-  auth.onAuthStateChanged(function(u){ if(u) afterAuth(u); });
-  document.getElementById("ta-google").onclick=function(){ err(""); var p=new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({prompt:"select_account"}); auth.signInWithPopup(p).catch(function(e){ err((e&&e.message||"Google sign-in failed").replace("Firebase: ","")); }); };
-  document.getElementById("ta-signin").onclick=function(){ err(""); var em=(document.getElementById("ta-email").value||"").trim(), pw=document.getElementById("ta-pass").value||""; if(!em||!pw){ err("Enter email and password."); return; } auth.signInWithEmailAndPassword(em,pw).catch(function(e){ err((e&&e.message||"Sign-in failed").replace("Firebase: ","")); }); };
-  document.getElementById("ta-pass").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("ta-signin").click(); });
-})();
-</script>
-</body></html>';
+    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt></body></html>';
 }
 function bookInvoiceHTML(x){
   var total=(x.amount_paise||0)/100, qty=x.qty||1, unit=qty?total/qty:total;
@@ -2692,4 +2660,37 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<div id="ta-gate" style="position:fixed;inset:0;z-index:99999;background:#0e1726;display:flex;align-items:center;justify-content:center;font-family:system-ui,Arial,sans-serif">
+  <div style="background:#fff;color:#1a2233;max-width:380px;width:92%;padding:28px;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="font-weight:800;font-size:13px;letter-spacing:.08em;color:#2E8BFF;text-transform:uppercase">GCCPROs</div>
+    <h2 style="margin:4px 0 6px;font-size:21px">Talent Admin</h2>
+    <p style="margin:0 0 18px;color:#5B6B84;font-size:13.5px">Sign in with your GCCPROs Talent team account.</p>
+    <button id="ta-google" style="width:100%;padding:11px;border:1px solid #d9dee7;border-radius:9px;background:#fff;cursor:pointer;font-size:14px;font-weight:600">Continue with Google</button>
+    <div style="text-align:center;margin:12px 0;color:#9aa6b8;font-size:12px">or use email</div>
+    <input id="ta-email" type="email" placeholder="you@gccpros.com" autocomplete="username" style="width:100%;padding:10px;border:1px solid #d9dee7;border-radius:9px;margin-bottom:8px;box-sizing:border-box">
+    <input id="ta-pass" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;padding:10px;border:1px solid #d9dee7;border-radius:9px;margin-bottom:10px;box-sizing:border-box">
+    <button id="ta-signin" style="width:100%;padding:11px;border:0;border-radius:9px;background:#2E8BFF;color:#fff;cursor:pointer;font-size:14px;font-weight:700">Sign in</button>
+    <div id="ta-err" style="color:#c0392b;font-size:13px;margin-top:10px;min-height:16px"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var API_BASE="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-api";
+  var BROKER="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/talent-admin-api";
+  var cfg={apiKey:"AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",authDomain:"gccpros-9aadb.firebaseapp.com",projectId:"gccpros-9aadb",appId:"1:764592723192:web:002a03f217b57d47f0570d"};
+  try{ firebase.initializeApp(cfg); }catch(_){}
+  var auth=firebase.auth(); window.__taAuth=auth; window.__taToken="";
+  var _f=window.fetch.bind(window);
+  window.fetch=async function(url,opts){ try{ if(typeof url==="string" && url.indexOf(API_BASE)===0){ url=BROKER+url.slice(API_BASE.length); opts=opts||{}; var h=opts.headers||{}; if(h && typeof h==="object" && !(h instanceof Headers)){ delete h["X-Admin-Key"]; delete h["x-admin-key"]; try{ if(auth.currentUser) window.__taToken=await auth.currentUser.getIdToken(); }catch(e){} h["X-TA-Token"]=window.__taToken||""; } opts.headers=h; } }catch(e){} return _f(url,opts); };
+  function err(m){ var e=document.getElementById("ta-err"); if(e)e.textContent=m||""; }
+  async function afterAuth(user){ try{ window.__taToken=await user.getIdToken(); var r=await _f(BROKER+"?action=taCheck",{method:"POST",headers:{"Content-Type":"application/json","X-TA-Token":window.__taToken},body:"{}"}); var j={}; try{ j=await r.json(); }catch(e){} if(!r.ok||!j.ok){ err("This account is not authorised for Talent admin."); await auth.signOut(); return; } document.getElementById("ta-gate").style.display="none"; var g=document.getElementById("gate"); if(g)g.style.display="none"; var app=document.getElementById("app"); if(app)app.style.display=""; var st=document.getElementById("admin-status"); if(st)st.textContent="Signed in \u00b7 "+(j.email||"")+" \u00b7 Talent"; var lo=document.getElementById("logout-btn"); if(lo){ lo.style.display=""; lo.textContent="Sign out"; lo.onclick=function(){ auth.signOut().then(function(){location.reload();}); }; } ["database","community","book","consult","rsvp","research"].forEach(function(d){ var c=document.getElementById("card-"+d); if(c)c.style.display="none"; }); var oc=document.getElementById("card-opportunities"); if(oc){ oc.style.cursor="default"; oc.onclick=null; } try{ document.querySelectorAll("#domain-opportunities .tabs .tab").forEach(function(b){ if(/partners/i.test(b.getAttribute("onclick")||"")) b.style.display="none"; }); }catch(e){} var pp=document.getElementById("opp-partners"); if(pp)pp.style.display="none"; window.loadPartners=function(){}; window.renderPartners=function(){}; try{ pickDomain("opportunities"); }catch(e){} try{ loadJobs(); }catch(e){} }catch(e){ err("Sign-in problem: "+(e&&e.message||e)); } }
+  auth.onAuthStateChanged(function(u){ if(u) afterAuth(u); });
+  document.getElementById("ta-google").onclick=function(){ err(""); var p=new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({prompt:"select_account"}); auth.signInWithPopup(p).catch(function(e){ err((e&&e.message||"Google sign-in failed").replace("Firebase: ","")); }); };
+  document.getElementById("ta-signin").onclick=function(){ err(""); var em=(document.getElementById("ta-email").value||"").trim(), pw=document.getElementById("ta-pass").value||""; if(!em||!pw){ err("Enter email and password."); return; } auth.signInWithEmailAndPassword(em,pw).catch(function(e){ err((e&&e.message||"Sign-in failed").replace("Firebase: ","")); }); };
+  document.getElementById("ta-pass").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("ta-signin").click(); });
+})();
+</script>
+
 </bo
