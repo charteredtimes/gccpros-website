@@ -738,56 +738,5 @@ try{
   });
 })();
 </script>
-<script>
-/* GCCPROS research auth hardening v1: reactive chrome sync, working logout, resilient Google sign-in with visible errors + retry. Additive, supersedes buggy handlers. */
-(function(){
-  function $(id){return document.getElementById(id);}
-  function gateEl(){return $("gate");}
-  function memberEl(){return document.querySelector(".memberbar");}
-  function ensureErr(){
-    var card=document.querySelector(".si-card"); if(!card) return null;
-    var e=$("siErr");
-    if(!e){ e=document.createElement("div"); e.id="siErr"; e.style.cssText="display:none;margin:10px 0 4px;padding:10px 12px;border-radius:8px;font-size:.9rem;line-height:1.4"; var g=$("siGoogle"); if(g&&g.parentNode){ g.parentNode.insertBefore(e,g);} else { card.appendChild(e);} }
-    return e;
-  }
-  function showMsg(msg,kind){ var e=ensureErr(); if(!e){ return; } e.style.display="block"; e.textContent=msg;
-    if(kind==="ok"){ e.style.background="#e8f7ee"; e.style.color="#0a5c2b"; e.style.border="1px solid #b6e6c6"; }
-    else if(kind==="info"){ e.style.background="#eef3ff"; e.style.color="#22386e"; e.style.border="1px solid #c7d6ff"; }
-    else { e.style.background="#fdecec"; e.style.color="#8a1c1c"; e.style.border="1px solid #f5c2c2"; } }
-  function clearMsg(){ var e=$("siErr"); if(e){ e.style.display="none"; e.textContent=""; } }
-  function ensureLogout(){ var mb=memberEl(); if(!mb||$("btnLogout")) return; var b=document.createElement("button"); b.id="btnLogout"; b.type="button"; b.textContent="Log out"; b.className="btn btn-ghost"; b.style.cssText="margin-left:12px;cursor:pointer"; b.onclick=window.doLogout; mb.appendChild(b); }
-  function applyAuth(user){ var g=gateEl(), mb=memberEl();
-    if(user){ if(g) g.style.display="none"; if(mb){ mb.style.display="flex"; var w=$("whoEmail"); if(w) w.textContent=(user.email||user.displayName||"your account"); } ensureLogout(); }
-    else { if(mb) mb.style.display="none"; if(g) g.style.display="block"; } }
-  var pendingDoc=null;
-  var _origOSD=window.openSecureDoc;
-  window.openSecureDoc=async function(key){
-    try{
-      var u=null; try{ u=firebase.auth().currentUser; }catch(e){}
-      if(!u){ u=await new Promise(function(res){ var done=false; var t=setTimeout(function(){ if(!done){done=true; try{res(firebase.auth().currentUser);}catch(e){res(null);} } },1500); try{ var un=firebase.auth().onAuthStateChanged(function(x){ if(!done){ done=true; clearTimeout(t); try{un();}catch(e){} res(x||null); } }); }catch(e){ clearTimeout(t); res(null); } }); }
-      if(!u){ pendingDoc=key; try{openSignin();}catch(e){} showMsg("Please sign in to open this document.","info"); return; }
-      return await _origOSD.call(this,key);
-    }catch(e){ showMsg("We could not open that document just now. Please try again in a moment.","err"); }
-  };
-  window.doLogout=async function(){ try{ await firebase.auth().signOut(); }catch(e){} try{ ["gcc_token","gcc_auth_method","gcc_pending_email"].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){} pendingDoc=null; try{ var v=$("viewer"); if(v) v.style.display="none"; }catch(e){} try{ location.href="research.html"; }catch(e){ location.reload(); } };
-  window.researchLogout=window.doLogout;
-  function onSignedIn(user){ applyAuth(user); showMsg("Signed in as "+(user.email||"your account")+".","ok"); setTimeout(function(){ try{closeSignin();}catch(e){} clearMsg(); if(pendingDoc){ var k=pendingDoc; pendingDoc=null; try{openSecureDoc(k);}catch(e){} } },700); }
-  window.doGoogleSignin=async function(){ clearMsg(); var btn=$("siGoogle"); var old=btn?btn.textContent:""; if(btn){ btn.disabled=true; btn.textContent="Connecting to Google..."; }
-    try{ var p=new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({prompt:"select_account"}); var res=await firebase.auth().signInWithPopup(p); if(res&&res.user){ onSignedIn(res.user); } }
-    catch(err){ var c=(err&&err.code)||"";
-      if(c==="auth/popup-blocked"){ showMsg("Your browser blocked the Google popup. Redirecting you to Google now.","info"); try{ await firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider()); return; }catch(e2){ showMsg("Please allow popups for this site, or sign in with your email and password below.","err"); } }
-      else if(c==="auth/popup-closed-by-user"||c==="auth/cancelled-popup-request"){ showMsg("Google sign-in was cancelled. Try again, or use your email and password below.","info"); }
-      else if(c==="auth/account-exists-with-different-credential"){ showMsg("This email is already registered with a password. Please sign in with your email and password below.","err"); }
-      else if(c==="auth/network-request-failed"){ showMsg("Network problem reaching Google. Check your connection and try again, or use email sign-in.","err"); }
-      else if(c==="auth/unauthorized-domain"){ showMsg("Google sign-in is unavailable here right now. Please sign in with your email and password below.","err"); }
-      else { showMsg("Google sign-in did not complete. Please try again, or use your email and password below.","err"); } }
-    finally{ if(btn){ btn.disabled=false; btn.textContent=old; } } };
-  var _origEmail=window.doResearchSignin;
-  if(typeof _origEmail==="function"){ window.doResearchSignin=async function(){ clearMsg(); try{ var r=_origEmail.apply(this,arguments); if(r&&typeof r.then==="function"){ await r; } }catch(e){ showMsg("Sign-in failed. Please check your email and password, or use Continue with Google.","err"); } }; }
-  function boot(){ try{ firebase.auth().onAuthStateChanged(function(user){ applyAuth(user); if(user&&pendingDoc){ var k=pendingDoc; pendingDoc=null; try{openSecureDoc(k);}catch(e){} } }); firebase.auth().getRedirectResult().then(function(res){ if(res&&res.user){ onSignedIn(res.user); } }).catch(function(){ showMsg("Sign-in could not be completed. Please try again, or use your email and password below.","err"); }); }catch(e){} }
-  function start(){ if(window.firebase&&firebase.apps&&firebase.apps.length){ boot(); } else { setTimeout(start,300); } }
-  if(document.readyState==="complete"||document.readyState==="interactive"){ start(); } else { document.addEventListener("DOMContentLoaded",start); }
-})();
-</script>
 </body>
 </html>
