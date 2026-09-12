@@ -49,7 +49,7 @@
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v10 · 2026-07-03 · 4 priority themes</span></div>
+  <div class="brand">GCCPROS Admin · GCC Leaders' Community <span style="font-family:Consolas,monospace;font-size:11px;color:var(--ice);font-weight:normal">panel v11 · 2026-09-12 · editable member sector</span></div>
   <div class="kbar"><input id="admin-key" type="password" placeholder="Admin key" style="width:230px"><button class="btn" onclick="saveKey()">Connect</button></div>
 </header>
 
@@ -389,7 +389,8 @@ async function loadMembers(){
     else { actions='<button class="btn ok sm" onclick="mstatus('+i+',\'approved\')">Reinstate</button>'; }
     actions+=' <button class="btn sm" style="background:#6b7280;color:#fff" onclick="dm('+i+')">Delete</button>';
     h+='<tr><td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div></td>'
-      +'<td>'+esc(x.email||'')+'</td><td>'+esc(x.industry_locked||'')+'</td>'
+      +'<td>'+esc(x.email||'')+'</td>'
+      +'<td id="misec'+i+'">'+esc(x.industry_locked||'—')+' <a href="#" onclick="editIndustry('+i+');return false;" title="Change this member\'s sector" style="text-decoration:none;color:var(--steel)">&#9998;</a></td>'
       +'<td class="muted" style="max-width:280px;font-size:11.5px">'+[['Tech',x.priority_1],['Growth',x.priority_2],['Financial',x.priority_3],['AI/Opt',x.priority_4]].filter(function(pp){return pp[1];}).map(function(pp){return '<b>'+pp[0]+':</b> '+esc(pp[1]);}).join('<br>')+'</td>'
       +'<td>'+(x.onboarding_complete?'✓':'—')+'</td><td class="muted">'+esc(fmtDT(x.last_login))+'</td><td>'+(x.login_count||0)+'</td>'
       +'<td><span class="pill p-'+esc(x.status)+'">'+esc(x.status)+'</span></td>'
@@ -397,6 +398,24 @@ async function loadMembers(){
   });
   if(!MEMBERS.length) h='<tr><td colspan="9" class="muted">No members in this view.</td></tr>';
   tb.innerHTML=h;
+}
+/* Manually change a member's locked sector (fixes an empty dashboard from a stale lock). */
+function editIndustry(i){
+  var x=MEMBERS[i]; var td=$('misec'+i); if(!td) return;
+  td.innerHTML='<select id="misel'+i+'" style="font-size:11.5px;max-width:200px">'+sectorOptions()+'</select>'
+    +' <button class="btn ok sm" onclick="saveIndustry('+i+')">Save</button>'
+    +' <button class="btn sm" style="background:#6b7280;color:#fff" onclick="loadMembers()">&#10005;</button>';
+  var sel=$('misel'+i); if(sel && x.industry_locked){ try{ sel.value=x.industry_locked; }catch(_){} }
+}
+async function saveIndustry(i){
+  var x=MEMBERS[i]; var el=$('misel'+i); var sec=el?(el.value||'').trim():'';
+  if(sec==='__custom__'){ sec=(prompt('Enter a custom sector:','')||'').trim(); if(!sec) return; }
+  if(!sec){ msg('mMem','Pick a sector first.','bad'); return; }
+  msg('mMem','Updating sector…','info');
+  var r=await adminApi('adminCouncilSetIndustry',{ email:x.email, industry:sec });
+  if(r.error){ msg('mMem',r.message||r.error+(r.error==='unknown_action'?' (deploy the v7.9.39 edge first)':''),'bad'); return; }
+  msg('mMem','Sector updated for '+(x.full_name||x.email)+'.'+(r.has_companies===false?' Note: no companies currently carry this exact label, so their dashboard may be empty until data matches.':''),r.has_companies===false?'info':'ok');
+  loadMembers();
 }
 async function mstatus(i,status){
   var x=MEMBERS[i];
