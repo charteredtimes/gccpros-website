@@ -1565,7 +1565,7 @@ async function loadActivity() {
   const box = document.getElementById('activity-box');
   box.innerHTML = '<p class="loading">Loading…</p>';
   try {
-    const r = await adminFetch(SCRIPT_URL + '?action=adminActivityLog&limit=3000&_t=' + Date.now());
+    const r = await adminFetch(SCRIPT_URL + '?action=adminActivity&limit=3000&_t=' + Date.now());
     const j = await r.json();
     if (j.error) throw new Error(j.error);
     ACTIVITY_ROWS = j.rows || [];
