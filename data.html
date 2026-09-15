@@ -1753,7 +1753,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   </div>
 </section>
 <script>
-(function(){
+function gccAudInit(){
   var pick=document.getElementById('aud-picker'); if(!pick)return;
   var ind=document.getElementById('individual-section');
   var ent=document.getElementById('enterprise-section');
@@ -1772,7 +1772,8 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   tiles.forEach(function(t){t.addEventListener('click',function(){set(t.getAttribute('data-aud'),true);});});
   var saved='individual';try{saved=localStorage.getItem('gcc_aud')||'individual';}catch(e){}
   set(saved,false);
-})();
+}
+if(document.readyState!=='loading'){gccAudInit();}else{document.addEventListener('DOMContentLoaded',gccAudInit);}
 </script>
 
 <section id="individual-section" style="background:var(--cream);border-bottom:1px solid var(--gold-soft);padding:36px 36px 8px;">
