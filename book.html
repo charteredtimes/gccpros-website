@@ -237,7 +237,7 @@ try{
       <a href="index.html">Home</a>
       <a href="consult.html">GCC Consulting</a>
       <a href="insights-events.html">Events</a>
-      <a href="database-pro.html">Data</a>
+      <a href="data.html">Data</a>
       <a href="research.html" class="active">Research</a>
       <a href="newsroom.html">Newsroom</a>
       <a href="talent.html">Talent</a>
@@ -434,7 +434,7 @@ try{
     <div>
       <h4>Explore</h4>
       <a href="consult.html">GCC Consulting</a>
-      <a href="database-pro.html">Data</a>
+      <a href="data.html">Data</a>
       <a href="research.html">Research</a>
       <a href="insights-events.html">Events</a>
     </div>
@@ -452,7 +452,7 @@ try{
 <script>
 (function(){
   var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/research-hub';
-  var PORTAL='database-pro.html';
+  var PORTAL='data.html';
   var DOCS={magazine:{url:'/GCCPROs_YTD_Magazine.pdf',title:'GCC Wave Report',short:'GCC Wave Report'},maharashtra:{url:'/Maharashtra_GCC_Company_Benefits_and_Application_Guide.pdf',title:'Maharashtra - GCC Policy, Simplified',short:'Maharashtra GCC Policy, Simplified'}};
   async function docUrl(key){ try{ var cu=(window.__auth&&window.__auth.currentUser)?window.__auth.currentUser:await waitUser(1200); var tok=cu?await cu.getIdToken():''; var r=await fetch(API+'?action=doc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key, idToken:tok, email:token()})}); var j=await r.json(); return j&&j.url; }catch(e){ return null; } }
   function waitUser(ms){ return new Promise(function(res){ var t0=Date.now(); (function chk(){ if(window.__auth&&window.__auth.currentUser) return res(window.__auth.currentUser); if(Date.now()-t0>ms) return res(null); setTimeout(chk,200); })(); }); }
@@ -498,7 +498,7 @@ try{
   // ---- inline sign-in (no redirect to the database page) ----
   window.openSignin=function(){ var m=document.getElementById('siModal'); if(m){ m.style.display='flex'; var f=document.getElementById('siEmail'); if(f) setTimeout(function(){f.focus();},60); } };
   window.closeSignin=function(){ var m=document.getElementById('siModal'); if(m) m.style.display='none'; };
-  (function(){ var _si=document.getElementById('btnSignin'); if(_si){ _si.removeAttribute('href'); _si.style.cursor='pointer'; _si.addEventListener('click',function(e){ e.preventDefault(); openSignin(); }); } var _cr=document.getElementById('siCreate'); if(_cr){ _cr.style.cursor='pointer'; _cr.addEventListener('click', function(ev){ ev.preventDefault(); var url; try{ url = PORTAL + nextParam + '&auth=signup'; }catch(e){ url='database-pro.html?auth=signup'; } window.location.href=url; }); } var _md=document.getElementById('siModal'); if(_md){ _md.addEventListener('click',function(e){ if(e.target===_md) closeSignin(); }); } })();
+  (function(){ var _si=document.getElementById('btnSignin'); if(_si){ _si.removeAttribute('href'); _si.style.cursor='pointer'; _si.addEventListener('click',function(e){ e.preventDefault(); openSignin(); }); } var _cr=document.getElementById('siCreate'); if(_cr){ _cr.style.cursor='pointer'; _cr.addEventListener('click', function(ev){ ev.preventDefault(); var url; try{ url = PORTAL + nextParam + '&auth=signup'; }catch(e){ url='data.html?auth=signup'; } window.location.href=url; }); } var _md=document.getElementById('siModal'); if(_md){ _md.addEventListener('click',function(e){ if(e.target===_md) closeSignin(); }); } })();
   window.doResearchReset=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var er=document.getElementById('siErr'); if(!em){ er.style.color=''; er.textContent='Enter your email first, then tap Forgot password.'; return; } if(!window.__auth){ er.textContent='Auth is still loading, please retry.'; return; } window.__auth.sendPasswordResetEmail(em).then(function(){ er.style.color='#7CE0B0'; er.textContent='Reset link sent. Check your inbox.'; }).catch(function(e){ er.style.color=''; er.textContent=(e&&e.message||'Could not send reset link').replace('Firebase: ',''); }); };
   window.doResearchCreate=function(){ var em=(document.getElementById('siEmail').value||'').trim(); var pw=document.getElementById('siPass').value||''; var er=document.getElementById('siErr'); er.style.color=''; er.textContent=''; if(!em||pw.length<6){ er.textContent='Enter your email and a password of at least 6 characters to create your free account.'; return; } if(!window.__auth){ er.textContent='Sign-in is still loading, please retry.'; return; } window.__auth.createUserWithEmailAndPassword(em,pw).then(function(){}).catch(function(e){ var c=(e&&e.code)||''; if(c==='auth/email-already-in-use'){ er.textContent='This email already has an account. Please use Sign in above.'; } else if(c==='auth/weak-password'){ er.textContent='Please choose a stronger password (at least 6 characters).'; } else { er.textContent=(e&&e.message||'Could not create account').replace('Firebase: ',''); } }); };
   window.doGoogleSignin=function(){ var er=document.getElementById('siErr'); if(er){er.style.color='';er.textContent='';} if(!window.__auth){ if(er)er.textContent='Sign-in is still loading, please retry.'; return; } var prov=new firebase.auth.GoogleAuthProvider(); prov.setCustomParameters({prompt:"select_account"}); return window.__auth.signInWithPopup(prov).catch(function(e){ var c=(e&&e.code)||''; if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){ if(er)er.textContent='Please allow pop-ups for gccpros.com and click Continue with Google again.'; } else if(c!=='auth/cancelled-popup-request'&&c!=='auth/popup-closed-by-user'){ if(er)er.textContent=(e&&e.message||'Google sign-in failed').replace('Firebase: ',''); } }); };
