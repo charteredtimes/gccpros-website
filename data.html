@@ -1737,6 +1737,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 .hub-d{color:#5A6473;font-size:13.5px;line-height:1.55}
 .hub-go{margin-top:6px;font:700 13.5px/1 'Space Grotesk',sans-serif;color:#0A1628;display:inline-flex;align-items:center;gap:6px}
 .hub-tile:hover .hub-go{color:var(--gold-deep,#B8892B)}
+#gcc-switch[hidden]{display:none}
 #gcc-switch{position:sticky;top:0;z-index:40;background:#0A1628;border-bottom:1px solid rgba(46,139,255,.35);display:flex;align-items:center;gap:6px;padding:11px 18px;flex-wrap:wrap}
 .sw-back{background:none;border:0;color:var(--gold,#2E8BFF);font:700 13px/1 'Space Grotesk',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px}
 .sw-back:hover{background:rgba(255,255,255,.08)}
@@ -1842,7 +1843,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
     var signup=document.getElementById('signup-cta');
     var li=document.getElementById('layer-institution');
     var lg=document.getElementById('layer-government');
-    function show(el,on){ if(el) el.style.display=on?'':'none'; }
+    function show(el,on){ if(el) el.style.display=on?'block':'none'; }
     if(ent)ent.style.display='none';
     if(sample)sample.style.display='none';
     if(signup)signup.style.display='none';
