@@ -1722,59 +1722,156 @@ body:not(.is-authed) .ent-pre-auth-teaser {
      Personal-use signup CTA → existing search portal (<main> below, unchanged).
      ═══════════════════════════════════════════════════════════════════════════ -->
 <style>
-.aud-picker{background:var(--cream,#F7F3EA);padding:40px 24px 30px;border-bottom:1px solid var(--gold-soft,#E6D9BE)}
-.aud-in{max-width:1080px;margin:0 auto}
-.aud-eyebrow{font:700 12px/1 'Space Grotesk',system-ui,sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-deep,#B8892B)}
-.aud-title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(24px,3.4vw,34px);color:#0A1628;margin:8px 0 4px;font-weight:700}
-.aud-sub{color:#5A6473;font-size:14.5px;margin:0 0 22px;max-width:560px}
-.aud-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-@media(max-width:760px){.aud-tiles{grid-template-columns:1fr}}
-.aud-tile{text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--gold-soft,#E6D9BE);border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,box-shadow .2s,transform .2s;font-family:inherit}
-.aud-tile:hover{border-color:var(--gold,#C79A3B);box-shadow:0 10px 30px -16px rgba(10,22,40,.4);transform:translateY(-2px)}
-.aud-tile.on{border-color:#0A1628;box-shadow:0 12px 34px -18px rgba(10,22,40,.55)}
-.aud-tile.on::before{content:"Viewing";position:absolute;margin-top:-33px;margin-left:auto;right:20px;font:700 10px/1 'Space Grotesk',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:#0A1628;padding:4px 8px;border-radius:6px}
-.aud-tile{position:relative}
-.aud-num{font:700 12px/1 'Space Grotesk',sans-serif;color:var(--gold-deep,#B8892B);letter-spacing:1px}
-.aud-h{font-family:'Playfair Display',Georgia,serif;font-size:19px;color:#0A1628;font-weight:700}
-.aud-d{color:#5A6473;font-size:13px;line-height:1.5}
-.aud-go{margin-top:8px;font:700 13px/1 'Space Grotesk',sans-serif;color:#0A1628}
-.aud-tile.on .aud-go{color:var(--gold-deep,#B8892B)}
+#gcc-hub{background:var(--cream,#F7F3EA);padding:52px 24px 46px;border-bottom:1px solid var(--gold-soft,#E6D9BE)}
+.hub-in{max-width:1080px;margin:0 auto;text-align:center}
+.hub-kicker{font:700 12px/1 'Space Grotesk',system-ui,sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-deep,#B8892B)}
+.hub-title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,4vw,40px);color:#0A1628;margin:10px 0 6px;font-weight:700}
+.hub-sub{color:#5A6473;font-size:15px;margin:0 auto 30px;max-width:600px;line-height:1.55}
+.hub-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:left}
+@media(max-width:820px){.hub-tiles{grid-template-columns:1fr}}
+.hub-tile{cursor:pointer;background:#fff;border:1.5px solid var(--gold-soft,#E6D9BE);border-radius:18px;padding:26px 24px;display:flex;flex-direction:column;gap:9px;transition:border-color .2s,box-shadow .2s,transform .2s;font-family:inherit;text-align:left}
+.hub-tile:hover{border-color:#0A1628;box-shadow:0 16px 40px -20px rgba(10,22,40,.5);transform:translateY(-3px)}
+.hub-ico{width:44px;height:44px;border-radius:12px;background:#0A1628;color:var(--gold,#D8B45A);display:grid;place-items:center;font-size:22px;margin-bottom:4px}
+.hub-num{font:700 11px/1 'Space Grotesk',sans-serif;color:var(--gold-deep,#B8892B);letter-spacing:1.5px;text-transform:uppercase}
+.hub-h{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:#0A1628;font-weight:700;line-height:1.15}
+.hub-d{color:#5A6473;font-size:13.5px;line-height:1.55}
+.hub-go{margin-top:6px;font:700 13.5px/1 'Space Grotesk',sans-serif;color:#0A1628;display:inline-flex;align-items:center;gap:6px}
+.hub-tile:hover .hub-go{color:var(--gold-deep,#B8892B)}
+#gcc-switch{position:sticky;top:0;z-index:40;background:#0A1628;border-bottom:1px solid rgba(46,139,255,.35);display:flex;align-items:center;gap:6px;padding:11px 18px;flex-wrap:wrap}
+.sw-back{background:none;border:0;color:var(--gold,#2E8BFF);font:700 13px/1 'Space Grotesk',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px}
+.sw-back:hover{background:rgba(255,255,255,.08)}
+.sw-sep{width:1px;height:20px;background:rgba(255,255,255,.18);margin:0 4px}
+.sw-tab{background:none;border:0;color:#9FB0C4;font:600 13px/1 'Space Grotesk',sans-serif;cursor:pointer;padding:7px 13px;border-radius:8px;transition:background .15s,color .15s}
+.sw-tab:hover{color:#EAF1FB;background:rgba(255,255,255,.06)}
+.sw-tab.on{color:#0A1628;background:var(--gold,#D8B45A)}
+.gcc-layer{background:linear-gradient(180deg,#0A1628,#0E1B30);color:#EAF1FB;padding:clamp(36px,5vw,60px) 24px}
+.layer-in{max-width:1000px;margin:0 auto}
+.layer-kicker{font:700 12px/1 'Space Grotesk',sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold,#D8B45A)}
+.layer-h{font-family:'Playfair Display',Georgia,serif;font-size:clamp(24px,3.6vw,36px);margin:10px 0 8px;color:#fff;font-weight:700}
+.layer-lead{color:#B7C6DA;font-size:15.5px;line-height:1.6;max-width:620px;margin:0 0 34px}
+.layer-sub{font:700 12px/1 'Space Grotesk',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--gold,#D8B45A);margin:38px 0 16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.12)}
+.fieldgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:820px){.fieldgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.fieldgrid{grid-template-columns:1fr}}
+.fg-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-left:3px solid var(--gold,#D8B45A);border-radius:10px;padding:14px 15px}
+.fg-h{font:700 11.5px/1 'Space Grotesk',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:6px}
+.fg-d{color:#9FB0C4;font-size:12.5px;line-height:1.5}
+.ucgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:820px){.ucgrid{grid-template-columns:1fr}}
+.uc-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:20px 18px}
+.uc-h{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:#fff;font-weight:700;margin-bottom:6px}
+.uc-d{color:#9FB0C4;font-size:13px;line-height:1.55}
+.layer-cta{margin-top:40px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-top:26px;border-top:1px solid rgba(255,255,255,.12)}
+.cta-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold,#D8B45A);color:#0A1628;font:700 15px/1 'Space Grotesk',sans-serif;text-decoration:none;padding:15px 26px;border-radius:12px;transition:transform .15s,box-shadow .15s}
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(46,139,255,.6)}
+.cta-note{color:#8DA0B6;font-size:13px}
 </style>
-<section class="aud-picker" id="aud-picker" aria-label="Choose your audience">
-  <div class="aud-in">
-    <div class="aud-eyebrow">Who is this for</div>
-    <h2 class="aud-title">Pick your lane</h2>
-    <p class="aud-sub">Three ways to use the GCC database. Choose yours &mdash; the rest stays one click away, so nothing crowds your screen.</p>
-    <div class="aud-tiles" role="tablist">
-      <button class="aud-tile" data-aud="individual" role="tab" aria-expanded="true"><span class="aud-num">01 &middot; Individuals</span><span class="aud-h">Search it yourself</span><span class="aud-d">Look up any company, reveal a full profile, pay as you go. No contract.</span><span class="aud-go">Open the search &rarr;</span></button>
-      <button class="aud-tile" data-aud="institution" role="tab" aria-expanded="false"><span class="aud-num">02 &middot; Institutions</span><span class="aud-h">Full dataset &amp; API</span><span class="aud-d">Custom geographies, secure API, audit-grade governance, annual seats.</span><span class="aud-go">See enterprise &rarr;</span></button>
-      <button class="aud-tile" data-aud="government" role="tab" aria-expanded="false"><span class="aud-num">03 &middot; Government</span><span class="aud-h">Policy &amp; strategy</span><span class="aud-d">Investment attraction, SEZ &amp; policy impact, fiscal strategy on hard data.</span><span class="aud-go">Open policy &rarr;</span></button>
+<section id="gcc-hub">
+  <div class="hub-in">
+    <div class="hub-kicker">The GCCPROs GCC database</div>
+    <h2 class="hub-title">Who's it for?</h2>
+    <p class="hub-sub">Pick your lane. Each opens one focused view — nothing else on the page competing for your attention.</p>
+    <div class="hub-tiles">
+      <button class="hub-tile" data-aud="individual"><span class="hub-ico">&#9906;</span><span class="hub-num">01 &middot; Individuals</span><span class="hub-h">Search the database</span><span class="hub-d">Look up any of 4,300+ GCCs, reveal a full 40+ field profile, pay as you go. No contract.</span><span class="hub-go">Open the search &rarr;</span></button>
+      <button class="hub-tile" data-aud="institution"><span class="hub-ico">&#9633;</span><span class="hub-num">02 &middot; Institutions</span><span class="hub-h">Licence the full dataset</span><span class="hub-d">Custom geographies, secure API, audit-grade governance and annual seats for your team.</span><span class="hub-go">See enterprise &rarr;</span></button>
+      <button class="hub-tile" data-aud="government"><span class="hub-ico">&#9819;</span><span class="hub-num">03 &middot; Government</span><span class="hub-h">Build policy on hard data</span><span class="hub-d">Investment attraction, SEZ and policy impact, and industry concentration for strategy.</span><span class="hub-go">Open policy &rarr;</span></button>
+    </div>
+  </div>
+</section>
+<div id="gcc-switch" hidden>
+  <button class="sw-back" type="button" data-back>&larr; All options</button>
+  <span class="sw-sep"></span>
+  <button class="sw-tab" type="button" data-aud="individual">Individuals</button>
+  <button class="sw-tab" type="button" data-aud="institution">Institutions</button>
+  <button class="sw-tab" type="button" data-aud="government">Government</button>
+</div>
+<section class="gcc-layer" id="layer-institution" hidden>
+  <div class="layer-in">
+    <div class="layer-kicker">For institutions &amp; enterprises</div>
+    <h2 class="layer-h">Full dataset. Custom scope. Secure API.</h2>
+    <p class="layer-lead">We licence annual seats, deliver continuously audited data, and tailor scope, contract and integration to your organisation. Talk to us for pricing, a guided walkthrough and a sample data extract.</p>
+    <div class="layer-sub">What we capture &middot; 40+ fields per company</div>
+    <div class="fieldgrid">
+      <div class="fg-card"><div class="fg-h">Identity</div><div class="fg-d">Company, parent, HQ country, India legal entity</div></div>
+      <div class="fg-card"><div class="fg-h">Location</div><div class="fg-d">GCC city, address, SEZ/STPI, area sq ft</div></div>
+      <div class="fg-card"><div class="fg-h">Capabilities</div><div class="fg-d">Domains, sub-domains, tech stack</div></div>
+      <div class="fg-card"><div class="fg-h">Leadership</div><div class="fg-d">Site head, CXOs, LinkedIn, verified email</div></div>
+      <div class="fg-card"><div class="fg-h">Headcount</div><div class="fg-d">Band, exact, women %, maturity level</div></div>
+      <div class="fg-card"><div class="fg-h">Financials</div><div class="fg-d">FY revenue, TP markup, group turnover</div></div>
+      <div class="fg-card"><div class="fg-h">Legal</div><div class="fg-d">CIN, legal structure, setup model</div></div>
+      <div class="fg-card"><div class="fg-h">Ratings &amp; IP</div><div class="fg-d">Glassdoor, GPTW, IPs registered</div></div>
+    </div>
+    <div class="layer-sub">Built for service providers</div>
+    <div class="ucgrid">
+      <div class="uc-card"><div class="uc-h">Account targeting</div><div class="uc-d">Buyer signals across hiring, expansion and IP filings to focus your pipeline.</div></div>
+      <div class="uc-card"><div class="uc-h">Account-based prospecting</div><div class="uc-d">Named decision-makers with verified email, mapped to each centre.</div></div>
+      <div class="uc-card"><div class="uc-h">Market sizing</div><div class="uc-d">By city, domain, headcount band and industry, on audited records.</div></div>
+    </div>
+    <div class="layer-cta">
+      <a class="cta-primary" href="mailto:admin@gccpros.com?subject=Enterprise%20data%20licence%20enquiry">Talk to our enterprise team</a>
+      <span class="cta-note">We'll reply within 1 working day.</span>
+    </div>
+  </div>
+</section>
+<section class="gcc-layer" id="layer-government" hidden>
+  <div class="layer-in">
+    <div class="layer-kicker">For government &amp; policy</div>
+    <h2 class="layer-h">Build fiscal strategy on hard data.</h2>
+    <p class="layer-lead">We work with state IT/ITeS departments and national policy teams on GCC ecosystem analysis: where capability is concentrating, which incentive structures are working, and which cities are pulling ahead. Confidential engagements, bespoke deliverables.</p>
+    <div class="layer-sub">How policy teams use it</div>
+    <div class="ucgrid">
+      <div class="uc-card"><div class="uc-h">Investment attraction</div><div class="uc-d">Foreign-HQ companies expanding in India, by sector and readiness.</div></div>
+      <div class="uc-card"><div class="uc-h">SEZ &amp; policy impact</div><div class="uc-d">Outcomes by zone, scheme and geography, measured on real records.</div></div>
+      <div class="uc-card"><div class="uc-h">Industry concentration</div><div class="uc-d">Geo and sector mapping to inform strategy and incentive design.</div></div>
+    </div>
+    <div class="layer-cta">
+      <a class="cta-primary" href="mailto:admin@gccpros.com?subject=Government%20policy%20conversation">Open a policy conversation</a>
+      <span class="cta-note">Confidential. We'll reply within 1 working day.</span>
     </div>
   </div>
 </section>
 <script>
-function gccAudInit(){
-  var pick=document.getElementById('aud-picker'); if(!pick)return;
-  var ind=document.getElementById('individual-section');
-  var ent=document.getElementById('enterprise-section');
-  var tiles=[].slice.call(pick.querySelectorAll('.aud-tile'));
-  function set(a,scroll){
-    tiles.forEach(function(t){var on=t.getAttribute('data-aud')===a;t.classList.toggle('on',on);t.setAttribute('aria-expanded',on?'true':'false');});
-    if(ind)ind.style.display=(a==='individual')?'':'none';
-    if(ent)ent.style.display=(a==='individual')?'none':'';
-    try{localStorage.setItem('gcc_aud',a);}catch(e){}
-    if(scroll){
-      if(a==='government'){var g=document.getElementById('gov-block');if(g){setTimeout(function(){g.scrollIntoView({behavior:'smooth',block:'start'});},350);return;}}
-      var tgt=(a==='individual')?ind:ent;
-      if(tgt){setTimeout(function(){var y=tgt.getBoundingClientRect().top+window.pageYOffset-64;window.scrollTo({top:y,behavior:'smooth'});},60);}
+(function(){
+  function init(){
+    var hub=document.getElementById('gcc-hub');
+    var sw=document.getElementById('gcc-switch');
+    if(!hub||!sw)return;
+    var ind=document.getElementById('individual-section');
+    var ent=document.getElementById('enterprise-section');
+    var sample=document.getElementById('sample-reports');
+    var signup=document.getElementById('signup-cta');
+    var li=document.getElementById('layer-institution');
+    var lg=document.getElementById('layer-government');
+    function show(el,on){ if(el) el.style.display=on?'':'none'; }
+    if(ent)ent.style.display='none';
+    if(sample)sample.style.display='none';
+    if(signup)signup.style.display='none';
+    var tabs=[].slice.call(sw.querySelectorAll('.sw-tab'));
+    function open(a){
+      hub.style.display='none'; sw.hidden=false;
+      show(ind,a==='individual'); show(li,a==='institution'); show(lg,a==='government');
+      tabs.forEach(function(t){t.classList.toggle('on',t.getAttribute('data-aud')===a);});
+      try{localStorage.setItem('gcc_lane',a);}catch(e){}
+      window.scrollTo({top:0,behavior:'smooth'});
     }
+    function back(){
+      sw.hidden=true; show(ind,false); show(li,false); show(lg,false);
+      hub.style.display='';
+      try{localStorage.removeItem('gcc_lane');}catch(e){}
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    [].slice.call(hub.querySelectorAll('.hub-tile')).forEach(function(t){t.addEventListener('click',function(){open(t.getAttribute('data-aud'));});});
+    tabs.forEach(function(t){t.addEventListener('click',function(){open(t.getAttribute('data-aud'));});});
+    sw.querySelector('[data-back]').addEventListener('click',back);
+    show(ind,false); show(li,false); show(lg,false); sw.hidden=true; hub.style.display='';
+    var saved=null;try{saved=localStorage.getItem('gcc_lane');}catch(e){}
+    if(saved==='individual'||saved==='institution'||saved==='government')open(saved);
   }
-  tiles.forEach(function(t){t.addEventListener('click',function(){set(t.getAttribute('data-aud'),true);});});
-  var saved='individual';try{saved=localStorage.getItem('gcc_aud')||'individual';}catch(e){}
-  set(saved,false);
-}
-if(document.readyState!=='loading'){gccAudInit();}else{document.addEventListener('DOMContentLoaded',gccAudInit);}
+  if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);
+})();
 </script>
+
+
 
 <section id="individual-section" style="background:var(--cream);border-bottom:1px solid var(--gold-soft);padding:36px 36px 8px;">
   <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;justify-content:space-between;">
