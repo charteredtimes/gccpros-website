@@ -1850,7 +1850,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
   function init(){
     var hub=document.getElementById('gcc-hub'), sw=document.getElementById('gcc-switch');
     if(!hub||!sw)return;
-    var LANE={individual:['individual-section','full-report-old-hidden'],business:['enterprise-section'],government:['layer-government']};
+    var LANE={individual:['individual-section','full-report-old-hidden','individual-portal'],business:['enterprise-section'],government:['layer-government']};
     var HIDE=['sample-reports','signup-cta','enterprise-waitlist-removed','use-cases-old-hidden','full-report'];
     function disp(id,on){var e=document.getElementById(id); if(e) e.style.display=on?'block':'none';}
     function allLaneIds(){var a=[];for(var k in LANE)a=a.concat(LANE[k]);return a;}
@@ -1933,7 +1933,7 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 </section>
 
 
-<main class="main">
+<main class="main" id="individual-portal">
   <div class="grid">
 
     
