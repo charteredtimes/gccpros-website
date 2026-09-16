@@ -159,7 +159,7 @@ td.actions { white-space:nowrap; }
 
 <div class="topbar">
   <div><span class="brand">GCC<span class="brand-mark">PROs</span></span><span class="tag">ADMIN CONSOLE</span></div>
-  <div><span id="admin-status" class="muted"></span> <a href="expert-admin.html" target="_blank" rel="noopener"><button class="btn small" title="Private expert profile review — reviewer sign-in required">Expert profiles</button></a> <a href="admin-council-panel.html" target="_blank" rel="noopener"><button class="btn small" title="GCC Leaders' Community — review &amp; approve members">&#127894; Leaders' Community</button></a> <a href="council-demo.html" target="_blank" rel="noopener"><button class="btn small" title="Sign in as any registered leader to test their experience">&#128065; Demo: sign in as user</button></a> <button class="btn small" id="install-btn" onclick="promptInstall()" style="display:none;">&#10515; Install app</button> <button class="btn secondary small" id="logout-btn" onclick="forgetKey()" style="display:none;">Forget key</button></div>
+  <div><span id="admin-status" class="muted"></span> <a href="javascript:void(0)" onclick="erOpen();return false;"><button class="btn small" title="Private expert profile review — opens in this console">Expert profiles</button></a> <a href="admin-council-panel.html" target="_blank" rel="noopener"><button class="btn small" title="GCC Leaders' Community — review &amp; approve members">&#127894; Leaders' Community</button></a> <a href="council-demo.html" target="_blank" rel="noopener"><button class="btn small" title="Sign in as any registered leader to test their experience">&#128065; Demo: sign in as user</button></a> <button class="btn small" id="install-btn" onclick="promptInstall()" style="display:none;">&#10515; Install app</button> <button class="btn secondary small" id="logout-btn" onclick="forgetKey()" style="display:none;">Forget key</button></div>
 </div>
 
 <div id="gate" class="gate">
@@ -2716,5 +2716,167 @@ if ('serviceWorker' in navigator) {
  };
 })();
 </script>
+
+<div id="er-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(10,22,40,.5);padding:20px;overflow:auto;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <div style="background:#fff;max-width:1040px;margin:16px auto;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)">
+    <div style="background:#0A1628;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+      <strong style="font-size:15px">Expert profiles &mdash; review &amp; approval</strong>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button id="er-back" onclick="erList()" style="display:none;background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">&larr; All applications</button>
+        <span onclick="erClose()" style="cursor:pointer;font-size:22px;line-height:1">&times;</span>
+      </div>
+    </div>
+    <div id="er-body" style="padding:16px 18px;max-height:74vh;overflow:auto;color:#1B2733">Loading&hellip;</div>
+  </div>
+</div>
+<script>
+(function(){
+ var FN="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/expert-intake";
+ var CHECKS=["email","phone","identity","linkedin","experience","skills","conflicts"];
+ var CHECK_LABEL={email:"Corporate email verified",phone:"Phone valid",identity:"Government ID checked",linkedin:"LinkedIn matches profile",experience:"Experience credible",skills:"Skills / sectors verified",conflicts:"Conflicts of interest cleared"};
+ var STATUSES=["submitted","under_review","needs_information","approved","rejected"];
+ var STATUS_LABEL={submitted:"Submitted",under_review:"Under review",needs_information:"Needs information",approved:"Approved",rejected:"Rejected"};
+ var STATUS_COLOR={submitted:"#5B6B7B",under_review:"#B7791F",needs_information:"#B7791F",approved:"#1E874B",rejected:"#C0392B"};
+ function key(){ try{ if(typeof ADMIN_KEY!=="undefined") return ADMIN_KEY||""; }catch(e){} return ""; }
+ function esc(s){return (s==null?"":String(s)).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+ function tsfmt(s){ return (s==null?"":String(s)).replace("T"," ").slice(0,16); }
+ function human(k){ return String(k).replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,function(c){return c.toUpperCase();}); }
+ function badge(st){ var c=STATUS_COLOR[st]||"#5B6B7B"; return "<span style='display:inline-block;padding:2px 9px;border-radius:999px;font:600 11.5px system-ui;color:#fff;background:"+c+"'>"+esc(STATUS_LABEL[st]||st||"")+"</span>"; }
+ async function api(qs,opts){
+   var k=key(); if(!k) throw new Error("Enter the admin key on the sign-in screen first, then reopen this panel.");
+   opts=opts||{}; opts.headers=opts.headers||{}; opts.headers["X-Admin-Key"]=k;
+   var r=await fetch(FN+qs,opts);
+   return r;
+ }
+ function body(){ return document.getElementById("er-body"); }
+ function showBack(on){ document.getElementById("er-back").style.display=on?"inline-block":"none"; }
+
+ window.erOpen=function(){ document.getElementById("er-modal").style.display="block"; erList(); };
+ window.erClose=function(){ document.getElementById("er-modal").style.display="none"; };
+
+ window.erList=async function(){
+   showBack(false);
+   var b=body(); b.innerHTML="Loading&hellip;";
+   var k=key(); if(!k){ b.innerHTML="<p style='color:#c0392b'>Enter the admin key on the sign-in screen first, then reopen this panel.</p>"; return; }
+   try{
+     var r=await api("?action=list&offset=0",{});
+     var j=await r.json();
+     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     var rows=j.rows||[];
+     if(!rows.length){ b.innerHTML="<p style='color:#5B6B7B'>No expert applications yet.</p>"; return; }
+     var h="<div style='margin:0 0 10px;color:#5B6B7B;font-size:12px'>"+rows.length+" application(s)"+(j.hasMore?" (more available)":"")+"</div>";
+     h+="<table style='width:100%;border-collapse:collapse;font-size:12.5px'><thead><tr>";
+     ["Ref","Name","Email","Capability","Status","Submitted",""].forEach(function(c){h+="<th style='text-align:left;padding:8px;border-bottom:2px solid #E3E8EF;white-space:nowrap'>"+c+"</th>";});
+     h+="</tr></thead><tbody>";
+     rows.forEach(function(x){
+       h+="<tr>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap;font-family:ui-monospace,monospace;font-size:11.5px'>"+esc(x.reference)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.name)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.email)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.capability)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+badge(x.status)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+esc(tsfmt(x.createdAt))+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'><button onclick=\"erDetail('"+esc(x.id)+"')\" style='background:#0A1628;color:#fff;border:none;border-radius:7px;padding:6px 11px;font:600 12px system-ui;cursor:pointer'>Open</button></td>";
+       h+="</tr>";
+     });
+     h+="</tbody></table>";
+     b.innerHTML=h;
+   }catch(e){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc(e.message||e)+"</p>"; }
+ };
+
+ function kvGrid(obj){
+   if(!obj||typeof obj!=="object") return "";
+   var h="<div style='display:grid;grid-template-columns:1fr 1fr;gap:2px 22px'>";
+   Object.keys(obj).forEach(function(k){
+     var v=obj[k];
+     if(v==null||v==="") return;
+     if(Array.isArray(v)||typeof v==="object") return;
+     h+="<div style='padding:6px 0;border-bottom:1px solid #F1F4F8'><div style='font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#8A98A8'>"+esc(human(k))+"</div><div style='font-size:13px;color:#1B2733'>"+esc(v)+"</div></div>";
+   });
+   h+="</div>";
+   return h;
+ }
+ function section(title,inner){ return "<div style='margin:0 0 18px'><h3 style='margin:0 0 8px;font-size:13px;color:#0A1628;border-bottom:2px solid #E3E8EF;padding-bottom:5px'>"+esc(title)+"</h3>"+inner+"</div>"; }
+
+ window.erDetail=async function(id){
+   showBack(true);
+   var b=body(); b.innerHTML="Loading&hellip;";
+   try{
+     var r=await api("?action=detail&id="+encodeURIComponent(id),{});
+     var j=await r.json();
+     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     var p=j.profile||{}, rev=j.review||{}, checks=rev.checks||{}, notes=rev.notes||"";
+     var h="";
+     h+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:0 0 14px'>";
+     h+="<div><div style='font-size:17px;font-weight:700;color:#0A1628'>"+esc(p.name||p.fullName||"(no name)")+"</div><div style='font-family:ui-monospace,monospace;font-size:11.5px;color:#8A98A8'>"+esc(j.reference||"")+" &middot; v"+esc(j.version)+" &middot; "+esc(tsfmt(j.createdAt))+"</div></div>";
+     h+="<div>"+badge(j.status)+"</div></div>";
+     h+=section("Full profile (reviewer-only)",kvGrid(p));
+     if(Array.isArray(p.skills)&&p.skills.length){
+       h+=section("Skills",p.skills.map(function(s){return "<span style='display:inline-block;background:#EEF3FB;color:#22496E;border-radius:6px;padding:3px 9px;margin:0 6px 6px 0;font-size:12px'>"+esc(typeof s==="object"?(s.name||JSON.stringify(s)):s)+"</span>";}).join(""));
+     }
+     if(Array.isArray(p.history)&&p.history.length){
+       var hh=p.history.map(function(e){ return "<div style='padding:7px 0;border-bottom:1px solid #F1F4F8;font-size:12.5px'>"+esc(typeof e==="object"?[e.role,e.employer,e.years].filter(Boolean).join(" - "):e)+"</div>"; }).join("");
+       h+=section("Experience history",hh);
+     }
+     if(j.clientPreview){
+       var cp=(typeof j.clientPreview==="object")?kvGrid(j.clientPreview):("<div style='white-space:pre-wrap;font-size:12.5px;color:#33414F'>"+esc(j.clientPreview)+"</div>");
+       h+=section("Anonymised client preview (what clients see)","<div style='background:#F4F7FB;border:1px solid #E3E8EF;border-radius:10px;padding:12px 14px'>"+cp+"</div>");
+     }
+     h+=section("Identity document","<button onclick=\"erDoc('"+esc(id)+"')\" style='background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:8px 14px;font:600 12.5px system-ui;cursor:pointer'>&#11015; Download ID document</button> <span id='er-doc-msg' style='margin-left:10px;font-size:12px;color:#8A98A8'></span>");
+     if(Array.isArray(j.emails)&&j.emails.length){
+       var em=j.emails.map(function(e){ return "<div style='padding:6px 0;border-bottom:1px solid #F1F4F8;font-size:12px'><strong>"+esc(e.kind||e.type||"email")+"</strong> - "+esc(e.status||"")+" - "+esc(tsfmt(e.createdAt||e.at))+"</div>"; }).join("");
+       h+=section("Email activity",em);
+     }
+     if(Array.isArray(j.audit)&&j.audit.length){
+       var au=j.audit.map(function(e){ return "<div style='padding:6px 0;border-bottom:1px solid #F1F4F8;font-size:12px;color:#5B6B7B'>"+esc(tsfmt(e.at||e.createdAt))+" - "+esc(e.actor||"")+" - "+esc(e.action||e.event||"")+(e.note?" - "+esc(e.note):"")+"</div>"; }).join("");
+       h+=section("Audit trail",au);
+     }
+     var form="<div style='background:#FBFCFE;border:1px solid #E3E8EF;border-radius:10px;padding:14px 16px'>";
+     form+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin:0 0 12px'>";
+     CHECKS.forEach(function(c){
+       var on=checks[c]===true;
+       form+="<label style='display:flex;align-items:center;gap:8px;font-size:12.5px;color:#1B2733;cursor:pointer'><input type='checkbox' id='er-chk-"+c+"' "+(on?"checked":"")+" style='width:16px;height:16px'> "+esc(CHECK_LABEL[c])+"</label>";
+     });
+     form+="</div>";
+     form+="<div style='margin:0 0 10px'><div style='font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#8A98A8;margin:0 0 4px'>Reviewer notes</div><textarea id='er-notes' style='width:100%;min-height:70px;border:1px solid #D4DBE4;border-radius:8px;padding:9px;font:13px system-ui;box-sizing:border-box'>"+esc(notes)+"</textarea></div>";
+     form+="<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>";
+     form+="<label style='font-size:12.5px;color:#1B2733'>Decision: <select id='er-status' style='padding:7px 9px;border:1px solid #D4DBE4;border-radius:8px;font:13px system-ui'>"+STATUSES.map(function(s){return "<option value='"+s+"' "+(s===j.status?"selected":"")+">"+esc(STATUS_LABEL[s])+"</option>";}).join("")+"</select></label>";
+     form+="<button onclick=\"erSave('"+esc(id)+"',"+JSON.stringify(j.version)+")\" style='background:#1E874B;color:#fff;border:none;border-radius:8px;padding:9px 18px;font:700 13px system-ui;cursor:pointer'>Save review</button>";
+     form+="<span id='er-save-msg' style='font-size:12.5px'></span>";
+     form+="</div></div>";
+     h+=section("Review decision",form);
+     b.innerHTML=h;
+   }catch(e){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc(e.message||e)+"</p>"; }
+ };
+
+ window.erDoc=async function(id){
+   var msg=document.getElementById("er-doc-msg"); if(msg) msg.textContent="Fetching…";
+   try{
+     var r=await api("?action=document&id="+encodeURIComponent(id),{});
+     if(!r.ok){ if(msg) msg.textContent="Error "+r.status; return; }
+     var blob=await r.blob();
+     var cd=r.headers.get("content-disposition")||""; var m=/filename="?([^"]+)"?/.exec(cd);
+     var name=m?m[1]:("expert-id-"+id);
+     var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+     if(msg) msg.textContent="Downloaded.";
+   }catch(e){ if(msg) msg.textContent="Error: "+(e.message||e); }
+ };
+
+ window.erSave=async function(id,version){
+   var msg=document.getElementById("er-save-msg"); if(msg){ msg.style.color="#5B6B7B"; msg.textContent="Saving…"; }
+   var status=document.getElementById("er-status").value;
+   var notes=document.getElementById("er-notes").value;
+   var checks={}; CHECKS.forEach(function(c){ var el=document.getElementById("er-chk-"+c); checks[c]=!!(el&&el.checked); });
+   try{
+     var r=await api("?action=review&id="+encodeURIComponent(id),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status,version:version,notes:notes,checks:checks})});
+     var j=await r.json().catch(function(){return {};});
+     if(!r.ok){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc((j&&j.error)||r.status)+(r.status===409?" (someone else updated this - reopen to refresh)":""); } return; }
+     if(msg){ msg.style.color="#1E874B"; msg.textContent="Saved."; }
+     setTimeout(function(){ erDetail(id); },700);
+   }catch(e){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc(e.message||e); } }
+ };
+})();
+</script>
+
 
 </bo
