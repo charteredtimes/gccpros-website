@@ -28,18 +28,21 @@ const repo={
  review:async(id:string,version:number,status:string,review:unknown,actor:string,checks:unknown)=>api('/rest/v1/rpc/expert_review',{method:'POST',body:JSON.stringify({p_id:id,p_version:version,p_status:status,p_review:review,p_actor:actor,p_checks:checks})}),
  claimMail:()=>api('/rest/v1/rpc/expert_claim_mail',{method:'POST',body:'{}'}),
  finishMail:(id:string,lease:string,ok:boolean,provider:string|null)=>api('/rest/v1/rpc/expert_finish_mail',{method:'POST',body:JSON.stringify({p_id:id,p_lease:lease,p_ok:ok,p_provider:provider})}),
- mailStatus:(id:string)=>api('/rest/v1/expert_email_jobs?application_id=eq.'+encodeURIComponent(id)+'&select=event,status,attempts,sent_at,last_error&order=created_at')
+ mailStatus:(id:string)=>api('/rest/v1/expert_email_jobs?application_id=eq.'+encodeURIComponent(id)+'&select=event,status,attempts,sent_at,last_error&order=created_at'),
+ otpGet:async(hash:string)=>(await api('/rest/v1/expert_email_otps?email_hash=eq.'+encodeURIComponent(hash)+'&select=*&limit=1'))[0]||null,
+ otpSet:async(row:unknown)=>api('/rest/v1/expert_email_otps?on_conflict=email_hash',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)})
 };
 const authenticate=reviewerAuth((token:string)=>jwtVerify(token,jwks,{issuer:'https://securetoken.google.com/'+project,audience:project,algorithms:['RS256']}),reviewers);
 async function verifyHuman(token:string,ip:string){if(!token||token.length>2048)return false;try{const r=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:env('EXPERT_TURNSTILE_SECRET'),response:token,remoteip:ip}),signal:AbortSignal.timeout(10000)});const d=await r.json();return d.success===true&&['gccpros.com','www.gccpros.com'].includes(d.hostname)&&d.action==='expert_registration';}catch{return false;}}
 let handler:ReturnType<typeof makeHandler>,dispatch:()=>Promise<unknown>;
 try{
  const box=await cryptoBox(env('EXPERT_DATA_KEY'));
+ const sendEmailResend=async(message:unknown,key:string)=>{const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env('RESEND_API_KEY'),'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify(message),signal:AbortSignal.timeout(15000)});const j=await r.json();if(!r.ok||!j.id)throw new Error('Email not accepted');return j.id;};
  let ready=Boolean(base&&service&&reviewers.length&&env('EXPERT_TURNSTILE_SITE_KEY')&&env('EXPERT_TURNSTILE_SECRET')&&env('RESEND_API_KEY')&&env('EXPERT_FROM_EMAIL')&&env('EXPERT_MAIL_WORKER_TOKEN').length>=40);
  if(ready){try{await api(table+'?select=id&limit=0');const bucketInfo=await api('/storage/v1/bucket/expert-identity-private');ready=bucketInfo.public===false;}catch{ready=false;}}
- dispatch=()=>dispatchEmails({repo,box,from:env('EXPERT_FROM_EMAIL'),team:'admin@gccpros.com',sendEmail:async(message:unknown,key:string)=>{const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env('RESEND_API_KEY'),'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify(message),signal:AbortSignal.timeout(15000)});const j=await r.json();if(!r.ok||!j.id)throw new Error('Email not accepted');return j.id;}});
- handler=makeHandler({repo,box,authenticate,verifyHuman,origins:allowedOrigins,siteKey:env('EXPERT_TURNSTILE_SITE_KEY'),ready,adminKey:env('GCP_ADMIN_KEY')});
-}catch{handler=makeHandler({repo,box:null,authenticate,verifyHuman,origins:allowedOrigins,siteKey:'',ready:false,adminKey:env('GCP_ADMIN_KEY')});}
+ dispatch=()=>dispatchEmails({repo,box,from:env('EXPERT_FROM_EMAIL'),team:'admin@gccpros.com',sendEmail:sendEmailResend});
+ handler=makeHandler({repo,box,authenticate,verifyHuman,origins:allowedOrigins,siteKey:env('EXPERT_TURNSTILE_SITE_KEY'),ready,adminKey:env('GCP_ADMIN_KEY'),sendEmail:sendEmailResend,mailFrom:env('EXPERT_FROM_EMAIL'),mailTeam:'admin@gccpros.com'});
+}catch{handler=makeHandler({repo,box:null,authenticate,verifyHuman,origins:allowedOrigins,siteKey:'',ready:false,adminKey:env('GCP_ADMIN_KEY'),sendEmail:null,mailFrom:'',mailTeam:''});}
 Deno.serve(async(request:Request)=>{
  const action=new URL(request.url).searchParams.get('action');
  if(action==='dispatch'){
