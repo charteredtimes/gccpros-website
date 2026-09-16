@@ -8,7 +8,7 @@ export async function cryptoBox(secret){
  const hmac=await crypto.subtle.importKey('raw',raw,{name:'HMAC',hash:'SHA-256'},false,['sign']);
  return {async seal(bytes,context){const iv=crypto.getRandomValues(new Uint8Array(12));return {v:1,iv:b64(iv),data:b64(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:enc.encode(context)},aes,bytes))};},async open(x,context){if(x.v!==1)throw new Error('Unsupported encrypted envelope');return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(x.iv),additionalData:enc.encode(context)},aes,unb64(x.data)));},async hash(s){return b64(await crypto.subtle.sign('HMAC',hmac,enc.encode(s)));}};
 }
-export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,ready=true,adminKey=''}){
+export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,ready=true,adminKey='',sendEmail=null,mailFrom='',mailTeam=''}){
  const json=(data,status=200,origin='')=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'authorization,content-type,x-admin-key','Access-Control-Allow-Methods':'GET,POST,OPTIONS'}});
  const decrypt=async row=>JSON.parse(dec.decode(await box.open(row.profile_encrypted,'profile:'+row.id)));
  return async request=>{
@@ -36,6 +36,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     p=Object.fromEntries(allowed.map(k=>[k,typeof p[k]==='string'?p[k].trim():p[k]]));
     const errors=validateProfile(p);const file=fd.get('document'),docError=await validateDocument(file);if(docError)errors.document=docError;
     if(Object.keys(errors).length)return reply({error:'validation',fields:errors},422);
+    {const _el=String(p.email||'').toLowerCase();const _w=Math.floor(Date.now()/864e5);const _t=String(fd.get('emailToken')||'');const _ok=_t&&(_t===await box.hash('ev:'+_el+':'+_w)||_t===await box.hash('ev:'+_el+':'+(_w-1)));if(!_ok)return reply({error:'email_unverified',message:'Verify your email with the code we sent before submitting.'},400);}
     const requestId=String(fd.get('requestId')||'');if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))return reply({error:'invalid_request_id'},400);
     const bytes=new Uint8Array(await file.arrayBuffer());
     const fingerprint=await box.hash(JSON.stringify(p)+'|'+b64(await crypto.subtle.digest('SHA-256',bytes)));
@@ -48,6 +49,31 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     await repo.putFile(filePath,enc.encode(JSON.stringify(documentEncrypted)));
     try{await repo.create(row)}catch(err){await repo.removeFile(filePath).catch(()=>{});const saved=await repo.byRequest(requestId);if(saved?.fingerprint===fingerprint)return reply({status:'ok',reference:saved.expert_code});if(err?.code==='23505')return reply({error:'existing_application',message:'An application may already exist. Contact admin@gccpros.com.'},409);throw err;}
     return reply({status:'ok',reference:code});
+   }
+   if(action==='otpSend'&&request.method==='POST'){
+    if(!sendEmail)return reply({error:'intake_unavailable'},503);
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    const email=String(d&&d.email||'').trim();const el=email.toLowerCase();
+    if(email.length>180||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))return reply({error:'invalid_email',message:'Enter a valid email address.'},422);
+    const eh=await box.hash('email:'+el);const now=Date.now();
+    const prev=await repo.otpGet(eh);let sends=0;if(prev&&prev.last_send&&now-new Date(prev.last_send).getTime()<36e5)sends=prev.sends||0;
+    if(sends>=5)return reply({error:'otp_rate',message:'Too many codes requested. Try again in an hour.'},429);
+    const code=String(crypto.getRandomValues(new Uint32Array(1))[0]%900000+100000);
+    await repo.otpSet({email_hash:eh,code_hash:await box.hash('otp:'+el+':'+code),expires_at:new Date(now+6e5).toISOString(),attempts:0,sends:sends+1,last_send:new Date(now).toISOString()});
+    try{await sendEmail({from:mailFrom,to:[email],reply_to:mailTeam,subject:'Your GCCPROs verification code',text:'Your GCCPROs email verification code is '+code+'.\n\nThis code expires in 10 minutes. If you did not request it, ignore this email.\n\nGCCPROs \u00b7 Chartered Times LLP',html:'<div style="font-family:Arial,sans-serif;max-width:520px;color:#122338"><h1 style="font-size:22px">GCCPROs</h1><p style="line-height:1.6">Your email verification code is:</p><p style="font-size:30px;font-weight:800;letter-spacing:5px;color:#0A1628">'+code+'</p><p style="line-height:1.6;color:#536474">This code expires in 10 minutes. If you did not request it, please ignore this email.</p><p style="font-size:12px;color:#536474">GCCPROs \u00b7 Chartered Times LLP</p></div>'},'expert-otp/'+eh+'/'+now);}catch{return reply({error:'otp_send_failed',message:'We could not send the code. Please retry.'},503);}
+    return reply({status:'ok'});
+   }
+   if(action==='otpVerify'&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    const el=String(d&&d.email||'').trim().toLowerCase();const code=String(d&&d.code||'').trim();
+    if(!el||!/^\d{6}$/.test(code))return reply({error:'otp_invalid',message:'Enter the 6-digit code.'},422);
+    const eh=await box.hash('email:'+el);const row=await repo.otpGet(eh);const now=Date.now();
+    if(!row||!row.expires_at||new Date(row.expires_at).getTime()<now)return reply({error:'otp_expired',message:'This code has expired. Request a new one.'},410);
+    if((row.attempts||0)>=6)return reply({error:'otp_locked',message:'Too many attempts. Request a new code.'},429);
+    const match=(await box.hash('otp:'+el+':'+code))===row.code_hash;
+    if(!match){await repo.otpSet({email_hash:eh,code_hash:row.code_hash,expires_at:row.expires_at,attempts:(row.attempts||0)+1,sends:row.sends||0,last_send:row.last_send});return reply({error:'otp_incorrect',message:'That code is not correct.'},422);}
+    await repo.otpSet({email_hash:eh,code_hash:'',expires_at:new Date(now-1).toISOString(),attempts:(row.attempts||0)+1,sends:row.sends||0,last_send:row.last_send});
+    const w=Math.floor(now/864e5);return reply({status:'ok',token:await box.hash('ev:'+el+':'+w)});
    }
    if(!['list','detail','document','review'].includes(action))return reply({error:'not_found'},404);
    const actor=(adminKey&&request.headers.get('x-admin-key')===adminKey)?'admin-console':await authenticate(request.headers.get('authorization')||'');if(!actor)return reply({error:'unauthorized'},401);
