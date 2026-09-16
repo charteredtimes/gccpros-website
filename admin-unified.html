@@ -897,7 +897,64 @@ function bookInvoiceHTML(x){
     +'<tbody><tr><td>GCC Industry @ 2030 , physical book</td><td class="right">'+qty+'</td><td class="right">'+_bkINR(unit)+'</td><td class="right">'+_bkINR(total)+'</td></tr></tbody></table>'
     +'<div class="tot"><div class="r"><span>Subtotal</span><span>Rs. '+_bkINR(total)+'</span></div><div class="r grand"><span>Total</span><span>Rs. '+_bkINR(total)+'</span></div></div>'
     +'<div class="note">Amount is inclusive of all applicable taxes and shipping. This is a computer-generated invoice issued by Chartered Times LLP (brand: GCCPROs). Thank you for your order.</div></div>'
-    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt></body></html>';
+    +'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}<\/scr'+'ipt>
+<div id="bsl-btn" onclick="bslOpen()" style="position:fixed;right:18px;bottom:18px;z-index:99998;background:#0A1628;color:#fff;padding:11px 16px;border-radius:999px;font:700 13px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.28)">Business Sample Leads</div>
+<div id="bsl-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(10,22,40,.5);padding:20px;overflow:auto;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <div style="background:#fff;max-width:980px;margin:16px auto;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)">
+    <div style="background:#0A1628;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+      <strong style="font-size:15px">Business / Corporate &mdash; 46-field Sample Leads</strong>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button onclick="bslCsv()" style="background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Export CSV</button>
+        <span onclick="bslClose()" style="cursor:pointer;font-size:22px;line-height:1">&times;</span>
+      </div>
+    </div>
+    <div id="bsl-body" style="padding:16px 18px;max-height:72vh;overflow:auto;color:#1B2733">Loading&hellip;</div>
+  </div>
+</div>
+<script>
+(function(){
+ var FN="https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/sample-gate";
+ var rows=[];
+ function esc(s){return (s==null?"":String(s)).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+ window.bslOpen=async function(){
+   var key=""; try{ if(typeof ADMIN_KEY!=="undefined") key=ADMIN_KEY||""; }catch(e){}
+   document.getElementById("bsl-modal").style.display="block";
+   var body=document.getElementById("bsl-body"); body.innerHTML="Loading&hellip;";
+   if(!key){ body.innerHTML="<p style='color:#c0392b'>Enter the admin key on the sign-in screen first, then reopen this panel.</p>"; return; }
+   try{
+     var r=await fetch(FN,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Key":key},body:JSON.stringify({action:"adminList"})});
+     var j=await r.json();
+     if(!r.ok||!j.ok){ body.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     rows=j.leads||[];
+     if(!rows.length){ body.innerHTML="<p style='color:#5B6B7B'>No sample-download leads yet.</p>"; return; }
+     var h="<div style='margin:0 0 10px;color:#5B6B7B;font-size:12px'>"+rows.length+" verified downloader(s)</div>";
+     h+="<table style='width:100%;border-collapse:collapse;font-size:12.5px'><thead><tr>";
+     ["Name","Corporate email","LinkedIn","Phone","Verified"].forEach(function(c){h+="<th style='text-align:left;padding:8px;border-bottom:2px solid #E3E8EF;white-space:nowrap'>"+c+"</th>";});
+     h+="</tr></thead><tbody>";
+     rows.forEach(function(x){
+       h+="<tr>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.full_name)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.email)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'><a href='"+esc(x.linkedin)+"' target='_blank' rel='noopener'>profile</a></td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+esc(x.phone)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+esc((x.verified_at||"").replace("T"," ").slice(0,16))+"</td>";
+       h+="</tr>";
+     });
+     h+="</tbody></table>";
+     body.innerHTML=h;
+   }catch(e){ body.innerHTML="<p style='color:#c0392b'>Error: "+esc(e.message||e)+"</p>"; }
+ };
+ window.bslClose=function(){ document.getElementById("bsl-modal").style.display="none"; };
+ window.bslCsv=function(){
+   if(!rows.length){ return; }
+   var cols=["full_name","email","linkedin","phone","source","verified_at"];
+   var csv=cols.join(",")+"\n"+rows.map(function(x){ return cols.map(function(c){ return '"'+String(x[c]==null?"":x[c]).replace(/"/g,'""')+'"'; }).join(","); }).join("\n");
+   var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="business_sample_leads.csv"; document.body.appendChild(a); a.click(); a.remove();
+ };
+})();
+</script>
+
+</body></html>';
 }
 function printBookDoc(id, kind){
   var x=(BOOK_ROWS||[]).find(function(o){return o.id===id;});
