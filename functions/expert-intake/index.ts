@@ -11,7 +11,7 @@ const jwks=createRemoteJWKSet(new URL('https://www.googleapis.com/service_accoun
 async function api(path:string,options:RequestInit={}){
  const r=await fetch(base+path,{...options,headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json',...options.headers},signal:AbortSignal.timeout(15000)});
  if(!r.ok){let err;try{err=await r.json()}catch{}throw Object.assign(new Error('Database operation failed'),{code:err?.code});}
- if(r.status===204)return null;return r.json();
+ if(r.status===204)return null;const _t=await r.text();return _t?JSON.parse(_t):null;
 }
 const table='/rest/v1/expert_applications',bucket='/storage/v1/object/expert-identity-private/';
 const one=async(q:string)=>(await api(table+'?'+q+'&select=*&limit=1'))[0]||null;
