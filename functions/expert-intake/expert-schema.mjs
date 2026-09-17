@@ -1,10 +1,10 @@
-export const VERSION='expert-intake-2026-09-16-v2';
+export const VERSION='expert-intake-2026-09-17-v3';
 export const CAPABILITIES=['Setup & strategy','Leadership & talent','Technology & AI','Finance & operations'];
 export const SKILLS=['GCC strategy & business case','Location selection & incentives','GCC setup & launch','Operating model & governance','Leadership & organisation design','Talent acquisition & workforce planning','Culture & change management','Product & platform engineering','Cloud & infrastructure','Data engineering & analytics','AI / ML & GenAI','Cybersecurity & privacy','Finance / accounting / FP&A','Global business services','Procurement & supply chain','Risk / compliance / controls','Service excellence & transformation','Legal / tax / entity setup'];
 export const LEVELS=['Practitioner','Senior specialist','Functional leader','Enterprise leader'];
 export const SECTORS=['GCC','Financial services','Technology','Healthcare & life sciences','Retail & consumer','Industrial & engineering','Energy & utilities','Telecom & media','Cross-industry','Others'];
 export const REGIONS=['India','APAC','Europe','North America','Middle East & Africa','Latin America'];
-export const ID_TYPES=['Passport','Driving licence','National ID — masked'];
+export const ID_TYPES=['Passport','Driving licence','PAN card','Voter ID (EPIC)','National ID — masked'];
 export const EMPLOYMENT=['Currently employed','Independent / portfolio career','Retired'];
 export const CHECKS=['email','phone','identity','linkedin','experience','skills','conflicts'];
 export function validateProfile(p,now=new Date()){
@@ -32,11 +32,13 @@ export function validateProfile(p,now=new Date()){
  if(!ID_TYPES.includes(p.idType))e.idType='Choose a government ID type.';
  text('idCountry',2,80);text('idName',2,120);
  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
- if(norm(p.idName)!==norm(p.name))e.idName='The document name must match your legal name. Contact us if your names differ.';
+ if(norm(p.idName)!==norm(p.name))e.idName='The name on your ID does not match your profile name. They must match exactly (ID: "'+(p.idName||'')+'", profile: "'+(p.name||'')+'"). Contact us if the difference is legitimate.';
  if(p.idType==='National ID — masked'){if(!/^[A-Z0-9]{4}$/i.test(p.idNumber||''))e.idNumber='Enter only the last four characters, never the full national ID number.';}
+ else if(p.idType==='PAN card'){if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A PAN is 10 characters: five letters, four digits, then one letter (e.g. ABCDE1234F).';}
+ else if(p.idType==='Voter ID (EPIC)'){if(!/^[A-Z]{3}[0-9]{7}$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A Voter ID (EPIC) number is three letters followed by seven digits (e.g. ABC1234567).';}
  else if(!/^[A-Z0-9 -]{6,24}$/i.test(p.idNumber||''))e.idNumber='Enter the government ID number using 6–24 letters, numbers, spaces or hyphens.';
  if(p.idType==='Passport'&&/^india$/i.test(p.idCountry||'')&&!/^[A-Z][0-9]{7}$/i.test(p.idNumber||''))e.idNumber='An Indian passport number is one letter followed by seven digits.';
- if(p.idType!=='National ID — masked'||p.idExpiry){const d=new Date(p.idExpiry+'T00:00:00Z');if(!/^\d{4}-\d{2}-\d{2}$/.test(p.idExpiry||'')||!Number.isFinite(+d)||d.toISOString().slice(0,10)!==p.idExpiry||p.idExpiry<now.toISOString().slice(0,10))e.idExpiry='Enter a valid, unexpired date.';}
+ if(['Passport','Driving licence'].includes(p.idType)||p.idExpiry){const d=new Date(p.idExpiry+'T00:00:00Z');if(!/^\d{4}-\d{2}-\d{2}$/.test(p.idExpiry||'')||!Number.isFinite(+d)||d.toISOString().slice(0,10)!==p.idExpiry||p.idExpiry<now.toISOString().slice(0,10))e.idExpiry='Enter a valid, unexpired date.';}
  for(const k of ['eligibility','privacy','identityConsent','truth'])if(p[k]!==true)e[k]='Please confirm this required acknowledgement.';
  if(p.consentVersion!==VERSION)e.consentVersion='Refresh the page to load the current consent notice.';
  return e;
