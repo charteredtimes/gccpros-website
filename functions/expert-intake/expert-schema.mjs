@@ -1,4 +1,4 @@
-export const VERSION='expert-intake-2026-09-17-v3';
+export const VERSION='expert-intake-2026-09-18-v4';
 export const CAPABILITIES=['Setup & strategy','Leadership & talent','Technology & AI','Finance & operations'];
 export const SKILLS=['GCC strategy & business case','Location selection & incentives','GCC setup & launch','Operating model & governance','Leadership & organisation design','Talent acquisition & workforce planning','Culture & change management','Product & platform engineering','Cloud & infrastructure','Data engineering & analytics','AI / ML & GenAI','Cybersecurity & privacy','Finance / accounting / FP&A','Global business services','Procurement & supply chain','Risk / compliance / controls','Service excellence & transformation','Legal / tax / entity setup'];
 export const LEVELS=['Practitioner','Senior specialist','Functional leader','Enterprise leader'];
@@ -39,7 +39,7 @@ export function validateProfile(p,now=new Date()){
  else if(!/^[A-Z0-9 -]{6,24}$/i.test(p.idNumber||''))e.idNumber='Enter the government ID number using 6–24 letters, numbers, spaces or hyphens.';
  if(p.idType==='Passport'&&/^india$/i.test(p.idCountry||'')&&!/^[A-Z][0-9]{7}$/i.test(p.idNumber||''))e.idNumber='An Indian passport number is one letter followed by seven digits.';
  if(['Passport','Driving licence'].includes(p.idType)||p.idExpiry){const d=new Date(p.idExpiry+'T00:00:00Z');if(!/^\d{4}-\d{2}-\d{2}$/.test(p.idExpiry||'')||!Number.isFinite(+d)||d.toISOString().slice(0,10)!==p.idExpiry||p.idExpiry<now.toISOString().slice(0,10))e.idExpiry='Enter a valid, unexpired date.';}
- for(const k of ['eligibility','privacy','identityConsent','truth'])if(p[k]!==true)e[k]='Please confirm this required acknowledgement.';
+ for(const k of ['eligibility','privacy','identityConsent','truth','engagementTerms'])if(p[k]!==true)e[k]='Please confirm this required acknowledgement.';
  if(p.consentVersion!==VERSION)e.consentVersion='Refresh the page to load the current consent notice.';
  return e;
 }
@@ -51,4 +51,4 @@ export async function validateDocument(file){
  if(!((file.type==='image/png'&&png&&/\.png$/i.test(file.name))||(file.type==='image/jpeg'&&jpg&&/\.jpe?g$/i.test(file.name))||(file.type==='application/pdf'&&pdf&&/\.pdf$/i.test(file.name))))return 'Upload a genuine PDF, JPG or PNG file; renamed files are rejected.';
  return '';
 }
-export function clientProjection(row,p){return {expertCode:row.expert_code,capability:p.capability,experienceBand:p.totalYears>=20?'20+ years':p.totalYears>=15?'15–19 years':p.totalYears>=10?'10–14 years':'5–9 years',skills:p.skills.map(x=>x.skill),sectors:p.sectors};}
+export function clientProjection(row,p){return {expertCode:row.expert_code,capability:p.capability,experienceBand:p.totalYears>=20?'20+ years':p.totalYears>=15?'15-19 years':p.totalYears>=10?'10-14 years':'5-9 years',skills:p.skills.map(x=>x.skill),sectors:p.sectors};}
