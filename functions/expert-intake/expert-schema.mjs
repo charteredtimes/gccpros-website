@@ -32,7 +32,7 @@ export function validateProfile(p,now=new Date()){
  if(!ID_TYPES.includes(p.idType))e.idType='Choose a government ID type.';
  text('idCountry',2,80);text('idName',2,120);
  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
- if(norm(p.idName)!==norm(p.name))e.idName='The name on your ID does not match your profile name. They must match exactly (ID: "'+(p.idName||'')+'", profile: "'+(p.name||'')+'"). Contact us if the difference is legitimate.';
+ {const _t=v=>String(v||'').normalize('NFKC').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);const _a=_t(p.name),_b=_t(p.idName);const _sub=(x,y)=>x.length>0&&x.every(t=>y.includes(t));if(!(_a.length&&_b.length&&(_sub(_a,_b)||_sub(_b,_a))))e.idName='The name on your ID must match your profile name. Your ID shows "'+(p.idName||'')+'" and your profile name is "'+(p.name||'')+'". Use the same name on both, or email admin@gccpros.com if they legitimately differ.';}
  if(p.idType==='National ID — masked'){if(!/^[A-Z0-9]{4}$/i.test(p.idNumber||''))e.idNumber='Enter only the last four characters, never the full national ID number.';}
  else if(p.idType==='PAN card'){if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A PAN is 10 characters: five letters, four digits, then one letter (e.g. ABCDE1234F).';}
  else if(p.idType==='Voter ID (EPIC)'){if(!/^[A-Z]{3}[0-9]{7}$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A Voter ID (EPIC) number is three letters followed by seven digits (e.g. ABC1234567).';}
