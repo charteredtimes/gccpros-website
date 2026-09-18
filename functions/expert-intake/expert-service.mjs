@@ -75,12 +75,67 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     await repo.otpSet({email_hash:eh,code_hash:'',expires_at:new Date(now-1).toISOString(),attempts:(row.attempts||0)+1,sends:row.sends||0,last_send:row.last_send});
     const w=Math.floor(now/864e5);return reply({status:'ok',token:await box.hash('ev:'+el+':'+w)});
    }
-   if(!['list','detail','document','review'].includes(action))return reply({error:'not_found'},404);
+   if(['self','selfUpdate','helpdesk'].includes(action)&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    const el=String(d&&d.email||'').trim().toLowerCase();const t=String(d&&d.emailToken||'');const w=Math.floor(Date.now()/864e5);
+    const okT=el&&t&&(t===await box.hash('ev:'+el+':'+w)||t===await box.hash('ev:'+el+':'+(w-1)));
+    if(!okT)return reply({error:'auth',message:'Your session has expired. Please verify your email again.'},401);
+    const eh=await box.hash('email:'+el);const rec=await repo.byEmail(eh);
+    if(!rec)return reply({error:'not_found',message:'We could not find a registration for this email.'},404);
+    if(action==='helpdesk'){
+     if(!sendEmail)return reply({error:'unavailable'},503);
+     const subject=String(d.subject||'').trim().slice(0,160)||'Expert helpdesk request';const message=String(d.message||'').trim();
+     if(message.length<5||message.length>4000)return reply({error:'invalid_message',message:'Please enter your message (5 to 4000 characters).'},422);
+     const esch=v=>String(v).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+     try{await sendEmail({from:mailFrom,to:[mailTeam],reply_to:el,subject:'[Expert helpdesk] '+subject+' | '+rec.expert_code,text:'From: '+el+' ('+rec.expert_code+')\nStatus: '+rec.status+'\n\n'+message,html:'<div style="font-family:Arial,sans-serif;max-width:620px;color:#122338"><p><strong>Expert helpdesk request</strong></p><p>From: '+esch(el)+' ('+esch(rec.expert_code)+')<br>Status: '+esch(rec.status)+'</p><p style="white-space:pre-wrap">'+esch(message)+'</p></div>'},'expert-help/'+rec.id+'/'+Date.now());}catch{return reply({error:'send_failed',message:'We could not send your message. Please retry.'},503);}
+     await repo.audit(rec.id,'expert-self','helpdesk_message',{subject});
+     return reply({status:'ok'});
+    }
+    const profile=await decrypt(rec);
+    if(action==='selfUpdate'){
+     const up=d.updates&&typeof d.updates==='object'?d.updates:{};
+     const editable=['phone','city','languages','availability','rate','profile','achievements','linkedin'];
+     const next={...profile};const changed=[];
+     for(const k of editable){if(up[k]!==undefined){next[k]=typeof up[k]==='string'?up[k].trim():up[k];changed.push(k);}}
+     const errs=validateProfile(next);const bad=Object.keys(errs).filter(k=>editable.includes(k));
+     if(bad.length)return reply({error:'validation',fields:Object.fromEntries(bad.map(k=>[k,errs[k]]))},422);
+     await repo.updateProfile(rec.id,await box.seal(enc.encode(JSON.stringify(next)),'profile:'+rec.id));
+     await repo.audit(rec.id,'expert-self','self_update',{fields:changed});
+     return reply({status:'ok'});
+    }
+    await repo.audit(rec.id,'expert-self','dashboard_viewed',{});
+    const selfKeys=['name','email','phone','country','city','linkedin','role','employer','employment','capability','totalYears','gccYears','leadershipYears','sectors','regions','languages','profile','achievements','rate','availability','skills','history'];
+    const selfProfile=Object.fromEntries(selfKeys.map(k=>[k,profile[k]]));
+    let projects=[];const earnings={paid:0,pending:0,currency:'USD',count:0};
+    if(rec.status==='approved'){
+     const rows=await repo.projList(rec.id);
+     projects=(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,status:x.status,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,notes:x.notes}));
+     for(const x of projects){const amt=Number(x.fee)||0;if(x.paid)earnings.paid+=amt;else earnings.pending+=amt;}
+     earnings.count=projects.length;if(projects[0]&&projects[0].currency)earnings.currency=projects[0].currency;
+    }
+    return reply({status:'ok',reference:rec.expert_code,applicationStatus:rec.status,blacklisted:!!rec.blacklisted,createdAt:rec.created_at,editable:['phone','city','languages','availability','rate','profile','achievements','linkedin'],profile:selfProfile,projects,earnings});
+   }
+   if(!['list','detail','document','review','blacklist','delete','projects','projectSave','projectDelete'].includes(action))return reply({error:'not_found'},404);
    const actor=(adminKey&&request.headers.get('x-admin-key')===adminKey)?'admin-console':await authenticate(request.headers.get('authorization')||'');if(!actor)return reply({error:'unauthorized'},401);
    if(action==='list'&&request.method==='GET'){
     const offset=Math.max(0,Math.min(100000,Number(url.searchParams.get('offset'))||0));const rows=await repo.list(offset);
     await repo.audit(null,actor,'list_viewed',{offset,count:rows.length});
-    const results=[];for(const row of rows){const p=await decrypt(row);results.push({id:row.id,reference:row.expert_code,name:p.name,email:p.email,capability:p.capability,status:row.status,createdAt:row.created_at});}return reply({rows:results,hasMore:rows.length===50});
+    const results=[];for(const row of rows){const p=await decrypt(row);results.push({id:row.id,reference:row.expert_code,name:p.name,email:p.email,capability:p.capability,status:row.status,blacklisted:!!row.blacklisted,createdAt:row.created_at});}return reply({rows:results,hasMore:rows.length===50});
+   }
+   if(action==='projectSave'&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    const appId=String(d.applicationId||'');if(!/^[0-9a-f-]{36}$/i.test(appId))return reply({error:'invalid_id'},400);
+    const patch={title:String(d.title||'').trim().slice(0,200),client_ref:String(d.clientRef||'').trim().slice(0,200)||null,status:['assigned','active','completed','cancelled'].includes(d.status)?d.status:'assigned',fee_amount:(d.fee===''||d.fee==null)?null:Number(d.fee),currency:String(d.currency||'USD').slice(0,8),hours:(d.hours===''||d.hours==null)?null:Number(d.hours),start_date:d.start||null,end_date:d.end||null,paid:d.paid===true,notes:String(d.notes||'').slice(0,2000)||null,updated_at:new Date().toISOString()};
+    if(!patch.title)return reply({error:'invalid_project',message:'Project title is required.'},422);
+    if(d.projectId){await repo.projUpdate(String(d.projectId),patch);await repo.audit(appId,actor,'project_updated',{projectId:d.projectId,title:patch.title});}
+    else{const appRow=await repo.get(appId);if(!appRow)return reply({error:'not_found'},404);await repo.projInsert({application_id:appId,...patch});await repo.audit(appId,actor,'project_assigned',{title:patch.title});}
+    return reply({status:'ok'});
+   }
+   if(action==='projectDelete'&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    if(!/^[0-9a-f-]{36}$/i.test(String(d.projectId||'')))return reply({error:'invalid_id'},400);
+    await repo.projDelete(String(d.projectId));await repo.audit(/^[0-9a-f-]{36}$/i.test(String(d.applicationId||''))?String(d.applicationId):null,actor,'project_deleted',{projectId:d.projectId});
+    return reply({status:'ok'});
    }
    const id=url.searchParams.get('id')||'';if(!/^[0-9a-f-]{36}$/i.test(id))return reply({error:'invalid_id'},400);
    const row=await repo.get(id);if(!row)return reply({error:'not_found'},404);
@@ -88,7 +143,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     await repo.audit(id,actor,'profile_viewed',{});const profile=await decrypt(row);
     const review=row.review_encrypted?JSON.parse(dec.decode(await box.open(row.review_encrypted,'review:'+id))):{checks:{},notes:''};
     const audit=await repo.events(id);for(const a of audit){if(a.metadata?.review_encrypted){a.metadata={...a.metadata,review:JSON.parse(dec.decode(await box.open(a.metadata.review_encrypted,'review:'+id)))};delete a.metadata.review_encrypted;}}
-    return reply({id,reference:row.expert_code,status:row.status,version:row.version,createdAt:row.created_at,profile,review,clientPreview:clientProjection(row,profile),audit,emails:await repo.mailStatus(id)});
+    return reply({id,reference:row.expert_code,status:row.status,version:row.version,createdAt:row.created_at,blacklisted:!!row.blacklisted,blacklistReason:row.blacklist_reason||'',profile,review,clientPreview:clientProjection(row,profile),audit,emails:await repo.mailStatus(id)});
    }
    if(action==='document'&&request.method==='GET'){
     await repo.audit(id,actor,'identity_document_viewed',{});const p=await decrypt(row),encrypted=JSON.parse(dec.decode(await repo.getFile(row.document_path))),bytes=await box.open(encrypted,'document:'+id);
@@ -103,6 +158,23 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     const review=await box.seal(enc.encode(JSON.stringify({checks,notes:d.notes.trim()})),'review:'+id);
     const success=await repo.review(id,d.version,d.status,review,actor,checks);
     if(!success)return reply({error:'review_conflict',message:'Another reviewer changed this application. Reload it before saving.'},409);
+    return reply({status:'ok'});
+   }
+   if(action==='projects'&&request.method==='GET'){
+    const rows=await repo.projList(id);
+    return reply({rows:(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,status:x.status,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,notes:x.notes,createdAt:x.created_at}))});
+   }
+   if(action==='blacklist'&&request.method==='POST'){
+    let d={};try{d=JSON.parse(await request.text()||'{}')}catch{}
+    const on=d.blacklisted!==false;const reason=String(d.reason||'').slice(0,500);
+    await repo.setFlags(id,{blacklisted:on,blacklist_reason:on?reason:null});
+    await repo.audit(id,actor,on?'blacklisted':'unblacklisted',{reason});
+    return reply({status:'ok'});
+   }
+   if(action==='delete'&&request.method==='POST'){
+    try{await repo.removeFile(row.document_path);}catch(e){}
+    await repo.del(id);
+    await repo.audit(null,actor,'application_deleted',{reference:row.expert_code});
     return reply({status:'ok'});
    }
    return reply({error:'method_not_allowed'},405);
