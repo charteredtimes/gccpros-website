@@ -2717,6 +2717,8 @@ if ('serviceWorker' in navigator) {
 })();
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <div id="er-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(10,22,40,.5);padding:20px;overflow:auto;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
   <div style="background:#fff;max-width:1040px;margin:16px auto;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)">
     <div style="background:#0A1628;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
@@ -2774,7 +2776,7 @@ if ('serviceWorker' in navigator) {
        h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.name)+"</td>";
        h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.email)+"</td>";
        h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'>"+esc(x.capability)+"</td>";
-       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+badge(x.status)+"</td>";
+       h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+badge(x.status)+(x.blacklisted?" <span style='background:#C0392B;color:#fff;border-radius:6px;padding:1px 6px;font-size:10px'>blocked</span>":"")+"</td>";
        h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5;white-space:nowrap'>"+esc(tsfmt(x.createdAt))+"</td>";
        h+="<td style='padding:8px;border-bottom:1px solid #EEF1F5'><button onclick=\"erDetail('"+esc(x.id)+"')\" style='background:#0A1628;color:#fff;border:none;border-radius:7px;padding:6px 11px;font:600 12px system-ui;cursor:pointer'>Open</button></td>";
        h+="</tr>";
@@ -2844,7 +2846,7 @@ if ('serviceWorker' in navigator) {
      form+="<button onclick=\"erSave('"+esc(id)+"',"+JSON.stringify(j.version)+")\" style='background:#1E874B;color:#fff;border:none;border-radius:8px;padding:9px 18px;font:700 13px system-ui;cursor:pointer'>Save review</button>";
      form+="<span id='er-save-msg' style='font-size:12.5px'></span>";
      form+="</div></div>";
-     h+=section("Review decision",form);
+     h+=section("Review decision",form);h+=erAdminHTML(id,j);setTimeout(function(){try{erLoadProjects(id);}catch(e){}},0);
      b.innerHTML=h;
    }catch(e){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc(e.message||e)+"</p>"; }
  };
@@ -2875,6 +2877,98 @@ if ('serviceWorker' in navigator) {
      setTimeout(function(){ erDetail(id); },700);
    }catch(e){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc(e.message||e); } }
  };
+
+function erProjForm(id){
+ return '<div style="margin-top:12px;background:#FBFCFE;border:1px solid #E3E8EF;border-radius:10px;padding:12px 14px">'
+  +'<div style="font-weight:700;font-size:12.5px;margin-bottom:8px">Assign / edit engagement</div>'
+  +'<input id="pf-title" placeholder="Project title" style="width:100%;margin:0 0 6px;padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">'
+  +'<input id="pf-client" placeholder="Client ref" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<select id="pf-status" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option value="assigned">Assigned</option><option value="active">Active</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>'
+  +'<select id="pf-currency" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option>USD</option><option>INR</option></select></div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">'
+  +'<input id="pf-fee" type="number" placeholder="Fee amount" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<input id="pf-hours" type="number" placeholder="Hours" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<label style="font-size:12.5px;align-self:center"><input type="checkbox" id="pf-paid"> Paid</label></div>'
+  +'<input id="pf-notes" placeholder="Notes (optional)" style="width:100%;margin:6px 0 8px;padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<input type="hidden" id="pf-pid">'
+  +'<button onclick="erProjSave(\''+esc(id)+'\')" style="background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">Save engagement</button> <span id="pf-msg" style="font-size:12px"></span></div>';
+}
+function erAdminHTML(id,j){
+ var bl=j.blacklisted;
+ var warn=bl?'<div style="background:#fdecec;border:1px solid #f0b4b4;color:#8a1f1f;border-radius:10px;padding:10px 12px;margin:0 0 10px;font-weight:700">This applicant is BLACKLISTED'+(j.blacklistReason?': '+esc(j.blacklistReason):'')+'</div>':'';
+ var actions='<div style="display:flex;gap:8px;flex-wrap:wrap">'
+   +'<button onclick="erDossier(\''+esc(id)+'\')" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">⬇ Download full dossier (PDF)</button>'
+   +'<button onclick="erBlacklist(\''+esc(id)+'\','+(bl?'false':'true')+')" style="background:'+(bl?'#1E874B':'#B7791F')+';color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">'+(bl?'Remove from blacklist':'Blacklist applicant')+'</button>'
+   +'<button onclick="erDelete(\''+esc(id)+'\')" style="background:#C0392B;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">Delete permanently</button>'
+   +'<span id="er-admin-msg" style="font-size:12.5px;align-self:center"></span></div>';
+ return warn+section("Record actions",actions)+section("Assigned engagements & earnings",'<div id="er-projects-host">Loading…</div>'+erProjForm(id));
+}
+window.erLoadProjects=async function(id){
+ var host=document.getElementById("er-projects-host"); if(!host) return;
+ try{ var r=await api("?action=projects&id="+encodeURIComponent(id),{}); var j=await r.json(); if(!r.ok){host.innerHTML="<span style='color:#c0392b'>"+esc((j&&j.error)||r.status)+"</span>";return;}
+  var rows=j.rows||[]; if(!rows.length){host.innerHTML="<div style='color:#5B6B7B;font-size:13px'>No engagements assigned yet.</div>";return;}
+  var paid=0,pending=0,cur="USD";
+  var h="<table style='width:100%;border-collapse:collapse;font-size:12.5px'><thead><tr>";
+  ["Project","Status","Fee","Paid",""].forEach(function(c){h+="<th style='text-align:left;padding:6px;border-bottom:2px solid #E3E8EF'>"+c+"</th>";});
+  h+="</tr></thead><tbody>";
+  rows.forEach(function(x){var amt=Number(x.fee)||0; if(x.paid)paid+=amt;else pending+=amt; if(x.currency)cur=x.currency;
+   h+="<tr><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+esc(x.title)+(x.clientRef?"<br><span style='color:#8A98A8'>"+esc(x.clientRef)+"</span>":"")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+esc(x.status||"")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+(x.fee!=null?esc((x.currency||"USD")+" "+x.fee):"–")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+(x.paid?"Yes":"No")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5;white-space:nowrap'><button onclick='erProjEdit("+JSON.stringify(x).replace(/'/g,"&#39;").replace(/</g,"\\u003c")+")' style='border:none;background:#eef;border-radius:6px;padding:4px 8px;cursor:pointer'>Edit</button> <button onclick=\"erProjDelete('"+esc(x.id)+"','"+esc(id)+"')\" style='border:none;background:#fdecec;color:#c0392b;border-radius:6px;padding:4px 8px;cursor:pointer'>Del</button></td></tr>";
+  });
+  h+="</tbody></table><div style='margin-top:8px;font-size:13px;color:#1B2733'><strong>Paid:</strong> "+esc(cur+" "+paid)+" &nbsp; <strong>Pending:</strong> "+esc(cur+" "+pending)+"</div>";
+  host.innerHTML=h;
+ }catch(e){ host.innerHTML="<span style='color:#c0392b'>"+esc(e.message||e)+"</span>"; }
+};
+window.erProjEdit=function(x){ document.getElementById("pf-title").value=x.title||""; document.getElementById("pf-client").value=x.clientRef||""; document.getElementById("pf-status").value=x.status||"assigned"; document.getElementById("pf-currency").value=x.currency||"USD"; document.getElementById("pf-fee").value=(x.fee!=null?x.fee:""); document.getElementById("pf-hours").value=(x.hours!=null?x.hours:""); document.getElementById("pf-paid").checked=!!x.paid; document.getElementById("pf-notes").value=x.notes||""; document.getElementById("pf-pid").value=x.id||""; var m=document.getElementById("pf-msg"); if(m){m.style.color="#B7791F";m.textContent="Editing existing engagement";} };
+window.erProjSave=async function(id){
+ var m=document.getElementById("pf-msg"); if(m){m.style.color="#5B6B7B"; m.textContent="Saving…";}
+ var body={applicationId:id,projectId:document.getElementById("pf-pid").value||undefined,title:document.getElementById("pf-title").value,clientRef:document.getElementById("pf-client").value,status:document.getElementById("pf-status").value,currency:document.getElementById("pf-currency").value,fee:document.getElementById("pf-fee").value,hours:document.getElementById("pf-hours").value,paid:document.getElementById("pf-paid").checked,notes:document.getElementById("pf-notes").value};
+ try{ var r=await api("?action=projectSave",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); var j=await r.json().catch(function(){return{};});
+  if(!r.ok){if(m){m.style.color="#c0392b";m.textContent=esc((j&&(j.message||j.error))||r.status);}return;}
+  if(m){m.style.color="#1E874B";m.textContent="Saved.";} ["pf-title","pf-client","pf-fee","pf-hours","pf-notes","pf-pid"].forEach(function(k){document.getElementById(k).value="";}); document.getElementById("pf-paid").checked=false; erLoadProjects(id);
+ }catch(e){ if(m){m.style.color="#c0392b"; m.textContent=esc(e.message||e);} }
+};
+window.erProjDelete=async function(pid,id){ if(!confirm("Delete this engagement?"))return; try{ var r=await api("?action=projectDelete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({projectId:pid,applicationId:id})}); if(r.ok)erLoadProjects(id); }catch(e){} };
+window.erBlacklist=async function(id,on){ if(!confirm(on?"Blacklist this applicant? They will be blocked from re-registering with this email.":"Remove this applicant from the blacklist?"))return; var reason=""; if(on){reason=prompt("Reason (optional):")||"";} var m=document.getElementById("er-admin-msg"); if(m){m.style.color="#5B6B7B";m.textContent="Working…";} try{ var r=await api("?action=blacklist&id="+encodeURIComponent(id),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({blacklisted:on,reason:reason})}); if(r.ok){erDetail(id);}else{var j=await r.json().catch(function(){return{};});if(m){m.style.color="#c0392b";m.textContent=esc((j&&j.error)||r.status);}} }catch(e){ if(m){m.style.color="#c0392b";m.textContent=esc(e.message||e);} } };
+window.erDelete=async function(id){ if(!confirm("Permanently DELETE this application and its ID document? This cannot be undone."))return; if(!confirm("Final confirmation: purge this record permanently?"))return; var m=document.getElementById("er-admin-msg"); if(m){m.style.color="#5B6B7B";m.textContent="Deleting…";} try{ var r=await api("?action=delete&id="+encodeURIComponent(id),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})}); if(r.ok){erList();}else{var j=await r.json().catch(function(){return{};});if(m){m.style.color="#c0392b";m.textContent=esc((j&&j.error)||r.status);}} }catch(e){ if(m){m.style.color="#c0392b";m.textContent=esc(e.message||e);} } };
+function _b2d(b){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=rej;fr.readAsDataURL(b);});}
+function _img(u){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=u;});}
+window.erDossier=async function(id){
+ var m=document.getElementById("er-admin-msg"); if(m){m.style.color="#5B6B7B";m.textContent="Building dossier…";}
+ try{
+  var rd=await api("?action=detail&id="+encodeURIComponent(id),{}); var j=await rd.json(); if(!rd.ok)throw new Error((j&&j.error)||rd.status);
+  var J=window.jspdf&&window.jspdf.jsPDF; if(!J)throw new Error("PDF library not loaded");
+  if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions&&!window.pdfjsLib.GlobalWorkerOptions.workerSrc){window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}
+  var doc=new J({unit:"pt",format:"a4"}); var M=44,W=595-2*M,y=54;
+  function ln(){doc.setDrawColor(46,139,255);doc.setLineWidth(1.5);doc.line(M,y,M+W,y);y+=16;}
+  function head(t){if(y>780){doc.addPage();y=54;}doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(10,22,40);doc.text(t,M,y);y+=6;ln();}
+  function kv(k,v){v=(v==null?"":String(v));if(y>800){doc.addPage();y=54;}doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(90,107,123);doc.text(String(k),M,y);doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(27,39,51);var lines=doc.splitTextToSize(v,W-140);doc.text(lines.length?lines:[""],M+140,y);y+=Math.max(14,lines.length*13);}
+  function para(t){doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(27,39,51);doc.splitTextToSize(String(t),W).forEach(function(l){if(y>800){doc.addPage();y=54;}doc.text(l,M,y);y+=13;});y+=6;}
+  doc.setFont("helvetica","bold");doc.setFontSize(18);doc.setTextColor(10,22,40);doc.text("GCCPROs Expert Applicant Dossier",M,y);y+=18;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(90,107,123);doc.text("Reference "+(j.reference||"")+"   Status: "+(j.status||"")+(j.blacklisted?"   BLACKLISTED":"")+"   Generated "+new Date().toLocaleString(),M,y);y+=10;ln();
+  var p=j.profile||{};
+  head("Identity & contact");[["Full name",p.name],["Email",p.email],["Phone",p.phone],["Country",p.country],["City",p.city],["LinkedIn",p.linkedin],["Submitted",String(j.createdAt||"").replace("T"," ").slice(0,16)]].forEach(function(a){kv(a[0],a[1]);});
+  head("Government ID (reviewer-only)");[["ID type",p.idType],["Issuing country",p.idCountry],["Name on ID",p.idName],["ID number / last four",p.idNumber],["ID expiry",p.idExpiry]].forEach(function(a){kv(a[0],a[1]);});
+  head("Professional");[["Role / title",p.role],["Employer",p.employer],["Employment",p.employment],["Primary capability",p.capability],["Total years",p.totalYears],["GCC years",p.gccYears],["Leadership years",p.leadershipYears],["Sectors",(p.sectors||[]).join(", ")],["Regions",(p.regions||[]).join(", ")],["Languages",p.languages],["Rate USD/hr",p.rate],["Availability hrs/mo",p.availability]].forEach(function(a){kv(a[0],a[1]);});
+  if(p.profile){head("Profile");para(p.profile);}
+  if(p.achievements){head("Achievements");para(p.achievements);}
+  if(Array.isArray(p.skills)&&p.skills.length){head("Skills");p.skills.forEach(function(s){kv(s.skill||"",(s.level||"")+" "+(s.years||"")+"y"+(s.evidence?" - "+s.evidence:""));});}
+  if(Array.isArray(p.history)&&p.history.length){head("Experience history");p.history.forEach(function(hh){kv((hh.title||"")+" @ "+(hh.company||""),[hh.location,hh.start,(hh.current?"present":hh.end)].filter(Boolean).join(" ")+(hh.scope?"\n"+hh.scope:""));});}
+  var rev=j.review||{};head("Review");kv("Decision status",j.status);kv("Checks",Object.keys(rev.checks||{}).filter(function(k){return rev.checks[k];}).join(", ")||"none");if(rev.notes)kv("Notes",rev.notes);if(j.blacklisted)kv("Blacklist reason",j.blacklistReason||"");
+  if(Array.isArray(j.audit)&&j.audit.length){head("Audit trail");j.audit.slice(0,30).forEach(function(a){kv(String(a.created_at||a.at||"").replace("T"," ").slice(0,16),(a.actor||"")+" "+(a.action||a.event||""));});}
+  try{
+   var rdoc=await api("?action=document&id="+encodeURIComponent(id),{}); if(rdoc.ok){ var blob=await rdoc.blob(); var ct=blob.type||"";
+    doc.addPage();y=54;doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(10,22,40);doc.text("Uploaded identity document",M,y);y+=8;ln();
+    if(ct.indexOf("image")===0){ var du=await _b2d(blob); var im=await _img(du); var iw=W,ih=iw*im.height/im.width; if(ih>720){ih=720;iw=ih*im.width/im.height;} doc.addImage(du,ct.indexOf("png")>=0?"PNG":"JPEG",M,y,iw,ih); }
+    else if(ct.indexOf("pdf")>=0&&window.pdfjsLib){ var buf=await blob.arrayBuffer(); var pdf=await window.pdfjsLib.getDocument({data:buf}).promise; var pg=await pdf.getPage(1); var vp=pg.getViewport({scale:2}); var cv=document.createElement("canvas"); cv.width=vp.width;cv.height=vp.height; await pg.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise; var du2=cv.toDataURL("image/jpeg",0.85); var iw2=W,ih2=iw2*cv.height/cv.width; if(ih2>720){ih2=720;iw2=ih2*cv.width/cv.height;} doc.addImage(du2,"JPEG",M,y,iw2,ih2); }
+    else { doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Document type "+ct+" could not be embedded. Use the ID download button.",M,y+14); }
+   }
+  }catch(e){ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(150,30,30);doc.text("ID document could not be embedded: "+(e.message||e),M,y+14); }
+  doc.save((j.reference||"expert")+"-dossier.pdf");
+  if(m){m.style.color="#1E874B";m.textContent="Dossier downloaded.";}
+ }catch(e){ if(m){m.style.color="#c0392b";m.textContent="Error: "+esc(e.message||e);} }
+};
+
 })();
 </script>
 
