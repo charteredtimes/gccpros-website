@@ -2793,7 +2793,7 @@ if ('serviceWorker' in navigator) {
      var v=obj[k];
      if(v==null||v==="") return;
      if(Array.isArray(v)||typeof v==="object") return;
-     h+="<div style='padding:6px 0;border-bottom:1px solid #F1F4F8'><div style='font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#8A98A8'>"+esc(human(k))+"</div><div style='font-size:13px;color:#1B2733'>"+esc(v)+"</div></div>";
+     var vs=String(v);var disp=/^https?:\/\//i.test(vs)?("<a href='"+esc(vs)+"' target='_blank' rel='noopener' style='color:#2E8BFF;word-break:break-all'>"+esc(vs)+"</a>"):esc(vs);h+="<div style='padding:6px 0;border-bottom:1px solid #F1F4F8'><div style='font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#8A98A8'>"+esc(human(k))+"</div><div style='font-size:13px;color:#1B2733'>"+disp+"</div></div>";
    });
    h+="</div>";
    return h;
@@ -2814,10 +2814,10 @@ if ('serviceWorker' in navigator) {
      h+="<div>"+badge(j.status)+"</div></div>";
      h+=section("Full profile (reviewer-only)",kvGrid(p));
      if(Array.isArray(p.skills)&&p.skills.length){
-       h+=section("Skills",p.skills.map(function(s){return "<span style='display:inline-block;background:#EEF3FB;color:#22496E;border-radius:6px;padding:3px 9px;margin:0 6px 6px 0;font-size:12px'>"+esc(typeof s==="object"?(s.name||JSON.stringify(s)):s)+"</span>";}).join(""));
+       h+=section("Skills & evidence",p.skills.map(function(s){if(typeof s!=="object")return "<div style='padding:6px 0'>"+esc(s)+"</div>";return "<div style='padding:8px 0;border-bottom:1px solid #F1F4F8'><div style='font-weight:700;font-size:13px;color:#0A1628'>"+esc(s.skill||"")+" <span style='font-weight:500;color:#5B6B7B'>"+esc([s.level,(s.years!=null?s.years+"y":"")].filter(Boolean).join(" \u00b7 "))+"</span></div>"+(s.evidence?"<div style='font-size:12.5px;color:#33414F;margin-top:2px'>"+esc(s.evidence)+"</div>":"")+"</div>";}).join(""));
      }
      if(Array.isArray(p.history)&&p.history.length){
-       var hh=p.history.map(function(e){ return "<div style='padding:7px 0;border-bottom:1px solid #F1F4F8;font-size:12.5px'>"+esc(typeof e==="object"?[e.role,e.employer,e.years].filter(Boolean).join(" - "):e)+"</div>"; }).join("");
+       var hh=p.history.map(function(e){ if(typeof e!=="object")return "<div style='padding:7px 0;border-bottom:1px solid #F1F4F8;font-size:12.5px'>"+esc(e)+"</div>";var period=[e.start,(e.current?"present":e.end)].filter(Boolean).join(" to ");return "<div style='padding:8px 0;border-bottom:1px solid #F1F4F8;font-size:12.5px'><div style='font-weight:700;color:#0A1628'>"+esc([e.title,e.company].filter(Boolean).join(" @ "))+"</div><div style='color:#5B6B7B'>"+esc([e.location,period].filter(Boolean).join(" \u00b7 "))+"</div>"+(e.scope?"<div style='margin-top:2px;color:#33414F'>"+esc(e.scope)+"</div>":"")+"</div>"; }).join("");
        h+=section("Experience history",hh);
      }
      if(j.clientPreview){
