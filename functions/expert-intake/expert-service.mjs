@@ -32,7 +32,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     const raw=fd.get('profile');if(typeof raw!=='string'||raw.length>100000)return reply({error:'invalid_profile'},400);
     let p;try{p=JSON.parse(raw)}catch{return reply({error:'invalid_profile'},400)}if(!p||Array.isArray(p)||typeof p!=='object')return reply({error:'invalid_profile'},400);
     // Store only explicitly supported fields, never arbitrary object properties.
-    const allowed=['name','email','phone','country','city','linkedin','role','employer','employment','capability','totalYears','gccYears','leadershipYears','sectors','regions','languages','profile','achievements','conflicts','rate','availability','skills','history','idType','idCountry','idName','idNumber','idExpiry','eligibility','privacy','identityConsent','truth','consentVersion'];
+    const allowed=['name','email','phone','country','city','linkedin','role','employer','employment','capability','totalYears','gccYears','leadershipYears','sectors','regions','languages','profile','achievements','conflicts','rate','availability','skills','history','idType','idCountry','idName','idNumber','idExpiry','eligibility','privacy','identityConsent','truth','engagementTerms','consentVersion'];
     p=Object.fromEntries(allowed.map(k=>[k,typeof p[k]==='string'?p[k].trim():p[k]]));
     const errors=validateProfile(p);const file=fd.get('document'),docError=await validateDocument(file);if(docError)errors.document=docError;
     if(Object.keys(errors).length)return reply({error:'validation',fields:errors},422);
