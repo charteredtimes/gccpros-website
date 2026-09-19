@@ -229,7 +229,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
    }
    if(action==='review'&&request.method==='POST'){
     const raw=await request.text();if(raw.length>15000)return reply({error:'request_too_large'},413);const d=JSON.parse(raw);
-    if(!['under_review','needs_information','approved','rejected'].includes(d.status)||!Number.isInteger(d.version)||typeof d.notes!=='string'||d.notes.trim().length<20||d.notes.length>6000)return reply({error:'invalid_review',message:'Choose a status and enter a review note of 20–6,000 characters.'},422);
+    if(!['under_review','needs_information','approved','rejected'].includes(d.status)||!Number.isInteger(d.version)||typeof d.notes!=='string'||d.notes.trim().length<2||d.notes.length>6000)return reply({error:'invalid_review',message:'Choose a status and enter a short review note (2 to 6,000 characters).'},422);
     const checks=Object.fromEntries(CHECKS.map(k=>[k,d.checks?.[k]===true]));
     if(d.status==='approved'&&CHECKS.some(k=>!checks[k]))return reply({error:'verification_incomplete',message:'Verify every review check before approval.'},422);
     const review=await box.seal(enc.encode(JSON.stringify({checks,notes:d.notes.trim()})),'review:'+id);
