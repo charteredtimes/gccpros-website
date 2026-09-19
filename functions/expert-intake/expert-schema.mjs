@@ -1,12 +1,13 @@
-export const VERSION='expert-intake-2026-09-18-v4';
+export const VERSION='expert-intake-2026-09-18-v5';
 export const CAPABILITIES=['Setup & strategy','Leadership & talent','Technology & AI','Finance & operations'];
 export const SKILLS=['GCC strategy & business case','Location selection & incentives','GCC setup & launch','Operating model & governance','Leadership & organisation design','Talent acquisition & workforce planning','Culture & change management','Product & platform engineering','Cloud & infrastructure','Data engineering & analytics','AI / ML & GenAI','Cybersecurity & privacy','Finance / accounting / FP&A','Global business services','Procurement & supply chain','Risk / compliance / controls','Service excellence & transformation','Legal / tax / entity setup'];
 export const LEVELS=['Practitioner','Senior specialist','Functional leader','Enterprise leader'];
 export const SECTORS=['GCC','Financial services','Technology','Healthcare & life sciences','Retail & consumer','Industrial & engineering','Energy & utilities','Telecom & media','Cross-industry','Others'];
 export const REGIONS=['India','APAC','Europe','North America','Middle East & Africa','Latin America'];
-export const ID_TYPES=['Passport','Driving licence','PAN card','Voter ID (EPIC)','National ID — masked'];
+export const ID_TYPES=['Passport','Driving licence','PAN card','Voter ID (EPIC)','Aadhaar (India)'];
 export const EMPLOYMENT=['Currently employed','Independent / portfolio career','Retired'];
 export const CHECKS=['email','phone','identity','linkedin','experience','skills','conflicts'];
+function verhoeff(n){var d=[[0,1,2,3,4,5,6,7,8,9],[1,2,3,4,0,6,7,8,9,5],[2,3,4,0,1,7,8,9,5,6],[3,4,0,1,2,8,9,5,6,7],[4,0,1,2,3,9,5,6,7,8],[5,9,8,7,6,0,4,3,2,1],[6,5,9,8,7,1,0,4,3,2],[7,6,5,9,8,2,1,0,4,3],[8,7,6,5,9,3,2,1,0,4],[9,8,7,6,5,4,3,2,1,0]],pp=[[0,1,2,3,4,5,6,7,8,9],[1,5,7,6,2,8,3,0,9,4],[5,8,0,3,7,9,6,1,4,2],[8,9,1,6,0,4,3,5,2,7],[9,4,5,3,1,2,6,8,7,0],[4,2,8,6,5,7,3,9,0,1],[2,7,9,3,8,0,6,4,1,5],[7,0,4,6,9,1,3,2,5,8]],c=0,s=String(n).replace(/\\D/g,'').split('').reverse();for(var i=0;i<s.length;i++){c=d[c][pp[i%8][parseInt(s[i],10)]];}return c===0;}
 export function validateProfile(p,now=new Date()){
  const e={};const text=(key,min,max)=>{if(typeof p[key]!=='string'||p[key].trim().length<min||p[key].trim().length>max)e[key]=`Enter ${min}–${max} characters.`;};
  text('name',2,120);if(!e.name&&(!/^[\p{L}\p{M} .’'\-]+$/u.test(p.name)||!/[\p{L}].*[\p{L}]/u.test(p.name)))e.name='Enter your legal name using letters, spaces, apostrophes or hyphens.';
@@ -33,7 +34,7 @@ export function validateProfile(p,now=new Date()){
  text('idCountry',2,80);text('idName',2,120);
  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
  {const _t=v=>String(v||'').normalize('NFKC').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);const _a=_t(p.name),_b=_t(p.idName);const _sub=(x,y)=>x.length>0&&x.every(t=>y.includes(t));if(!(_a.length&&_b.length&&(_sub(_a,_b)||_sub(_b,_a))))e.idName='The name on your ID must match your profile name. Your ID shows "'+(p.idName||'')+'" and your profile name is "'+(p.name||'')+'". Use the same name on both, or email admin@gccpros.com if they legitimately differ.';}
- if(p.idType==='National ID — masked'){if(!/^[A-Z0-9]{4}$/i.test(p.idNumber||''))e.idNumber='Enter only the last four characters, never the full national ID number.';}
+ if(p.idType==='Aadhaar (India)'){const _ad=String(p.idNumber||'').replace(/\s/g,'');if(!/^[2-9][0-9]{11}$/.test(_ad)||!verhoeff(_ad))e.idNumber='Enter a valid 12-digit Aadhaar number exactly as printed on the card.';}
  else if(p.idType==='PAN card'){if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A PAN is 10 characters: five letters, four digits, then one letter (e.g. ABCDE1234F).';}
  else if(p.idType==='Voter ID (EPIC)'){if(!/^[A-Z]{3}[0-9]{7}$/i.test((p.idNumber||'').replace(/\s/g,'')))e.idNumber='A Voter ID (EPIC) number is three letters followed by seven digits (e.g. ABC1234567).';}
  else if(!/^[A-Z0-9 -]{6,24}$/i.test(p.idNumber||''))e.idNumber='Enter the government ID number using 6–24 letters, numbers, spaces or hyphens.';
