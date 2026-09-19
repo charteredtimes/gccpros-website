@@ -48,6 +48,18 @@ const repo={
  reqGet:(id:string)=>api('/rest/v1/expert_requests?id=eq.'+encodeURIComponent(id)+'&select=*&limit=1').then((r:any)=>r[0]||null),
  reqOpen:(appId:string)=>api('/rest/v1/expert_requests?application_id=eq.'+encodeURIComponent(appId)+'&status=eq.pending&select=type,status,created_at&order=created_at.desc'),
  reqDecide:(id:string,status:string,note:string)=>api('/rest/v1/expert_requests?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status,admin_note:note,decided_at:new Date().toISOString()})})
+,
+ slotList:(pid:string)=>api('/rest/v1/expert_slots?project_id=eq.'+encodeURIComponent(pid)+'&select=*&order=start_ts'),
+ slotInsert:(row:unknown)=>api('/rest/v1/expert_slots',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)}),
+ slotClearProposed:(pid:string)=>api('/rest/v1/expert_slots?project_id=eq.'+encodeURIComponent(pid)+'&status=eq.proposed',{method:'DELETE',headers:{Prefer:'return=minimal'}}),
+ slotUpdate:(id:string,patch:unknown)=>api('/rest/v1/expert_slots?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)}),
+ slotRejectOthers:(pid:string,keep:string)=>api('/rest/v1/expert_slots?project_id=eq.'+encodeURIComponent(pid)+'&id=neq.'+encodeURIComponent(keep),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:'rejected'})}),
+ tsList:(pid:string)=>api('/rest/v1/expert_timesheets?project_id=eq.'+encodeURIComponent(pid)+'&select=*&order=work_date.desc'),
+ tsByApp:(appId:string)=>api('/rest/v1/expert_timesheets?application_id=eq.'+encodeURIComponent(appId)+'&select=*&order=work_date.desc'),
+ tsPending:()=>api('/rest/v1/expert_timesheets?status=eq.submitted&select=*&order=created_at.desc&limit=200'),
+ tsInsert:(row:unknown)=>api('/rest/v1/expert_timesheets',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)}),
+ tsGet:(id:string)=>api('/rest/v1/expert_timesheets?id=eq.'+encodeURIComponent(id)+'&select=*&limit=1').then((r:any)=>r[0]||null),
+ tsUpdate:(id:string,patch:unknown)=>api('/rest/v1/expert_timesheets?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)})
 };
 const authenticate=reviewerAuth((token:string)=>jwtVerify(token,jwks,{issuer:'https://securetoken.google.com/'+project,audience:project,algorithms:['RS256']}),reviewers);
 async function verifyHuman(token:string,ip:string){if(!token||token.length>2048)return false;try{const r=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:env('EXPERT_TURNSTILE_SECRET'),response:token,remoteip:ip}),signal:AbortSignal.timeout(10000)});const d=await r.json();return d.success===true&&['gccpros.com','www.gccpros.com'].includes(d.hostname)&&d.action==='expert_registration';}catch{return false;}}
