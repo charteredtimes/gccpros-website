@@ -44,6 +44,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     const emailHash=await box.hash('email:'+p.email.toLowerCase());if(await repo.byEmail(emailHash))return reply({error:'existing_application',message:'We could not create a new application. If you have applied before, contact admin@gccpros.com to update your record.'},409);
     const id=crypto.randomUUID(),code='GXP-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase(),filePath=id+'/identity.enc';
     const documentEncrypted=await box.seal(bytes,'document:'+id);
+    if(p.idType==='Aadhaar (India)'){p.idNumber='XXXX XXXX '+String(p.idNumber).replace(/\D/g,'').slice(-4);}
     const storedProfile={...p,skills:p.skills.map(({skill,level,years,evidence})=>({skill,level,years,evidence})),history:p.history.map(({company,title,location,start,end,current,scope})=>({company,title,location,start,end,current,scope})),documentType:file.type,documentSize:file.size};
     const row={id,expert_code:code,request_id:requestId,email_hash:emailHash,fingerprint,profile_encrypted:await box.seal(enc.encode(JSON.stringify(storedProfile)),'profile:'+id),document_path:filePath};
     await repo.putFile(filePath,enc.encode(JSON.stringify(documentEncrypted)));
