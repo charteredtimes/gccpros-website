@@ -2724,7 +2724,7 @@ if ('serviceWorker' in navigator) {
     <div style="background:#0A1628;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
       <strong style="font-size:15px">Expert profiles &mdash; review &amp; approval</strong>
       <div style="display:flex;gap:12px;align-items:center">
-        <button id="er-back" onclick="erList()" style="display:none;background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">&larr; All applications</button><button onclick="erChangeReqs()" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Change requests</button><button onclick="erAccountReqs()" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Account requests</button>
+        <button id="er-back" onclick="erList()" style="display:none;background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">&larr; All applications</button><button onclick="erChangeReqs()" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Change requests</button><button onclick="erAccountReqs()" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Account requests</button><button onclick="erTsQueue()" style="background:#B7791F;color:#fff;border:none;border-radius:8px;padding:7px 12px;font:600 12.5px system-ui;cursor:pointer">Timesheets</button>
         <span onclick="erClose()" style="cursor:pointer;font-size:22px;line-height:1">&times;</span>
       </div>
     </div>
@@ -2886,13 +2886,21 @@ function erProjForm(id){
   +'<input id="pf-client" placeholder="Client ref" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
   +'<select id="pf-status" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option value="assigned">Assigned</option><option value="active">Active</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>'
   +'<select id="pf-currency" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option>USD</option><option>INR</option></select></div>'
+  +'<div style="margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-size:11.5px;color:#8A98A8;margin-bottom:4px">Commercials &amp; consent</div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">'
+  +'<select id="pf-billing" title="Billing basis" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option value="fixed">Fixed fee</option><option value="hourly">Hourly (timesheets)</option></select>'
+  +'<input id="pf-fee" type="number" placeholder="Expert honorarium (fixed)" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<input id="pf-rate" type="number" placeholder="Hourly rate (expert)" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div>'
   +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">'
-  +'<input id="pf-fee" type="number" placeholder="Fee amount" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
-  +'<input id="pf-hours" type="number" placeholder="Hours" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
-  +'<label style="font-size:12.5px;align-self:center"><input type="checkbox" id="pf-paid"> Paid</label></div>'
-  +'<input id="pf-notes" placeholder="Notes (optional)" style="width:100%;margin:6px 0 8px;padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
-  +'<div style="margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-size:11.5px;color:#8A98A8;margin-bottom:4px">Lifecycle &amp; disbursement</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><select id="pf-elig" title="Lifecycle" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option value="assigned">Assigned</option><option value="eligible">Eligible</option><option value="active">Active</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select><input id="pf-disb" type="number" placeholder="Disbursed amount" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-disbdate" type="date" title="Disbursed on" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="pf-mode" placeholder="Payout mode (bank/UPI)" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-ref" placeholder="Payout reference" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-rating" type="number" min="1" max="5" placeholder="Rating 1-5" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div><input id="pf-feedback" placeholder="Feedback (optional)" style="width:100%;margin-top:6px;padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div>'+'<input type="hidden" id="pf-pid">'
-  +'<button onclick="erProjSave(\''+esc(id)+'\')" style="background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">Save engagement</button> <span id="pf-msg" style="font-size:12px"></span></div>';
+  +'<input id="pf-clientfee" type="number" placeholder="Client fee (admin only)" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<input id="pf-hours" type="number" placeholder="Est. hours" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<label style="font-size:12px;align-self:center"><input type="checkbox" id="pf-consent" checked> Require consent</label></div>'
+  +'<input id="pf-terms" placeholder="Commercial terms (payment basis, milestones…)" style="width:100%;margin-top:6px;padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div>'
+  +'<div style="margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-size:11.5px;color:#8A98A8;margin-bottom:4px">Scheduling</div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label style="font-size:11.5px;color:#5B6B7B">Respond-by deadline<input id="pf-respondby" type="datetime-local" style="width:100%;padding:8px;border:1px solid #D4DBE4;border-radius:7px"></label><label style="font-size:11.5px;align-self:end;color:#5B6B7B;padding-bottom:8px"><input type="checkbox" id="pf-paid"> Marked paid</label></div></div>'
+  +'<input id="pf-notes" placeholder="Notes (optional)" style="width:100%;margin:8px 0;padding:8px;border:1px solid #D4DBE4;border-radius:7px">'
+  +'<div style="margin-top:4px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-size:11.5px;color:#8A98A8;margin-bottom:4px">Lifecycle &amp; disbursement</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><select id="pf-elig" title="Lifecycle" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><option value="assigned">Assigned</option><option value="eligible">Eligible</option><option value="active">Active</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select><input id="pf-disb" type="number" placeholder="Disbursed amount" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-disbdate" type="date" title="Disbursed on" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="pf-mode" placeholder="Payout mode (bank/UPI)" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-ref" placeholder="Payout reference" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"><input id="pf-rating" type="number" min="1" max="5" placeholder="Rating 1-5" style="padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div><input id="pf-feedback" placeholder="Feedback (optional)" style="width:100%;margin-top:6px;padding:8px;border:1px solid #D4DBE4;border-radius:7px"></div>'+'<input type="hidden" id="pf-pid">'
+  +'<div style="margin-top:10px"><button onclick="erProjSave(\''+esc(id)+'\')" style="background:#2E8BFF;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px system-ui;cursor:pointer">Save engagement</button> <span id="pf-msg" style="font-size:12px"></span></div></div>';
 }
 function erAdminHTML(id,j){
  var bl=j.blacklisted;
@@ -2904,28 +2912,100 @@ function erAdminHTML(id,j){
    +'<span id="er-admin-msg" style="font-size:12.5px;align-self:center"></span></div>';
  return warn+section("Record actions",actions)+section("Assigned engagements & earnings",'<div id="er-projects-host">Loading…</div>'+erProjForm(id));
 }
+function _erFmt(s){if(!s)return "";try{var d=new Date(s);if(isNaN(d))return String(s);return d.toLocaleString([],{dateStyle:"medium",timeStyle:"short"});}catch(e){return String(s);}}
+function _erMoney(c,v){return esc((c||"USD")+" "+(v==null?0:v));}
 window.erLoadProjects=async function(id){
  var host=document.getElementById("er-projects-host"); if(!host) return;
  try{ var r=await api("?action=projects&id="+encodeURIComponent(id),{}); var j=await r.json(); if(!r.ok){host.innerHTML="<span style='color:#c0392b'>"+esc((j&&j.error)||r.status)+"</span>";return;}
   var rows=j.rows||[]; if(!rows.length){host.innerHTML="<div style='color:#5B6B7B;font-size:13px'>No engagements assigned yet.</div>";return;}
-  var paid=0,pending=0,cur="USD";
-  var h="<table style='width:100%;border-collapse:collapse;font-size:12.5px'><thead><tr>";
-  ["Project","Status","Fee","Paid",""].forEach(function(c){h+="<th style='text-align:left;padding:6px;border-bottom:2px solid #E3E8EF'>"+c+"</th>";});
-  h+="</tr></thead><tbody>";
-  rows.forEach(function(x){var amt=Number(x.fee)||0; if(x.paid)paid+=amt;else pending+=amt; if(x.currency)cur=x.currency;
-   h+="<tr><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+esc(x.title)+(x.clientRef?"<br><span style='color:#8A98A8'>"+esc(x.clientRef)+"</span>":"")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+esc(x.status||"")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+(x.fee!=null?esc((x.currency||"USD")+" "+x.fee):"–")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5'>"+(x.paid?"Yes":"No")+"</td><td style='padding:6px;border-bottom:1px solid #EEF1F5;white-space:nowrap'><button onclick='erProjEdit("+JSON.stringify(x).replace(/'/g,"&#39;").replace(/</g,"\\u003c")+")' style='border:none;background:#eef;border-radius:6px;padding:4px 8px;cursor:pointer'>Edit</button> <button onclick=\"erProjDelete('"+esc(x.id)+"','"+esc(id)+"')\" style='border:none;background:#fdecec;color:#c0392b;border-radius:6px;padding:4px 8px;cursor:pointer'>Del</button></td></tr>";
+  var cur="USD",totalVal=0,totalClient=0,totalDisb=0;
+  var h="";
+  rows.forEach(function(x){ if(x.currency)cur=x.currency;
+   var hourly=x.billingType==="hourly";
+   var val=hourly?null:(x.honorarium!=null?x.honorarium:x.fee);
+   var clientFee=x.clientFee;
+   totalClient+=Number(clientFee)||0; totalDisb+=Number(x.disbursedAmount)||0; if(!hourly)totalVal+=Number(val)||0;
+   var margin=(clientFee==null)?null:((Number(clientFee)||0)-(Number(hourly?0:val)||0));
+   var consent=x.consentRequired===false?"<span style='color:#8A98A8'>Not required</span>":(x.consentAcceptedAt?"<span style='color:#1E874B'>Accepted "+_erFmt(x.consentAcceptedAt)+"</span>":"<span style='color:#B7791F'>Pending</span>");
+   var sched=x.confirmedSlot?("<span style='color:#1E874B'>Confirmed: "+_erFmt(x.confirmedSlot)+"</span>"):(x.respondBy?("<span style='color:#5B6B7B'>Awaiting slots · respond by "+_erFmt(x.respondBy)+"</span>"):"<span style='color:#8A98A8'>No deadline set</span>");
+   h+="<div style='border:1px solid #E3E8EF;border-radius:10px;padding:10px 12px;margin-bottom:10px'>";
+   h+="<div style='display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap'><div style='font-weight:700;font-size:13px'>"+esc(x.title||"")+(x.clientRef?" <span style='color:#8A98A8;font-weight:400'>· "+esc(x.clientRef)+"</span>":"")+"</div><div style='font-size:11.5px;background:#EEF3FA;border-radius:20px;padding:2px 10px'>"+esc(x.status||"")+(x.eligibility&&x.eligibility!==x.status?" · "+esc(x.eligibility):"")+"</div></div>";
+   h+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;font-size:12px;color:#1B2733;margin-top:6px'>";
+   h+="<div>Basis: <b>"+(hourly?"Hourly":"Fixed")+"</b></div>";
+   h+="<div>"+(hourly?("Rate: <b>"+_erMoney(x.currency,x.agreedRate)+"/hr</b> · Approved: <b>"+(x.approvedHours!=null?x.approvedHours:0)+"h</b>"):("Honorarium: <b>"+_erMoney(x.currency,val)+"</b>"))+"</div>";
+   h+="<div>Client fee: <b>"+(clientFee==null?"–":_erMoney(x.currency,clientFee))+"</b></div>";
+   h+="<div>Margin: <b>"+(margin==null?"–":_erMoney(x.currency,margin))+"</b></div>";
+   h+="<div>Consent: "+consent+"</div>";
+   h+="<div>Disbursed: <b>"+(x.disbursedAmount==null?"–":_erMoney(x.currency,x.disbursedAmount))+"</b>"+(x.paid?" ✓":"")+"</div>";
+   h+="</div>";
+   if(x.terms)h+="<div style='font-size:11.5px;color:#5B6B7B;margin-top:4px'>Terms: "+esc(x.terms)+"</div>";
+   h+="<div style='font-size:12px;margin-top:6px'>Scheduling: "+sched+"</div>";
+   h+="<div id='er-slots-"+esc(x.id)+"' style='margin-top:6px'></div>";
+   if(hourly)h+="<div id='er-ts-"+esc(x.id)+"' style='margin-top:6px'></div>";
+   h+="<div style='margin-top:8px;white-space:nowrap'><button onclick='erProjEdit("+JSON.stringify(x).replace(/'/g,"&#39;").replace(/</g,"\\u003c")+")' style='border:none;background:#eef;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px'>Edit</button> <button onclick=\"erProjDelete('"+esc(x.id)+"','"+esc(id)+"')\" style='border:none;background:#fdecec;color:#c0392b;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px'>Delete</button></div>";
+   h+="</div>";
   });
-  h+="</tbody></table><div style='margin-top:8px;font-size:13px;color:#1B2733'><strong>Paid:</strong> "+esc(cur+" "+paid)+" &nbsp; <strong>Pending:</strong> "+esc(cur+" "+pending)+"</div>";
+  h+="<div style='margin-top:6px;font-size:13px;color:#1B2733;background:#F6F9FC;border-radius:8px;padding:8px 10px'><strong>Totals</strong> — Expert value (fixed): "+_erMoney(cur,totalVal)+" &nbsp;·&nbsp; Client fees: "+_erMoney(cur,totalClient)+" &nbsp;·&nbsp; Disbursed: "+_erMoney(cur,totalDisb)+"</div>";
   host.innerHTML=h;
+  rows.forEach(function(x){ erRenderSlots(x.id,id); if(x.billingType==="hourly")erRenderTs(x.id,id); });
  }catch(e){ host.innerHTML="<span style='color:#c0392b'>"+esc(e.message||e)+"</span>"; }
 };
-window.erProjEdit=function(x){ document.getElementById("pf-title").value=x.title||""; document.getElementById("pf-client").value=x.clientRef||""; document.getElementById("pf-status").value=x.status||"assigned"; document.getElementById("pf-currency").value=x.currency||"USD"; document.getElementById("pf-fee").value=(x.fee!=null?x.fee:""); document.getElementById("pf-hours").value=(x.hours!=null?x.hours:""); document.getElementById("pf-paid").checked=!!x.paid; document.getElementById("pf-notes").value=x.notes||"";if(document.getElementById("pf-elig"))document.getElementById("pf-elig").value=x.eligibility||x.status||"assigned";if(document.getElementById("pf-disb"))document.getElementById("pf-disb").value=(x.disbursedAmount!=null?x.disbursedAmount:"");if(document.getElementById("pf-disbdate"))document.getElementById("pf-disbdate").value=(x.disbursedAt?String(x.disbursedAt).slice(0,10):"");if(document.getElementById("pf-mode"))document.getElementById("pf-mode").value=x.disbursementMode||"";if(document.getElementById("pf-ref"))document.getElementById("pf-ref").value=x.disbursementRef||"";if(document.getElementById("pf-rating"))document.getElementById("pf-rating").value=(x.rating!=null?x.rating:"");if(document.getElementById("pf-feedback"))document.getElementById("pf-feedback").value=x.feedback||""; document.getElementById("pf-pid").value=x.id||""; var m=document.getElementById("pf-msg"); if(m){m.style.color="#B7791F";m.textContent="Editing existing engagement";} };
+window.erRenderSlots=async function(pid,appId){
+ var host=document.getElementById("er-slots-"+pid); if(!host)return;
+ try{ var r=await api("?action=slots&projectId="+encodeURIComponent(pid),{}); var j=await r.json(); if(!r.ok)return;
+  var rows=j.rows||[]; if(!rows.length){host.innerHTML="<div style='font-size:11.5px;color:#8A98A8'>No availability proposed yet.</div>";return;}
+  var h="<div style='font-size:11.5px;color:#8A98A8;margin-bottom:3px'>Proposed availability</div>";
+  rows.forEach(function(s){var st=s.status;var col=st==="confirmed"?"#1E874B":(st==="rejected"?"#B0B8C1":"#1B2733");
+   h+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;color:"+col+";margin:2px 0'>";
+   h+="<span style='flex:1'>"+_erFmt(s.start)+(s.end?" – "+_erFmt(s.end):"")+(st!=="proposed"?" ("+esc(st)+")":"")+"</span>";
+   if(st==="proposed"){h+="<button onclick=\"erSlotDecide('"+esc(s.id)+"','"+esc(pid)+"','"+esc(appId)+"','confirm')\" style='border:none;background:#1E874B;color:#fff;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11.5px'>Confirm</button> <button onclick=\"erSlotDecide('"+esc(s.id)+"','"+esc(pid)+"','"+esc(appId)+"','reject')\" style='border:none;background:#fdecec;color:#c0392b;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11.5px'>Reject</button>";}
+   h+="</div>";});
+  host.innerHTML=h;
+ }catch(e){}
+};
+window.erSlotDecide=async function(slotId,pid,appId,decision){
+ if(decision==="confirm"&&!confirm("Confirm this time slot? Other proposed slots for this engagement will be rejected."))return;
+ try{ var r=await api("?action=slotDecide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({slotId:slotId,projectId:pid,applicationId:appId,decision:decision})}); if(r.ok){erLoadProjects(appId);} else {var j=await r.json().catch(function(){return{};});alert("Error: "+((j&&(j.message||j.error))||r.status));} }catch(e){alert("Error: "+(e.message||e));}
+};
+window.erRenderTs=async function(pid,appId){
+ var host=document.getElementById("er-ts-"+pid); if(!host)return;
+ try{ var r=await api("?action=timesheets&projectId="+encodeURIComponent(pid),{}); var j=await r.json(); if(!r.ok)return;
+  var rows=j.rows||[]; if(!rows.length){host.innerHTML="<div style='font-size:11.5px;color:#8A98A8'>No time entries logged.</div>";return;}
+  var appr=0;var h="<div style='font-size:11.5px;color:#8A98A8;margin-bottom:3px'>Timesheets</div>";
+  rows.forEach(function(t){if(t.status==="approved")appr+=Number(t.hours)||0;var col=t.status==="approved"?"#1E874B":(t.status==="rejected"?"#B0B8C1":"#B7791F");
+   h+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;margin:2px 0'>";
+   h+="<span style='flex:1'>"+esc(t.date)+" · <b>"+esc(t.hours)+"h</b>"+(t.note?" · "+esc(t.note):"")+" <span style='color:"+col+"'>("+esc(t.status)+(t.amount!=null?", "+esc(t.amount):"")+")</span></span>";
+   if(t.status==="submitted"){h+="<button onclick=\"erTsDecide('"+esc(t.id)+"','"+esc(appId)+"','approved')\" style='border:none;background:#1E874B;color:#fff;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11.5px'>Approve</button> <button onclick=\"erTsDecide('"+esc(t.id)+"','"+esc(appId)+"','rejected')\" style='border:none;background:#fdecec;color:#c0392b;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11.5px'>Reject</button>";}
+   h+="</div>";});
+  h+="<div style='font-size:12px;color:#1B2733;margin-top:3px'>Approved hours: <b>"+appr+"</b></div>";
+  host.innerHTML=h;
+ }catch(e){}
+};
+window.erTsDecide=async function(tsId,appId,decision){
+ var note="";if(decision==="rejected"){note=prompt("Reason for rejecting this time entry (optional):")||"";}
+ try{ var r=await api("?action=timesheetDecide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:tsId,decision:decision,note:note})}); if(r.ok){erLoadProjects(appId);} else {var j=await r.json().catch(function(){return{};});alert("Error: "+((j&&(j.message||j.error))||r.status));} }catch(e){alert("Error: "+(e.message||e));}
+};
+window.erProjEdit=function(x){ var g=function(k){return document.getElementById(k);};
+ g("pf-title").value=x.title||""; g("pf-client").value=x.clientRef||""; g("pf-status").value=x.status||"assigned"; g("pf-currency").value=x.currency||"USD";
+ if(g("pf-billing"))g("pf-billing").value=x.billingType||"fixed";
+ g("pf-fee").value=(x.honorarium!=null?x.honorarium:(x.fee!=null?x.fee:""));
+ if(g("pf-rate"))g("pf-rate").value=(x.agreedRate!=null?x.agreedRate:"");
+ if(g("pf-clientfee"))g("pf-clientfee").value=(x.clientFee!=null?x.clientFee:"");
+ if(g("pf-terms"))g("pf-terms").value=x.terms||"";
+ if(g("pf-consent"))g("pf-consent").checked=(x.consentRequired!==false);
+ if(g("pf-respondby"))g("pf-respondby").value=(x.respondBy?String(x.respondBy).slice(0,16):"");
+ g("pf-hours").value=(x.hours!=null?x.hours:""); g("pf-paid").checked=!!x.paid; g("pf-notes").value=x.notes||"";
+ if(g("pf-elig"))g("pf-elig").value=x.eligibility||x.status||"assigned"; if(g("pf-disb"))g("pf-disb").value=(x.disbursedAmount!=null?x.disbursedAmount:""); if(g("pf-disbdate"))g("pf-disbdate").value=(x.disbursedAt?String(x.disbursedAt).slice(0,10):""); if(g("pf-mode"))g("pf-mode").value=x.disbursementMode||""; if(g("pf-ref"))g("pf-ref").value=x.disbursementRef||""; if(g("pf-rating"))g("pf-rating").value=(x.rating!=null?x.rating:""); if(g("pf-feedback"))g("pf-feedback").value=x.feedback||""; g("pf-pid").value=x.id||"";
+ var m=g("pf-msg"); if(m){m.style.color="#B7791F";m.textContent="Editing existing engagement";}
+ try{g("pf-title").scrollIntoView({behavior:"smooth",block:"center"});}catch(e){} };
 window.erProjSave=async function(id){
+ var g=function(k){return (document.getElementById(k)||{});};
  var m=document.getElementById("pf-msg"); if(m){m.style.color="#5B6B7B"; m.textContent="Saving…";}
- var body={applicationId:id,projectId:document.getElementById("pf-pid").value||undefined,title:document.getElementById("pf-title").value,clientRef:document.getElementById("pf-client").value,status:document.getElementById("pf-status").value,currency:document.getElementById("pf-currency").value,fee:document.getElementById("pf-fee").value,hours:document.getElementById("pf-hours").value,paid:document.getElementById("pf-paid").checked,eligibility:(document.getElementById("pf-elig")||{}).value,disbursedAmount:(document.getElementById("pf-disb")||{}).value,disbursedAt:(document.getElementById("pf-disbdate")||{}).value,disbursementMode:(document.getElementById("pf-mode")||{}).value,disbursementRef:(document.getElementById("pf-ref")||{}).value,rating:(document.getElementById("pf-rating")||{}).value,feedback:(document.getElementById("pf-feedback")||{}).value,notes:document.getElementById("pf-notes").value};
+ var fee=g("pf-fee").value;
+ var body={applicationId:id,projectId:g("pf-pid").value||undefined,title:g("pf-title").value,clientRef:g("pf-client").value,status:g("pf-status").value,currency:g("pf-currency").value,billingType:g("pf-billing").value,fee:fee,honorarium:fee,agreedRate:g("pf-rate").value,clientFee:g("pf-clientfee").value,terms:g("pf-terms").value,consentRequired:!!g("pf-consent").checked,respondBy:(g("pf-respondby").value?new Date(g("pf-respondby").value).toISOString():""),hours:g("pf-hours").value,paid:!!g("pf-paid").checked,eligibility:g("pf-elig").value,disbursedAmount:g("pf-disb").value,disbursedAt:g("pf-disbdate").value,disbursementMode:g("pf-mode").value,disbursementRef:g("pf-ref").value,rating:g("pf-rating").value,feedback:g("pf-feedback").value,notes:g("pf-notes").value};
  try{ var r=await api("?action=projectSave",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); var j=await r.json().catch(function(){return{};});
   if(!r.ok){if(m){m.style.color="#c0392b";m.textContent=esc((j&&(j.message||j.error))||r.status);}return;}
-  if(m){m.style.color="#1E874B";m.textContent="Saved.";} ["pf-title","pf-client","pf-fee","pf-hours","pf-notes","pf-pid"].forEach(function(k){document.getElementById(k).value="";}); document.getElementById("pf-paid").checked=false; erLoadProjects(id);
+  if(m){m.style.color="#1E874B";m.textContent="Saved.";} ["pf-title","pf-client","pf-fee","pf-rate","pf-clientfee","pf-terms","pf-hours","pf-notes","pf-pid","pf-respondby","pf-disb","pf-disbdate","pf-mode","pf-ref","pf-rating","pf-feedback"].forEach(function(k){var el=document.getElementById(k);if(el)el.value="";}); if(document.getElementById("pf-paid"))document.getElementById("pf-paid").checked=false; if(document.getElementById("pf-consent"))document.getElementById("pf-consent").checked=true; erLoadProjects(id);
  }catch(e){ if(m){m.style.color="#c0392b"; m.textContent=esc(e.message||e);} }
 };
 window.erProjDelete=async function(pid,id){ if(!confirm("Delete this engagement?"))return; try{ var r=await api("?action=projectDelete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({projectId:pid,applicationId:id})}); if(r.ok)erLoadProjects(id); }catch(e){} };
@@ -2974,6 +3054,9 @@ window.erChangeReqs=async function(){showBack(true);var b=body();b.innerHTML="Lo
 window.erChangeDecide=async function(id,decision){var m=document.getElementById('crm-'+id);if(m){m.style.color='#5B6B7B';m.textContent='Saving…';}var note=(document.getElementById('crn-'+id)||{}).value||'';try{var r=await api("?action=changeDecide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:id,decision:decision,note:note})});var j=await r.json().catch(function(){return{};});if(!r.ok){if(m){m.style.color='#c0392b';m.textContent=esc((j&&(j.message||j.error))||r.status);}return;}erChangeReqs();}catch(e){if(m){m.style.color='#c0392b';m.textContent=esc(e.message||e);}}};
 window.erAccountReqs=async function(){showBack(true);var b=body();b.innerHTML="Loading…";try{var r=await api("?action=accountRequests",{});var j=await r.json();if(!r.ok){b.innerHTML="<p style='color:#c0392b'>"+esc((j&&j.error)||r.status)+"</p>";return;}var rows=j.rows||[];if(!rows.length){b.innerHTML="<p style='color:#5B6B7B'>No pending account requests.</p>";return;}var lbl={closure:'Account closure',deletion:'Permanent deletion',data_export:'Data export (DPDP)'};var h="<h3 style='margin:0 0 10px'>Account &amp; data requests</h3>";rows.forEach(function(x){h+="<div style='border:1px solid #E3E8EF;border-radius:10px;padding:12px 14px;margin:0 0 10px'><div style='font-weight:700'>"+esc(lbl[x.type]||x.type)+" · "+esc(x.name||'')+" <span style='color:#8A98A8;font-weight:400'>"+esc(x.reference||'')+"</span></div>"+(x.message?"<div style='margin:6px 0;color:#33414F'>"+esc(x.message)+"</div>":"")+"<textarea id='arn-"+x.id+"' placeholder='Note (optional)' style='width:100%;min-height:42px;border:1px solid #D4DBE4;border-radius:7px;padding:7px;font:13px system-ui'></textarea><div style='margin-top:6px'><button onclick=\"erReqDecide('"+x.id+"','actioned','"+x.type+"')\" style='background:#0A1628;color:#fff;border:none;border-radius:7px;padding:7px 12px;cursor:pointer'>Mark actioned</button> <button onclick=\"erReqDecide('"+x.id+"','declined','"+x.type+"')\" style='background:#B7791F;color:#fff;border:none;border-radius:7px;padding:7px 12px;cursor:pointer'>Decline</button> <span id='arm-"+x.id+"' style='font-size:12px'></span></div></div>";});b.innerHTML=h;}catch(e){b.innerHTML="<p style='color:#c0392b'>"+esc(e.message||e)+"</p>";}};
 window.erReqDecide=async function(id,decision,type){if(decision==='actioned'&&type==='deletion'&&!confirm('This will PERMANENTLY delete the expert record and ID document. Continue?'))return;var m=document.getElementById('arm-'+id);if(m){m.style.color='#5B6B7B';m.textContent='Saving…';}var note=(document.getElementById('arn-'+id)||{}).value||'';try{var r=await api("?action=requestDecide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:id,decision:decision,note:note})});var j=await r.json().catch(function(){return{};});if(!r.ok){if(m){m.style.color='#c0392b';m.textContent=esc((j&&(j.message||j.error))||r.status);}return;}erAccountReqs();}catch(e){if(m){m.style.color='#c0392b';m.textContent=esc(e.message||e);}}};
+
+window.erTsQueue=async function(){showBack(true);var b=body();b.innerHTML="Loading…";try{var r=await api("?action=timesheets",{});var j=await r.json();if(!r.ok){b.innerHTML="<p style='color:#c0392b'>"+esc((j&&j.error)||r.status)+"</p>";return;}var rows=j.rows||[];if(!rows.length){b.innerHTML="<h3 style='margin:0 0 10px'>Timesheets awaiting approval</h3><p style='color:#5B6B7B'>No time entries are waiting for approval.</p>";return;}var h="<h3 style='margin:0 0 10px'>Timesheets awaiting approval</h3>";rows.forEach(function(t){h+="<div style='border:1px solid #E3E8EF;border-radius:10px;padding:10px 14px;margin:0 0 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap'><div style='flex:1;min-width:200px'><div style='font-weight:700;font-size:13px'>"+esc(t.name||'')+" <span style='color:#8A98A8;font-weight:400'>"+esc(t.reference||'')+"</span></div><div style='font-size:12.5px;color:#33414F'>"+esc(t.date)+" · <b>"+esc(t.hours)+"h</b>"+(t.note?" · "+esc(t.note):"")+"</div></div><button onclick=\"erTsQueueDecide('"+esc(t.id)+"','approved')\" style='background:#1E874B;color:#fff;border:none;border-radius:7px;padding:7px 12px;cursor:pointer'>Approve</button> <button onclick=\"erTsQueueDecide('"+esc(t.id)+"','rejected')\" style='background:#C0392B;color:#fff;border:none;border-radius:7px;padding:7px 12px;cursor:pointer'>Reject</button> <span id='tsqm-"+esc(t.id)+"' style='font-size:12px'></span></div>";});b.innerHTML=h;}catch(e){b.innerHTML="<p style='color:#c0392b'>"+esc(e.message||e)+"</p>";}};
+window.erTsQueueDecide=async function(id,decision){var m=document.getElementById('tsqm-'+id);if(m){m.style.color='#5B6B7B';m.textContent='Saving…';}var note='';if(decision==='rejected'){note=prompt('Reason for rejecting this time entry (optional):')||'';}try{var r=await api("?action=timesheetDecide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:id,decision:decision,note:note})});var j=await r.json().catch(function(){return{};});if(!r.ok){if(m){m.style.color='#c0392b';m.textContent=esc((j&&(j.message||j.error))||r.status);}return;}erTsQueue();}catch(e){if(m){m.style.color='#c0392b';m.textContent=esc(e.message||e);}}};
 
 })();
 </script>
