@@ -830,7 +830,7 @@ function showAppDetails(kind, idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:var(--muted);font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>' + (kind === 'insider' ? 'Insider' : 'Council') + ' — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;color:#1c1c1c;} h2{margin:0 0 12px;}</style></head><body><h2>' + (kind === 'insider' ? 'Insider Community' : 'Leadership Council') + ' application</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>' + (kind === 'insider' ? 'Insider' : 'Council') + ' — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;} h2{margin:0 0 12px;}</style></head><body><h2>' + (kind === 'insider' ? 'Insider Community' : 'Leadership Council') + ' application</h2>' + html + '</body></html>');
 }
 
 function exportApplicationsCsv(kind) {
@@ -1211,7 +1211,7 @@ function oppsShowAppDetails(idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Application — ' + esc(r.applicant_email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;color:#1c1c1c;}</style></head><body><h2>Application detail</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>Application — ' + esc(r.applicant_email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;}</style></head><body><h2>Application detail</h2>' + html + '</body></html>');
 }
 
 // ─── PARTNERS ──────────────────────────────────────────────────
@@ -1276,7 +1276,7 @@ function oppsShowPartnerDetails(idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:200px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Partner — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;}</style></head><body><h2>Partner detail</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>Partner — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Partner detail</h2>' + html + '</body></html>');
 }
 
 // ─── REFERRALS ──────────────────────────────────────────────────
@@ -1329,7 +1329,7 @@ function oppsShowReferralDetails(idx) {
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const linkBlock = tokenUrl ? '<p style="margin:16px 0 8px;"><b>Candidate URL:</b><br><a href="' + esc(tokenUrl) + '" target="_blank" style="word-break:break-all;">' + esc(tokenUrl) + '</a></p>' : '';
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Referral — ' + esc(r.candidate_name||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#fafaf6;}</style></head><body><h2>Referral detail</h2>' + linkBlock + html + '</body></html>');
+  w.document.write('<html><head><title>Referral — ' + esc(r.candidate_name||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Referral detail</h2>' + linkBlock + html + '</body></html>');
 }
 
 // ─── CSV EXPORT (shared) ───────────────────────────────────────

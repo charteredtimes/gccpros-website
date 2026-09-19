@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.gccpros.com/assets/img/og-summit.jpg">
 <!-- gp:head -->
-<meta name="theme-color" content="#F5F7FB">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -24,8 +24,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=a9bbc7ac">
-<link rel="stylesheet" href="/assets/css/gp.css?v=12e61dff">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=3ad74cb0">
+<link rel="stylesheet" href="/assets/css/gp.css?v=cdc44c27">
 <!-- /gp:head -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -64,7 +64,7 @@
 @media (max-width:900px){.ev-hero,.feature,.feature--rev{grid-template-columns:1fr}.feature--rev .feature__media{order:0}.feature__media{max-width:520px}}
 
 /* cinematic recap band */
-.cine{position:relative;min-height:min(86vh,760px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;color:#fff;background:#0B1733}
+.cine{position:relative;min-height:min(86vh,760px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;color:#fff;background:#07122B}
 .cine video,.cine .cine__poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
 .cine video{opacity:0;transition:opacity 1.2s}
 .cine video.is-ready{opacity:1}
@@ -110,7 +110,21 @@
 .co .marquee+.marquee{margin-top:12px}
 .co span.cn{display:inline-flex;align-items:center;padding:12px 20px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-weight:700;color:var(--ink-2);white-space:nowrap;font-size:15px}
 
-/* testimonials spotlight */
+/* feedback wall (auto-running) */
+.fbwall{display:grid;gap:16px;margin-top:8px}
+.fbrow .marquee__track{--gap:16px;align-items:stretch;padding-block:6px}
+.fb{margin:0;width:380px;flex:none;display:flex;flex-direction:column;justify-content:space-between;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 24px 20px;box-shadow:var(--sh-1);position:relative}
+.fb::before{content:"\201C";position:absolute;top:-6px;right:18px;font-family:var(--serif);font-size:90px;line-height:1;color:var(--brand-100)}
+.fb blockquote{margin:0;font-family:var(--serif);font-size:17.5px;line-height:1.5;color:var(--ink);font-weight:500;position:relative;white-space:normal}
+.fb figcaption{display:flex;align-items:center;gap:12px}
+.fb i{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;color:#fff;background:linear-gradient(135deg,var(--brand),#5B86C9)}
+.fb:nth-child(3n+2) i{background:linear-gradient(135deg,var(--teal),#3AA89F)}
+.fb:nth-child(3n) i{background:linear-gradient(135deg,var(--navy-2),#3E5486)}
+.fb b{display:block;color:var(--ink);font-size:14.5px;line-height:1.25}
+.fb small{color:var(--muted);font-size:13px}
+@media (max-width:560px){.fb{width:300px}.fb blockquote{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.fbrow{-webkit-mask-image:none;mask-image:none}.fbrow .marquee__track{flex-wrap:wrap;animation:none;min-width:0}.fbrow .marquee__track[aria-hidden]{display:none}}
+/* (old spotlight styles unused) */
 .spot-q{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:clamp(24px,4vw,56px);align-items:center}
 .qcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:clamp(28px,4vw,48px);box-shadow:var(--sh-2);min-height:320px;display:flex;flex-direction:column;justify-content:space-between}
 .qcard::before{content:"\201C";position:absolute;top:-10px;right:28px;font-family:var(--serif);font-size:180px;line-height:1;color:var(--brand-100)}
@@ -358,19 +372,14 @@
       <div class="section-head">
         <span class="eyebrow" data-reveal>In their own words</span>
         <h2 class="h2" id="q-title" data-reveal style="--d:1">What GCC leaders <em>said afterwards.</em></h2>
-        <p class="lede" data-reveal style="--d:2">Unedited reactions shared on LinkedIn after the Pune summit.</p>
+        <p class="lede" data-reveal style="--d:2">Unedited reactions shared on LinkedIn after the Pune summit. Hover to pause.</p>
       </div>
-      <div class="spot-q" id="quotes" data-reveal>
-        <div>
-          <figure class="qcard" style="margin:0" aria-live="polite">
-            <blockquote id="qText">One closed-door room, no scripts, no fluff. You don&rsquo;t get many rooms where the people setting policy and the people running these centres on the ground talk to each other directly. This was one of them.</blockquote>
-            <figcaption class="qwho"><i id="qAv">NM</i><span><b id="qName">Neeraj Mishra</b><small id="qCo">Xplor Technologies</small></span></figcaption>
-          </figure>
-          <div class="qctl"><button type="button" id="qPrev" aria-label="Previous quote"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 8H3M7 4 3 8l4 4"/></svg></button><div class="qprog"><i id="qBar"></i></div><button type="button" id="qNext" aria-label="Next quote"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></div>
-        </div>
-        <div class="qfaces" id="qFaces" aria-label="Choose a leader"></div>
-      </div>
+      
     </div>
+    <div class="fbwall" aria-label="Feedback from GCC leaders">
+        <div class="marquee fbrow" style="--dur:140s"><div class="marquee__track"><figure class="fb"><blockquote>Thank you. It was an event well organised.</blockquote><figcaption><i>NM</i><span><b>Neeraj Mishra</b><small>Xplor Technologies</small></span></figcaption></figure><figure class="fb"><blockquote>Excellent event. Lots of connects, made many new friends today. Shammi and team, kudos to your efforts.</blockquote><figcaption><i>MP</i><span><b>Manoj Patil</b><small>Assent</small></span></figcaption></figure><figure class="fb"><blockquote>A great collective voice we built with our peer networks. Kudos to GCCPROs and Shammi to pull this together in such a short time. #WhyNotPune</blockquote><figcaption><i>SP</i><span><b>Sandeep Poddar</b><small>Kimberly-Clark</small></span></figcaption></figure><figure class="fb"><blockquote>Superb summit. Thanks to all the organisers and people who made it happen.</blockquote><figcaption><i>SK</i><span><b>Sandeep Kulkarni</b><small>Worley</small></span></figcaption></figure><figure class="fb"><blockquote>The event was well organised.</blockquote><figcaption><i>YS</i><span><b>Yogesh Satish Kantak</b><small>Simplify</small></span></figcaption></figure><figure class="fb"><blockquote>Great work Shammi, GCCPros and the organising team, for this well-crafted event. Very thoughtful in bringing attention to the Pune tech ecosystem. Privileged to be there. #WhyNotPune</blockquote><figcaption><i>UV</i><span><b>Ullas Vinod</b><small>Accendra Health</small></span></figcaption></figure><figure class="fb"><blockquote>Great event Shammi! Congratulations to you and the whole team behind making this such a huge success. And like we said, this is just the beginning.</blockquote><figcaption><i>AC</i><span><b>Atul Chanani</b><small>Citi</small></span></figcaption></figure><figure class="fb"><blockquote>Great effort to bring us all together. Bringing the CM, Deputy CM and Industry Minister onto one platform to interact with the GCC network is a big step.</blockquote><figcaption><i>AK</i><span><b>Anand Kanhere</b><small>Novartis</small></span></figcaption></figure><figure class="fb"><blockquote>Super event, what an execution, so flawless, and what value delivered. No sales pitch, real conversations, and intriguing questions on Menti and panel discussions.</blockquote><figcaption><i>SR</i><span><b>Supriya Rao</b><small>ClearRoute</small></span></figcaption></figure><figure class="fb"><blockquote>A huge thank you for organising the Summit in Pune. The sessions were insightful and engaging, and what stood out most was the clear message from the government to grow the ecosystem.</blockquote><figcaption><i>VR</i><span><b>Vishal Rajani</b><small>TVH</small></span></figcaption></figure><figure class="fb"><blockquote>Great event. More meaningful than most other GCC events. Well done Shammi and team.</blockquote><figcaption><i>RW</i><span><b>Rajesh Wazarkar</b><small>Hyster-Yale</small></span></figcaption></figure><figure class="fb"><blockquote>Great event Shammi, thank you for curating this opportunity and getting us and the policy makers together. Looking forward to the next one already!</blockquote><figcaption><i>KJ</i><span><b>Kaustubha Joshi</b><small>Taylor &amp; Francis</small></span></figcaption></figure><figure class="fb"><blockquote>One closed-door room, no scripts, no fluff. You don't get many rooms where the people setting policy and the people running these centers on the ground talk to each other directly. This was one of them.</blockquote><figcaption><i>NM</i><span><b>Neeraj Mishra</b><small>Xplor Technologies</small></span></figcaption></figure></div></div>
+        <div class="marquee marquee--rev fbrow" style="--dur:150s"><div class="marquee__track"><figure class="fb"><blockquote>Thank you Shammi for the wonderful event, well coordinated and organised. Proud to be part of this.</blockquote><figcaption><i>NS</i><span><b>Navin Sharma</b><small>Roquette</small></span></figcaption></figure><figure class="fb"><blockquote>Thanks Shammi and team for a wonderful and well-organised event. Looking forward to staying connected with all leaders.</blockquote><figcaption><i>YP</i><span><b>Yogesh Pawar</b><small>Sensata</small></span></figcaption></figure><figure class="fb"><blockquote>Well planned and organised event. Looking forward to more events from GCCPROs.</blockquote><figcaption><i>MG</i><span><b>Mohit Gupta</b><small>Equifax</small></span></figcaption></figure><figure class="fb"><blockquote>Great event, well conceptualised, planned and executed. Looking forward to continued engagement with GCCPROs and all member GCC leaders.</blockquote><figcaption><i>AD</i><span><b>Ajit Deshpande</b><small>Convera</small></span></figcaption></figure><figure class="fb"><blockquote>Indeed a lovely event. Loved that we spoke reality and skipped the fluff. Thanks for the amazing organisation.</blockquote><figcaption><i>SA</i><span><b>Saurabh Arora</b><small>Maersk</small></span></figcaption></figure><figure class="fb"><blockquote>Thank you Shammi and the team for this great event. The best part was the opportunity to speak the honest reality. The talent survey via Menti was an amazing way to bring out reality. #WhyNotPune</blockquote><figcaption><i>MK</i><span><b>Manish Keshavan</b><small>Smith+Nephew</small></span></figcaption></figure><figure class="fb"><blockquote>Thanks Shammi and team for a much-needed event in Pune.</blockquote><figcaption><i>NB</i><span><b>Nilesh Biniwale</b><small>Pattern</small></span></figcaption></figure><figure class="fb"><blockquote>Thank you for putting together such an exceptional gathering. The icing on the cake was the authentic atmosphere: no sales pitch, just real conversations with great peers.</blockquote><figcaption><i>VA</i><span><b>Vijai Amirtharaj Gnanavel</b><small>NielsenIQ</small></span></figcaption></figure><figure class="fb"><blockquote>Amazing event Shammi, thank you for making us a part of it. Looking forward to the next event!</blockquote><figcaption><i>PC</i><span><b>Pankaj Chitre</b><small>General Mills</small></span></figcaption></figure><figure class="fb"><blockquote>What a truly impactful and well-curated event. Bringing GCC leaders and Government dignitaries together on the same platform was both bold and meaningful. Here's to many more editions!</blockquote><figcaption><i>GP</i><span><b>Geetesh Prasad</b><small>Arkose Labs</small></span></figcaption></figure><figure class="fb"><blockquote>A thoughtfully curated event with very engaging conversations, and a great opportunity to connect with leaders across the GCC ecosystem. Energy, attention to detail and seamless execution.</blockquote><figcaption><i>SG</i><span><b>Saurabh Gupta</b><small>Sulzer</small></span></figcaption></figure><figure class="fb"><blockquote>Indeed a finely strategised and meticulously executed event. Thanks for having me on the delegate list!</blockquote><figcaption><i>AS</i><span><b>Ashfak Shaikh</b><small>Domo</small></span></figcaption></figure><figure class="fb"><blockquote>A big appreciation to Shammi Prabhakar Singh and the entire GCCPROS team for creating this platform, a practitioner-led forum where the conversation is about what actually works, what doesn't, and what needs to change.</blockquote><figcaption><i>NS</i><span><b>Navin Sharma</b><small>Roquette</small></span></figcaption></figure></div></div>
+      </div>
   </section>
 
   <!-- REELS -->
@@ -466,7 +475,7 @@
       </div>
       <div>
         <h4>Work with us</h4>
-        <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
+        <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/expert-dashboard">Expert login</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
       </div>
       <div>
         <h4>Community</h4>
@@ -540,40 +549,6 @@
   function pad(n){return (n<10?'0':'')+n;}
   function tick(){ var s=Math.max(0,Math.floor((t-Date.now())/1000)); u.d.textContent=Math.floor(s/86400); u.h.textContent=pad(Math.floor(s%86400/3600)); u.m.textContent=pad(Math.floor(s%3600/60)); u.s.textContent=pad(s%60); }
   tick(); setInterval(tick,1000);
-})();
-/* Testimonial spotlight */
-(function(){
-  var Q=[
-    ['Neeraj Mishra','Xplor Technologies','One closed-door room, no scripts, no fluff. You don’t get many rooms where the people setting policy and the people running these centres on the ground talk to each other directly. This was one of them.'],
-    ['Navin Sharma','Roquette','A practitioner-led forum where the conversation is about what actually works, what doesn’t, and what needs to change.'],
-    ['Vijai Amirtharaj Gnanavel','NielsenIQ','The icing on the cake was the authentic atmosphere: no sales pitch, just real conversations with great peers.'],
-    ['Supriya Rao','ClearRoute','What an execution, so flawless, and what value delivered. No sales pitch, real conversations, and intriguing questions on Menti and in the panel discussions.'],
-    ['Geetesh Prasad','Arkose Labs','Bringing GCC leaders and government dignitaries together on the same platform was both bold and meaningful. Here’s to many more editions!'],
-    ['Anand Kanhere','Novartis','Bringing the CM, Deputy CM and Industry Minister onto one platform to interact with the GCC network is a big step.'],
-    ['Vishal Rajani','TVH','The sessions were insightful and engaging, and what stood out most was the clear message from the government to grow the ecosystem.'],
-    ['Manish Keshavan','Smith+Nephew','The best part was the opportunity to speak the honest reality. The talent survey via Menti was an amazing way to bring it out.'],
-    ['Saurabh Arora','Maersk','Loved that we spoke reality and skipped the fluff. Thanks for the amazing organisation.'],
-    ['Sandeep Poddar','Kimberly-Clark','A great collective voice we built with our peer networks. Kudos to GCCPROs for pulling this together in such a short time. #WhyNotPune'],
-    ['Saurabh Gupta','Sulzer','A thoughtfully curated event with very engaging conversations, and a great opportunity to connect with leaders across the GCC ecosystem.'],
-    ['Atul Chanani','Citi','Congratulations to the whole team behind making this such a huge success. And like we said, this is just the beginning.'],
-    ['Rajesh Wazarkar','Hyster-Yale','More meaningful than most other GCC events.'],
-    ['Ullas Vinod','Accendra Health','Very thoughtful in bringing attention to the Pune tech ecosystem. Privileged to be there. #WhyNotPune'],
-    ['Kaustubha Joshi','Taylor & Francis','Thank you for curating this opportunity and getting us and the policy makers together. Looking forward to the next one already!'],
-    ['Ajit Deshpande','Convera','Well conceptualised, planned and executed. Looking forward to continued engagement with GCCPROs and all member GCC leaders.']
-  ];
-  var card=document.querySelector('.qcard'), faces=document.getElementById('qFaces'), bar=document.getElementById('qBar'); if(!card||!faces) return;
-  var ini=function(n){return n.split(' ').filter(Boolean).map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();};
-  var i=0, timer=null, DUR=7000, reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  Q.forEach(function(q,k){ var b=document.createElement('button'); b.type='button'; b.textContent=ini(q[0]); b.title=q[0]+', '+q[1]; b.setAttribute('aria-label','Quote from '+q[0]+', '+q[1]); b.setAttribute('aria-pressed',k===0); b.addEventListener('click',function(){go(k,true);}); faces.appendChild(b); });
-  function paint(){ var q=Q[i]; document.getElementById('qText').textContent=q[2]; document.getElementById('qName').textContent=q[0]; document.getElementById('qCo').textContent=q[1]; document.getElementById('qAv').textContent=ini(q[0]); faces.querySelectorAll('button').forEach(function(b,k){b.setAttribute('aria-pressed',k===i);}); }
-  function go(k,user){ i=(k+Q.length)%Q.length; card.classList.add('swap'); setTimeout(function(){ paint(); card.classList.remove('swap'); },260); restart(); }
-  function restart(){ clearTimeout(timer); bar.classList.remove('run'); void bar.offsetWidth; if(reduce) return; bar.style.setProperty('--qdur',DUR+'ms'); bar.classList.add('run'); timer=setTimeout(function(){go(i+1);},DUR); }
-  document.getElementById('qPrev').addEventListener('click',function(){go(i-1,true);});
-  document.getElementById('qNext').addEventListener('click',function(){go(i+1,true);});
-  var wrap=document.getElementById('quotes');
-  wrap.addEventListener('mouseenter',function(){clearTimeout(timer);bar.classList.remove('run');});
-  wrap.addEventListener('mouseleave',restart);
-  if('IntersectionObserver' in window){ new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting) restart(); else {clearTimeout(timer);bar.classList.remove('run');} });},{threshold:.3}).observe(wrap); }
 })();
 /* Lazy media: summit video when the recap band nears the viewport; Instagram embed.js when reels near */
 (function(){

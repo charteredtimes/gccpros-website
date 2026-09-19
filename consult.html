@@ -8,7 +8,7 @@
 <meta name="gp:priority" content="0.95">
 <meta property="og:type" content="website"><meta property="og:site_name" content="GCCPROs"><meta property="og:title" content="GCC Consulting | GCCPROs"><meta property="og:description" content="Advice from people who have built GCCs: location, talent, operating model and a private expert network."><meta property="og:url" content="https://www.gccpros.com/consult"><meta property="og:image" content="https://www.gccpros.com/assets/img/og-consult.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.gccpros.com/assets/img/og-consult.jpg">
 <!-- gp:head -->
-<meta name="theme-color" content="#F5F7FB">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=a9bbc7ac">
-<link rel="stylesheet" href="/assets/css/gp.css?v=12e61dff">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=3ad74cb0">
+<link rel="stylesheet" href="/assets/css/gp.css?v=cdc44c27">
 <!-- /gp:head -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -79,6 +79,11 @@
 .portal-expert{background:var(--surface);color:var(--ink);border:1px solid var(--line-2);text-align:left;border-radius:18px!important;padding:11px 22px!important}
 .portal-expert small{display:block;font-weight:600;font-size:12px;margin-top:3px;color:var(--muted)}
 .portal-expert:hover{border-color:var(--brand)}
+.portal-login{display:inline-flex;align-items:center;gap:8px;align-self:center;padding:12px 18px;border-radius:999px;font-weight:700;font-size:14.5px;color:var(--brand);border:1px solid var(--brand-100);background:var(--brand-50);transition:background .2s,border-color .2s}
+.portal-login:hover{background:#fff;border-color:var(--brand)}
+.consulting-sections a.sec-login{margin-left:auto;display:inline-flex;align-items:center;gap:7px;color:#fff;background:var(--brand)}
+.consulting-sections a.sec-login:hover{background:var(--brand-600);color:#fff}
+@media(max-width:650px){.portal-login{justify-content:center}}
 .portal-private{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.6}
 .coverage-source{font-size:12px;color:var(--muted);padding:18px 0}
 .coverage-source a{color:var(--brand);text-decoration:underline}
@@ -128,7 +133,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 @media(max-width:600px){.network-invite{padding:22px 20px}.network-count>strong{font-size:56px}.network-book{width:100%}}
 
 /* ===== network extension (expertise, dialogs, forms) ===== */
-.network-extension{--ink:#0B1733;--navy:#0B1733;--teal:#2F5DA8;--aqua:#9DC0EE;--muted:#5B6782;--line:rgba(11,23,51,.10);--soft:#EEF3FB;--white:#FFFFFF;--heading:'Fraunces',Georgia,serif;--body:'Manrope',system-ui,sans-serif;color:#2A3752;line-height:1.6;font-family:var(--body)}
+.network-extension{--ink:#07122B;--navy:#07122B;--teal:#2F5DA8;--aqua:#9DC0EE;--muted:#4A5670;--line:rgba(7,18,43,.14);--soft:#EEF3FB;--white:#FFFFFF;--heading:'Fraunces',Georgia,serif;--body:'Manrope',system-ui,sans-serif;color:#1E2A44;line-height:1.6;font-family:var(--body)}
 .network-extension .section-wrap{max-width:1200px;padding-left:24px;padding-right:24px}
 .network-extension h2{font-size:clamp(30px,3.4vw,46px);line-height:1.12;letter-spacing:-.025em;font-weight:600;color:var(--ink)}
 .network-extension h3{font-weight:600;color:var(--ink)}
@@ -137,7 +142,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 .network-extension .expertise-section,.network-extension .engagements-section,.network-extension .join-section,.network-extension .faq-section{padding-top:clamp(56px,7vw,88px);padding-bottom:clamp(56px,7vw,88px)}
 .network-extension .button{border-radius:999px;background:var(--teal);color:#fff;border-color:transparent;gap:12px;font-weight:700;box-shadow:0 8px 20px rgba(47,93,168,.22)}
 .network-extension .button:hover{background:#244A88;transform:translateY(-2px)}
-.network-extension .button.outline{background:#fff;color:var(--ink);border:1px solid rgba(11,23,51,.18);box-shadow:none}
+.network-extension .button.outline{background:#fff;color:var(--ink);border:1px solid rgba(7,18,43,.24);box-shadow:none}
 .network-extension .button.outline:hover{border-color:var(--teal);color:var(--teal);background:#fff}
 .network-extension .button.pale{background:var(--aqua);color:var(--navy)}
 .network-extension .button.pale:hover{background:#fff}
@@ -150,30 +155,30 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 .network-extension .capability h3{font-size:24px}
 .network-extension .cap-num{font-family:'JetBrains Mono',monospace;font-weight:500}
 .network-extension .cap-action{font-size:13px;font-weight:700}
-.network-extension .network-section{background:#ECF1F8;padding-top:clamp(56px,7vw,88px);padding-bottom:clamp(56px,7vw,88px)}
-.network-extension .search,.network-extension .sector-select select{border-radius:14px;border:1px solid rgba(11,23,51,.16);background:#fff}
+.network-extension .network-section{background:#F7F9FC;padding-top:clamp(56px,7vw,88px);padding-bottom:clamp(56px,7vw,88px)}
+.network-extension .search,.network-extension .sector-select select{border-radius:14px;border:1px solid rgba(7,18,43,.24);background:#fff}
 .network-extension .search>span{color:var(--teal)}
-.network-extension .filter-tabs button{border-radius:999px;border:1px solid rgba(11,23,51,.16);background:#fff;color:#2A3752;font-weight:700;font-size:13px;padding:9px 16px}
+.network-extension .filter-tabs button{border-radius:999px;border:1px solid rgba(7,18,43,.24);background:#fff;color:#1E2A44;font-weight:700;font-size:13px;padding:9px 16px}
 .network-extension .filter-tabs button.active{background:var(--ink);border-color:var(--ink);color:#fff}
 .network-extension .expert-card{border-radius:22px;padding:26px;background:#fff;border:1px solid var(--line);box-shadow:0 1px 2px rgba(11,23,51,.05),0 2px 8px rgba(11,23,51,.04);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s cubic-bezier(.16,1,.3,1),border-color .3s}
-.network-extension .expert-card:hover{transform:translateY(-6px);box-shadow:0 10px 24px rgba(11,23,51,.08),0 30px 70px rgba(11,23,51,.12);border-color:rgba(47,93,168,.3)}
+.network-extension .expert-card:hover{transform:translateY(-6px);box-shadow:0 10px 24px rgba(11,23,51,.08),0 30px 70px rgba(7,18,43,.16);border-color:rgba(47,93,168,.3)}
 .network-extension .expert-card .card-bottom{margin-top:auto}
 .network-extension .expert-card h3{font-size:24px}
 .network-extension .tags span{background:#EEF3FB;color:#1A3A6E;border-radius:999px;padding:5px 10px;font-weight:600}
-.network-extension .save-button{border-radius:12px;background:#fff;color:var(--teal);border-color:rgba(11,23,51,.16)}
+.network-extension .save-button{border-radius:12px;background:#fff;color:var(--teal);border-color:rgba(7,18,43,.24)}
 .network-extension .save-button.saved{background:var(--teal);color:#fff;border-color:var(--teal)}
 .network-extension .empty-state{border-radius:20px;background:#fff}
 .network-extension .engagement-grid article{border-top:3px solid var(--teal);padding-top:24px}
 .network-extension .engagement-grid h3{font-size:25px;line-height:1.25}
-.network-extension .engagement-grid ul{list-style:none;padding:0;color:#2A3752;font-size:14px}
+.network-extension .engagement-grid ul{list-style:none;padding:0;color:#1E2A44;font-size:14px}
 .network-extension .engagement-grid li::before{content:'';flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:#E6F4F2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2315807A' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/11px no-repeat}
 .network-extension .support-section{padding-top:0;padding-bottom:40px}
-.support-details{border:1px solid rgba(11,23,51,.10);border-radius:20px;padding:22px 26px;background:#fff;box-shadow:0 1px 2px rgba(11,23,51,.05)}
-.support-details summary{font-size:17px;font-weight:700;cursor:pointer;color:#0B1733}
-.support-details p{font-size:15px;color:#5B6782;margin:16px 0}
-.support-details ul{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;padding-left:20px;font-size:15px;color:#2A3752;line-height:1.5}
+.support-details{border:1px solid rgba(7,18,43,.14);border-radius:20px;padding:22px 26px;background:#fff;box-shadow:0 1px 2px rgba(11,23,51,.05)}
+.support-details summary{font-size:17px;font-weight:700;cursor:pointer;color:#07122B}
+.support-details p{font-size:15px;color:#4A5670;margin:16px 0}
+.support-details ul{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;padding-left:20px;font-size:15px;color:#1E2A44;line-height:1.5}
 .support-details button{margin-top:20px;color:#2F5DA8;font-weight:700;text-decoration:underline;text-underline-offset:4px}
-.network-extension .trust-section{background:#0B1733;color:#C9D4E8;padding-top:clamp(56px,7vw,88px);padding-bottom:clamp(56px,7vw,88px)}
+.network-extension .trust-section{background:#07122B;color:#C9D4E8;padding-top:clamp(56px,7vw,88px);padding-bottom:clamp(56px,7vw,88px)}
 .network-extension .trust-section h2,.network-extension .trust-section h3{color:#fff}
 .network-extension .trust-section .eyebrow{color:#9DC0EE}
 .network-extension .trust-sub,.network-extension .process-list p{color:#AFBCD6}
@@ -190,66 +195,66 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 .network-extension .faq-grid details{border-top-color:rgba(11,23,51,.14)}
 .network-extension .faq-grid summary{font-size:16px;color:var(--ink)}
 .network-extension .faq-grid p{font-size:15px}
-.network-extension .closing{background:#0B1733;padding:clamp(48px,6vw,72px) 0;position:relative;overflow:hidden;isolation:isolate}
+.network-extension .closing{background:#07122B;padding:clamp(48px,6vw,72px) 0;position:relative;overflow:hidden;isolation:isolate}
 .network-extension .closing::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 90% at 100% 0%,rgba(47,93,168,.55),transparent 60%)}
 .network-extension .closing h2{color:#fff;max-width:680px}
 .network-extension .closing .eyebrow{color:#9DC0EE}
-.network-extension .shortlist-bar{background:#0B1733;color:#fff;border-radius:16px;box-shadow:0 18px 40px rgba(11,23,51,.35)}
+.network-extension .shortlist-bar{background:#07122B;color:#fff;border-radius:16px;box-shadow:0 18px 40px rgba(11,23,51,.35)}
 .network-extension .shortlist-bar .text-button{color:#9DC0EE}
 .network-extension .shortlist-bar strong{color:#9DC0EE}
-.network-extension #toast{background:#0B1733;color:#fff;border-radius:12px;border:0}
+.network-extension #toast{background:#07122B;color:#fff;border-radius:12px;border:0}
 /* dialogs + forms */
-.network-extension dialog{margin:auto;background:#fff;color:#0B1733;border:1px solid rgba(11,23,51,.10);border-radius:26px;padding:34px;max-height:90vh;box-shadow:0 30px 100px rgba(11,23,51,.35);color-scheme:light}
+.network-extension dialog{margin:auto;background:#fff;color:#07122B;border:1px solid rgba(7,18,43,.14);border-radius:26px;padding:34px;max-height:90vh;box-shadow:0 30px 100px rgba(11,23,51,.35);color-scheme:light}
 .network-extension dialog::backdrop{background:rgba(11,23,51,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .network-extension dialog h2{font-size:32px}
-.network-extension .close-dialog{color:#5B6782;border-radius:50%}
-.network-extension .close-dialog:hover{background:#EEF3FB;color:#0B1733}
-.network-extension .modal-intro,.network-extension .field-note,.network-extension .commercial-note,.network-extension .range-label{color:#5B6782}
-.network-extension label{color:#2A3752}
+.network-extension .close-dialog{color:#4A5670;border-radius:50%}
+.network-extension .close-dialog:hover{background:#EEF3FB;color:#07122B}
+.network-extension .modal-intro,.network-extension .field-note,.network-extension .commercial-note,.network-extension .range-label{color:#4A5670}
+.network-extension label{color:#1E2A44}
 .network-extension .demo-notice,.network-extension .profile-privacy{background:#EEF3FB;color:#1A3A6E;border-radius:14px}
-.network-extension .steps{color:#5B6782}
+.network-extension .steps{color:#4A5670}
 .network-extension .steps .current{color:var(--teal);border-bottom-color:var(--teal)}
-.network-extension input:not([type=checkbox]):not([type=range]):not([type=radio]),.network-extension textarea,.network-extension select{border:1px solid rgba(11,23,51,.18);background:#fff;color:#0B1733;border-radius:12px;font-size:15px;transition:border-color .2s,box-shadow .2s}
+.network-extension input:not([type=checkbox]):not([type=range]):not([type=radio]),.network-extension textarea,.network-extension select{border:1px solid rgba(7,18,43,.24);background:#fff;color:#07122B;border-radius:12px;font-size:15px;transition:border-color .2s,box-shadow .2s}
 .network-extension input:not([type=checkbox]):not([type=range]):focus,.network-extension textarea:focus,.network-extension select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 4px #DCE7F7}
 .network-extension .search input{border:0!important;box-shadow:none!important;background:transparent!important}
 .network-extension input:disabled{opacity:.6}
 .network-extension input[type=checkbox]{accent-color:#2F5DA8;flex:none}
-.network-extension .checkbox{color:#2A3752}
+.network-extension .checkbox{color:#1E2A44}
 .network-extension .form-error,.network-extension .field-error{color:#B42335}
 .network-extension .form-error{line-height:1.6}
 .network-extension [aria-invalid=true]{border-color:#B42335!important;outline:1px solid #B42335}
 .network-extension .field-error{display:block;min-height:0;font-size:12.5px;font-weight:600}
 .network-extension .field-error:empty{display:none}
-.network-extension label>small{font-weight:500;font-size:12px;margin-top:5px;display:block;color:#8792A8}
+.network-extension label>small{font-weight:500;font-size:12px;margin-top:5px;display:block;color:#6B7690}
 .network-extension .application-result{background:#E6F4F2;color:#0E5E59;border-left:3px solid #15807A;border-radius:0 14px 14px 0}
 .network-extension .inline-link{color:#2F5DA8;background:none;border:0;text-decoration:underline;font:inherit;padding:0;cursor:pointer}
 .network-extension .bot-trap{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
-.network-extension .brief-summary,.network-extension .review-summary{background:#F5F7FB;border:1px solid rgba(11,23,51,.10);border-radius:14px;padding:20px}
-.network-extension .brief-summary dd,.network-extension .review-summary dd{white-space:pre-wrap;overflow-wrap:anywhere;color:#2A3752}
+.network-extension .brief-summary,.network-extension .review-summary{background:#FFFFFF;border:1px solid rgba(7,18,43,.14);border-radius:14px;padding:20px}
+.network-extension .brief-summary dd,.network-extension .review-summary dd{white-space:pre-wrap;overflow-wrap:anywhere;color:#1E2A44}
 .network-extension .brief-summary dt,.network-extension .review-summary dt{color:#2F5DA8}
 .network-extension .privacy-split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
-.network-extension .privacy-split>div{border:1px solid rgba(11,23,51,.10);padding:15px;border-radius:14px;background:#F5F7FB}
+.network-extension .privacy-split>div{border:1px solid rgba(7,18,43,.14);padding:15px;border-radius:14px;background:#FFFFFF}
 .network-extension .privacy-split strong{font-size:13px;color:#1A3A6E;display:block}
-.network-extension .privacy-split span{font-size:12.5px;color:#5B6782;display:block;margin-top:6px}
+.network-extension .privacy-split span{font-size:12.5px;color:#4A5670;display:block;margin-top:6px}
 .network-extension .expert-progress{padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
-.network-extension .expert-progress li{padding:7px 12px;border:1px solid rgba(11,23,51,.14);border-radius:999px;font-size:12px;color:#5B6782;font-weight:600}
+.network-extension .expert-progress li{padding:7px 12px;border:1px solid rgba(11,23,51,.14);border-radius:999px;font-size:12px;color:#4A5670;font-weight:600}
 .network-extension .expert-progress .current{background:#2F5DA8;border-color:#2F5DA8;color:#fff}
 .network-extension .expert-wizard{max-width:860px;width:calc(100% - 32px)}
 .network-extension .expert-wizard h3{font-size:22px;margin-bottom:14px}
-.network-extension .choice-set,.network-extension .repeat-row{border:1px solid rgba(11,23,51,.14);padding:18px;border-radius:16px;margin:18px 0;min-width:0;background:#F9FBFE}
+.network-extension .choice-set,.network-extension .repeat-row{border:1px solid rgba(11,23,51,.14);padding:18px;border-radius:16px;margin:18px 0;min-width:0;background:#FFFFFF}
 .network-extension legend{font-size:13px;color:#2F5DA8;padding:0 8px;font-weight:700}
 .network-extension .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
 .network-extension .choice-grid label{margin:0}
 .network-extension .expert-wizard textarea{min-height:120px}
 .network-extension .form-row.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-.network-extension .form-actions{flex-wrap:wrap;gap:15px;border-top-color:rgba(11,23,51,.10)}
-.network-extension .profile-body p{color:#5B6782;overflow-wrap:anywhere}
+.network-extension .form-actions{flex-wrap:wrap;gap:15px;border-top-color:rgba(7,18,43,.14)}
+.network-extension .profile-body p{color:#4A5670;overflow-wrap:anywhere}
 .network-extension #expert-human{margin:22px 0;min-height:65px}
 .network-extension .status-message{color:#15807A}
-.network-extension .client-budget{border:1px solid rgba(11,23,51,.12);border-radius:14px;margin:4px 0 24px;padding:15px 18px 18px;min-width:0;background:#F9FBFE}
-.network-extension .client-budget legend{padding:0 7px;font-size:14px;font-weight:700;color:#0B1733}
-.network-extension .client-budget legend span{font-weight:500;color:#5B6782}
-.network-extension .client-budget p{font-size:13px;line-height:1.6;color:#5B6782;margin:0 0 15px}
+.network-extension .client-budget{border:1px solid rgba(7,18,43,.16);border-radius:14px;margin:4px 0 24px;padding:15px 18px 18px;min-width:0;background:#FFFFFF}
+.network-extension .client-budget legend{padding:0 7px;font-size:14px;font-weight:700;color:#07122B}
+.network-extension .client-budget legend span{font-weight:500;color:#4A5670}
+.network-extension .client-budget p{font-size:13px;line-height:1.6;color:#4A5670;margin:0 0 15px}
 .network-extension .budget-fields{display:grid;grid-template-columns:90px minmax(100px,1fr) minmax(155px,1.2fr);gap:12px}
 .network-extension .budget-fields label{margin:0;font-size:12px;min-width:0}
 .network-extension .budget-fields input,.network-extension .budget-fields select{width:100%;min-width:0}
@@ -316,12 +321,12 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
       <div class="eyebrow eyebrow--pill">GCC setup &amp; scale-up advisory</div>
       <h1 class="disp">GCC consulting, <span class="grad">from people who have built GCCs.</span></h1>
       <p class="sub">Work with senior leaders who have built and run GCCs. Get practical support for setup, growth and transformation, or specialist help with technology, talent, finance and operations.</p>
-      <div class="portal-actions"><button class="portal-primary brief-open">Book a consultation now</button><button class="portal-expert expert-open">Register as an expert<small>Selected engagements · $200–$500 / hour</small></button></div><p class="portal-private">Expert identities stay private. Every consultation is matched to your brief.</p><section class="hero-network" aria-labelledby="hero-network-title"><div class="hero-network-heading"><h2 id="hero-network-title"><strong>124+</strong> experts onboarded</h2><span>And growing</span></div><div class="expert-counts"><button type="button" class="expert-count" data-capability="Setup &amp; strategy" aria-label="Explore Setup &amp; strategy: 65 GCC heads"><strong data-expert-count="65" aria-hidden="true">65</strong><span class="count-label" aria-hidden="true">GCC heads</span><span class="count-meter" aria-hidden="true"><i style="--count-width:100.0%"></i></span></button><button type="button" class="expert-count" data-capability="Technology &amp; AI" aria-label="Explore Technology &amp; AI: 21 AI &amp; Technology experts"><strong data-expert-count="21" aria-hidden="true">21</strong><span class="count-label" aria-hidden="true">AI &amp; Technology experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:32.3%"></i></span></button><button type="button" class="expert-count" data-capability="Finance &amp; operations" aria-label="Explore Finance &amp; operations: 27 Finance experts"><strong data-expert-count="27" aria-hidden="true">27</strong><span class="count-label" aria-hidden="true">Finance experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:41.5%"></i></span></button><button type="button" class="expert-count" data-capability="Leadership &amp; talent" aria-label="Explore Leadership &amp; talent: 7 HR experts"><strong data-expert-count="7" aria-hidden="true">7</strong><span class="count-label" aria-hidden="true">HR experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:10.8%"></i></span></button></div><p class="hero-network-hint">Select a specialism to explore relevant expertise.</p></section>
+      <div class="portal-actions"><button class="portal-primary brief-open">Book a consultation now</button><button class="portal-expert expert-open">Register as an expert<small>Selected engagements · $200–$500 / hour</small></button><a class="portal-login" href="/expert-dashboard"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg> Expert login</a></div><p class="portal-private">Expert identities stay private. Every consultation is matched to your brief.</p><section class="hero-network" aria-labelledby="hero-network-title"><div class="hero-network-heading"><h2 id="hero-network-title"><strong>124+</strong> experts onboarded</h2><span>And growing</span></div><div class="expert-counts"><button type="button" class="expert-count" data-capability="Setup &amp; strategy" aria-label="Explore Setup &amp; strategy: 65 GCC heads"><strong data-expert-count="65" aria-hidden="true">65</strong><span class="count-label" aria-hidden="true">GCC heads</span><span class="count-meter" aria-hidden="true"><i style="--count-width:100.0%"></i></span></button><button type="button" class="expert-count" data-capability="Technology &amp; AI" aria-label="Explore Technology &amp; AI: 21 AI &amp; Technology experts"><strong data-expert-count="21" aria-hidden="true">21</strong><span class="count-label" aria-hidden="true">AI &amp; Technology experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:32.3%"></i></span></button><button type="button" class="expert-count" data-capability="Finance &amp; operations" aria-label="Explore Finance &amp; operations: 27 Finance experts"><strong data-expert-count="27" aria-hidden="true">27</strong><span class="count-label" aria-hidden="true">Finance experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:41.5%"></i></span></button><button type="button" class="expert-count" data-capability="Leadership &amp; talent" aria-label="Explore Leadership &amp; talent: 7 HR experts"><strong data-expert-count="7" aria-hidden="true">7</strong><span class="count-label" aria-hidden="true">HR experts</span><span class="count-meter" aria-hidden="true"><i style="--count-width:10.8%"></i></span></button></div><p class="hero-network-hint">Select a specialism to explore relevant expertise.</p></section>
     </div>
 
     <div class="botmount reveal" id="gccbot"></div>
   </div>
-</header><nav class="consulting-sections" aria-label="On this page"><div class="wrap"><a href="#network">Find expertise</a><a href="#engagements">Engagement options</a><a href="#trust">How it works</a><a href="#join">Join as an expert</a><a href="/expert-dashboard">Expert login</a></div></nav>
+</header><nav class="consulting-sections" aria-label="On this page"><div class="wrap"><a href="#network">Find expertise</a><a href="#engagements">Engagement options</a><a href="#trust">How it works</a><a href="#join">Join as an expert</a><a class="sec-login" href="/expert-dashboard"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg> Expert login</a></div></nav>
 
 <!-- WHY -->
 <section class="why practitioner-section" id="practitioner-network"><div class="wrap">
@@ -374,7 +379,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
   <div class="form-step" data-panel="2" hidden=""><div id="brief-summary" class="review-summary"></div><p class="commercial-note">Your selected profiles indicate the experience you need. Fit, availability, eligibility, identity disclosure and client fees require confirmation before an engagement.</p></div>
   <div id="brief-error" class="form-error" role="alert"></div><div class="form-actions"><button id="brief-back" class="button outline" type="button" hidden="">Back</button><button id="brief-next" class="button" type="button">Continue</button><button id="brief-submit" class="button" type="button" hidden="">Send consultation request</button><button id="brief-download" class="text-button" type="button" hidden="">Download a copy</button></div><div id="brief-result" class="application-result" hidden="" role="status"></div><p id="brief-download-status" class="status-message" role="status"></p></form>
 </dialog>
-<dialog id="expert-dialog" class="large-dialog expert-wizard" aria-labelledby="expert-title"><button class="close-dialog" aria-label="Close expert application">×</button><p class="eyebrow">GCCPROs · PRIVATE EXPERT REGISTRATION</p><h2 id="expert-title">Register as an expert</h2><p class="modal-intro">A complete professional profile for private GCCPROs verification. Your identity and documents are never included in the client profile.</p><div class="privacy-banner" style="display:flex;align-items:center;gap:10px;background:#EEF3FB;border:1px solid #DCE7F7;border-radius:12px;padding:11px 14px;margin:12px 0;color:#1A3A6E;font-size:13.5px;line-height:1.5"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><span><strong style="color:#0B1733">Clients cannot see your identity.</strong> They only ever see an anonymised capability profile — never your name, contact details, employer or ID.</span></div><p id="expert-availability" role="status" class="field-note">Checking private registration availability…</p><ol class="expert-progress" aria-label="Application progress"><li data-expert-step="0">1. Contact</li><li data-expert-step="1">2. Work profile</li><li data-expert-step="2">3. Skills</li><li data-expert-step="3">4. Experience</li><li data-expert-step="4">5. Identity</li><li data-expert-step="5">6. Review</li></ol><form id="expert-form" novalidate=""><div class="bot-trap" aria-hidden="true"><label>Leave empty<input name="website" autocomplete="off" tabindex="-1"></label></div>
+<dialog id="expert-dialog" class="large-dialog expert-wizard" aria-labelledby="expert-title"><button class="close-dialog" aria-label="Close expert application">×</button><p class="eyebrow">GCCPROs · PRIVATE EXPERT REGISTRATION</p><h2 id="expert-title">Register as an expert</h2><p class="modal-intro">A complete professional profile for private GCCPROs verification. Your identity and documents are never included in the client profile.</p><div class="privacy-banner" style="display:flex;align-items:center;gap:10px;background:#EEF3FB;border:1px solid #DCE7F7;border-radius:12px;padding:11px 14px;margin:12px 0;color:#1A3A6E;font-size:13.5px;line-height:1.5"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><span><strong style="color:#07122B">Clients cannot see your identity.</strong> They only ever see an anonymised capability profile — never your name, contact details, employer or ID.</span></div><p id="expert-availability" role="status" class="field-note">Checking private registration availability…</p><ol class="expert-progress" aria-label="Application progress"><li data-expert-step="0">1. Contact</li><li data-expert-step="1">2. Work profile</li><li data-expert-step="2">3. Skills</li><li data-expert-step="3">4. Experience</li><li data-expert-step="4">5. Identity</li><li data-expert-step="5">6. Review</li></ol><form id="expert-form" novalidate=""><div class="bot-trap" aria-hidden="true"><label>Leave empty<input name="website" autocomplete="off" tabindex="-1"></label></div>
 <section data-expert-panel="0"><h3>01 / Contact &amp; professional identity</h3><p class="field-note">Use details GCCPROs can verify with you. Contact ownership and credentials are checked during review.</p><div class="form-row"><label>Legal full name <span aria-hidden="true">*</span><input id="ex-name" name="name" type="text" required="" maxlength="120" autocomplete="name" aria-describedby="err-name"><small class="field-error" id="err-name" data-error-key="name"></small></label><label>Email address <span aria-hidden="true">*</span><input id="ex-email" name="email" type="email" required="" maxlength="180" autocomplete="email" aria-describedby="err-email"><small class="field-error" id="err-email" data-error-key="email"></small></label></div><div class="form-row" data-otp-verify style="align-items:flex-start"><label style="flex:1 1 100%">Verify your email <span aria-hidden="true">*</span><span id="ex-otp-badge" style="display:none;margin-left:8px;color:#1E874B;font-weight:700">&#10003; Verified</span><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px"><button type="button" id="ex-otp-send" style="background:#0A1628;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 13px system-ui;cursor:pointer">Send code</button><input id="ex-otp-code" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code" style="max-width:150px;padding:9px;border:1px solid #D4DBE4;border-radius:8px;font:14px system-ui;letter-spacing:2px" disabled><button type="button" id="ex-otp-verify" style="background:#2F5DA8;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 13px system-ui;cursor:pointer;opacity:.5" disabled>Verify</button></div><small id="ex-otp-msg" class="field-note" style="display:block;margin-top:6px">We&#39;ll email a 6-digit code to confirm this address before you can submit.</small></label></div><div class="form-row"><label>Phone with country code <span aria-hidden="true">*</span><input id="ex-phone" name="phone" type="tel" required="" maxlength="16" placeholder="+919876543210" autocomplete="tel" aria-describedby="err-phone"><small class="field-error" id="err-phone" data-error-key="phone"></small></label><label>Personal LinkedIn URL <span aria-hidden="true">*</span><input id="ex-linkedin" name="linkedin" type="url" required="" maxlength="300" placeholder="https://www.linkedin.com/in/your-profile" autocomplete="url" aria-describedby="err-linkedin"><small class="field-error" id="err-linkedin" data-error-key="linkedin"></small></label></div><div class="form-row"><label>Country of residence <span aria-hidden="true">*</span><select id="ex-country" name="country" required=""><option value="">Select country</option><option value="India">India</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="United Arab Emirates">United Arab Emirates</option><option value="Singapore">Singapore</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="France">France</option><option value="Netherlands">Netherlands</option><option value="Ireland">Ireland</option><option value="Poland">Poland</option><option value="Philippines">Philippines</option><option value="Malaysia">Malaysia</option><option value="China">China</option><option value="Japan">Japan</option><option value="Switzerland">Switzerland</option><option value="Sweden">Sweden</option><option value="Spain">Spain</option><option value="Italy">Italy</option><option value="Saudi Arabia">Saudi Arabia</option><option value="Qatar">Qatar</option><option value="Bahrain">Bahrain</option><option value="Kuwait">Kuwait</option><option value="Oman">Oman</option><option value="Egypt">Egypt</option><option value="South Africa">South Africa</option><option value="Kenya">Kenya</option><option value="Nigeria">Nigeria</option><option value="Brazil">Brazil</option><option value="Mexico">Mexico</option><option value="Argentina">Argentina</option><option value="Sri Lanka">Sri Lanka</option><option value="Bangladesh">Bangladesh</option><option value="Nepal">Nepal</option><option value="Pakistan">Pakistan</option><option value="Vietnam">Vietnam</option><option value="Indonesia">Indonesia</option><option value="Thailand">Thailand</option><option value="Hong Kong">Hong Kong</option><option value="South Korea">South Korea</option><option value="Israel">Israel</option><option value="Turkey">Turkey</option><option value="Romania">Romania</option><option value="Hungary">Hungary</option><option value="Czech Republic">Czech Republic</option><option value="Portugal">Portugal</option><option value="Belgium">Belgium</option><option value="Denmark">Denmark</option><option value="Norway">Norway</option><option value="Finland">Finland</option><option value="Austria">Austria</option><option value="Greece">Greece</option><option value="New Zealand">New Zealand</option><option value="Mauritius">Mauritius</option><option value="Morocco">Morocco</option><option value="Ghana">Ghana</option><option value="Ethiopia">Ethiopia</option><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="Peru">Peru</option><option value="Other">Other</option></select><small class="field-error" id="err-country" data-error-key="country"></small></label><label>City <span aria-hidden="true">*</span><select id="ex-city" name="city" required=""><option value="">Select country first</option></select><input type="text" id="ex-city-other" placeholder="Type your city" style="display:none;margin-top:8px"><small class="field-error" id="err-city" data-error-key="city"></small></label></div></section>
 <section data-expert-panel="1" hidden=""><h3>02 / Detailed work profile</h3><div class="form-row"><label>Current / most recent role <span aria-hidden="true">*</span><input id="ex-role" name="role" type="text" required="" maxlength="160" aria-describedby="err-role"><small class="field-error" id="err-role" data-error-key="role"></small></label><label>Current / most recent organisation <span aria-hidden="true">*</span><input id="ex-employer" name="employer" type="text" required="" maxlength="180" aria-describedby="err-employer"><small class="field-error" id="err-employer" data-error-key="employer"></small></label></div><div class="form-row"><label>Employment status *<select id="ex-employment" name="employment" required="" aria-describedby="err-employment"><option value="">Select</option><option>Currently employed</option><option>Independent / portfolio career</option><option>Retired</option></select><small class="field-error" id="err-employment" data-error-key="employment"></small></label><label>Primary capability *<select id="ex-capability" name="capability" required="" aria-describedby="err-capability"><option value="">Select</option><option>Setup &amp; strategy</option><option>Leadership &amp; talent</option><option>Technology &amp; AI</option><option>Finance &amp; operations</option></select><small class="field-error" id="err-capability" data-error-key="capability"></small></label></div><div class="form-row three"><label>Total professional years <span aria-hidden="true">*</span><input id="ex-totalYears" name="totalYears" type="number" required="" min="5" max="60" step="1" aria-describedby="err-totalYears"><small class="field-error" id="err-totalYears" data-error-key="totalYears"></small></label><label>Years working with GCCs <span aria-hidden="true">*</span><input id="ex-gccYears" name="gccYears" type="number" required="" min="0" max="60" step="1" aria-describedby="err-gccYears"><small class="field-error" id="err-gccYears" data-error-key="gccYears"></small></label><label>Years in leadership <span aria-hidden="true">*</span><input id="ex-leadershipYears" name="leadershipYears" type="number" required="" min="0" max="60" step="1" aria-describedby="err-leadershipYears"><small class="field-error" id="err-leadershipYears" data-error-key="leadershipYears"></small></label></div><label>Your professional profile *<textarea id="ex-profile" name="profile" required="" minlength="150" maxlength="6000" placeholder="Describe your mandates, functional depth, scale of responsibility, team leadership and work across geographies. Keep employer-confidential information out." aria-describedby="err-profile"></textarea><small>150–6,000 characters</small><small class="field-error" id="err-profile" data-error-key="profile"></small></label><label>Selected achievements &amp; outcomes *<textarea id="ex-achievements" name="achievements" required="" minlength="80" maxlength="4000" placeholder="Describe two or three significant capabilities you have built or transformed, your personal contribution and non-confidential outcomes." aria-describedby="err-achievements"></textarea><small>80–4,000 characters</small><small class="field-error" id="err-achievements" data-error-key="achievements"></small></label><fieldset class="choice-set"><legend>Industry experience (up to 5) *</legend><div class="choice-grid"><label class="checkbox"><input type="checkbox" name="sectors" value="GCC"><span>GCC</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Financial services"><span>Financial services</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Technology"><span>Technology</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Healthcare &amp; life sciences"><span>Healthcare &amp; life sciences</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Retail &amp; consumer"><span>Retail &amp; consumer</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Industrial &amp; engineering"><span>Industrial &amp; engineering</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Energy &amp; utilities"><span>Energy &amp; utilities</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Telecom &amp; media"><span>Telecom &amp; media</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Cross-industry"><span>Cross-industry</span></label><label class="checkbox"><input type="checkbox" name="sectors" value="Others"><span>Others</span></label></div><small class="field-error" data-error-key="sectors"></small></fieldset><fieldset class="choice-set"><legend>Regions supported *</legend><div class="choice-grid"><label class="checkbox"><input type="checkbox" name="regions" value="India"><span>India</span></label><label class="checkbox"><input type="checkbox" name="regions" value="APAC"><span>APAC</span></label><label class="checkbox"><input type="checkbox" name="regions" value="Europe"><span>Europe</span></label><label class="checkbox"><input type="checkbox" name="regions" value="North America"><span>North America</span></label><label class="checkbox"><input type="checkbox" name="regions" value="Middle East &amp; Africa"><span>Middle East &amp; Africa</span></label><label class="checkbox"><input type="checkbox" name="regions" value="Latin America"><span>Latin America</span></label></div><small class="field-error" data-error-key="regions"></small></fieldset><label>Languages for consultations <span aria-hidden="true">*</span><input id="ex-languages" name="languages" type="text" required="" maxlength="150" placeholder="Use the menu below to add languages" aria-describedby="err-languages" readonly="" value="English"><select id="ex-lang-pick" style="margin-top:8px"><option value="">Add a language…</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Tamil">Tamil</option><option value="Telugu">Telugu</option><option value="Kannada">Kannada</option><option value="Malayalam">Malayalam</option><option value="Marathi">Marathi</option><option value="Bengali">Bengali</option><option value="Gujarati">Gujarati</option><option value="Punjabi">Punjabi</option><option value="Urdu">Urdu</option><option value="Arabic">Arabic</option><option value="French">French</option><option value="German">German</option><option value="Spanish">Spanish</option><option value="Mandarin">Mandarin</option><option value="Japanese">Japanese</option><option value="Portuguese">Portuguese</option><option value="Dutch">Dutch</option><option value="Italian">Italian</option><option value="Russian">Russian</option><option value="Filipino">Filipino</option><option value="Bahasa (Indonesian/Malay)">Bahasa (Indonesian/Malay)</option><option value="Korean">Korean</option><option value="Other">Other</option></select><button type="button" id="ex-lang-clear" style="margin-top:6px;background:none;border:none;color:#2F5DA8;font-size:12px;cursor:pointer;padding:0">Clear languages</button><small class="field-error" id="err-languages" data-error-key="languages"></small></label><div class="form-row"><label>Preferred honorarium *<select id="expert-rate" name="rate"><option value="200" selected="selected">USD 200 / hour</option><option value="225">USD 225 / hour</option><option value="250">USD 250 / hour</option><option value="275">USD 275 / hour</option><option value="300">USD 300 / hour</option><option value="325">USD 325 / hour</option><option value="350">USD 350 / hour</option><option value="375">USD 375 / hour</option><option value="400">USD 400 / hour</option><option value="425">USD 425 / hour</option><option value="450">USD 450 / hour</option><option value="475">USD 475 / hour</option><option value="500">USD 500 / hour</option></select><small class="field-error" data-error-key="rate"></small></label><label>Available hours per month <span aria-hidden="true">*</span><input id="ex-availability" name="availability" type="number" required="" min="1" max="160" step="1" aria-describedby="err-availability"><small class="field-error" id="err-availability" data-error-key="availability"></small></label></div><p class="field-note">Rates and assignments are agreed per engagement; registration does not guarantee work.</p></section>
 <section data-expert-panel="2" hidden=""><h3>03 / Skills and expertise</h3><p class="field-note">Add 2–12 distinct skills. For each, tell us your level, years of practice and evidence of your contribution.</p><div id="skill-rows"></div><small class="field-error" data-error-key="skills"></small><button type="button" class="button outline" id="add-skill">+ Add another skill</button></section>
@@ -406,7 +411,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
       </div>
       <div>
         <h4>Work with us</h4>
-        <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
+        <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/expert-dashboard">Expert login</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
       </div>
       <div>
         <h4>Community</h4>
@@ -447,11 +452,11 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
   var STYLE=`
   :host{display:block;width:100%}
   *{box-sizing:border-box;margin:0;padding:0}
-  .panel{font-family:'Manrope',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;color:#0B1733;position:relative;
-    background:#fff;border:1px solid rgba(11,23,51,.10);border-radius:24px;
-    box-shadow:0 10px 24px rgba(11,23,51,.08),0 30px 70px rgba(11,23,51,.12);
+  .panel{font-family:'Manrope',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;color:#07122B;position:relative;
+    background:#fff;border:1px solid rgba(7,18,43,.14);border-radius:24px;
+    box-shadow:0 10px 24px rgba(11,23,51,.08),0 30px 70px rgba(7,18,43,.16);
     overflow:hidden;display:flex;flex-direction:column;height:min(560px,calc(100vh - 160px))}
-  .head{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #E6EBF3;background:linear-gradient(180deg,#F9FBFE,#fff)}
+  .head{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #DFE5F0;background:linear-gradient(180deg,#FFFFFF,#fff)}
   .ava{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #DCE7F7;display:flex;align-items:center;justify-content:center;flex:none}
   .ava img{display:block;width:22px;height:26px}
   .t{font-weight:800;font-size:15px;line-height:1.2}
@@ -459,23 +464,23 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
   .s i{width:7px;height:7px;border-radius:50%;background:#15807A;box-shadow:0 0 0 3px rgba(21,128,122,.18)}
   .msgs{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:20px;display:flex;flex-direction:column;justify-content:flex-start;gap:12px;background:#fff}
   .msg{overflow-wrap:anywhere;max-width:84%;width:fit-content;font-size:14.5px;line-height:1.55;padding:11px 14px;border-radius:16px;animation:pop .3s cubic-bezier(.16,1,.3,1)}
-  .msg.asst{align-self:flex-start;background:#F1F5FB;border:1px solid #E3EAF5;border-bottom-left-radius:5px;color:#0B1733}
+  .msg.asst{align-self:flex-start;background:#F1F5FB;border:1px solid #E3EAF5;border-bottom-left-radius:5px;color:#07122B}
   .msg.user{align-self:flex-end;background:#2F5DA8;color:#fff;border-bottom-right-radius:5px}
   @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .typing{align-self:flex-start;width:fit-content;background:#F1F5FB;border:1px solid #E3EAF5;border-radius:16px;border-bottom-left-radius:5px;padding:13px 16px;display:inline-flex;gap:5px}
-  .typing i{width:7px;height:7px;border-radius:50%;background:#8792A8;animation:bl 1.2s infinite}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#6B7690;animation:bl 1.2s infinite}
   .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
   @keyframes bl{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
   .opts{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:8px;padding:8px 20px 6px}
   .opt{font-family:inherit;font-size:13.5px;font-weight:700;color:#2F5DA8;background:#EEF3FB;border:1px solid #DCE7F7;border-radius:999px;padding:9px 15px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
   .opt:hover{background:#DCE7F7;border-color:#2F5DA8;transform:translateY(-1px)}
-  .inp{flex:0 0 auto;display:flex;gap:8px;padding:14px 16px;border-top:1px solid #E6EBF3;background:#F9FBFE}
-  .inp input{flex:1;min-width:0;font-family:inherit;font-size:14.5px;color:#0B1733;background:#fff;border:1px solid #D5DDEA;border-radius:12px;padding:12px 14px}
+  .inp{flex:0 0 auto;display:flex;gap:8px;padding:14px 16px;border-top:1px solid #DFE5F0;background:#FFFFFF}
+  .inp input{flex:1;min-width:0;font-family:inherit;font-size:14.5px;color:#07122B;background:#fff;border:1px solid #C9D3E4;border-radius:12px;padding:12px 14px}
   .inp input:focus{outline:none;border-color:#2F5DA8;box-shadow:0 0 0 4px #DCE7F7}
   .inp input:disabled{opacity:.5}
   .inp button{border:none;cursor:pointer;width:46px;flex:none;border-radius:12px;background:#2F5DA8;color:#fff;font-size:18px;font-weight:800}
   .inp button:disabled{opacity:.45;cursor:default}
-  .note{flex:0 0 auto;font-size:11.5px;color:#5B6782;text-align:center;padding:0 16px 12px;background:#F9FBFE}
+  .note{flex:0 0 auto;font-size:11.5px;color:#4A5670;text-align:center;padding:0 16px 12px;background:#FFFFFF}
   @media(max-width:900px){.panel{height:520px}}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 `;
