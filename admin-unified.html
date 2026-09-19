@@ -2687,7 +2687,7 @@ if ('serviceWorker' in navigator) {
    try{
      var r=await fetch(FN,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Key":key},body:JSON.stringify({action:"adminList"})});
      var j=await r.json();
-     if(!r.ok||!j.ok){ body.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     if(!r.ok||!j.ok){ body.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&(j.message||j.error))||r.status)+"</p>"; return; }
      rows=j.leads||[];
      if(!rows.length){ body.innerHTML="<p style='color:#5B6B7B'>No sample-download leads yet.</p>"; return; }
      var h="<div style='margin:0 0 10px;color:#5B6B7B;font-size:12px'>"+rows.length+" verified downloader(s)</div>";
@@ -2763,7 +2763,7 @@ if ('serviceWorker' in navigator) {
    try{
      var r=await api("?action=list&offset=0",{});
      var j=await r.json();
-     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&(j.message||j.error))||r.status)+"</p>"; return; }
      var rows=j.rows||[];
      if(!rows.length){ b.innerHTML="<p style='color:#5B6B7B'>No expert applications yet.</p>"; return; }
      var h="<div style='margin:0 0 10px;color:#5B6B7B;font-size:12px'>"+rows.length+" application(s)"+(j.hasMore?" (more available)":"")+"</div>";
@@ -2806,7 +2806,7 @@ if ('serviceWorker' in navigator) {
    try{
      var r=await api("?action=detail&id="+encodeURIComponent(id),{});
      var j=await r.json();
-     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&j.error)||r.status)+"</p>"; return; }
+     if(!r.ok){ b.innerHTML="<p style='color:#c0392b'>Error: "+esc((j&&(j.message||j.error))||r.status)+"</p>"; return; }
      var p=j.profile||{}, rev=j.review||{}, checks=rev.checks||{}, notes=rev.notes||"";
      var h="";
      h+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:0 0 14px'>";
@@ -2872,7 +2872,7 @@ if ('serviceWorker' in navigator) {
    try{
      var r=await api("?action=review&id="+encodeURIComponent(id),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status,version:version,notes:notes,checks:checks})});
      var j=await r.json().catch(function(){return {};});
-     if(!r.ok){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc((j&&j.error)||r.status)+(r.status===409?" (someone else updated this - reopen to refresh)":""); } return; }
+     if(!r.ok){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc((j&&(j.message||j.error))||r.status)+(r.status===409?" (someone else updated this - reopen to refresh)":""); } return; }
      if(msg){ msg.style.color="#1E874B"; msg.textContent="Saved."; }
      setTimeout(function(){ erDetail(id); },700);
    }catch(e){ if(msg){ msg.style.color="#c0392b"; msg.textContent="Error: "+esc(e.message||e); } }
