@@ -240,7 +240,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
    }
    if(action==='projects'&&request.method==='GET'){
     const rows=await repo.projList(id);
-    return reply({rows:(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,status:x.status,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,notes:x.notes,createdAt:x.created_at}))});
+    return reply({rows:(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,eligibility:x.eligibility,status:x.status,response:x.expert_response,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,disbursedAmount:x.disbursed_amount,disbursedAt:x.disbursed_at,disbursementMode:x.disbursement_mode,disbursementRef:x.disbursement_ref,rating:x.rating,feedback:x.feedback,notes:x.notes,createdAt:x.created_at}))});
    }
    if(action==='blacklist'&&request.method==='POST'){
     let d={};try{d=JSON.parse(await request.text()||'{}')}catch{}
