@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GCCPROS — GCC Intelligence Console (SSO)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -9,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#2F5DA8;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
   *{box-sizing:border-box}
   body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
   header{background:var(--dark);color:#fff;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -39,7 +40,7 @@
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:nth-child(even) td{background:#FAFCFF}
   .pill{display:inline-block;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:20px}
-  .pill.high{background:#E4F4EA;color:var(--ok)}.pill.med{background:#FFF4DC;color:#8a6d12}
+  .pill.high{background:#E4F4EA;color:var(--ok)}.pill.med{background:#EEF3FB;color:#1A3A6E}
   .det-btn{background:none;border:1px solid var(--line);color:var(--steel);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:bold}
   .det{background:var(--pale)!important}
   .det dl{margin:0;display:grid;grid-template-columns:200px 1fr;gap:4px 14px;font-size:12.5px}
@@ -96,7 +97,7 @@
 #customFilters .cf-head-left{display:flex;align-items:center;gap:10px}
 #customFilters .cf-head-title{font-family:Georgia,serif;font-size:14px;color:var(--navy);font-weight:bold;line-height:1.15}
 #customFilters .cf-head-sub{font-size:11px;color:var(--grey);margin-top:2px;line-height:1.35}
-#customFilters .cf-head-badge{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:#8a6d12;font-weight:bold;background:#FFF8E5;border:1px solid #E7D89A;padding:3px 8px;border-radius:999px;white-space:nowrap}
+#customFilters .cf-head-badge{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:#1A3A6E;font-weight:bold;background:#EEF3FB;border:1px solid #9DC0EE;padding:3px 8px;border-radius:999px;white-space:nowrap}
 #customFilterRows{display:grid;grid-template-columns:1fr;gap:10px}
 .cf-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px 10px;transition:border-color .2s,box-shadow .2s}
 .cf-row:hover{border-color:#A8C2E8;box-shadow:0 2px 6px rgba(31,56,100,.08)}
@@ -111,7 +112,7 @@
    v6.9 PREMIUM POLISH  (overrides late in cascade)
    ======================================================== */
 :root{
-  --gold-2:#B98F1A;
+  --gold-2:#2F5DA8;
   --ink:#0F1E38;
   --line-soft:#E5ECF7;
   --pale-2:#F6F9FE;
@@ -126,7 +127,7 @@
 body{
   background:
     radial-gradient(1100px 520px at 12% -10%, rgba(31,56,100,.06) 0%, transparent 65%),
-    radial-gradient(900px 480px at 100% 12%, rgba(201,162,39,.06) 0%, transparent 65%),
+    radial-gradient(900px 480px at 100% 12%, rgba(47,93,168,.06) 0%, transparent 65%),
     #F4F7FC;
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
@@ -269,11 +270,11 @@ button{
   box-shadow:0 4px 12px rgba(31,56,100,.10);
 }
 .btn.gold{
-  background:linear-gradient(180deg,#DBB63A 0%, var(--gold) 55%, var(--gold-2) 100%);
+  background:linear-gradient(180deg,#5B86C9 0%, var(--gold) 55%, var(--gold-2) 100%);
   color:var(--ink);
-  box-shadow:0 6px 16px rgba(201,162,39,.30);
+  box-shadow:0 6px 16px rgba(47,93,168,.30);
 }
-.btn.gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,162,39,.42)}
+.btn.gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(47,93,168,.42)}
 .btns{gap:12px;margin-top:18px}
 
 /* Status pills */
@@ -312,9 +313,9 @@ button{
 .det-btn:hover{background:var(--pale);border-color:#A8C2E8}
 .pill{padding:3px 10px;font-size:10.5px;letter-spacing:.6px}
 .pill.high{background:linear-gradient(180deg,#E9F6EE 0%, #DCEFE3 100%);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(30,126,69,.16)}
-.pill.med{background:linear-gradient(180deg,#FFF4DC 0%, #FBE9BE 100%);color:#8a6d12;box-shadow:inset 0 0 0 1px rgba(138,109,18,.18)}
+.pill.med{background:linear-gradient(180deg,#EEF3FB 0%, #DCE7F7 100%);color:#1A3A6E;box-shadow:inset 0 0 0 1px rgba(26,58,110,.18)}
 .cfgwarn{border:1px solid rgba(179,38,30,.20);box-shadow:0 2px 8px rgba(179,38,30,.06)}
-.notice{background:#FFF8E5;border:1px solid #F1E2A5;color:#7A5F12;padding:10px 14px;border-radius:10px;font-size:12.5px}
+.notice{background:#EEF3FB;border:1px solid #9DC0EE;color:#1A3A6E;padding:10px 14px;border-radius:10px;font-size:12.5px}
 .restbl th{background:linear-gradient(180deg,#243d6d 0%, var(--navy) 100%)}
 .stat{
   background:linear-gradient(180deg,#F6F9FE 0%, var(--pale) 100%);

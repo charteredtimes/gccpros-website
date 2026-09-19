@@ -27,6 +27,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GCCPROs — Talent Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,9 +38,9 @@
 <style>
 :root{
   --ink:#1D2226; --gold:#0A66C2; --gold-light:#70B5F9; --blue:#1E40AF; --blue-mid:#1E3A8A;
-  --brand-blue:#1E40AF; --brand-orange:#E85D04; --brand-orange-dark:#c44b00;
+  --brand-blue:#1E40AF; --brand-orange:#2F5DA8; --brand-orange-dark:#2F5DA8;
   --cream:#F8F7F4; --white:#FFFFFF; --surface:#FFFFFF; --muted:#64748B; --border:#E2E8F0;
-  --green:#059669; --red:#DC2626; --amber:#F59E0B;
+  --green:#059669; --red:#DC2626; --amber:#5B86C9;
   --brand:#0A66C2; /* overridden per-customer on login */
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -114,12 +115,12 @@ th{background:var(--cream);font-weight:700;font-size:11px;text-transform:upperca
 tr:last-child td{border-bottom:none;}
 .row-click{cursor:pointer;} .row-click:hover{background:#FAFCFF;}
 .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10.5px;font-weight:600;white-space:nowrap;}
-.b-green{background:#D1FAE5;color:var(--green);} .b-amber{background:#FEF3C7;color:#92400E;}
+.b-green{background:#D1FAE5;color:var(--green);} .b-amber{background:#DCE7F7;color:#1A3A6E;}
 .b-red{background:#FEE2E2;color:var(--red);} .b-blue{background:#DBEAFE;color:var(--brand-blue);}
 .b-grey{background:#EEF1F4;color:var(--muted);}
 .src-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px;}
 .src-direct{background:rgba(10,102,194,.12);color:var(--gold);}
-.src-referral{background:#FFF0E2;color:var(--brand-orange);}
+.src-referral{background:#EEF3FB;color:var(--brand-orange);}
 .locked{color:var(--muted);font-style:italic;}
 .mask{letter-spacing:1px;color:var(--muted);}
 
@@ -139,8 +140,8 @@ tr:last-child td{border-bottom:none;}
 
 /* duplicate gate */
 .gate{background:#FFFBEB;border:1px solid var(--amber);border-radius:10px;padding:20px 22px;margin-bottom:18px;}
-.gate h4{color:#78350F;font-size:15px;margin-bottom:6px;}
-.gate p{font-size:13px;color:#92400E;line-height:1.55;margin-bottom:14px;}
+.gate h4{color:#1A3A6E;font-size:15px;margin-bottom:6px;}
+.gate p{font-size:13px;color:#1A3A6E;line-height:1.55;margin-bottom:14px;}
 .gate-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
 /* candidate detail */
@@ -152,7 +153,7 @@ tr:last-child td{border-bottom:none;}
 .detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:18px 0 14px;}
 .detail-tab{background:none;border:none;padding:9px 14px;font-family:inherit;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
 .detail-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
-.detail-tab.cv-tab{background:var(--brand-orange);color:#fff;border-radius:8px;font-weight:800;font-size:14.5px;padding:10px 18px;border-bottom:2px solid transparent;box-shadow:0 3px 10px rgba(232,93,4,.32);}
+.detail-tab.cv-tab{background:var(--brand-orange);color:#fff;border-radius:8px;font-weight:800;font-size:14.5px;padding:10px 18px;border-bottom:2px solid transparent;box-shadow:0 3px 10px rgba(47,93,168,.32);}
 .detail-tab.cv-tab:hover{filter:brightness(.95);color:#fff;}
 .detail-tab.cv-tab.active{color:#fff;border-bottom-color:transparent;}
 .dpane{display:none;} .dpane.active{display:block;}
@@ -711,7 +712,7 @@ async function openCand(id){
 
   // referral privacy note + FULL referrer submission (everything except referrer identity)
   if(a.source==='referral'){
-    html += `<div style="font-size:12px;color:var(--brand-orange);background:#FFF0E2;border-radius:6px;padding:8px 12px;margin:10px 0;">🔒 Referred candidate — the referrer's identity is withheld by GCCPROs policy.</div>`;
+    html += `<div style="font-size:12px;color:var(--brand-orange);background:#EEF3FB;border-radius:6px;padding:8px 12px;margin:10px 0;">🔒 Referred candidate — the referrer's identity is withheld by GCCPROs policy.</div>`;
     html += referralPanelHTML(a, false);
   }
 
@@ -865,7 +866,7 @@ function buildSampleCV(a){
    h2{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#0A66C2;border-bottom:2px solid #E2E8F0;padding-bottom:4px;margin:22px 0 8px;}
    .job b{font-size:14px;} .muted{color:#64748B;font-size:12px;} ul{margin:6px 0 0 18px;} li{font-size:13px;margin:3px 0;}
    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;} .chip{background:#EFF6FF;color:#1E40AF;padding:3px 10px;border-radius:4px;font-size:12px;}
-   .banner{background:#FFFBEB;border:1px solid #F59E0B;color:#92400E;font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:18px;}
+   .banner{background:#FFFBEB;border:1px solid #5B86C9;color:#1A3A6E;font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:18px;}
   </style></head>
   <body oncontextmenu="return false" ondragstart="return false">
    <div class="wm">GCCPROS · VIEW ONLY</div>

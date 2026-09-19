@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Internal tools carry <meta name="robots" content="noindex"> and are left crawlable so that tag is seen.
+Disallow: /functions/
+
+Sitemap: https://www.gccpros.com/sitemap.xml

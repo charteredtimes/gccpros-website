@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>GCCPROS Admin — Demo / Sign in as user</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#2F5DA8;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
   *{box-sizing:border-box}
   body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
   header{background:var(--dark);color:#fff;padding:14px 24px;font-family:Georgia,serif;font-size:19px;font-weight:bold}
@@ -22,7 +23,7 @@
   .btn.gold{background:var(--gold);color:var(--navy)}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .muted{color:var(--grey);font-size:12px;margin:8px 0}
-  .warn{background:#FFF4DC;border:1px solid #E9D48A;color:#6b5312;border-radius:10px;padding:11px 14px;font-size:12.5px;margin:6px 0 14px}
+  .warn{background:#EEF3FB;border:1px solid #9DC0EE;color:#1A3A6E;border-radius:10px;padding:11px 14px;font-size:12.5px;margin:6px 0 14px}
   .msg{font-size:13px;font-weight:bold;padding:9px 12px;border-radius:8px;margin-top:12px;display:none}
   .msg.ok{background:#E4F4EA;color:var(--ok);display:block}.msg.bad{background:#FBE7E5;color:var(--bad);display:block}.msg.info{background:var(--pale);color:var(--navy);display:block}
   .hide{display:none}

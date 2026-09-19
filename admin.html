@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GCCPROs Admin Console</title>
@@ -11,12 +12,12 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; background: #0A1628; color: #E5E7EB; margin: 0; min-height: 100vh; }
   header { background: #14213D; padding: 14px 24px; border-bottom: 1px solid #1F2A44; display: flex; align-items: center; justify-content: space-between; }
   h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 0.4px; }
-  h2 { margin: 0 0 12px; font-size: 15px; color: #C9973A; }
+  h2 { margin: 0 0 12px; font-size: 15px; color: #5B86C9; }
   main { padding: 20px 24px; max-width: 1300px; margin: 0 auto; }
   .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid #1F2A44; }
   .tab { padding: 10px 18px; background: none; border: none; color: #9CA3AF; cursor: pointer; font-size: 13px; font-weight: 500; }
   .tab:hover { color: #FFF; }
-  .tab.active { color: #FFF; border-bottom: 2px solid #C9973A; }
+  .tab.active { color: #FFF; border-bottom: 2px solid #5B86C9; }
   .panel { display: none; }
   .panel.active { display: block; }
   .card { background: #14213D; padding: 20px 22px; border-radius: 6px; margin-bottom: 16px; border: 1px solid #1F2A44; }
@@ -25,22 +26,22 @@
   th { color: #9CA3AF; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.7px; background: #0F1A33; }
   tr:hover td { background: #0F1A33; }
   input, select, button { padding: 7px 11px; border-radius: 3px; border: 1px solid #2D3A5C; background: #0A1628; color: #E5E7EB; font-size: 13px; font-family: inherit; }
-  input:focus, select:focus { outline: none; border-color: #C9973A; }
+  input:focus, select:focus { outline: none; border-color: #5B86C9; }
   button { cursor: pointer; transition: 0.15s; }
-  button:hover { border-color: #C9973A; }
-  button.primary { background: #C9973A; border-color: #C9973A; color: #0A1628; font-weight: 600; }
-  button.primary:hover { background: #D4A75A; }
+  button:hover { border-color: #5B86C9; }
+  button.primary { background: #5B86C9; border-color: #5B86C9; color: #0A1628; font-weight: 600; }
+  button.primary:hover { background: #5B86C9; }
   button.danger { background: #DC2626; border-color: #DC2626; color: #FFF; }
   button.danger:hover { background: #EF4444; }
   button.small { padding: 4px 8px; font-size: 11px; margin-right: 3px; }
   .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .badge-pending { background: rgba(251,191,36,0.15); color: #FBBF24; }
+  .badge-pending { background: rgba(91,134,201,0.15); color: #5B86C9; }
   .badge-approved { background: rgba(16,185,129,0.15); color: #34D399; }
   .badge-suspended { background: rgba(248,113,113,0.15); color: #F87171; }
   .badge-rejected { background: rgba(107,114,128,0.15); color: #9CA3AF; }
   .filter-row { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
   #login-screen { padding: 80px 24px; text-align: center; max-width: 460px; margin: 0 auto; }
-  #login-screen h1 { font-size: 22px; margin-bottom: 8px; color: #C9973A; }
+  #login-screen h1 { font-size: 22px; margin-bottom: 8px; color: #5B86C9; }
   #login-screen p { color: #9CA3AF; margin: 8px 0 24px; }
   #login-screen input { width: 100%; padding: 12px 14px; font-size: 14px; margin-bottom: 12px; }
   #login-screen button { width: 100%; padding: 12px; font-size: 14px; }
@@ -48,13 +49,13 @@
   .toast.ok { background: #10B981; color: #FFF; }
   .toast.err { background: #DC2626; color: #FFF; }
   .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 18px; }
-  .stat { background: #0F1A33; padding: 12px 14px; border-radius: 4px; border-left: 3px solid #C9973A; }
+  .stat { background: #0F1A33; padding: 12px 14px; border-radius: 4px; border-left: 3px solid #5B86C9; }
   .stat-num { font-size: 22px; font-weight: 700; color: #FFF; }
   .stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: #9CA3AF; margin-top: 2px; }
   ul.security { line-height: 1.7; padding-left: 18px; }
   ul.security li { margin-bottom: 8px; }
-  ul.security strong { color: #C9973A; }
-  code { background: #0F1A33; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #FBBF24; }
+  ul.security strong { color: #5B86C9; }
+  code { background: #0F1A33; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #5B86C9; }
   .field-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 14px; }
   .field-row label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
   .field-row input { min-width: 200px; }
@@ -90,7 +91,7 @@
       <button class="tab" onclick="showTab(event,'submissions')">Submissions</button>
       <button class="tab" onclick="showTab(event,'insider')">Insider Community</button>
       <button class="tab" onclick="showTab(event,'council')">Leadership Council</button>
-      <button class="tab" onclick="showTab(event,'oppsJobs')" style="border-left:2px solid var(--gold,#C9973A);padding-left:10px;">Opps · Jobs</button>
+      <button class="tab" onclick="showTab(event,'oppsJobs')" style="border-left:2px solid var(--gold,#5B86C9);padding-left:10px;">Opps · Jobs</button>
       <button class="tab" onclick="showTab(event,'oppsApps')">Opps · Applications</button>
       <button class="tab" onclick="showTab(event,'oppsPartners')">Opps · Partners</button>
       <button class="tab" onclick="showTab(event,'oppsReferrals')">Opps · Referrals</button>
@@ -575,7 +576,7 @@ function showDetails(idx) {
       <div onclick="event.stopPropagation()" style="background:#14213D;border:1px solid #2D3A5C;border-radius:6px;max-width:760px;width:92%;max-height:88vh;overflow-y:auto;">
         <div style="padding:18px 24px;border-bottom:1px solid #1F2A44;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <h2 style="margin:0;color:#C9973A;font-size:16px;">${esc(u.fullName || u.email)}</h2>
+            <h2 style="margin:0;color:#5B86C9;font-size:16px;">${esc(u.fullName || u.email)}</h2>
             <div style="color:#9CA3AF;font-size:12px;margin-top:2px;">${esc(u.email)} · <span class="badge badge-${u.status.toLowerCase()}">${esc(u.status)}</span></div>
           </div>
           <button onclick="this.closest('[onclick]').remove()" style="background:none;border:none;color:#9CA3AF;font-size:24px;cursor:pointer;line-height:1;">×</button>
@@ -975,7 +976,7 @@ function showSubmissionDetails(idx) {
     '<div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9998;" onclick="this.remove()">' +
       '<div onclick="event.stopPropagation()" style="background:#14213D;border:1px solid #2D3A5C;border-radius:6px;max-width:780px;width:92%;max-height:88vh;overflow-y:auto;">' +
         '<div style="padding:18px 24px;border-bottom:1px solid #1F2A44;display:flex;justify-content:space-between;align-items:center;">' +
-          '<h2 style="margin:0;color:#C9973A;font-size:16px;">' + esc(titleText) + '</h2>' +
+          '<h2 style="margin:0;color:#5B86C9;font-size:16px;">' + esc(titleText) + '</h2>' +
           '<button onclick="this.closest(\'[onclick]\').remove()" style="background:none;border:none;color:#9CA3AF;font-size:24px;cursor:pointer;line-height:1;">x</button>' +
         '</div>' +
         '<table style="width:100%;border-collapse:collapse;">' + rowsHtml + '</table>' +

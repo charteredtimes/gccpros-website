@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GCCPROS — Demo Console (admin only)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -9,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#C9A227;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
+  :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#2F5DA8;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
   *{box-sizing:border-box}
   body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;color:#1c2535;background:#F4F7FC}
   header{background:var(--dark);color:#fff;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -39,7 +40,7 @@
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:nth-child(even) td{background:#FAFCFF}
   .pill{display:inline-block;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:20px}
-  .pill.high{background:#E4F4EA;color:var(--ok)}.pill.med{background:#FFF4DC;color:#8a6d12}
+  .pill.high{background:#E4F4EA;color:var(--ok)}.pill.med{background:#EEF3FB;color:#1A3A6E}
   .det-btn{background:none;border:1px solid var(--line);color:var(--steel);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:bold}
   .det{background:var(--pale)!important}
   .det dl{margin:0;display:grid;grid-template-columns:200px 1fr;gap:4px 14px;font-size:12.5px}
@@ -77,7 +78,7 @@
 .demo-bar .demo-label{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
 .demo-bar select{padding:6px 28px 6px 12px;border-radius:3px;border:1px solid rgba(255,255,255,.3);background:#fff;color:#1B3B72;font-size:13px;font-weight:600;cursor:pointer}
 .demo-bar .demo-hint{font-size:11px;color:rgba(255,255,255,.7);margin-left:auto}
-.demo-bar .demo-current{font-size:11px;color:#FFE19C;font-weight:600;letter-spacing:.5px}
+.demo-bar .demo-current{font-size:11px;color:#DCE7F7;font-weight:600;letter-spacing:.5px}
 .not-authorized{padding:48px 24px;text-align:center;color:#B3261E}
 .not-authorized h2{color:#1B3B72;margin-bottom:12px}
 .not-authorized .who{font-size:13px;color:#5A6B82;margin:14px 0}
