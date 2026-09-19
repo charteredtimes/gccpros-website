@@ -244,22 +244,63 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
    if(d.applicationStatus==='approved'&&!d.closed){
      $('#d-approved').classList.remove('hide');
      var e=d.earnings||{};$('#e-fees').textContent=money(e.fees,e.currency);$('#e-disb').textContent=money(e.disbursed,e.currency);$('#e-pending').textContent=money(e.pending,e.currency);$('#e-count').textContent=(e.count!=null?e.count:0);
-     var g=d.engagements||[];
-     if(!g.length){$('#d-engagements').innerHTML='<p class="muted">No engagements yet. We will notify you when a suitable project is matched.</p>';}
-     else{var h='<table><thead><tr><th>Engagement</th><th>Stage</th><th>Fee</th><th>Disbursement</th><th></th></tr></thead><tbody>';
-       g.forEach(function(x){
-         var act='';
-         if(x.status==='active'&&x.response==='pending'){act='<button class="btn sm" onclick="EXP.respond(\''+x.id+'\',\'accepted\')">Accept</button> <button class="btn ghost sm" onclick="EXP.respond(\''+x.id+'\',\'declined\')">Decline</button>';}
-         var disb=x.paid?(money(x.disbursedAmount||x.fee,x.currency)+(x.disbursedAt?'<br><span class=\'muted\'>'+String(x.disbursedAt).slice(0,10)+(x.disbursementMode?' · '+esc(x.disbursementMode):'')+'</span>':'')):'<span class="muted">Pending</span>';
-         h+='<tr><td><b>'+esc(x.title)+'</b>'+(x.clientRef?'<br><span class="muted">'+esc(x.clientRef)+'</span>':'')+(x.rating?'<br><span class="pill" style="background:#eef3fb;color:#22496e">Rating '+esc(x.rating)+'/5</span>':'')+'</td><td>'+esc(engStatus(x))+'</td><td>'+(x.fee!=null?money(x.fee,x.currency):'–')+'</td><td>'+disb+'</td><td>'+act+'</td></tr>';
-       });
-       h+='</tbody></table>';$('#d-engagements').innerHTML=h;}
+     $('#d-engagements').innerHTML=(d.engagements||[]).length?(d.engagements||[]).map(engCard).join(''):'<p class="muted">No engagements yet. We will notify you when a suitable project is matched.</p>';
    } else { $('#d-approved').classList.add('hide'); }
    // open requests
    var rq=d.requests||[];
    $('#d-requests').innerHTML=rq.length?('Open requests: '+rq.map(function(x){return '<span class="pill" style="background:#fff7e6;color:#8a5a00">'+esc(x.type.replace('_',' '))+' (pending)</span>';}).join(' ')):'No open requests.';
  }
- window.EXP={respond:function(pid,resp){if(resp==='declined'&&!confirm('Decline this engagement?'))return;api('engagementRespond',{email:S.email,token:S.token,projectId:pid,response:resp}).then(function(r){if(r.ok){toast(resp==='accepted'?'Engagement accepted':'Engagement declined');load();}else{toast((r.j&&r.j.message)||'Could not update');}});}};
+ function fmtDT(s){if(!s)return '';try{var dd=new Date(s);if(isNaN(dd))return String(s);return dd.toLocaleString([],{dateStyle:'medium',timeStyle:'short'});}catch(e){return String(s);}}
+ function engCard(x){
+  var hourly=x.billingType==='hourly';
+  var val=hourly?null:(x.value!=null?x.value:(x.honorarium!=null?x.honorarium:x.fee));
+  var feeLine=hourly?('Hourly · '+money(x.agreedRate,x.currency)+'/hr · Approved '+(x.approvedHours||0)+'h · Accrued '+money(x.value,x.currency)):('Fixed fee · '+money(val,x.currency));
+  var disb=x.paid?('Disbursed '+money(x.disbursedAmount||val,x.currency)+(x.disbursedAt?' on '+String(x.disbursedAt).slice(0,10):'')+(x.disbursementMode?' · '+esc(x.disbursementMode):'')):'<span class="muted">Not yet disbursed</span>';
+  var h='<div class="card" style="box-shadow:none;margin:0 0 12px">';
+  h+='<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><b style="font-size:15px">'+esc(x.title)+'</b>'+(x.clientRef?' <span class="muted">· '+esc(x.clientRef)+'</span>':'')+'</div><span class="pill" style="background:#eef3fb;color:#22496e">'+esc(engStatus(x))+'</span></div>';
+  h+='<div class="muted" style="margin-top:4px;font-size:13px">'+feeLine+'</div>';
+  if(x.terms)h+='<div class="muted" style="margin-top:2px;font-size:12.5px">Terms: '+esc(x.terms)+'</div>';
+  h+='<div style="margin-top:6px;font-size:13px">Disbursement: '+disb+(x.rating?' · <span class="pill" style="background:#eef3fb;color:#22496e">Rating '+esc(x.rating)+'/5</span>':'')+'</div>';
+  if((x.status==='active'||x.status==='assigned')&&x.response==='pending'){
+   h+='<div style="margin-top:8px">'+(x.consentRequired!==false&&!x.consentAcceptedAt?'<span class="muted" style="font-size:12.5px">Please accept the engagement terms below before accepting.</span><br>':'')+'<button class="btn sm" onclick="EXP.respond(\''+x.id+'\',\'accepted\')">Accept engagement</button> <button class="btn ghost sm" onclick="EXP.respond(\''+x.id+'\',\'declined\')">Decline</button></div>';
+  }
+  if(x.consentRequired!==false&&x.status!=='cancelled'){
+   if(x.consentAcceptedAt){h+='<div class="msg ok" style="margin-top:8px;font-size:12.5px">&#10003; Engagement terms accepted on '+fmtDT(x.consentAcceptedAt)+'</div>';}
+   else{h+='<div style="margin-top:8px;background:#F7FAFF;border:1px solid #dbe6f5;border-radius:9px;padding:10px 12px">'
+     +'<div style="font-weight:700;font-size:13px">Engagement terms</div>'
+     +'<ul style="margin:6px 0;padding-left:18px;font-size:12.5px;color:#33414F"><li>I will use this engagement only for the agreed scope; no marketing, soliciting the client, or alternate use.</li><li>The payment terms agreed at engagement will not be disputed later.</li><li>On early closure, my earning is pro-rata for work done.</li><li>No confidential or identity information of the client will be sought or shared.</li></ul>'
+     +'<button class="btn sm" onclick="EXP.consent(\''+x.id+'\')">Accept engagement terms</button></div>';}
+  }
+  if(x.status!=='cancelled'&&x.status!=='completed'&&!x.paid){
+   if(x.confirmedSlot){h+='<div class="msg ok" style="margin-top:8px;font-size:12.5px">Confirmed time: '+fmtDT(x.confirmedSlot)+'</div>';}
+   else{
+    var slots=x.slots||[];var proposed=slots.filter(function(s){return s.status==='proposed';});
+    var deadlinePassed=x.respondBy&&(new Date(x.respondBy).getTime()<Date.now());
+    h+='<div style="margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-weight:700;font-size:13px">Choose your availability</div>';
+    if(x.respondBy)h+='<div class="muted" style="font-size:12px">Please propose times by '+fmtDT(x.respondBy)+'.</div>';
+    if(proposed.length){h+='<div style="font-size:12.5px;margin:4px 0">Proposed: '+proposed.map(function(s){return fmtDT(s.start);}).join(' · ')+' <span class="muted">(awaiting confirmation)</span></div>';}
+    if(deadlinePassed&&!proposed.length){h+='<div class="msg" style="color:#B7791F;font-size:12.5px">The window to propose times has closed. Contact the helpdesk.</div>';}
+    else{h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">';
+     for(var i=0;i<4;i++){h+='<input type="datetime-local" id="slot-'+x.id+'-'+i+'" style="padding:8px;font-size:13px">';}
+     h+='</div><button class="btn sm" style="margin-top:6px" onclick="EXP.slots(\''+x.id+'\')">'+(proposed.length?'Update availability':'Send availability')+'</button>';}
+    h+='</div>';
+   }
+  }
+  if(hourly&&(x.status==='active'||x.status==='assigned')){
+   h+='<div style="margin-top:8px;border-top:1px dashed #E3E8EF;padding-top:8px"><div style="font-weight:700;font-size:13px">Timesheet</div>';
+   var ts=x.timesheets||[];
+   if(ts.length){h+='<div style="font-size:12.5px;margin:4px 0">'+ts.map(function(t){var c=t.status==='approved'?'#1E874B':(t.status==='rejected'?'#8A98A8':'#B7791F');return '<div>'+esc(t.date)+' · '+esc(t.hours)+'h <span style="color:'+c+'">('+esc(t.status)+')</span>'+(t.reviewerNote?' <span class="muted">&ndash; '+esc(t.reviewerNote)+'</span>':'')+'</div>';}).join('')+'</div>';}
+   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="date" id="ts-'+x.id+'-date" style="padding:8px;font-size:13px"><input type="number" id="ts-'+x.id+'-hours" min="0.25" max="24" step="0.25" placeholder="Hours" style="padding:8px;font-size:13px"></div><input id="ts-'+x.id+'-note" placeholder="What did you work on? (optional)" style="margin-top:6px;padding:8px;font-size:13px"><button class="btn sm" style="margin-top:6px" onclick="EXP.timesheet(\''+x.id+'\')">Log time</button></div>';
+  }
+  h+='</div>';
+  return h;
+ }
+ window.EXP={
+  respond:function(pid,resp){if(resp==='declined'&&!confirm('Decline this engagement?'))return;api('engagementRespond',{email:S.email,token:S.token,projectId:pid,response:resp}).then(function(r){if(r.ok){toast(resp==='accepted'?'Engagement accepted':'Engagement declined');load();}else{toast((r.j&&r.j.message)||'Could not update');}});},
+  consent:function(pid){api('consentAccept',{email:S.email,token:S.token,projectId:pid}).then(function(r){if(r.ok){toast('Terms accepted');load();}else{toast((r.j&&r.j.message)||'Could not record consent');}});},
+  slots:function(pid){var arr=[];for(var i=0;i<4;i++){var el=document.getElementById('slot-'+pid+'-'+i);if(el&&el.value){arr.push({start:new Date(el.value).toISOString()});}}if(!arr.length){toast('Pick at least one time');return;}api('slotsPropose',{email:S.email,token:S.token,projectId:pid,slots:arr}).then(function(r){if(r.ok){toast('Availability sent');load();}else{toast((r.j&&r.j.message)||'Could not send');}});},
+  timesheet:function(pid){var dt=document.getElementById('ts-'+pid+'-date'),hr=document.getElementById('ts-'+pid+'-hours'),nt=document.getElementById('ts-'+pid+'-note');var date=dt&&dt.value,hours=hr&&hr.value;if(!date||!hours){toast('Enter date and hours');return;}api('timesheetSubmit',{email:S.email,token:S.token,projectId:pid,workDate:date,hours:Number(hours),notes:(nt&&nt.value)||''}).then(function(r){if(r.ok){toast('Time logged');load();}else{toast((r.j&&r.j.message)||'Could not log time');}});}
+ };
 
  // save (submit for review)
  $('#save').addEventListener('click',function(){
