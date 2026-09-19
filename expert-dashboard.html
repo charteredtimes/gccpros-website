@@ -1,53 +1,72 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Expert Dashboard | GCCPROs</title>
-<meta name="robots" content="noindex,nofollow">
+<title>Expert Dashboard | GCCPROs</title><meta name="robots" content="noindex,nofollow">
 <style>
-:root{--navy:#0A1628;--azure:#2E8BFF;--ink:#1B2733;--muted:#5B6B7B;--line:#E3E8EF;--bg:#eef2f7}
+:root{--navy:#0A1628;--azure:#2E8BFF;--ink:#1B2733;--muted:#5B6B7B;--line:#E3E8EF;--bg:#eef2f7;--ok:#1E874B;--warn:#B7791F;--err:#C0392B}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
-.wrap{max-width:920px;margin:0 auto;padding:22px 16px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.wrap{max-width:960px;margin:0 auto;padding:22px 16px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .wm{font-weight:800;font-size:20px;color:var(--navy)}.wm span{color:var(--azure)}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:0 0 16px;box-shadow:0 8px 24px rgba(10,22,40,.05)}
 h1{font-size:22px;margin:0 0 4px;color:var(--navy)}h2{font-size:16px;margin:0 0 12px;color:var(--navy)}
 label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:10px 0 4px}
 input,select,textarea{width:100%;padding:10px 12px;border:1px solid #D4DBE4;border-radius:9px;font:15px system-ui;color:var(--ink);background:#fff}
-textarea{min-height:90px;resize:vertical}
+textarea{min-height:84px;resize:vertical}
 .btn{background:var(--azure);color:#fff;border:none;border-radius:10px;padding:11px 18px;font:700 14px system-ui;cursor:pointer}
 .btn.dark{background:var(--navy)}.btn.ghost{background:#fff;color:var(--navy);border:1px solid #cfd8e3}
+.btn.warn{background:var(--warn)}.btn.err{background:var(--err)}.btn.sm{padding:7px 12px;font-size:13px}
 .btn:disabled{opacity:.55;cursor:default}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:640px){.row{grid-template-columns:1fr}}
-.muted{color:var(--muted);font-size:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.row{grid-template-columns:1fr}}
+.muted{color:var(--muted);font-size:13px}.link{color:var(--azure);cursor:pointer;background:none;border:none;font:inherit;padding:0}
 .badge{display:inline-block;padding:3px 11px;border-radius:999px;color:#fff;font:700 12px system-ui}
-.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.kpi .box{background:#F4F7FB;border:1px solid var(--line);border-radius:12px;padding:14px}
-.kpi .box b{display:block;font-size:22px;color:var(--navy)}
-.msg{font-size:13.5px;margin-top:8px}.err{color:#c0392b}.ok{color:#1E874B}
-table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left;padding:8px;border-bottom:1px solid #EEF1F5}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:640px){.kpi{grid-template-columns:1fr 1fr}}
+.kpi .box{background:#F4F7FB;border:1px solid var(--line);border-radius:12px;padding:12px}.kpi .box b{display:block;font-size:20px;color:var(--navy)}
+.msg{font-size:13.5px;margin-top:8px}.err{color:var(--err)}.ok{color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px;border-bottom:1px solid #EEF1F5;vertical-align:top}
 .hide{display:none}
-.gridfields{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}
-@media(max-width:640px){.gridfields{grid-template-columns:1fr}}
+.gridfields{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}@media(max-width:640px){.gridfields{grid-template-columns:1fr}}
 .gridfields .f{padding:7px 0;border-bottom:1px solid #F1F4F8}.gridfields .f small{display:block;font-size:10.5px;text-transform:uppercase;color:#8A98A8}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;font:600 13px system-ui;opacity:0;transition:.25s;pointer-events:none}
-.toast.show{opacity:1}
+.banner{border-radius:10px;padding:11px 14px;font-size:13.5px;margin:0 0 12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;font:600 13px system-ui;opacity:0;transition:.25s;pointer-events:none}.toast.show{opacity:1}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font:600 11px system-ui}
 </style></head>
 <body>
 <div class="wrap">
-  <div class="top"><div class="wm">GCC<span>PROs</span> · Expert</div><button id="logout" class="btn ghost hide" style="padding:7px 12px">Sign out</button></div>
+  <div class="top"><div class="wm">GCC<span>PROs</span> · Expert</div><button id="logout" class="btn ghost hide sm">Sign out</button></div>
 
   <!-- LOGIN -->
-  <div id="login" class="card" style="max-width:520px;margin:32px auto">
+  <div id="login" class="card" style="max-width:520px;margin:28px auto">
     <h1>Expert sign in</h1>
-    <p class="muted">Sign in with the email you registered with. We will email you a 6-digit code.</p>
-    <label>Registered email</label>
-    <input id="li-email" type="email" autocomplete="email" placeholder="you@company.com">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
-      <button id="li-send" class="btn dark">Send code</button>
-      <input id="li-code" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" style="max-width:150px;letter-spacing:3px" disabled>
-      <button id="li-verify" class="btn" disabled>Verify &amp; enter</button>
-    </div>
+    <p class="muted">Sign in with your registered email and password.</p>
+    <label>Email</label><input id="li-email" type="email" autocomplete="username" placeholder="you@company.com">
+    <label>Password</label><input id="li-pass" type="password" autocomplete="current-password" placeholder="Your password">
+    <div style="margin-top:12px"><button id="li-btn" class="btn dark">Sign in</button></div>
     <div id="li-msg" class="msg muted"></div>
+    <p style="margin-top:14px"><button id="forgot" class="link">First time here, or forgot password? Sign in with an email code</button></p>
+  </div>
+
+  <!-- EMAIL CODE (recovery / first login) -->
+  <div id="recover" class="card hide" style="max-width:520px;margin:28px auto">
+    <h1>Sign in with an email code</h1>
+    <p class="muted">We will email a 6-digit code to your registered address.</p>
+    <label>Email</label><input id="rc-email" type="email" autocomplete="username" placeholder="you@company.com">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <button id="rc-send" class="btn dark">Send code</button>
+      <input id="rc-code" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" style="max-width:150px;letter-spacing:3px" disabled>
+      <button id="rc-verify" class="btn" disabled>Verify</button>
+    </div>
+    <div id="rc-msg" class="msg muted"></div>
+    <p style="margin-top:12px"><button id="back-login" class="link">Back to password sign in</button></p>
+  </div>
+
+  <!-- SET PASSWORD (forced first-login / reset) -->
+  <div id="setpw" class="card hide" style="max-width:520px;margin:28px auto">
+    <h1>Set your password</h1>
+    <p class="muted">Choose a password to secure your dashboard. At least 8 characters, with letters and numbers.</p>
+    <label>New password</label><input id="sp-pass" type="password" autocomplete="new-password">
+    <label>Confirm password</label><input id="sp-pass2" type="password" autocomplete="new-password">
+    <div style="margin-top:12px"><button id="sp-btn" class="btn">Save password</button></div>
+    <div id="sp-msg" class="msg muted"></div>
   </div>
 
   <!-- DASHBOARD -->
@@ -55,24 +74,27 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
         <div><h1 id="d-name">Welcome</h1><div class="muted" id="d-ref"></div></div>
-        <div id="d-status"></div>
+        <div style="text-align:right"><div id="d-status"></div><button id="change-pw" class="link" style="font-size:12px;margin-top:6px">Change password</button></div>
       </div>
       <div id="d-note" class="msg" style="margin-top:8px"></div>
+      <div id="d-pending" class="banner hide" style="background:#FFF7E6;border:1px solid #F3D793;color:#8a5a00"></div>
     </div>
 
     <div id="d-approved" class="card hide">
       <h2>Engagements &amp; earnings</h2>
       <div class="kpi">
-        <div class="box"><small class="muted">Paid</small><b id="e-paid">–</b></div>
+        <div class="box"><small class="muted">Total fees</small><b id="e-fees">–</b></div>
+        <div class="box"><small class="muted">Disbursed</small><b id="e-disb">–</b></div>
         <div class="box"><small class="muted">Pending</small><b id="e-pending">–</b></div>
-        <div class="box"><small class="muted">Projects</small><b id="e-count">–</b></div>
+        <div class="box"><small class="muted">Engagements</small><b id="e-count">–</b></div>
       </div>
-      <div id="d-projects" style="margin-top:14px"></div>
+      <div id="d-engagements" style="margin-top:14px"></div>
+      <p class="muted" style="margin-top:8px">Lifecycle: eligible → assigned → you accept → active → completed → paid. Disbursement is recorded by GCCPROs after each engagement.</p>
     </div>
 
     <div class="card">
       <h2>Your details</h2>
-      <p class="muted">You can update the fields below. Other details are verified and locked; contact the helpdesk to change them.</p>
+      <p class="muted">Edits here are submitted to GCCPROs for review and apply only after approval. Verified fields (name, ID) are locked; use the helpdesk to change them.</p>
       <div class="row">
         <div><label>Phone (with country code)</label><input id="f-phone" type="tel"></div>
         <div><label>City</label><input id="f-city" type="text"></div>
@@ -87,7 +109,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left
       </div>
       <label>Professional profile</label><textarea id="f-profile"></textarea>
       <label>Key achievements</label><textarea id="f-achievements"></textarea>
-      <div style="margin-top:12px"><button id="save" class="btn">Save changes</button> <span id="save-msg" class="msg"></span></div>
+      <div style="margin-top:12px"><button id="save" class="btn">Submit changes for review</button> <span id="save-msg" class="msg"></span></div>
     </div>
 
     <div class="card">
@@ -96,8 +118,21 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left
     </div>
 
     <div class="card">
+      <h2>Account &amp; data rights</h2>
+      <p class="muted">Under India's DPDP Act you can access, correct, or ask us to erase your data. Requests below are actioned by GCCPROs.</p>
+      <div id="d-requests" class="muted" style="margin:6px 0 12px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" data-req="data_export">Request a copy of my data</button>
+        <button class="btn warn sm" data-req="closure">Request account closure</button>
+        <button class="btn err sm" data-req="deletion">Request permanent deletion</button>
+      </div>
+      <div id="req-msg" class="msg"></div>
+      <p class="muted" style="margin-top:12px;font-size:12px">Data controller: Chartered Times LLP (GCCPROs). Purpose: expert vetting, matching and engagement management. Your identity and ID are never shared with clients. Grievances: <a href="mailto:admin@gccpros.com">admin@gccpros.com</a>.</p>
+    </div>
+
+    <div class="card">
       <h2>Helpdesk</h2>
-      <p class="muted">Send a message to the GCCPROs team. We reply to your registered email.</p>
+      <p class="muted">Message the GCCPROs team. We reply to your registered email.</p>
       <label>Subject</label><input id="h-subject" type="text" maxlength="160" placeholder="How can we help?">
       <label>Message</label><textarea id="h-message" placeholder="Type your question or request"></textarea>
       <div style="margin-top:10px"><button id="h-send" class="btn dark">Send to admin@gccpros.com</button> <span id="h-msg" class="msg"></span></div>
@@ -105,119 +140,168 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left
   </div>
 </div>
 <div id="toast" class="toast"></div>
-
 <script>
 (function(){
  var EP='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/expert-intake';
  var $=function(s){return document.querySelector(s);};
- var state={email:'',token:'',data:null};
+ var S={email:'',token:'',data:null};
+ try{var sv=JSON.parse(sessionStorage.getItem('gcx')||'{}');if(sv.email&&sv.token){S.email=sv.email;S.token=sv.token;}}catch(e){}
+ function persist(){try{sessionStorage.setItem('gcx',JSON.stringify({email:S.email,token:S.token}));}catch(e){}}
  function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
  function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
  function money(n,c){n=Number(n)||0;try{return new Intl.NumberFormat('en-US',{style:'currency',currency:c||'USD',maximumFractionDigits:0}).format(n);}catch(e){return (c||'USD')+' '+n;}}
  function api(action,body){return fetch(EP+'?action='+action,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',body:JSON.stringify(body||{}),signal:AbortSignal.timeout(20000)}).then(function(r){return r.json().catch(function(){return{};}).then(function(j){return {ok:r.ok,status:r.status,j:j};});});}
+ function show(id){['login','recover','setpw','dash'].forEach(function(x){$('#'+x).classList.add('hide');});$('#'+id).classList.remove('hide');$('#logout').classList.toggle('hide',id!=='dash');}
 
- // ---- login ----
- var em=$('#li-email'),sc=$('#li-code'),sbtn=$('#li-send'),vbtn=$('#li-verify'),lmsg=$('#li-msg');
- function lmset(t,c){lmsg.textContent=t;lmsg.className='msg '+(c||'muted');}
- sbtn.addEventListener('click',function(){
-   var e=(em.value||'').trim();
-   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)){lmset('Enter a valid email.','err');return;}
-   sbtn.disabled=true;var o=sbtn.textContent;sbtn.textContent='Sending…';
+ // ---------- password login ----------
+ $('#li-btn').addEventListener('click',function(){
+   var e=($('#li-email').value||'').trim().toLowerCase(),p=$('#li-pass').value||'';
+   if(!e||!p){$('#li-msg').className='msg err';$('#li-msg').textContent='Enter email and password.';return;}
+   $('#li-btn').disabled=true;$('#li-msg').className='msg muted';$('#li-msg').textContent='Signing in…';
+   api('login',{email:e,password:p}).then(function(r){
+     $('#li-btn').disabled=false;
+     if(!r.ok){$('#li-msg').className='msg err';$('#li-msg').textContent=(r.j&&r.j.message)||'Sign in failed.';return;}
+     S.email=e;S.token=r.j.token;persist();
+     if(r.j.mustReset){$('#li-msg').textContent='';openSetPw();}else{load();}
+   }).catch(function(){$('#li-btn').disabled=false;$('#li-msg').className='msg err';$('#li-msg').textContent='Network error.';});
+ });
+ $('#forgot').addEventListener('click',function(){$('#rc-email').value=$('#li-email').value;show('recover');});
+ $('#back-login').addEventListener('click',function(){show('login');});
+
+ // ---------- email-code recovery ----------
+ var rcE=$('#rc-email'),rcC=$('#rc-code'),rcS=$('#rc-send'),rcV=$('#rc-verify');
+ rcS.addEventListener('click',function(){
+   var e=(rcE.value||'').trim().toLowerCase();
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)){$('#rc-msg').className='msg err';$('#rc-msg').textContent='Enter a valid email.';return;}
+   rcS.disabled=true;var o=rcS.textContent;rcS.textContent='Sending…';
    api('otpSend',{email:e}).then(function(r){
-     if(!r.ok){lmset((r.j&&r.j.message)||'Could not send code.','err');sbtn.disabled=false;sbtn.textContent=o;return;}
-     lmset('Code sent to '+e+'. It expires in 10 minutes.','ok');sc.disabled=false;sc.focus();vbtn.disabled=false;sbtn.textContent='Resend code';setTimeout(function(){sbtn.disabled=false;},12000);
-   }).catch(function(){lmset('Network error. Retry.','err');sbtn.disabled=false;sbtn.textContent=o;});
+     if(!r.ok){$('#rc-msg').className='msg err';$('#rc-msg').textContent=(r.j&&r.j.message)||'Could not send code.';rcS.disabled=false;rcS.textContent=o;return;}
+     $('#rc-msg').className='msg ok';$('#rc-msg').textContent='Code sent. It expires in 10 minutes.';rcC.disabled=false;rcC.focus();rcV.disabled=false;rcS.textContent='Resend code';setTimeout(function(){rcS.disabled=false;},12000);
+   }).catch(function(){$('#rc-msg').className='msg err';$('#rc-msg').textContent='Network error.';rcS.disabled=false;rcS.textContent=o;});
  });
- vbtn.addEventListener('click',function(){
-   var e=(em.value||'').trim(),c=(sc.value||'').trim();
-   if(!/^\d{6}$/.test(c)){lmset('Enter the 6-digit code.','err');return;}
-   vbtn.disabled=true;var o=vbtn.textContent;vbtn.textContent='Verifying…';
+ rcV.addEventListener('click',function(){
+   var e=(rcE.value||'').trim().toLowerCase(),c=(rcC.value||'').trim();
+   if(!/^\d{6}$/.test(c)){$('#rc-msg').className='msg err';$('#rc-msg').textContent='Enter the 6-digit code.';return;}
+   rcV.disabled=true;var o=rcV.textContent;rcV.textContent='Verifying…';
    api('otpVerify',{email:e,code:c}).then(function(r){
-     if(!r.ok||!r.j.token){lmset((r.j&&r.j.message)||'Incorrect code.','err');vbtn.disabled=false;vbtn.textContent=o;return;}
-     state.email=e.toLowerCase();state.token=r.j.token;
-     load();
-   }).catch(function(){lmset('Network error. Retry.','err');vbtn.disabled=false;vbtn.textContent=o;});
+     rcV.disabled=false;rcV.textContent=o;
+     if(!r.ok||!r.j.token){$('#rc-msg').className='msg err';$('#rc-msg').textContent=(r.j&&r.j.message)||'Incorrect code.';return;}
+     S.email=e;S.token=r.j.token;persist();openSetPw(true);
+   }).catch(function(){rcV.disabled=false;rcV.textContent=o;$('#rc-msg').className='msg err';$('#rc-msg').textContent='Network error.';});
  });
 
+ // ---------- set password ----------
+ var setPwOptional=false;
+ function openSetPw(optional){setPwOptional=!!optional;$('#sp-msg').textContent=optional?'Set a new password to finish signing in.':'For security, set a new password before continuing.';$('#sp-msg').className='msg muted';$('#sp-pass').value='';$('#sp-pass2').value='';show('setpw');}
+ $('#sp-btn').addEventListener('click',function(){
+   var a=$('#sp-pass').value||'',b=$('#sp-pass2').value||'';
+   if(a.length<8||!/[A-Za-z]/.test(a)||!/[0-9]/.test(a)){$('#sp-msg').className='msg err';$('#sp-msg').textContent='At least 8 characters, with letters and numbers.';return;}
+   if(a!==b){$('#sp-msg').className='msg err';$('#sp-msg').textContent='Passwords do not match.';return;}
+   $('#sp-btn').disabled=true;$('#sp-msg').className='msg muted';$('#sp-msg').textContent='Saving…';
+   api('setPassword',{email:S.email,token:S.token,newPassword:a}).then(function(r){
+     $('#sp-btn').disabled=false;
+     if(!r.ok){$('#sp-msg').className='msg err';$('#sp-msg').textContent=(r.j&&r.j.message)||'Could not save.';return;}
+     S.token=r.j.token;persist();toast('Password set');load();
+   }).catch(function(){$('#sp-btn').disabled=false;$('#sp-msg').className='msg err';$('#sp-msg').textContent='Network error.';});
+ });
+ $('#change-pw').addEventListener('click',function(){openSetPw(true);});
+
+ // ---------- load dashboard ----------
  function load(){
-   api('self',{email:state.email,emailToken:state.token}).then(function(r){
-     if(!r.ok){lmset((r.j&&r.j.message)||'Could not load your dashboard.','err');return;}
-     state.data=r.j;render();
-   }).catch(function(){lmset('Network error loading dashboard.','err');});
+   api('self',{email:S.email,token:S.token}).then(function(r){
+     if(r.status===401){show('login');$('#li-msg').className='msg muted';$('#li-msg').textContent='Please sign in again.';return;}
+     if(!r.ok){show('login');$('#li-msg').className='msg err';$('#li-msg').textContent=(r.j&&r.j.message)||'Could not load dashboard.';return;}
+     if(r.j.mustReset){openSetPw();return;}
+     S.data=r.j;render();
+   }).catch(function(){show('login');$('#li-msg').className='msg err';$('#li-msg').textContent='Network error.';});
  }
-
- function statusBadge(s,bl){
-   var map={submitted:['#5B6B7B','Submitted'],under_review:['#B7791F','Under review'],needs_information:['#B7791F','Needs information'],approved:['#1E874B','Approved'],rejected:['#C0392B','Not approved']};
-   if(bl)return '<span class="badge" style="background:#C0392B">Blocked</span>';
-   var m=map[s]||['#5B6B7B',s];return '<span class="badge" style="background:'+m[0]+'">'+esc(m[1])+'</span>';
- }
+ function statusBadge(s,bl,cl){var map={submitted:['#5B6B7B','Submitted'],under_review:['#B7791F','Under review'],needs_information:['#B7791F','Needs information'],approved:['#1E874B','Approved'],rejected:['#C0392B','Not approved']};if(cl)return '<span class="badge" style="background:#5B6B7B">Closed</span>';if(bl)return '<span class="badge" style="background:#C0392B">On hold</span>';var m=map[s]||['#5B6B7B',s];return '<span class="badge" style="background:'+m[0]+'">'+esc(m[1])+'</span>';}
  var LABEL={name:'Name',email:'Email',phone:'Phone',country:'Country',city:'City',linkedin:'LinkedIn',role:'Role / title',employer:'Employer',employment:'Employment',capability:'Primary capability',totalYears:'Total years',gccYears:'GCC years',leadershipYears:'Leadership years',sectors:'Sectors',regions:'Regions',languages:'Languages',rate:'Indicative rate (USD/hr)',availability:'Availability (hrs/mo)'};
-
+ function engStatus(x){var s=x.status;if(s==='active'&&x.response==='pending')return 'Awaiting your response';if(x.paid)return 'Completed · Paid';var m={assigned:'Assigned',active:'Active',completed:'Completed · Awaiting disbursement',cancelled:'Declined / cancelled'};return m[s]||s;}
  function render(){
-   var d=state.data,p=d.profile||{};
-   $('#login').classList.add('hide');$('#dash').classList.remove('hide');$('#logout').classList.remove('hide');
+   var d=S.data,p=d.profile||{};show('dash');
    $('#d-name').textContent=(p.name?('Welcome, '+p.name.split(' ')[0]):'Welcome');
    $('#d-ref').textContent='Reference '+(d.reference||'')+' · joined '+String(d.createdAt||'').slice(0,10);
-   $('#d-status').innerHTML=statusBadge(d.applicationStatus,d.blacklisted);
+   $('#d-status').innerHTML=statusBadge(d.applicationStatus,d.blacklisted,d.closed);
    var note=$('#d-note');
-   if(d.blacklisted){note.className='msg err';note.textContent='Your account is currently on hold. Please contact the helpdesk.';}
-   else if(d.applicationStatus==='approved'){note.className='msg ok';note.textContent='You are an approved GCCPROs expert. Keep your details current so we can match you well.';}
-   else if(d.applicationStatus==='needs_information'){note.className='msg';note.style.color='#B7791F';note.textContent='We need a little more information. Use the helpdesk below or update your details.';}
-   else if(d.applicationStatus==='rejected'){note.className='msg err';note.textContent='This application was not approved. Contact the helpdesk if you believe this is an error.';}
-   else{note.className='msg';note.style.color='#B7791F';note.textContent='Your application is under review. We will email you when there is an update.';}
-
-   // editable fields
+   if(d.closed){note.className='msg err';note.textContent='Your account is closed. Contact the helpdesk to reactivate.';}
+   else if(d.applicationStatus==='approved'){note.className='msg ok';note.textContent='You are an approved GCCPROs expert.';}
+   else if(d.applicationStatus==='needs_information'){note.className='msg';note.style.color='#B7791F';note.textContent='We need a little more information. Use the helpdesk or update your details.';}
+   else if(d.applicationStatus==='rejected'){note.className='msg err';note.textContent='This application was not approved. Contact the helpdesk if this seems wrong.';}
+   else{note.className='msg';note.style.color='#B7791F';note.textContent='Your application is under review.';}
+   // pending change banner
+   var pb=$('#d-pending');
+   if(d.pendingChange){pb.classList.remove('hide');pb.innerHTML='You have a profile change awaiting GCCPROs review: <b>'+esc(Object.keys(d.pendingChange.requested||{}).join(', '))+'</b>.';}
+   else pb.classList.add('hide');
+   // editable
    $('#f-phone').value=p.phone||'';$('#f-city').value=p.city||'';$('#f-linkedin').value=p.linkedin||'';$('#f-languages').value=p.languages||'';
    $('#f-availability').value=(p.availability!=null?p.availability:'');$('#f-rate').value=(p.rate!=null?p.rate:'');
    $('#f-profile').value=p.profile||'';$('#f-achievements').value=p.achievements||'';
-
    // read-only
    var ro=['name','email','role','employer','capability','country','totalYears','gccYears','leadershipYears','sectors','regions'];
    $('#d-readonly').innerHTML=ro.map(function(k){var v=p[k];if(Array.isArray(v))v=v.join(', ');return '<div class="f"><small>'+esc(LABEL[k]||k)+'</small>'+esc(v==null?'':v)+'</div>';}).join('');
-
-   // approved: projects + earnings
-   if(d.applicationStatus==='approved'){
+   // engagements
+   if(d.applicationStatus==='approved'&&!d.closed){
      $('#d-approved').classList.remove('hide');
-     var e=d.earnings||{};$('#e-paid').textContent=money(e.paid,e.currency);$('#e-pending').textContent=money(e.pending,e.currency);$('#e-count').textContent=(e.count!=null?e.count:0);
-     var pr=d.projects||[];
-     if(!pr.length){$('#d-projects').innerHTML='<p class="muted">No engagements assigned yet. We will notify you when a suitable project comes up.</p>';}
-     else{var h='<table><thead><tr><th>Project</th><th>Status</th><th>Fee</th><th>Paid</th></tr></thead><tbody>';
-       pr.forEach(function(x){h+='<tr><td>'+esc(x.title)+(x.clientRef?'<br><span class="muted">'+esc(x.clientRef)+'</span>':'')+'</td><td>'+esc(x.status||'')+'</td><td>'+(x.fee!=null?money(x.fee,x.currency):'–')+'</td><td>'+(x.paid?'Yes':'No')+'</td></tr>';});
-       h+='</tbody></table>';$('#d-projects').innerHTML=h;}
+     var e=d.earnings||{};$('#e-fees').textContent=money(e.fees,e.currency);$('#e-disb').textContent=money(e.disbursed,e.currency);$('#e-pending').textContent=money(e.pending,e.currency);$('#e-count').textContent=(e.count!=null?e.count:0);
+     var g=d.engagements||[];
+     if(!g.length){$('#d-engagements').innerHTML='<p class="muted">No engagements yet. We will notify you when a suitable project is matched.</p>';}
+     else{var h='<table><thead><tr><th>Engagement</th><th>Stage</th><th>Fee</th><th>Disbursement</th><th></th></tr></thead><tbody>';
+       g.forEach(function(x){
+         var act='';
+         if(x.status==='active'&&x.response==='pending'){act='<button class="btn sm" onclick="EXP.respond(\''+x.id+'\',\'accepted\')">Accept</button> <button class="btn ghost sm" onclick="EXP.respond(\''+x.id+'\',\'declined\')">Decline</button>';}
+         var disb=x.paid?(money(x.disbursedAmount||x.fee,x.currency)+(x.disbursedAt?'<br><span class=\'muted\'>'+String(x.disbursedAt).slice(0,10)+(x.disbursementMode?' · '+esc(x.disbursementMode):'')+'</span>':'')):'<span class="muted">Pending</span>';
+         h+='<tr><td><b>'+esc(x.title)+'</b>'+(x.clientRef?'<br><span class="muted">'+esc(x.clientRef)+'</span>':'')+(x.rating?'<br><span class="pill" style="background:#eef3fb;color:#22496e">Rating '+esc(x.rating)+'/5</span>':'')+'</td><td>'+esc(engStatus(x))+'</td><td>'+(x.fee!=null?money(x.fee,x.currency):'–')+'</td><td>'+disb+'</td><td>'+act+'</td></tr>';
+       });
+       h+='</tbody></table>';$('#d-engagements').innerHTML=h;}
    } else { $('#d-approved').classList.add('hide'); }
+   // open requests
+   var rq=d.requests||[];
+   $('#d-requests').innerHTML=rq.length?('Open requests: '+rq.map(function(x){return '<span class="pill" style="background:#fff7e6;color:#8a5a00">'+esc(x.type.replace('_',' '))+' (pending)</span>';}).join(' ')):'No open requests.';
  }
+ window.EXP={respond:function(pid,resp){if(resp==='declined'&&!confirm('Decline this engagement?'))return;api('engagementRespond',{email:S.email,token:S.token,projectId:pid,response:resp}).then(function(r){if(r.ok){toast(resp==='accepted'?'Engagement accepted':'Engagement declined');load();}else{toast((r.j&&r.j.message)||'Could not update');}});}};
 
- // save
+ // save (submit for review)
  $('#save').addEventListener('click',function(){
-   var sm=$('#save-msg');sm.className='msg';sm.style.color='#5B6B7B';sm.textContent='Saving…';
+   var sm=$('#save-msg');sm.className='msg';sm.style.color='#5B6B7B';sm.textContent='Submitting…';
    var updates={phone:$('#f-phone').value.trim(),city:$('#f-city').value.trim(),linkedin:$('#f-linkedin').value.trim(),languages:$('#f-languages').value.trim(),profile:$('#f-profile').value.trim(),achievements:$('#f-achievements').value.trim()};
-   var av=$('#f-availability').value,rt=$('#f-rate').value;
-   if(av!=='')updates.availability=Number(av);if(rt!=='')updates.rate=Number(rt);
+   var av=$('#f-availability').value,rt=$('#f-rate').value;if(av!=='')updates.availability=Number(av);if(rt!=='')updates.rate=Number(rt);
    $('#save').disabled=true;
-   api('selfUpdate',{email:state.email,emailToken:state.token,updates:updates}).then(function(r){
+   api('selfUpdate',{email:S.email,token:S.token,updates:updates}).then(function(r){
      $('#save').disabled=false;
-     if(!r.ok){
-       if(r.j&&r.j.fields){var first=Object.values(r.j.fields)[0];sm.className='msg err';sm.textContent=first||'Please check the highlighted fields.';}
-       else{sm.className='msg err';sm.textContent=(r.j&&r.j.message)||'Could not save. Retry.';}
-       return;
-     }
-     sm.className='msg ok';sm.textContent='Saved.';toast('Details updated');load();
-   }).catch(function(){$('#save').disabled=false;sm.className='msg err';sm.textContent='Network error. Retry.';});
+     if(!r.ok){if(r.j&&r.j.fields){sm.className='msg err';sm.textContent=Object.values(r.j.fields)[0]||'Please check the fields.';}else{sm.className='msg err';sm.textContent=(r.j&&r.j.message)||'Could not submit.';}return;}
+     sm.className='msg ok';sm.textContent='Submitted for review.';toast('Changes sent for review');load();
+   }).catch(function(){$('#save').disabled=false;sm.className='msg err';sm.textContent='Network error.';});
  });
+
+ // data rights requests
+ document.querySelectorAll('[data-req]').forEach(function(b){b.addEventListener('click',function(){
+   var type=b.getAttribute('data-req');var labels={data_export:'a copy of your data',closure:'account closure',deletion:'permanent deletion of your profile and ID'};
+   var note=prompt('Request '+labels[type]+'. Add an optional note:');if(note===null)return;
+   if((type==='deletion'||type==='closure')&&!confirm('Confirm you want to request '+labels[type]+'? GCCPROs will action this.'))return;
+   var rm=$('#req-msg');rm.className='msg';rm.style.color='#5B6B7B';rm.textContent='Sending…';
+   api('requestCreate',{email:S.email,token:S.token,type:type,message:note||''}).then(function(r){
+     if(!r.ok){rm.className='msg err';rm.textContent=(r.j&&r.j.message)||'Could not send.';return;}
+     rm.className='msg ok';rm.textContent='Request sent to GCCPROs.';toast('Request sent');load();
+   }).catch(function(){rm.className='msg err';rm.textContent='Network error.';});
+ });});
 
  // helpdesk
  $('#h-send').addEventListener('click',function(){
    var hm=$('#h-msg'),subject=$('#h-subject').value.trim(),message=$('#h-message').value.trim();
    if(message.length<5){hm.className='msg err';hm.textContent='Please type your message.';return;}
    hm.className='msg';hm.style.color='#5B6B7B';hm.textContent='Sending…';$('#h-send').disabled=true;
-   api('helpdesk',{email:state.email,emailToken:state.token,subject:subject,message:message}).then(function(r){
+   api('helpdesk',{email:S.email,token:S.token,subject:subject,message:message}).then(function(r){
      $('#h-send').disabled=false;
-     if(!r.ok){hm.className='msg err';hm.textContent=(r.j&&r.j.message)||'Could not send. Retry.';return;}
-     hm.className='msg ok';hm.textContent='Sent. The team will reply to your email.';$('#h-subject').value='';$('#h-message').value='';toast('Message sent to admin@gccpros.com');
-   }).catch(function(){$('#h-send').disabled=false;hm.className='msg err';hm.textContent='Network error. Retry.';});
+     if(!r.ok){hm.className='msg err';hm.textContent=(r.j&&r.j.message)||'Could not send.';return;}
+     hm.className='msg ok';hm.textContent='Sent. The team will reply to your email.';$('#h-subject').value='';$('#h-message').value='';toast('Message sent');
+   }).catch(function(){$('#h-send').disabled=false;hm.className='msg err';hm.textContent='Network error.';});
  });
 
- $('#logout').addEventListener('click',function(){state={email:'',token:'',data:null};$('#dash').classList.add('hide');$('#login').classList.remove('hide');$('#logout').classList.add('hide');sc.value='';sc.disabled=true;vbtn.disabled=true;lmset('','muted');});
+ $('#logout').addEventListener('click',function(){S={email:'',token:'',data:null};try{sessionStorage.removeItem('gcx');}catch(e){}show('login');});
+
+ // auto-resume if token present
+ if(S.email&&S.token){load();}else{show('login');}
 })();
 </script>
 </body></html>
