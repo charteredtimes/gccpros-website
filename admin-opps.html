@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#E85D04; --cream:#F8F7F4; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#F59E0B; }
+:root { --ink:#1D2226; --gold:#0A66C2; --brand-orange:#2F5DA8; --cream:#FFFFFF; --border:#E2E8F0; --muted:#64748B; --green:#059669; --red:#DC2626; --amber:#5B86C9; }
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink); font-size:14px; }
 .topbar { background:#fff; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; justify-content:space-between; align-items:center; }
@@ -49,11 +49,11 @@ td.email { font-family:monospace; font-size:11.5px; }
 td.actions { white-space:nowrap; }
 .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; }
 .b-active, .b-approved, .b-placed, .b-accepted, .b-paid { background:#D1FAE5; color:var(--green); }
-.b-pending, .b-submitted, .b-invited, .b-interview, .b-shortlisted, .b-draft, .b-paused, .b-not_started { background:#FEF3C7; color:#92400E; }
+.b-pending, .b-submitted, .b-invited, .b-interview, .b-shortlisted, .b-draft, .b-paused, .b-not_started { background:#DCE7F7; color:#1A3A6E; }
 .b-rejected, .b-suspended, .b-expired, .b-closed { background:#FEE2E2; color:var(--red); }
-.b-urgent { background:#FFE4D5; color:var(--brand-orange); }
+.b-urgent { background:#EEF3FB; color:var(--brand-orange); }
 .b-both { background:linear-gradient(90deg,var(--gold),var(--brand-orange)); color:#fff; }
-.b-partner { background:#FFE4D5; color:var(--brand-orange); }
+.b-partner { background:#EEF3FB; color:var(--brand-orange); }
 .b-job_seeker, .b-jobseeker { background:#DBEAFE; color:var(--gold); }
 .result { margin-top:8px; padding:8px 12px; border-radius:4px; font-size:12px; }
 .result.ok { background:#ECFDF5; color:var(--green); }
@@ -138,7 +138,7 @@ td.actions { white-space:nowrap; }
           <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
           <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
         <span class="muted" id="apps-count"></span>
-        <span id="apps-jobfilter" style="display:none;background:#FFF4E5;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
+        <span id="apps-jobfilter" style="display:none;background:#EEF3FB;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
           Filtered to job: <span id="apps-jobfilter-label"></span>
           <button onclick="clearJobFilter()" style="background:none;border:none;color:var(--brand-orange);cursor:pointer;font-size:14px;padding:0 0 0 6px;font-weight:700;">×</button>
         </span>

@@ -22,24 +22,39 @@
       F4. openApplyModal: designation prefill now tries pf.designation || pf.current_designation || pf.currentDesignation.
       F5. _apSubmitInner: mimeType fallback to 'application/octet-stream' if cvFile.type is empty.
 -->
-<html lang="en">
+<html lang="en-IN">
 <head>
-  <link rel="canonical" href="https://www.gccpros.com/talent.html">
 <meta charset="UTF-8">
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="index,follow">
-<meta name="description" content="GCCPROs Talent Solutions: curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centres. Sign in to apply or refer talent.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E40AF'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' text-anchor='middle' fill='white'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://www.gccpros.com/talent">
+<meta name="gp:priority" content="0.8">
+<meta name="description" content="Curated jobs at Global Capability Centres in India, identity-protected referrals from senior GCC leaders, and executive search and RPO for GCC employers.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GCCPROs">
 <meta property="og:title" content="Talent | GCCPROs">
 <meta property="og:description" content="Curated GCC jobs, referrals, and a vetted partner network for India's Global Capability Centers.">
 <meta property="og:url" content="https://www.gccpros.com/talent">
-<meta name="twitter:card" content="summary">
-<title>Talent | GCCPROs</title>
+<meta property="og:image" content="https://www.gccpros.com/assets/img/og-talent.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.gccpros.com/assets/img/og-talent.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.gccpros.com/"},{"@type":"ListItem","position":2,"name":"GCC Talent","item":"https://www.gccpros.com/talent"}]}
+</script>
+<title>GCC Jobs &amp; Talent in Global Capability Centres | GCCPROs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<!-- gp:head-app -->
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=3ad74cb0">
+<!-- /gp:head-app -->
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -54,16 +69,16 @@
   --blue: #1E40AF;
   --blue-mid: #1E3A8A;
   --brand-blue: #1E40AF;
-  --brand-orange: #E85D04;
-  --brand-orange-dark: #c44b00;
-  --cream: #F8F7F4;
+  --brand-orange: #2F5DA8;
+  --brand-orange-dark: #2F5DA8;
+  --cream: #FFFFFF;
   --white: #FFFFFF;
   --surface: #FFFFFF;
   --muted: #64748B;
   --border: #E2E8F0;
   --green: #059669;
   --red: #DC2626;
-  --amber: #F59E0B;
+  --amber: #5B86C9;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { font-family: 'Inter', -apple-system, sans-serif; background: var(--cream); color: var(--ink); line-height: 1.6; font-size: 15px; }
@@ -194,7 +209,7 @@ a:hover { text-decoration: underline; }
 .form-result { margin-top: 14px; padding: 12px 14px; border-radius: 4px; font-size: 13px; display: none; word-break: break-word; white-space: pre-wrap; }
 .form-result.ok { background: #ECFDF5; color: var(--green); border-left: 3px solid var(--green); }
 .form-result.err { background: #FEF2F2; color: var(--red); border-left: 3px solid var(--red); }
-.form-result.warn { background: #FFFBEB; color: #92400E; border-left: 3px solid var(--amber); }
+.form-result.warn { background: #FFFBEB; color: #1A3A6E; border-left: 3px solid var(--amber); }
 .role-tabs { display: flex; background: var(--cream); border-radius: 6px; padding: 4px; margin-bottom: 20px; }
 .role-tab { flex: 1; padding: 10px 12px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--muted); border-radius: 4px; transition: all 0.15s; }
 .role-tab.active { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -203,7 +218,7 @@ a:hover { text-decoration: underline; }
 .google-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px 16px; background: #fff; border: 2px solid var(--gold); color: var(--gold); border-radius: 4px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
 .google-btn:hover { background: var(--cream); }
 .google-btn.partner-tone { border-color: var(--brand-orange); color: var(--brand-orange); }
-.google-btn.partner-tone:hover { background: #FFF4E5; }
+.google-btn.partner-tone:hover { background: #EEF3FB; }
 .google-icon { width: 20px; height: 20px; flex-shrink: 0; }
 .divider { display: flex; align-items: center; gap: 14px; margin: 18px 0; color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -233,10 +248,10 @@ th, td { padding: 10px 14px; border-bottom: 1px solid var(--border); text-align:
 th { background: var(--cream); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 600; }
 .b-active, .b-approved, .b-placed, .b-verified, .b-completed { background: #D1FAE5; color: var(--green); }
-.b-pending, .b-submitted, .b-invited, .b-accepted, .b-interview, .b-not_started, .b-in_progress { background: #FEF3C7; color: #92400E; }
+.b-pending, .b-submitted, .b-invited, .b-accepted, .b-interview, .b-not_started, .b-in_progress { background: #DCE7F7; color: #1A3A6E; }
 .b-rejected, .b-suspended, .b-expired, .b-blocked { background: #FEE2E2; color: var(--red); }
-.partner-pending-banner { background: #FFFBEB; border: 1px solid var(--amber); border-radius: 6px; padding: 18px 22px; color: #92400E; margin-bottom: 24px; }
-.partner-pending-banner h4 { font-size: 15px; margin-bottom: 6px; color: #78350F; }
+.partner-pending-banner { background: #FFFBEB; border: 1px solid var(--amber); border-radius: 6px; padding: 18px 22px; color: #1A3A6E; margin-bottom: 24px; }
+.partner-pending-banner h4 { font-size: 15px; margin-bottom: 6px; color: #1A3A6E; }
 .partner-pending-banner p { font-size: 13px; line-height: 1.55; }
 footer { background: var(--ink); color: rgba(255,255,255,0.7); padding: 30px 0 20px; text-align: center; font-size: 12px; margin-top: 40px; }
 footer .ft-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 8px; }
@@ -254,11 +269,11 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .console-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border,#e5e7eb);margin-bottom:20px;}
 .console-tab{background:none;border:none;padding:10px 16px;font-family:Inter,sans-serif;font-weight:600;font-size:14px;color:var(--muted,#6b7280);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
 .console-tab:hover{color:var(--text,#111827);}
-.console-tab.active{color:var(--brand,#ea580c);border-bottom-color:var(--brand,#ea580c);}
+.console-tab.active{color:var(--brand,#2F5DA8);border-bottom-color:var(--brand,#2F5DA8);}
 .profile-meter{margin-bottom:18px;}
 .profile-meter-label{font-size:13px;color:var(--muted,#6b7280);}
 .profile-bar{height:8px;background:#eceef1;border-radius:6px;overflow:hidden;margin-top:6px;max-width:420px;}
-.profile-bar-fill{height:100%;background:var(--brand,#ea580c);transition:width .3s;}
+.profile-bar-fill{height:100%;background:var(--brand,#2F5DA8);transition:width .3s;}
 .profile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:18px;}
 .profile-grid .field label{display:block;font-size:12px;font-weight:600;color:var(--muted,#6b7280);margin-bottom:4px;}
 .profile-grid .field input{width:100%;padding:9px 11px;border:1px solid var(--border,#d1d5db);border-radius:8px;font-size:14px;box-sizing:border-box;}
@@ -280,42 +295,41 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .b2b-eyebrow{font-size:11px;letter-spacing:2.5px;font-weight:800;text-transform:uppercase;color:#93C5FD;margin-bottom:6px;}
 .b2b-text h2{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:6px;line-height:1.15;}
 .b2b-text p{font-size:14px;color:rgba(255,255,255,.85);max-width:580px;margin:0;}
-.b2b-btn{background:var(--brand-orange);color:#fff;border:none;padding:15px 28px;font-size:15px;font-weight:800;border-radius:6px;white-space:nowrap;box-shadow:0 6px 18px rgba(232,93,4,.4);text-decoration:none;display:inline-block;transition:all .15s;}
+.b2b-btn{background:var(--brand-orange);color:#fff;border:none;padding:15px 28px;font-size:15px;font-weight:800;border-radius:6px;white-space:nowrap;box-shadow:0 6px 18px rgba(47,93,168,.4);text-decoration:none;display:inline-block;transition:all .15s;}
 .b2b-btn:hover{background:var(--brand-orange-dark);color:#fff;text-decoration:none;transform:translateY(-1px);}
 .btn.employer-login{background:var(--brand-orange);color:#fff;border:none;text-decoration:none;}
 .btn.employer-login:hover{background:var(--brand-orange-dark);color:#fff;text-decoration:none;}
 /* ===== Guest sample teaser ===== */
-.guest-teaser{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#FFF7ED 0%,#FEF3C7 100%);border:2px dashed var(--brand-orange);border-radius:10px;padding:30px 24px;}
+.guest-teaser{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#FFF7ED 0%,#DCE7F7 100%);border:2px dashed var(--brand-orange);border-radius:10px;padding:30px 24px;}
 .guest-teaser-n{font-family:'Playfair Display',serif;font-size:42px;font-weight:800;color:var(--brand-orange);line-height:1;}
 .guest-teaser h3{font-family:'Inter';font-size:18px;font-weight:800;color:var(--ink);margin:4px 0 6px;}
 .guest-teaser p{font-size:13.5px;color:var(--muted);margin-bottom:14px;max-width:420px;}
 @media(max-width:640px){.b2b-inner{flex-direction:column;text-align:center;align-items:center;}.b2b-text p{margin:0 auto;}}
 </style>
 <style id="ts-redesign">
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-:root{--ts-azure:#0A66C2;--ts-azure2:#3E8BEE;--ts-orange:#FF6A1A;--ts-orange2:#E85D04;--ts-ink:#0E1726;--ts-slate:#5A6B85;--ts-line:#E7ECF4;--ts-cream:#F6F8FC;}
+:root{--ts-azure:#0A66C2;--ts-azure2:#3E8BEE;--ts-orange:#5B86C9;--ts-orange2:#2F5DA8;--ts-ink:#0E1726;--ts-slate:#5A6B85;--ts-line:#E7ECF4;--ts-cream:#F7F9FC;}
 .ts-h1,.ts-h2,.ts-pill h3,.ts-aud-t,.ts-stat-n{font-family:'Sora','Inter',sans-serif;letter-spacing:-.02em;}
 .ts-eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--ts-azure);text-transform:uppercase;margin-bottom:12px;}
 .ts-eyebrow.dark{color:var(--ts-orange2);}
 /* HERO compact */
 .ts-hero{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 15% 0%,#12245C 0%,#0A1533 55%,#070E24 100%);color:#fff;padding:66px 0 56px;isolation:isolate;}
 .ts-hero .container{position:relative;z-index:3;}
-.ts-aurora{position:absolute;inset:-20% -10% auto -10%;height:130%;z-index:1;filter:blur(60px);opacity:.5;background:radial-gradient(40% 55% at 20% 25%,rgba(62,139,238,.9),transparent 70%),radial-gradient(35% 50% at 82% 20%,rgba(255,106,26,.7),transparent 70%),radial-gradient(45% 60% at 65% 85%,rgba(10,102,194,.8),transparent 70%);animation:tsFloat 16s ease-in-out infinite alternate;}
+.ts-aurora{position:absolute;inset:-20% -10% auto -10%;height:130%;z-index:1;filter:blur(60px);opacity:.5;background:radial-gradient(40% 55% at 20% 25%,rgba(62,139,238,.9),transparent 70%),radial-gradient(35% 50% at 82% 20%,rgba(91,134,201,.7),transparent 70%),radial-gradient(45% 60% at 65% 85%,rgba(10,102,194,.8),transparent 70%);animation:tsFloat 16s ease-in-out infinite alternate;}
 @keyframes tsFloat{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(0,-22px,0) scale(1.08)}}
 .ts-grid-ovl{position:absolute;inset:0;z-index:2;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:52px 52px;-webkit-mask-image:radial-gradient(80% 70% at 50% 25%,#000,transparent 85%);mask-image:radial-gradient(80% 70% at 50% 25%,#000,transparent 85%);}
 .ts-hero-inner{max-width:1000px;}
 .ts-h1{font-size:clamp(30px,5vw,52px);line-height:1.05;font-weight:800;margin:0 0 14px;}
-.ts-grad{background:linear-gradient(92deg,#8CC2FF 0%,#4F9BF0 40%,#FF8A3D 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ts-grad{background:linear-gradient(92deg,#8CC2FF 0%,#4F9BF0 40%,#5B86C9 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ts-hero-sub{font-size:clamp(15px,1.6vw,18px);line-height:1.55;color:#C6D3EA;max-width:640px;margin:0 0 28px;}
 /* audience boxes */
 .ts-aud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 .ts-aud{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:6px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.16);border-radius:16px;padding:20px 20px 22px;cursor:pointer;color:#fff;font-family:inherit;transition:transform .16s ease,border-color .16s,background .16s,box-shadow .16s;}
 .ts-aud:hover{transform:translateY(-3px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.32);}
-.ts-aud.sel{background:linear-gradient(160deg,rgba(62,139,238,.28),rgba(255,106,26,.18));border-color:#4F9BF0;box-shadow:0 16px 40px -18px rgba(10,102,194,.8);}
+.ts-aud.sel{background:linear-gradient(160deg,rgba(62,139,238,.28),rgba(91,134,201,.18));border-color:#4F9BF0;box-shadow:0 16px 40px -18px rgba(10,102,194,.8);}
 .ts-aud-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);color:#fff;margin-bottom:4px;}
 .ts-aud-ic svg{width:24px;height:24px;}
 .ts-aud-k{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:#9CC3F5;}
-.ts-aud.sel .ts-aud-k{color:#FFC59A;}
+.ts-aud.sel .ts-aud-k{color:#DCE7F7;}
 .ts-aud-t{font-size:18px;font-weight:800;}
 .ts-aud-s{font-size:13px;color:#C6D3EA;}
 .ts-hero.is-signedin .ts-eyebrow,.ts-hero.is-signedin .ts-hero-sub,.ts-hero.is-signedin .ts-aud-grid{display:none;}
@@ -323,7 +337,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 /* buttons */
 .ts-btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:13px 24px;border-radius:12px;cursor:pointer;border:1px solid transparent;text-decoration:none;font-family:inherit;transition:transform .16s ease,box-shadow .16s,background .16s;line-height:1;}
 .ts-btn-primary{background:linear-gradient(92deg,#2E7BE0,#0A66C2);color:#fff;box-shadow:0 12px 28px -12px rgba(10,102,194,.8);}
-.ts-btn-orange{background:linear-gradient(92deg,#FF7A1A,#E85D04);color:#fff;box-shadow:0 12px 28px -12px rgba(232,93,4,.7);}
+.ts-btn-orange{background:linear-gradient(92deg,#5B86C9,#2F5DA8);color:#fff;box-shadow:0 12px 28px -12px rgba(47,93,168,.7);}
 .ts-btn-primary:hover,.ts-btn-orange:hover{transform:translateY(-2px);}
 .ts-btn-ghost{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.28);}
 .ts-btn-ghost:hover{background:rgba(255,255,255,.14);}
@@ -332,7 +346,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 /* proof compact */
 .ts-proof{background:#0C1E4A;color:#fff;padding:28px 0;}
 .ts-proof-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;}
-.ts-stat-n{font-size:clamp(24px,3vw,34px);font-weight:800;background:linear-gradient(92deg,#8CC2FF,#FF9A56);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ts-stat-n{font-size:clamp(24px,3vw,34px);font-weight:800;background:linear-gradient(92deg,#8CC2FF,#5B86C9);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ts-stat-l{font-size:12.5px;color:#AFC0DE;margin-top:5px;line-height:1.35;}
 /* section heads */
 .ts-sec-head{max-width:720px;margin:0 auto 32px;text-align:center;}
@@ -347,7 +361,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .ts-pill:before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(92deg,var(--ts-azure),var(--ts-orange));transform:scaleX(0);transform-origin:left;transition:transform .25s ease;}
 .ts-pill:hover{transform:translateY(-4px);box-shadow:0 20px 44px -24px rgba(10,25,60,.35);border-color:transparent;}
 .ts-pill:hover:before{transform:scaleX(1);}
-.ts-picon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--ts-azure);background:linear-gradient(160deg,rgba(10,102,194,.12),rgba(255,106,26,.12));margin-bottom:12px;}
+.ts-picon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--ts-azure);background:linear-gradient(160deg,rgba(10,102,194,.12),rgba(91,134,201,.12));margin-bottom:12px;}
 .ts-picon svg{width:23px;height:23px;}
 .ts-pill h3{font-size:17px;font-weight:700;color:var(--ts-ink);margin:0 0 7px;font-family:'Sora',sans-serif;}
 .ts-pill p{font-size:13.5px;line-height:1.5;color:var(--ts-slate);margin:0;}
@@ -369,7 +383,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .ts-ul li:before{content:"";position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;background:linear-gradient(160deg,var(--ts-azure),var(--ts-azure2));box-shadow:inset 0 0 0 6px rgba(255,255,255,.85);}
 .ts-ul.alt li:before{background:linear-gradient(160deg,var(--ts-orange),var(--ts-orange2));}
 .ts-tbadge{font-size:13px;color:#3a4a66;background:#EEF3FB;border:1px dashed #C7D6EE;border-radius:12px;padding:12px 14px;margin-bottom:18px;text-align:center;}
-.ts-tbadge.orange{background:#FFF1E6;border-color:#F3C89E;}
+.ts-tbadge.orange{background:#EEF3FB;border-color:#9DC0EE;}
 /* cta */
 .ts-cta{padding:48px 0;background:linear-gradient(100deg,#0A66C2 0%,#0C1E4A 55%,#0A1533 100%);color:#fff;}
 .ts-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
@@ -385,24 +399,116 @@ html{scroll-behavior:smooth;}
 @media(max-width:900px){.ts-aud-grid{grid-template-columns:1fr;}.ts-pgrid{grid-template-columns:1fr 1fr;}.ts-proof-row{grid-template-columns:1fr 1fr;gap:22px 14px;}.ts-cta-inner{flex-direction:column;align-items:flex-start;}}
 @media(max-width:600px){.ts-pgrid{grid-template-columns:1fr;}.ts-ul.two{grid-template-columns:1fr;}.ts-diff-row{grid-template-columns:1fr;text-align:center;gap:6px;}.ts-old,.ts-new{text-align:center;}.ts-arrow{transform:rotate(90deg);}}
 </style>
+<style id="gp-theme">
+/* ===== GCCPROs light theme for Talent (class names kept; JS selectors unchanged) ===== */
+:root{--ink:#07122B;--gold:#2F5DA8;--gold-light:#9DC0EE;--blue:#2F5DA8;--blue-mid:#1A3A6E;--brand-blue:#2F5DA8;--brand-orange:#2F5DA8;--brand-orange-dark:#244A88;--cream:#FFFFFF;--muted:#4A5670;--border:#DDE4F0;--green:#15807A;--red:#B42335;--amber:#1A3A6E;
+  --ts-azure:#2F5DA8;--ts-azure2:#5B86C9;--ts-orange:#15807A;--ts-orange2:#15807A;--ts-ink:#07122B;--ts-slate:#4A5670;--ts-line:#DDE4F0;--ts-cream:#FFFFFF}
+html,body{font-family:'Manrope',system-ui,sans-serif!important}
+body.gp-app{background:#FFFFFF}
+body.gp-app .brand,body.gp-app .ts-h1,body.gp-app .ts-h2,body.gp-app .ts-pill h3,body.gp-app .ts-aud-t,body.gp-app .ts-stat-n,body.gp-app .section-intro h2{font-family:'Fraunces',Georgia,serif!important;letter-spacing:-.02em}
+/* account toolbar */
+body.gp-app .topbar{top:var(--nav-h);z-index:400;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:10px 0}
+body.gp-app .topbar .brand{font-size:18px;font-weight:600}
+body.gp-app .topbar .brand-tag{color:#15807A;font-family:'JetBrains Mono',monospace;letter-spacing:.14em}
+body.gp-app .topbar .btn{border-radius:999px}
+/* hero: light */
+body.gp-app .ts-hero{background:radial-gradient(700px 380px at 88% 0%,rgba(157,192,238,.5),transparent 60%),radial-gradient(520px 320px at 0% 100%,rgba(21,128,122,.12),transparent 60%),#FFFFFF;color:#07122B;padding:64px 0 56px}
+body.gp-app .ts-aurora{display:none}
+body.gp-app .ts-grid-ovl{background-image:linear-gradient(rgba(47,93,168,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(47,93,168,.06) 1px,transparent 1px)}
+body.gp-app .ts-eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.14em;color:#2F5DA8}
+body.gp-app .ts-eyebrow.dark{color:#15807A}
+body.gp-app .ts-h1{font-weight:600;color:#07122B;font-size:clamp(34px,5vw,60px)}
+body.gp-app .ts-grad{background:none;-webkit-background-clip:initial;background-clip:initial;color:#2F5DA8;font-style:italic;font-weight:500}
+body.gp-app .ts-hero-sub{color:#4A5670}
+body.gp-app .ts-aud{background:#fff;border:1px solid rgba(7,18,43,.14);color:#07122B;border-radius:20px;box-shadow:0 1px 2px rgba(11,23,51,.05),0 2px 8px rgba(11,23,51,.04)}
+body.gp-app .ts-aud:hover{background:#fff;border-color:rgba(47,93,168,.35);transform:translateY(-4px);box-shadow:0 10px 24px rgba(11,23,51,.08),0 24px 50px rgba(7,18,43,.14)}
+body.gp-app .ts-aud.sel{background:#fff;border-color:#2F5DA8;box-shadow:0 0 0 4px #EEF3FB,0 14px 34px rgba(47,93,168,.18)}
+body.gp-app .ts-aud-ic{background:#EEF3FB;color:#2F5DA8}
+body.gp-app .ts-aud.sel .ts-aud-ic{background:#2F5DA8;color:#fff}
+body.gp-app .ts-aud-k{color:#2F5DA8;font-family:'JetBrains Mono',monospace;font-weight:500}
+body.gp-app .ts-aud.sel .ts-aud-k{color:#15807A}
+body.gp-app .ts-aud-t{color:#07122B;font-weight:600}
+body.gp-app .ts-aud-s{color:#4A5670}
+/* buttons */
+body.gp-app .ts-btn{border-radius:999px}
+body.gp-app .ts-btn-primary{background:#2F5DA8;box-shadow:0 10px 24px rgba(47,93,168,.28)}
+body.gp-app .ts-btn-orange{background:#15807A;box-shadow:0 10px 24px rgba(21,128,122,.28)}
+body.gp-app .ts-btn-ghost.dark{color:#2F5DA8;border-color:rgba(7,18,43,.24)}
+/* dark bands -> site navy with ice accents */
+body.gp-app .ts-proof,body.gp-app .ts-diff,body.gp-app .ts-cta{background:#07122B}
+body.gp-app .ts-diff{background:radial-gradient(70% 90% at 90% 0%,rgba(47,93,168,.45),transparent 60%),#07122B}
+body.gp-app .ts-cta{background:radial-gradient(60% 120% at 100% 0%,rgba(47,93,168,.55),transparent 60%),#07122B}
+body.gp-app .ts-stat-n{background:none;-webkit-background-clip:initial;background-clip:initial;color:#fff;font-weight:600}
+body.gp-app .ts-stat-l{color:#AFBCD6}
+body.gp-app .ts-arrow{color:#9DC0EE}
+body.gp-app .ts-proof .ts-eyebrow,body.gp-app .ts-diff .ts-eyebrow,body.gp-app .ts-cta .ts-eyebrow{color:#9DC0EE}
+body.gp-app .ts-h2{font-weight:600}
+body.gp-app .ts-pill{border-radius:20px}
+body.gp-app .ts-pill:before{background:linear-gradient(92deg,#2F5DA8,#15807A)}
+body.gp-app .ts-picon{background:#EEF3FB;color:#2F5DA8}
+body.gp-app .ts-tracks.alt{background:linear-gradient(180deg,#FFFFFF,#EEF6F5)}
+body.gp-app .ts-tbadge.orange{background:#E6F4F2;border-color:#9ED3CD}
+/* sister-platform strip (was the page footer) */
+body.gp-app .talent-strip{background:#EEF3FB;border-top:1px solid #DCE7F7;color:#4A5670;text-align:center;font-size:13.5px;padding:18px 24px}
+body.gp-app .talent-strip a{color:#2F5DA8;font-weight:700}
+
+</style>
 </head>
-<body>
+<body class="gp-app">
+<!-- gp:nav -->
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="gp-progress" aria-hidden="true"></div>
+<header class="gp-nav" id="gpNav">
+  <div class="gp-nav__in">
+    <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt=""><span>GCC<b>PROs</b></span></a>
+    <nav aria-label="Primary">
+      <ul class="gp-menu">
+        <li class="has-drop">
+          <button type="button" aria-expanded="false" aria-haspopup="true">Intelligence <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5 6 7.5l3-3"/></svg></button>
+          <ul class="gp-drop">
+            <li><a href="/data"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>GCC Database</b><small>4,370+ verified Global Capability Centres</small></a></li>
+            <li><a href="/research"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/></svg></span><b>Research &amp; reports</b><small>GCC Industry @ 2030, policy handbooks</small></a></li>
+            <li><a href="/newsroom"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/></svg></span><b>Newsroom</b><small>Press and government coverage</small></a></li>
+            <li><a href="/faq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14M12 17.5h.01"/></svg></span><b>GCC FAQ &amp; glossary</b><small>What a GCC is and how to set one up</small></a></li>
+          </ul>
+        </li>
+        <li><a href="/consult">Consulting</a></li>
+        <li class="has-drop">
+          <button type="button" aria-expanded="false" aria-haspopup="true">Community <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5 6 7.5l3-3"/></svg></button>
+          <ul class="gp-drop">
+            <li><a href="/industry-council"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 4.8"/></svg></span><b>GCC Industry Council</b><small>The peer council of working GCC leaders</small></a></li>
+            <li><a href="/council-signup"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg></span><b>Join as a GCC leader</b><small>Complimentary membership and benchmark</small></a></li>
+            <li><a href="/community-insider"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><b>GCC Insiders</b><small>The open community for GCC professionals</small></a></li>
+            <li><a href="/council-console"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span><b>Member sign-in</b><small>Benchmark console for members</small></a></li>
+          </ul>
+        </li>
+        <li><a href="/insights-events">Events</a></li>
+        <li><a href="/talent">Talent</a></li>
+      </ul>
+    </nav>
+    <div class="gp-nav__cta"><a class="gp-cta" href="/consult#chat">Book a consultation</a></div>
+    <button class="gp-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gpMobile"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="gp-mobile" id="gpMobile">
+  <h6>Intelligence</h6>
+  <a href="/data">GCC Database</a><a href="/research">Research &amp; reports</a><a href="/newsroom">Newsroom</a><a href="/faq">FAQ &amp; glossary</a>
+  <h6>Work with us</h6>
+  <a href="/consult">GCC Consulting</a><a href="/insights-events">Events &amp; summits</a><a href="/talent">Talent</a>
+  <h6>Community</h6>
+  <a href="/industry-council">GCC Industry Council</a><a href="/council-signup">Join as a GCC leader</a><a href="/community-insider">GCC Insiders</a><a href="/council-console">Member sign-in</a>
+  <a class="gp-cta" href="/consult#chat">Book a consultation</a>
+</div>
+<!-- /gp:nav -->
 
 <header class="topbar">
   <div class="container topbar-inner">
     <div>
-      <span class="brand">GCC<span class="brand-mark">PROs</span></span>
-      <span class="brand-tag">OPPORTUNITIES</span>
+      <span class="brand">GCC Talent</span>
+      <span class="brand-tag">SISTER PLATFORM</span>
     </div>
-    <nav class="nav-pills">
-      <a href="/">Home</a>
-      <a href="/insights-events.html">Insights</a>
-      <a href="/industry-council.html">Council</a>
-      <a href="/data.html">Data</a> <a href="/research.html">Research</a>
-      <a href="#" class="active">Talent</a>
-    </nav>
     <div class="right">
-      <a class="btn employer-login" href="/customer-portal-live.html" title="Employer / customer login to the Talent Engine">🏢 Employer Login</a>
+      <a class="btn employer-login" href="/customer-portal-live.html" title="Employer / customer login to the Talent Engine">Employer login</a>
       <button class="btn secondary" id="signin-btn" onclick="openLoginModal()">Sign in</button>
       <span class="user-pill" id="user-pill" style="display:none;"></span>
       <button class="btn secondary" id="signout-btn" onclick="signOut()" style="display:none;">Sign out</button>
@@ -476,7 +582,7 @@ html{scroll-behavior:smooth;}
     </div></div>
     <div class="ts-cta"><div class="container ts-cta-inner">
       <div class="ts-cta-text"><div class="ts-eyebrow">READY TO HIRE?</div><h2 class="ts-h2 light">Build your GCC&#39;s talent engine.</h2><p class="ts-lede light">Post roles and manage your pipeline in a private workspace, or talk to us about a search or scale mandate.</p></div>
-      <div class="ts-cta-actions"><a class="ts-btn ts-btn-orange" href="/customer-portal-live.html">Employer login →</a><a class="ts-btn ts-btn-ghost" href="mailto:sp@gccpros.com?subject=GCC%20Talent%20Solutions%20enquiry">Talk to our talent team</a></div>
+      <div class="ts-cta-actions"><a class="ts-btn ts-btn-orange" href="/customer-portal-live.html">Employer login →</a><a class="ts-btn ts-btn-ghost" href="https://wa.me/918506976700?text=Hi%20GCCPROs%20Talent%20team%2C%20I%20would%20like%20to%20discuss%20a%20GCC%20hiring%20requirement." target="_blank" rel="noopener">WhatsApp our talent team</a></div>
     </div></div>
   </section>
 
@@ -525,7 +631,7 @@ html{scroll-behavior:smooth;}
     <div class="section-intro">
       <h2>Active Opportunities</h2>
       <p>Live listings from verified Global Capability Centres.</p>
-      <p id="jobs-cta" onclick="openLoginModal()" style="margin-top:8px;color:var(--brand,#ea580c);font-weight:700;cursor:pointer;display:inline-block;">&#128274; Sign in to unlock exclusive opportunities curated for you &rarr;</p>
+      <p id="jobs-cta" onclick="openLoginModal()" style="margin-top:8px;color:var(--brand,#2F5DA8);font-weight:700;cursor:pointer;display:inline-block;">&#128274; Sign in to unlock exclusive opportunities curated for you &rarr;</p>
       <p style="margin-top:14px;">
         <a class="wa-inline" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg> Join the &ldquo;GCC Jobs&rdquo; WhatsApp group</a>
       </p>
@@ -581,7 +687,7 @@ html{scroll-behavior:smooth;}
     <div class="field"><label>Password</label><input type="password" id="li-pwd" autocomplete="current-password"></div>
     <div style="margin-top:12px;display:flex;justify-content:center;"><div id="turnstile-login"></div></div>
     <button class="btn" style="width:100%;margin-top:14px;" onclick="doEmailSignIn()">Sign in with email</button>
-    <p style="text-align:center;margin-top:10px;"><a href="#" onclick="doForgotPassword();return false;" style="font-size:12px;color:var(--brand,#ea580c);font-weight:600;">Forgot password?</a></p>
+    <p style="text-align:center;margin-top:10px;"><a href="#" onclick="doForgotPassword();return false;" style="font-size:12px;color:var(--brand,#2F5DA8);font-weight:600;">Forgot password?</a></p>
     <div id="li-result" class="form-result"></div>
     <p style="margin-top:14px;font-size:11.5px;color:var(--muted);text-align:center;">If you signed up via Google originally, you don't have a password: use the Google button above.<br>New here? Use the Register tiles on the main page.</p>
   </div>
@@ -703,7 +809,7 @@ html{scroll-behavior:smooth;}
       <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-js"></div></div>
       <label style="display:flex;align-items:flex-start;gap:8px;margin-top:14px;font-size:12px;cursor:pointer;color:var(--ink);">
         <input type="checkbox" id="js-consent" style="margin-top:2px;width:auto;">
-        <span>I agree to the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023) and Terms of Use.</span>
+        <span>I agree to the <a href="/privacy" target="_blank">Privacy Policy</a> (DPDP Act 2023) and Terms of Use.</span>
       </label>
       <div style="display:flex;gap:10px;margin-top:18px;">
         <button class="btn secondary" style="flex:1;" onclick="jsStep3to2()">&larr; Back</button>
@@ -782,7 +888,7 @@ html{scroll-behavior:smooth;}
     </div>
     <div style="margin-top:14px;display:flex;justify-content:center;"><div id="turnstile-pt"></div></div>
     <div style="margin-top:14px;">
-      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent1" style="margin-top:2px;width:auto;"><span>I consent to GCCPROs processing my data per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span></label>
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent1" style="margin-top:2px;width:auto;"><span>I consent to GCCPROs processing my data per the <a href="/privacy" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span></label>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent2" style="margin-top:2px;width:auto;"><span>I agree to the Partner Agreement (KYC required before payout).</span></label>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:6px 0;cursor:pointer;"><input type="checkbox" id="pt-consent3" style="margin-top:2px;width:auto;"><span>I agree to the Community Rules (no spam, quality referrals only).</span></label>
     </div>
@@ -973,21 +1079,47 @@ html{scroll-behavior:smooth;}
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <div class="ft-row">
-      <a href="/">Home</a>
-      <a href="/insights-events.html">Insights</a>
-      <a href="/industry-council.html">Council</a>
-      <a href="/data.html">Data</a> <a href="/research.html">Research</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="mailto:admin@gccpros.com">Contact</a>
+<div class="talent-strip">GCC Talent is an independent sister platform of GCCPROs, separate from community membership. &middot; Talent team (WhatsApp only): <a href="https://wa.me/918506976700" target="_blank" rel="noopener">+91 85069 76700</a><span style="display:none">build <span id="bld"></span></span></div>
+<!-- gp:footer -->
+<footer class="gp-footer">
+  <div class="gp-footer__in">
+    <div class="gp-footer__top">
+      <div class="gp-footer__brand">
+        <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt=""><span>GCC<b>PROs</b></span></a>
+        <p>The world&rsquo;s GCC ecosystem: verified intelligence, a peer council of GCC leaders, original research and practitioner-led advisory. A Chartered Times LLP initiative.</p>
+        <div class="gp-social">
+          <a href="https://www.linkedin.com/company/gccpros/" target="_blank" rel="noopener" aria-label="GCCPROs on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.75v5.7h-4v-5.05c0-1.2-.02-2.75-1.7-2.75-1.7 0-1.95 1.3-1.95 2.66v5.14h-4z"/></svg></a>
+          <a href="https://x.com/GCC_PROS" target="_blank" rel="noopener" aria-label="GCCPROs on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.3L5.3 21H2.2l7.3-8.3L2 3h6.3l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a>
+          <a href="https://www.instagram.com/gcc.pros/" target="_blank" rel="noopener" aria-label="GCCPROs on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r=".9" fill="currentColor"/></svg></a>
+          <a href="https://whatsapp.com/channel/0029Vb7RNvY4IBhDd4TbUU01" target="_blank" rel="noopener" aria-label="GCCPROs WhatsApp channel"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.96L2 22l5.2-1.5A9.9 9.9 0 1 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.1.9.9-3-.2-.3a8.2 8.2 0 1 1 6.9 3.73zm4.5-6.1c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06a6.7 6.7 0 0 1-3.3-2.88c-.25-.43.25-.4.71-1.33.08-.16.04-.3-.02-.42-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.47a.9.9 0 0 0-.66.31 2.8 2.8 0 0 0-.86 2.07 4.8 4.8 0 0 0 1 2.55 11 11 0 0 0 4.2 3.7c1.56.68 2.17.73 2.95.62.48-.07 1.46-.6 1.66-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Intelligence</h4>
+        <ul><li><a href="/data">GCC Database</a></li><li><a href="/research">Research &amp; reports</a></li><li><a href="/research#book">GCC Industry @ 2030</a></li><li><a href="/newsroom">Newsroom</a></li><li><a href="/faq">FAQ &amp; glossary</a></li></ul>
+      </div>
+      <div>
+        <h4>Work with us</h4>
+        <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/expert-dashboard">Expert login</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
+      </div>
+      <div>
+        <h4>Community</h4>
+        <ul><li><a href="/industry-council">Industry Council</a></li><li><a href="/council-signup">Join as a GCC leader</a></li><li><a href="/community-insider">GCC Insiders</a></li><li><a href="/council-console">Member sign-in</a></li><li><a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu" target="_blank" rel="noopener">WhatsApp group</a></li></ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <address class="gp-footer__addr"><a href="https://www.google.com/maps/search/?api=1&amp;query=WeWork%20World%20Trade%20Centre%20EON%20Free%20Zone%20Kharadi%20Pune" target="_blank" rel="noopener">WeWork, 2nd Floor, Tower 5, World Trade Centre, Kharadi, Pune 411014</a></address>
+        <ul style="margin-top:12px"><li><a href="mailto:admin@gccpros.com">admin@gccpros.com</a></li><li><a href="https://wa.me/918506976700" target="_blank" rel="noopener">WhatsApp +91 85069 76700</a></li></ul>
+      </div>
     </div>
-    <div>GCCPROs &middot; <a href="https://www.gccpros.com">www.gccpros.com</a> &middot; By the GCC Community. For the GCC Community.</div>
-    <div class="ft-addr" style="margin-top:8px;opacity:.8;font-size:13px;">WeWork, 2nd Floor, Tower 5, World Trade Centre, Opp. EON Free Zone, Kharadi, Pune, Maharashtra 411014</div>
-    <div class="ft-meta">Opportunities &middot; build <span id="bld"></span></div>
+    <div class="gp-footer__word" aria-hidden="true">GCCPROs</div>
+    <div class="gp-footer__bottom">
+      <span>&copy; <span data-year>2026</span> GCCPROs &middot; Chartered Times LLP. All rights reserved.</span>
+      <nav aria-label="Legal"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/faq">FAQ</a></nav>
+    </div>
   </div>
 </footer>
+<!-- /gp:footer -->
 
 <a class="wa-fab" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer" aria-label="Join the GCC Jobs WhatsApp group"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg><span class="wa-label">Join GCC Jobs on WhatsApp</span></a>
 
@@ -1065,7 +1197,7 @@ function renderApplySkillGrid(jobId) {
   const grid = document.getElementById('ap-skill-grid');
   if (!grid) return;
   if (!skills.length) {
-    grid.innerHTML = '<p class="field-hint" style="margin:6px;">No skills listed on this role ,  use the "Other skills" box below.</p>';
+    grid.innerHTML = '<p class="field-hint" style="margin:6px;">No skills listed on this role, use the "Other skills" box below.</p>';
     return;
   }
   grid.innerHTML = skills.map((s,i) => {
@@ -1088,7 +1220,7 @@ function renderReferSkillAssessment(jobId) {
   const grid = document.getElementById('ref-skill-grid');
   if (!grid) return;
   if (!skills.length) {
-    grid.innerHTML = '<p class="field-hint">No specific skills listed on this job ,  rate on general competencies below.</p>' +
+    grid.innerHTML = '<p class="field-hint">No specific skills listed on this job, rate on general competencies below.</p>' +
       ['Communication','Domain expertise','Problem solving','Leadership'].map((s,i) => _skillRowHTML(s, 'general_'+i)).join('');
   } else {
     grid.innerHTML = skills.map((s,i) => _skillRowHTML(s, 'skill_'+i)).join('');
@@ -1098,7 +1230,7 @@ function _skillRowHTML(label, id) {
   return '<div style="display:flex;align-items:center;gap:10px;">' +
     '<div style="flex:1;font-size:13px;font-weight:500;">' + esc(label) + '</div>' +
     '<select data-skill="' + esc(label) + '" id="ref-rate-' + esc(id) + '" required style="padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;">' +
-      '<option value="">Rate</option><option value="1">1 ,  Beginner</option><option value="2">2 ,  Working</option><option value="3">3 ,  Proficient</option><option value="4">4 ,  Strong</option><option value="5">5 ,  Expert</option>' +
+      '<option value="">Rate</option><option value="1">1, Beginner</option><option value="2">2, Working</option><option value="3">3, Proficient</option><option value="4">4, Strong</option><option value="5">5, Expert</option>' +
     '</select></div>';
 }
 function _collectSkillRatings() {
@@ -1203,7 +1335,7 @@ function pwdMeterUpdate(pfx){
   const bar = document.getElementById(pfx+'-pwd-bar'); const hint = document.getElementById(pfx+'-pwd-hint');
   let pct, col;
   if (ok) { col = '#16a34a'; pct = (p.length>=12 ? 100 : 80); }
-  else { col = (met<=2 ? '#dc2626' : '#f59e0b'); pct = Math.max(8, met*18); }
+  else { col = (met<=2 ? '#dc2626' : '#5B86C9'); pct = Math.max(8, met*18); }
   if (bar){ bar.style.width = pct+'%'; bar.style.background = col; }
   if (hint){
     if (!p){ hint.textContent = 'Min 8 chars incl. upper, lower, number & symbol.'; hint.style.color = ''; return; }
@@ -1407,15 +1539,15 @@ async function doEmailSignIn() {
   try {
     const vr = await fetch(SCRIPT_URL + '?action=verifyCaptcha&cfToken=' + encodeURIComponent(cf) + '&_t=' + Date.now());
     const vj = await vr.json();
-    if (!vj.ok) { try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){} return showResult('li-result', 'Puzzle verification failed ,  please retry.', false); }
+    if (!vj.ok) { try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){} return showResult('li-result', 'Puzzle verification failed, please retry.', false); }
   } catch (e) { return showResult('li-result', 'Could not verify the puzzle. Try again.', false); }
   try {
     await firebase.auth().signInWithEmailAndPassword(eIn, p);
   } catch (err) {
     const c = String(err.code || '');
     let msg = (c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-credential') || c.includes('invalid-login'))
-      ? ('Sign-in failed (' + c + '). The password is wrong OR this email has no password account ,  if you registered with Google use the Google button, otherwise use "Forgot password?" or register to set one.')
-      : (c + ' ,  ' + err.message);
+      ? ('Sign-in failed (' + c + '). The password is wrong OR this email has no password account, if you registered with Google use the Google button, otherwise use "Forgot password?" or register to set one.')
+      : (c + ', ' + err.message);
     showResult('li-result', msg, false);
     try { if (window.turnstile && window._tsWidgets['turnstile-login']) window.turnstile.reset(window._tsWidgets['turnstile-login']); } catch(_){}
   }
@@ -1427,11 +1559,11 @@ async function doForgotPassword() {
   showResult('li-result', 'Sending reset link…', true);
   try {
     await firebase.auth().sendPasswordResetEmail(eIn);
-    showResult('li-result', '✓ Reset link sent to ' + eIn + ' ,  check inbox/spam. If nothing arrives, this email has no password account yet (register again, or use Google).', true);
+    showResult('li-result', '✓ Reset link sent to ' + eIn + ', check inbox/spam. If nothing arrives, this email has no password account yet (register again, or use Google).', true);
   } catch (e) {
     const c = String(e.code || '');
     if (c.includes('user-not-found')) showResult('li-result', 'No password account exists for ' + eIn + '. Register to set a password, or use "Continue with Google".', false);
-    else showResult('li-result', 'Reset failed: ' + c + ' ,  ' + (e.message || ''), false);
+    else showResult('li-result', 'Reset failed: ' + c + ', ' + (e.message || ''), false);
   }
 }
 
@@ -1533,8 +1665,8 @@ async function loadJobs() {
     populateFilters();
     renderJobs();
     const sel = document.getElementById('ref-job');
-    sel.innerHTML = '<option value="">,  general referral , </option>' +
-      JOB_LIST.map(jr => '<option value="' + esc(jr.id) + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ' ,  ' + esc(jr.title) + (jr.location ? ' · ' + esc(jr.location) : '') + '</option>').join('');
+    sel.innerHTML = '<option value="">General referral (no specific role)</option>' +
+      JOB_LIST.map(jr => '<option value="' + esc(jr.id) + '">' + esc(jr.job_code || jr.id.slice(0,8)) + ', ' + esc(jr.title) + (jr.location ? ' · ' + esc(jr.location) : '') + '</option>').join('');
   } catch (err) {
     document.getElementById('job-list').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--red);">Failed to load jobs: ' + esc(err.message) + '</p>';
   }
@@ -1638,7 +1770,7 @@ function renderJobCard(j, guest) {
   const referrerBlock = (CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0))
     ? '<span class="referral-coin">🪙 ' + fmtINR(j.referral_amount_inr) + ' referral</span>'
     : '<span></span>';
-  // v8.19-fix F2: Use jsSafe() for onclick params ,  esc() converts ' → &#39; which the browser
+  // v8.19-fix F2: Use jsSafe() for onclick params, esc() converts ' → &#39; which the browser
   // HTML-decodes back to ' inside the onclick attribute, breaking JS string literals for any
   // job title/company containing an apostrophe (e.g. "McDonald's", "O'Brien Global").
   const jsSafe = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
@@ -1833,7 +1965,7 @@ async function jsSubmit() {
     const r = await apiFetch(SCRIPT_URL + '?' + params.toString());
     const j = await r.json();
     if (j.error === 'blacklisted') return showResult('js-result-3', 'This email/phone is blocked. Contact admin@gccpros.com.', false);
-    if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed ,  re-tick and retry.', false);
+    if (j.error === 'captcha_failed') return showResult('js-result-3', 'CAPTCHA failed, re-tick and retry.', false);
     if (j.error) throw new Error(j.error);
     if (!_isGoogleJS) {
       try {
@@ -1858,7 +1990,7 @@ async function jsSubmit() {
       console.error('[CV upload failed]', uj);
       showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
     }
-    else showResult('js-result-3', '✓ Registration complete. You are auto-approved ,  browse and apply.', true);
+    else showResult('js-result-3', '✓ Registration complete. You are auto-approved, browse and apply.', true);
     setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
@@ -1972,7 +2104,7 @@ function openApplyModal(jobId, title, company) {
   set('ap-altphone', pf.altPhone || pf.alt_phone || '');
   set('ap-linkedin', pf.linkedin || '');
   set('ap-curcompany', pf.currentCompany || pf.current_company || '');
-  // v8.19-fix F4: try multiple field aliases ,  profile may store designation under different keys
+  // v8.19-fix F4: try multiple field aliases, profile may store designation under different keys
   set('ap-curdesig', pf.designation || pf.current_designation || pf.currentDesignation || '');
   set('ap-curcity', pf.city || pf.current_city || '');
   set('ap-totalexp', pf.totalExp != null ? pf.totalExp : (pf.total_exp || ''));
@@ -1983,7 +2115,7 @@ function openApplyModal(jobId, title, company) {
       const info = document.getElementById('ap-cv-info');
       if (cv.files && cv.files[0]) {
         const f = cv.files[0];
-        info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB) ,  recruiters download via signed URL only.';
+        info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB), recruiters download via signed URL only.';
         info.className = 'field-hint ' + (f.size > CV_MAX_BYTES ? 'err' : 'ok');
       }
     };
@@ -2034,7 +2166,7 @@ async function _apSubmitInner() {
   if (isNaN(ctcCur) || ctcCur < 0) return showResult('ap-result', 'Current CTC must be a positive number (in LPA).', false);
   if (isNaN(ctcExp) || ctcExp < 0) return showResult('ap-result', 'Expected CTC must be a positive number (in LPA).', false);
   const skillsArr = collectApplySkills();
-  if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above) ,  you selected ' + skillsArr.length + '.', false);
+  if (skillsArr.length < 3) return showResult('ap-result', 'Pick at least 3 skills (tick boxes above), you selected ' + skillsArr.length + '.', false);
   const elgWords = v('ap-eligibility').split(/\s+/).filter(Boolean).length;
   if (elgWords < 20) return showResult('ap-result', '"Why you fit" needs at least 20 words (you have ' + elgWords + ').', false);
   const jd = new Date(v('ap-joindate'));
@@ -2051,7 +2183,7 @@ async function _apSubmitInner() {
     const b64 = await fileToBase64(cvFile);
     const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL) + '&context=application', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      // v8.19-fix F5: mimeType fallback ,  some browsers return empty string for cvFile.type
+      // v8.19-fix F5: mimeType fallback, some browsers return empty string for cvFile.type
       body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type || 'application/octet-stream' })
     });
     const uj = await ur.json();
@@ -2312,7 +2444,7 @@ function renderAppsTable(apps) {
   return '<table><thead><tr><th>Role</th><th>Source</th><th>Status</th><th>Applied</th></tr></thead><tbody>' +
     apps.map(a => {
       const job = JOB_LIST.find(j => j.id === a.job_id);
-      const roleLabel = job ? esc(job.job_code || '') + ' ,  ' + esc(job.title || '') : '<span style="font-family:monospace;font-size:11px;">' + esc((a.job_id || '').slice(0,8)) + '…</span>';
+      const roleLabel = job ? esc(job.job_code || '') + ', ' + esc(job.title || '') : '<span style="font-family:monospace;font-size:11px;">' + esc((a.job_id || '').slice(0,8)) + '…</span>';
       return `<tr><td>${roleLabel}</td><td>${esc(a.source || '')}</td><td><span class="badge b-${esc(a.application_status || '')}">${esc(a.application_status || '')}</span></td><td>${a.applied_at ? new Date(a.applied_at).toLocaleDateString() : ''}</td></tr>`;
     }).join('') +
     '</tbody></table>';
@@ -2490,7 +2622,7 @@ function downloadAgreementDraft() {
 }
 
 function emailSignedAgreement() {
-  const subject = encodeURIComponent('Signed Partner Agreement ,  ' + (CURRENT_EMAIL || ''));
+  const subject = encodeURIComponent('Signed Partner Agreement, ' + (CURRENT_EMAIL || ''));
   const body = encodeURIComponent('Hi Admin,\n\nPlease find my signed partner agreement attached.\n\nName: ' + ((CURRENT_PROFILE && CURRENT_PROFILE.fullName) || '') + '\nEmail: ' + (CURRENT_EMAIL || '') + '\n');
   window.location.href = 'mailto:admin@gccpros.com?subject=' + subject + '&body=' + body;
 }
@@ -2538,6 +2670,8 @@ function renderSettingsTab() {
 // Bootstrap
 loadJobs();
 </script>
+<script src="/assets/js/gp.js?v=28e5f803" defer></script>
+<script src="/analytics.js" defer></script>
 </body>
 
 <script>
