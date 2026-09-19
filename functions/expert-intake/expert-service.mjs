@@ -103,7 +103,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     const w=Math.floor(Date.now()/864e5);
     return reply({status:'ok',token:await box.hash('sess:'+el+':'+w)});
    }
-   if(['self','selfUpdate','helpdesk','engagementRespond','requestCreate'].includes(action)&&request.method==='POST'){
+   if(['self','selfUpdate','helpdesk','engagementRespond','requestCreate','consentAccept','slotsPropose','timesheetSubmit'].includes(action)&&request.method==='POST'){
     let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
     const el=String(d&&d.email||'').trim().toLowerCase();const t=String(d&&(d.token||d.emailToken)||'');
     if(!await verifyExpertToken(el,t))return reply({error:'auth',message:'Your session has expired. Please sign in again.'},401);
@@ -135,6 +135,38 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
      await repo.audit(rec.id,'expert-self','engagement_'+resp,{projectId:pid});
      return reply({status:'ok'});
     }
+    if(action==='consentAccept'){
+     const pid=String(d.projectId||'');if(!/^[0-9a-f-]{36}$/i.test(pid))return reply({error:'invalid_request'},422);
+     const prow=((await repo.projList(rec.id))||[]).find(x=>x.id===pid);if(!prow)return reply({error:'not_found'},404);
+     await repo.projUpdate(pid,{consent_accepted_at:new Date().toISOString(),updated_at:new Date().toISOString()});
+     await repo.audit(rec.id,'expert-self','engagement_consent',{projectId:pid});
+     return reply({status:'ok',message:'Consent recorded. Thank you.'});
+    }
+    if(action==='slotsPropose'){
+     const pid=String(d.projectId||'');if(!/^[0-9a-f-]{36}$/i.test(pid))return reply({error:'invalid_request'},422);
+     const prow=((await repo.projList(rec.id))||[]).find(x=>x.id===pid);if(!prow)return reply({error:'not_found'},404);
+     if(prow.confirmed_slot)return reply({error:'already_scheduled',message:'A time has already been confirmed for this engagement.'},409);
+     if(prow.respond_by&&new Date(prow.respond_by).getTime()<Date.now())return reply({error:'deadline_passed',message:'The window to propose times has closed. Please contact GCCPROs.'},409);
+     const slots=Array.isArray(d.slots)?d.slots.slice(0,12):[];const rows=[];
+     for(const sl of slots){const st=new Date(String(sl&&sl.start||''));if(isNaN(st.getTime()))continue;let en=sl&&sl.end?new Date(String(sl.end)):null;if(en&&isNaN(en.getTime()))en=null;if(st.getTime()<Date.now()-864e5)continue;rows.push({project_id:pid,application_id:rec.id,start_ts:st.toISOString(),end_ts:en?en.toISOString():null,status:'proposed'});}
+     if(!rows.length)return reply({error:'no_slots',message:'Add at least one valid future time slot.'},422);
+     await repo.slotClearProposed(pid);
+     for(const r of rows)await repo.slotInsert(r);
+     await repo.audit(rec.id,'expert-self','slots_proposed',{projectId:pid,count:rows.length});
+     return reply({status:'ok',message:'Your availability has been sent to GCCPROs.'});
+    }
+    if(action==='timesheetSubmit'){
+     const pid=String(d.projectId||'');if(!/^[0-9a-f-]{36}$/i.test(pid))return reply({error:'invalid_request'},422);
+     const prow=((await repo.projList(rec.id))||[]).find(x=>x.id===pid);if(!prow)return reply({error:'not_found'},404);
+     if(prow.billing_type!=='hourly')return reply({error:'not_hourly',message:'Timesheets apply to hourly engagements only.'},422);
+     if(!['active','assigned'].includes(prow.status))return reply({error:'not_active',message:'This engagement is not open for time logging.'},422);
+     const hours=Number(d.hours);if(!(hours>0)||hours>24)return reply({error:'invalid_hours',message:'Enter hours between 0 and 24.'},422);
+     const wd=String(d.workDate||'');if(!/^\d{4}-\d{2}-\d{2}$/.test(wd))return reply({error:'invalid_date',message:'Choose a valid work date.'},422);
+     if(new Date(wd+'T00:00:00Z').getTime()>Date.now()+864e5)return reply({error:'future_date',message:'Work date cannot be in the future.'},422);
+     await repo.tsInsert({project_id:pid,application_id:rec.id,work_date:wd,hours,notes:String(d.notes||'').slice(0,1000)||null,status:'submitted'});
+     await repo.audit(rec.id,'expert-self','timesheet_submitted',{projectId:pid,hours});
+     return reply({status:'ok',message:'Your time entry was submitted for approval.'});
+    }
     const profile=await decrypt(rec);
     if(action==='selfUpdate'){
      const up=d.updates&&typeof d.updates==='object'?d.updates:{};
@@ -154,14 +186,24 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     let engagements=[];const earnings={fees:0,paid:0,pending:0,disbursed:0,currency:'USD',count:0};
     if(rec.status==='approved'&&!rec.closed_at){
      const rows=await repo.projList(rec.id);
-     engagements=(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,status:x.status,eligibility:x.eligibility,response:x.expert_response,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,disbursedAmount:x.disbursed_amount,disbursedAt:x.disbursed_at,disbursementMode:x.disbursement_mode,disbursementRef:x.disbursement_ref,rating:x.rating,feedback:x.feedback,notes:x.notes}));
-     for(const x of engagements){const amt=Number(x.fee)||0;earnings.fees+=amt;if(x.paid)earnings.paid+=(Number(x.disbursedAmount)||amt);else earnings.pending+=amt;earnings.disbursed+=(Number(x.disbursedAmount)||0);if(x.currency)earnings.currency=x.currency;}
+     const allTs=(await repo.tsByApp(rec.id))||[];
+     for(const x of (rows||[])){
+      const pslotsSrc=(await repo.slotList(x.id))||[];
+      const pslots=pslotsSrc.map(sl=>({id:sl.id,start:sl.start_ts,end:sl.end_ts,status:sl.status}));
+      const ts=allTs.filter(t=>t.project_id===x.id).map(t=>({id:t.id,date:t.work_date,hours:Number(t.hours),status:t.status,amount:t.amount==null?null:Number(t.amount),note:t.notes,reviewerNote:t.reviewer_note}));
+      const approvedHours=ts.filter(t=>t.status==='approved').reduce((a,t)=>a+(t.hours||0),0);
+      const approvedAmt=ts.filter(t=>t.status==='approved').reduce((a,t)=>a+(t.amount||0),0);
+      const honorarium=(x.honorarium==null?x.fee_amount:x.honorarium);
+      const value=x.billing_type==='hourly'?approvedAmt:(Number(honorarium)||0);
+      engagements.push({id:x.id,title:x.title,clientRef:x.client_ref,status:x.status,eligibility:x.eligibility,response:x.expert_response,billingType:x.billing_type||'fixed',agreedRate:x.agreed_rate,honorarium,value,currency:x.currency,hours:x.hours,approvedHours,start:x.start_date,end:x.end_date,paid:x.paid,disbursedAmount:x.disbursed_amount,disbursedAt:x.disbursed_at,disbursementMode:x.disbursement_mode,disbursementRef:x.disbursement_ref,rating:x.rating,feedback:x.feedback,notes:x.notes,terms:x.terms,consentRequired:x.consent_required!==false,consentAcceptedAt:x.consent_accepted_at,respondBy:x.respond_by,scheduledAt:x.scheduled_at,confirmedSlot:x.confirmed_slot,slots:pslots,timesheets:ts});
+     }
+     for(const x of engagements){const amt=Number(x.value)||0;earnings.fees+=amt;const disb=Number(x.disbursedAmount)||0;earnings.disbursed+=disb;if(x.paid)earnings.paid+=(disb||amt);else earnings.pending+=Math.max(0,amt-disb);if(x.currency)earnings.currency=x.currency;}
      earnings.count=engagements.length;
     }
     const pc=await repo.changeReqPending(rec.id);const reqs=await repo.reqOpen(rec.id);
     return reply({status:'ok',reference:rec.expert_code,applicationStatus:rec.status,blacklisted:!!rec.blacklisted,closed:!!rec.closed_at,mustReset:!!rec.must_reset_password,hasPassword:!!rec.password_hash,createdAt:rec.created_at,editable:['phone','city','languages','availability','rate','profile','achievements','linkedin'],profile:selfProfile,engagements,earnings,pendingChange:pc||null,requests:reqs||[]});
    }
-   if(!['list','detail','document','review','blacklist','delete','projects','projectSave','projectDelete','changeRequests','changeDecide','accountRequests','requestDecide'].includes(action))return reply({error:'not_found'},404);
+   if(!['list','detail','document','review','blacklist','delete','projects','projectSave','projectDelete','changeRequests','changeDecide','accountRequests','requestDecide','slots','slotDecide','timesheets','timesheetDecide'].includes(action))return reply({error:'not_found'},404);
    const actor=(adminKey&&request.headers.get('x-admin-key')===adminKey)?'admin-console':await authenticate(request.headers.get('authorization')||'');if(!actor)return reply({error:'unauthorized'},401);
    if(action==='list'&&request.method==='GET'){
     const offset=Math.max(0,Math.min(100000,Number(url.searchParams.get('offset'))||0));const rows=await repo.list(offset);
@@ -171,7 +213,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
    if(action==='projectSave'&&request.method==='POST'){
     let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
     const appId=String(d.applicationId||'');if(!/^[0-9a-f-]{36}$/i.test(appId))return reply({error:'invalid_id'},400);
-    const patch={title:String(d.title||'').trim().slice(0,200),client_ref:String(d.clientRef||'').trim().slice(0,200)||null,eligibility:['eligible','assigned','active','completed','cancelled'].includes(d.eligibility)?d.eligibility:'assigned',status:['assigned','active','completed','cancelled'].includes(d.status)?d.status:'assigned',fee_amount:(d.fee===''||d.fee==null)?null:Number(d.fee),currency:String(d.currency||'USD').slice(0,8),hours:(d.hours===''||d.hours==null)?null:Number(d.hours),start_date:d.start||null,end_date:d.end||null,paid:d.paid===true,disbursed_amount:(d.disbursedAmount===''||d.disbursedAmount==null)?null:Number(d.disbursedAmount),disbursed_at:d.disbursedAt||null,disbursement_mode:String(d.disbursementMode||'').slice(0,40)||null,disbursement_ref:String(d.disbursementRef||'').slice(0,120)||null,rating:(d.rating===''||d.rating==null)?null:Number(d.rating),feedback:String(d.feedback||'').slice(0,2000)||null,notes:String(d.notes||'').slice(0,2000)||null,updated_at:new Date().toISOString()};
+    const patch={title:String(d.title||'').trim().slice(0,200),client_ref:String(d.clientRef||'').trim().slice(0,200)||null,billing_type:['hourly','fixed'].includes(d.billingType)?d.billingType:'fixed',agreed_rate:(d.agreedRate===''||d.agreedRate==null)?null:Number(d.agreedRate),client_fee:(d.clientFee===''||d.clientFee==null)?null:Number(d.clientFee),honorarium:(d.honorarium===''||d.honorarium==null)?null:Number(d.honorarium),terms:String(d.terms||'').slice(0,2000)||null,consent_required:d.consentRequired!==false,respond_by:d.respondBy||null,eligibility:['eligible','assigned','active','completed','cancelled'].includes(d.eligibility)?d.eligibility:'assigned',status:['assigned','active','completed','cancelled'].includes(d.status)?d.status:'assigned',fee_amount:(d.fee===''||d.fee==null)?null:Number(d.fee),currency:String(d.currency||'USD').slice(0,8),hours:(d.hours===''||d.hours==null)?null:Number(d.hours),start_date:d.start||null,end_date:d.end||null,paid:d.paid===true,disbursed_amount:(d.disbursedAmount===''||d.disbursedAmount==null)?null:Number(d.disbursedAmount),disbursed_at:d.disbursedAt||null,disbursement_mode:String(d.disbursementMode||'').slice(0,40)||null,disbursement_ref:String(d.disbursementRef||'').slice(0,120)||null,rating:(d.rating===''||d.rating==null)?null:Number(d.rating),feedback:String(d.feedback||'').slice(0,2000)||null,notes:String(d.notes||'').slice(0,2000)||null,updated_at:new Date().toISOString()};
     if(!patch.title)return reply({error:'invalid_project',message:'Project title is required.'},422);
     if(d.projectId){await repo.projUpdate(String(d.projectId),patch);await repo.audit(appId,actor,'project_updated',{projectId:d.projectId,title:patch.title});}
     else{const appRow=await repo.get(appId);if(!appRow)return reply({error:'not_found'},404);await repo.projInsert({application_id:appId,...patch});await repo.audit(appId,actor,'project_assigned',{title:patch.title});}
@@ -181,6 +223,44 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
     let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
     if(!/^[0-9a-f-]{36}$/i.test(String(d.projectId||'')))return reply({error:'invalid_id'},400);
     await repo.projDelete(String(d.projectId));await repo.audit(/^[0-9a-f-]{36}$/i.test(String(d.applicationId||''))?String(d.applicationId):null,actor,'project_deleted',{projectId:d.projectId});
+    return reply({status:'ok'});
+   }
+   if(action==='slots'&&request.method==='GET'){
+    const pid=url.searchParams.get('projectId')||'';if(!/^[0-9a-f-]{36}$/i.test(pid))return reply({error:'invalid_id'},400);
+    const rows=await repo.slotList(pid);
+    return reply({rows:(rows||[]).map(sl=>({id:sl.id,start:sl.start_ts,end:sl.end_ts,status:sl.status,createdAt:sl.created_at}))});
+   }
+   if(action==='slotDecide'&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    const sid=String(d.slotId||'');const pid=String(d.projectId||'');
+    if(!/^[0-9a-f-]{36}$/i.test(sid)||!/^[0-9a-f-]{36}$/i.test(pid))return reply({error:'invalid_id'},400);
+    const slots=(await repo.slotList(pid))||[];const slot=slots.find(sl=>sl.id===sid);if(!slot)return reply({error:'not_found'},404);
+    if(d.decision==='confirm'){
+     await repo.slotUpdate(sid,{status:'confirmed'});
+     await repo.slotRejectOthers(pid,sid);
+     await repo.projUpdate(pid,{scheduled_at:slot.start_ts,confirmed_slot:slot.start_ts,status:'active',updated_at:new Date().toISOString()});
+     await repo.audit(/^[0-9a-f-]{36}$/i.test(String(d.applicationId||''))?String(d.applicationId):null,actor,'slot_confirmed',{projectId:pid,slotId:sid});
+    }else{
+     await repo.slotUpdate(sid,{status:'rejected'});
+     await repo.audit(/^[0-9a-f-]{36}$/i.test(String(d.applicationId||''))?String(d.applicationId):null,actor,'slot_rejected',{projectId:pid,slotId:sid});
+    }
+    return reply({status:'ok'});
+   }
+   if(action==='timesheets'&&request.method==='GET'){
+    const pid=url.searchParams.get('projectId')||'';
+    let rows;if(/^[0-9a-f-]{36}$/i.test(pid))rows=await repo.tsList(pid);else rows=await repo.tsPending();
+    const out=[];for(const t of (rows||[])){let nm='',ref='';try{const rr=await repo.get(t.application_id);if(rr){ref=rr.expert_code;nm=(await decrypt(rr)).name;}}catch(e){}out.push({id:t.id,projectId:t.project_id,applicationId:t.application_id,name:nm,reference:ref,date:t.work_date,hours:Number(t.hours),status:t.status,amount:t.amount==null?null:Number(t.amount),note:t.notes,reviewerNote:t.reviewer_note,createdAt:t.created_at});}
+    return reply({rows:out});
+   }
+   if(action==='timesheetDecide'&&request.method==='POST'){
+    let d;try{d=JSON.parse(await request.text())}catch{return reply({error:'invalid_request'},400);}
+    if(!/^[0-9a-f-]{36}$/i.test(String(d.id||'')))return reply({error:'invalid_id'},400);
+    const t=await repo.tsGet(String(d.id));if(!t||t.status!=='submitted')return reply({error:'not_found'},404);
+    const decision=d.decision==='approved'?'approved':'rejected';
+    let amount=null;
+    if(decision==='approved'){const proj=((await repo.projList(t.application_id))||[]).find(x=>x.id===t.project_id);const rate=Number(proj&&proj.agreed_rate)||0;amount=Math.round(rate*Number(t.hours)*100)/100;}
+    await repo.tsUpdate(String(d.id),{status:decision,amount,reviewer_note:String(d.note||'').slice(0,1000)||null,decided_at:new Date().toISOString()});
+    await repo.audit(t.application_id,actor,'timesheet_'+decision,{projectId:t.project_id,hours:Number(t.hours),amount});
     return reply({status:'ok'});
    }
    if(action==='changeRequests'&&request.method==='GET'){
@@ -240,7 +320,7 @@ export function makeHandler({repo,box,authenticate,verifyHuman,origins,siteKey,r
    }
    if(action==='projects'&&request.method==='GET'){
     const rows=await repo.projList(id);
-    return reply({rows:(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,eligibility:x.eligibility,status:x.status,response:x.expert_response,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,disbursedAmount:x.disbursed_amount,disbursedAt:x.disbursed_at,disbursementMode:x.disbursement_mode,disbursementRef:x.disbursement_ref,rating:x.rating,feedback:x.feedback,notes:x.notes,createdAt:x.created_at}))});
+    return reply({rows:(rows||[]).map(x=>({id:x.id,title:x.title,clientRef:x.client_ref,eligibility:x.eligibility,status:x.status,response:x.expert_response,fee:x.fee_amount,currency:x.currency,hours:x.hours,start:x.start_date,end:x.end_date,paid:x.paid,disbursedAmount:x.disbursed_amount,disbursedAt:x.disbursed_at,disbursementMode:x.disbursement_mode,disbursementRef:x.disbursement_ref,rating:x.rating,feedback:x.feedback,notes:x.notes,billingType:x.billing_type||'fixed',agreedRate:x.agreed_rate,clientFee:x.client_fee,honorarium:x.honorarium,margin:(x.client_fee==null&&x.honorarium==null)?null:((Number(x.client_fee)||0)-(Number(x.honorarium)||0)),terms:x.terms,consentRequired:x.consent_required!==false,consentAcceptedAt:x.consent_accepted_at,respondBy:x.respond_by,scheduledAt:x.scheduled_at,confirmedSlot:x.confirmed_slot,createdAt:x.created_at}))});
    }
    if(action==='blacklist'&&request.method==='POST'){
     let d={};try{d=JSON.parse(await request.text()||'{}')}catch{}
