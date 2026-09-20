@@ -309,3 +309,32 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 @supports not (color: color-mix(in srgb,red 50%,blue)){
   :where(.gp) .icon-tile{box-shadow:0 8px 20px rgba(7,18,43,.22)}
 }
+
+
+/* mobile type floor --------------------------------------------------------
+   Nothing readable should sit under 12px on a phone. These all measured
+   11-11.5px in the 375px audit. */
+@media (max-width:760px){
+  :where(.gp) .globe-hint,
+  :where(.gp) .mcard__tag,
+  :where(.gp) .domains__label,
+  :where(.gp) .chart-note,
+  :where(.gp) .eyebrow,
+  :where(.gp) .tag,
+  :where(.gp) .crumbs{font-size:12px}
+  :where(.gp) .stat__label{font-size:13.5px}
+  :where(.gp) .card small,:where(.gp) .cta-panel small{font-size:12.5px}
+  /* give inline CTAs room to be tapped */
+  :where(.gp) .link-arrow{display:inline-flex;align-items:center;min-height:40px}
+  :where(.gp) .chip-row .tag{min-height:40px;padding-inline:14px}
+}
+
+/* atlas + breadcrumb mobile ergonomics */
+@media (max-width:760px){
+  .atlas__lbl{font-size:12px}
+  .atlas__table th,.atlas__table td{font-size:12.5px}
+  .atlas__toggle{min-height:40px;display:inline-flex;align-items:center}
+  .atlas__dim,.atlas__scope{min-height:40px}
+  :where(.gp) .crumbs a,:where(.gp) .crumbs span{display:inline-flex;align-items:center;min-height:36px}
+}
+@media (max-width:760px){ :where(.gp) th{font-size:12.5px} }
