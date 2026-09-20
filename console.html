@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GCCPROS — GCC Intelligence Console (SSO)</title>
+<title>GCCPROS â€” GCC Intelligence Console (SSO)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -364,7 +364,7 @@ button{
 }
 
 
-/* ===== v6.10 My usage — fix overlap + cosmetic polish ===== */
+/* ===== v6.10 My usage â€” fix overlap + cosmetic polish ===== */
 .statgrid{
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:14px;
@@ -414,8 +414,8 @@ button{
 </head>
 <body>
 <header>
-  <div class="brand">GCCPROS <span class="gold">·</span> GCC Intelligence Console
-    <small>Verified sign-in · powered by the Enterprise Data API</small>
+  <div class="brand">GCCPROS <span class="gold">Â·</span> GCC Intelligence Console
+    <small>Verified sign-in Â· powered by the Enterprise Data API</small>
   </div>
   <div id="topright"><span id="acctBadge" class="status idle">Not signed in</span></div>
 </header>
@@ -490,11 +490,11 @@ button{
         <span class="chip" onclick="chipSet({domain:'HR'})">HR</span>
         <span class="chip" onclick="chipSet({domain:'Procurement'})">Procurement</span>
         <span class="chips-label">Headcount</span>
-        <span class="chip" onclick="chipSet({headcount_band:'1-100'})">1–100</span>
-        <span class="chip" onclick="chipSet({headcount_band:'101-500'})">101–500</span>
-        <span class="chip" onclick="chipSet({headcount_band:'501-1000'})">501–1,000</span>
-        <span class="chip" onclick="chipSet({headcount_band:'1001-5000'})">1,001–5,000</span>
-        <span class="chip" onclick="chipSet({headcount_band:'5000+'})">4,338+</span>
+        <span class="chip" onclick="chipSet({headcount_band:'1-100'})">1â€“100</span>
+        <span class="chip" onclick="chipSet({headcount_band:'101-500'})">101â€“500</span>
+        <span class="chip" onclick="chipSet({headcount_band:'501-1000'})">501â€“1,000</span>
+        <span class="chip" onclick="chipSet({headcount_band:'1001-5000'})">1,001â€“5,000</span>
+        <span class="chip" onclick="chipSet({headcount_band:'5000+'})">5,000+</span>
         <span class="chips-label">Parent HQ</span>
         <span class="chip" onclick="chipSet({hq_country:'United States'})">United States</span>
         <span class="chip" onclick="chipSet({hq_country:'United Kingdom'})">United Kingdom</span>
@@ -526,14 +526,14 @@ button{
         <div id="customFilterRows"></div>
       </div>
         <div><label>Country</label><input id="f_country" value="India"></div>
-        <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluru…"></div>
-        <div><label>Industry contains</label><input id="f_industry" placeholder="BFSI, Retail…"></div>
-        <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AI…"></div>
-        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="United States, Germany…"></div>
+        <div><label>City contains</label><input id="f_gcc_city" placeholder="Pune, Bengaluruâ€¦"></div>
+        <div><label>Industry contains</label><input id="f_industry" placeholder="BFSI, Retailâ€¦"></div>
+        <div><label>Capability / domain</label><input id="f_domain" placeholder="Finance, Engineering, AIâ€¦"></div>
+        <div><label>Parent HQ country</label><input id="f_hq_country" placeholder="United States, Germanyâ€¦"></div>
         <div><label>Headcount band</label><input id="f_headcount_band" list="hcbands" placeholder="any">
           <datalist id="hcbands"><option value="1-100"><option value="101-500"><option value="501-1000"><option value="1001-5000"><option value="5000+"></datalist></div>
         <div><label>Confidence</label><select id="f_confidence"><option value="">Any</option><option>High</option><option>Medium</option></select></div>
-        <div><label>Search company / parent</label><input id="f_q" placeholder="name contains…"></div>
+        <div><label>Search company / parent</label><input id="f_q" placeholder="name containsâ€¦"></div>
         <div><label>Results per page</label><select id="f_limit"><option>10</option><option selected>25</option><option>50</option></select></div>
       </div>
       <div class="btns">
@@ -558,19 +558,19 @@ button{
       <div id="exportNote" class="notice hide" style="margin-bottom:12px">Data export is an <b>Enterprise</b> feature. Contact your administrator to enable it.</div>
       <div id="resTable"></div>
       <div id="pager" class="pager hide">
-        <button class="btn alt" onclick="prevPage()">‹ Previous</button>
+        <button class="btn alt" onclick="prevPage()">â€¹ Previous</button>
         <span id="pageInfo" class="muted"></span>
-        <button class="btn alt" onclick="nextPage()">Next ›</button>
+        <button class="btn alt" onclick="nextPage()">Next â€º</button>
       </div>
     </div>
-    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API · SSO console · build v6.10 (sidebar layout · usage tile polish)</div>
+    <div class="muted" style="text-align:center">GCCPROS Enterprise Data API Â· SSO console Â· build v6.10 (sidebar layout Â· usage tile polish)</div>
     </main>
     </div>
   </div>
 </div>
 
 <script>
-/* ============ CONFIG — your developer fills these in before hosting ============ */
+/* ============ CONFIG â€” your developer fills these in before hosting ============ */
 const SUPABASE_URL      = "https://fufnvnvufmrhrzhcoeil.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7gCbQ5kfv6UVEhsqnde3WA_pOuTAde3";
 const API_BASE          = "https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-data-api";
@@ -635,7 +635,7 @@ function friendly(code,msg){
     user_disabled:'Your access has been disabled by the administrator.',
     account_suspended:'This account is paused. Contact your administrator.',
     ip_not_allowed:'You are connecting from outside the approved network/IP.',
-    rate_limited:'Too many requests — wait a few seconds and try again.',
+    rate_limited:'Too many requests â€” wait a few seconds and try again.',
     quota_exceeded:'Monthly data allowance used up. Contact your administrator to raise it.',
     backend_error:'The data service reported an error.',bad_response:msg,server_error:msg};
   return map[code]||msg||code;
@@ -711,17 +711,17 @@ if(document.readyState==='loading'){
 } else { buildCustomFilters(); }
 
 function search(){
-  badge('Searching…','idle');
+  badge('Searchingâ€¦','idle');
   S.limit=parseInt($('f_limit').value,10)||25;
   var p=qs(); p.set('limit',S.limit); p.set('offset',S.offset);
   call('/v1/companies?'+p.toString()).then(function(r){
     if(!r.ok){badge('Error','bad');$('resMeta').innerHTML='<span style="color:#B3261E">'+friendly(r.code,r.message)+'</span>';$('resTable').innerHTML='';$('pager').classList.add('hide');$('exportBar').classList.add('hide');$('exportNote').classList.add('hide');return;}
-    badge('Connected · '+(r.tier||'').toUpperCase()+' tier','ok'); render(r);
+    badge('Connected Â· '+(r.tier||'').toUpperCase()+' tier','ok'); render(r);
   }).catch(function(){});
 }
 function render(r){
   S.total=r.page.total; var data=r.data||[]; S.tier=(r.tier||'').toLowerCase();
-  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> matching GCCs &nbsp;·&nbsp; tier: <b>'+(r.tier||'').toUpperCase()+'</b>';
+  $('resMeta').innerHTML='Showing <b>'+data.length+'</b> of <b>'+S.total.toLocaleString()+'</b> matching GCCs &nbsp;Â·&nbsp; tier: <b>'+(r.tier||'').toUpperCase()+'</b>';
   var canExport=(S.tier==='enterprise' && data.length>0);
   $('exportBar').classList.toggle('hide', !canExport);
   $('exportNote').classList.toggle('hide', !(S.tier && S.tier!=='enterprise' && data.length>0));
@@ -741,7 +741,7 @@ function render(r){
   });
   h+='</div>';
   $('resTable').innerHTML=h; window._rows=data;
-  $('pageInfo').textContent=(S.offset+1)+'–'+(S.offset+data.length)+' of '+S.total.toLocaleString();
+  $('pageInfo').textContent=(S.offset+1)+'â€“'+(S.offset+data.length)+' of '+S.total.toLocaleString();
   $('pager').classList.remove('hide');
 }
 // === v6 polish (added 2026-05-22) ===
@@ -802,12 +802,12 @@ function loadUsage(silent){
     }
     S.tier=(r.tier||'').toLowerCase();
     var num = function(x){
-      if (x===null || x===undefined || x==='') return '—';
+      if (x===null || x===undefined || x==='') return 'â€”';
       return (typeof x==='number') ? x.toLocaleString() : String(x);
     };
     var pair = function(a,b){
-      var A = (a===null||a===undefined) ? '–' : a;
-      var B = (b===null||b===undefined) ? '–' : b;
+      var A = (a===null||a===undefined) ? 'â€“' : a;
+      var B = (b===null||b===undefined) ? 'â€“' : b;
       return A + ' / ' + B;
     };
     var quota   = (typeof r.monthly_row_quota==='number') ? r.monthly_row_quota : 0;
@@ -816,16 +816,16 @@ function loadUsage(silent){
     var seats   = pair(r.seats_used, r.seat_limit);
     var concur  = pair(r.concurrent_active_now, r.concurrent_limit);
     var remains = (r.rows_remaining!=null) ? num(r.rows_remaining)
-                 : (quota ? num(Math.max(0, quota-used)) : '—');
-    var rate    = (r.rate_limit_per_min!=null) ? (r.rate_limit_per_min+'/min') : '—';
+                 : (quota ? num(Math.max(0, quota-used)) : 'â€”');
+    var rate    = (r.rate_limit_per_min!=null) ? (r.rate_limit_per_min+'/min') : 'â€”';
     body.innerHTML =
-      stat2((r.tier||'').toUpperCase() || '—','Your access tier','tier')+
+      stat2((r.tier||'').toUpperCase() || 'â€”','Your access tier','tier')+
       stat(seats,'Seats used (plan)')+
       stat(concur,'Users active now (max)')+
       stat(num(used),'Records pulled this month')+
       stat(remains,'Records remaining ('+pct+'% used)')+
       stat(rate,'Request speed limit');
-    if(!silent) badge('Connected · '+((r.tier||'').toUpperCase()||'—')+' tier','ok');
+    if(!silent) badge('Connected Â· '+((r.tier||'').toUpperCase()||'â€”')+' tier','ok');
   }).catch(function(err){
     console.error('[loadUsage] fetch failed:', err);
     if(!silent) badge('Error','bad');
@@ -835,7 +835,7 @@ function loadUsage(silent){
 function stat(n,l){return '<div class="stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
 function stat2(n,l,cls){return '<div class="stat"><div class="n '+esc(cls||'')+'">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';}
 function loadStats(){
-  badge('Loading stats…','idle');
+  badge('Loading statsâ€¦','idle');
   var p=qs(); ['gcc_city','domain','headcount_band','confidence','q'].forEach(function(k){p.delete(k);});
   call('/v1/stats?'+p.toString()).then(function(r){
     if(!r.ok){badge('Error','bad');$('statsCard').classList.remove('hide');$('statsBody').innerHTML='<span style="color:#B3261E">'+friendly(r.code,r.message)+'</span>';return;}
@@ -863,7 +863,7 @@ function barBlock(title,arr,key,subtotal,note){
 var CSV_ORDER=["company_name","mca_legal_entity_name","group_company","hq_country","gcc_city","state_province","office_addresses","sez_stpi_peza","office_area_sqft","other_country_gcc_units","industry","gcc_domains","sub_domains","finance_domain_active","ip_notes","ips_registered","site_head","leaders_technology","leaders_finance","leaders_hr","other_leaders","leader_linkedin_urls","leader_email_verified","headcount","headcount_band","headcount_notes","gender_diversity_women_pct","year_established","legal_structure","cin_reg_id","maturity_level","setup_model","setup_partner","fy24_revenue_usd_mn","fy25_revenue_usd_mn","revenue_growth_yoy_pct","net_profit_local_ccy","transfer_pricing_markup_pct","group_global_turnover","group_turnover_fy","group_turnover_source","tech_stack","recent_press_6mo","strategic_initiatives","glassdoor_rating","gptw_certified","confidence"];
 var PDF_COLS=[["company_name","Company"],["group_company","Parent"],["hq_country","HQ"],["gcc_city","City"],["industry","Industry"],["gcc_domains","Domains"],["headcount_band","Headcount"],["site_head","India site head"],["confidence","Conf."]];
 function today(){return new Date().toISOString().slice(0,10);}
-function filterSummary(){var p=qs();var parts=[];p.forEach(function(v,k){parts.push(k+': '+v);});return parts.length?parts.join('   ·   '):'All India GCCs';}
+function filterSummary(){var p=qs();var parts=[];p.forEach(function(v,k){parts.push(k+': '+v);});return parts.length?parts.join('   Â·   '):'All India GCCs';}
 function exportCols(rows){var keys=CSV_ORDER.filter(function(k){return rows.some(function(r){return k in r;});});rows.forEach(function(r){Object.keys(r).forEach(function(k){if(k!=='id'&&keys.indexOf(k)<0)keys.push(k);});});return keys;}
 function downloadBlob(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);}
 function enterpriseOnly(){if(S.tier!=='enterprise'){alert('Data export is available on the Enterprise tier only.');return false;}return true;}
@@ -883,11 +883,11 @@ function gatherAll(){
         if(!r.ok){alert(friendly(r.code,r.message));return all;}
         var got=r.data||[]; if(!got.length) return all;
         all=all.concat(got); offset+=r.page.returned;
-        badge('Preparing export… '+all.length+' / '+planned,'idle');
+        badge('Preparing exportâ€¦ '+all.length+' / '+planned,'idle');
         return loop();
       });
     }
-    badge('Preparing export… 0 / '+planned,'idle');
+    badge('Preparing exportâ€¦ 0 / '+planned,'idle');
     return loop();
   });
 }
@@ -901,7 +901,7 @@ function exportExcel(){
     var wb=new ExcelJS.Workbook(); wb.creator='GCCPROS'; wb.created=new Date();
     var ws=wb.addWorksheet('GCC Export',{views:[{state:'frozen',ySplit:3}]});
     var n=keys.length;
-    ws.mergeCells(1,1,1,n); var t=ws.getCell(1,1); t.value='GCCPROS — GCC Intelligence Export'; t.font={name:'Calibri',size:16,bold:true,color:{argb:NAVY}}; ws.getRow(1).height=24;
+    ws.mergeCells(1,1,1,n); var t=ws.getCell(1,1); t.value='GCCPROS â€” GCC Intelligence Export'; t.font={name:'Calibri',size:16,bold:true,color:{argb:NAVY}}; ws.getRow(1).height=24;
     ws.mergeCells(2,1,2,n); var sub=ws.getCell(2,1);
     sub.value='Filters:  '+filterSummary()+'      |      '+rows.length+' records      |      '+today()+'      |      Confidential';
     sub.font={name:'Calibri',size:10,italic:true,color:{argb:GREY}};
@@ -924,18 +924,18 @@ function exportPdf(){
     var jsPDF=window.jspdf.jsPDF; var doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
     var W=doc.internal.pageSize.getWidth(),Hh=doc.internal.pageSize.getHeight();
     doc.setFillColor(20,33,61);doc.rect(0,0,W,66,'F');
-    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('GCCPROS — GCC Intelligence Report',40,30);
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('GCCPROS â€” GCC Intelligence Report',40,30);
     doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(202,220,252);doc.text('Filters:  '+filterSummary(),40,50);
-    doc.setTextColor(201,162,39);doc.text(rows.length+' records   ·   '+today()+'   ·   Confidential',W-40,50,{align:'right'});
+    doc.setTextColor(201,162,39);doc.text(rows.length+' records   Â·   '+today()+'   Â·   Confidential',W-40,50,{align:'right'});
     var head=[PDF_COLS.map(function(c){return c[1];})];
-    var body=rows.map(function(r){return PDF_COLS.map(function(c){var v=r[c[0]];v=(v===null||v===undefined)?'':String(v);if(v.length>70)v=v.slice(0,67)+'…';return v;});});
+    var body=rows.map(function(r){return PDF_COLS.map(function(c){var v=r[c[0]];v=(v===null||v===undefined)?'':String(v);if(v.length>70)v=v.slice(0,67)+'â€¦';return v;});});
     doc.autoTable({head:head,body:body,startY:80,
       styles:{font:'helvetica',fontSize:7.5,cellPadding:3,overflow:'linebreak',valign:'top',lineColor:[217,225,242],lineWidth:0.4},
       headStyles:{fillColor:[31,56,100],textColor:255,fontStyle:'bold',fontSize:8},
       alternateRowStyles:{fillColor:[238,243,251]},
       columnStyles:{0:{fontStyle:'bold',cellWidth:120},5:{cellWidth:150},7:{cellWidth:120}},
       margin:{left:40,right:40,top:80,bottom:34},
-      didDrawPage:function(){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text('GCCPROS · Confidential · for internal/licensed use only',40,Hh-16);doc.text('Page '+doc.internal.getNumberOfPages(),W-40,Hh-16,{align:'right'});}});
+      didDrawPage:function(){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text('GCCPROS Â· Confidential Â· for internal/licensed use only',40,Hh-16);doc.text('Page '+doc.internal.getNumberOfPages(),W-40,Hh-16,{align:'right'});}});
     doc.save('GCCPROS_GCC_Report_'+today()+'.pdf');
   });
 }
