@@ -54,7 +54,7 @@ textarea{resize:vertical;line-height:1.7;}
 .error-msg{color:#dc2626;font-size:12px;margin-top:5px;display:none;}
 #success-screen{display:none;text-align:center;padding:48px 28px;}
 #success-screen .tick{font-size:56px;margin-bottom:16px;}
-#success-screen h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--ink);margin-bottom:10px;}
+#success-screen :is(h2,h3){font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--ink);margin-bottom:10px;}
 #success-screen p{font-size:14px;color:var(--muted);line-height:1.8;max-width:360px;margin:0 auto;}
 .note-strip{background:var(--cream);border-top:1px solid var(--border);padding:16px 28px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
 @media(max-width:640px){nav{padding:0 20px;}.row{grid-template-columns:1fr;}}
@@ -72,7 +72,7 @@ textarea{resize:vertical;line-height:1.7;}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=3ad74cb0">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=f313b87e">
 <!-- /gp:head-app -->
 <style id="gp-theme">
 :root{--ink:#07122B;--gold:#2F5DA8;--gold-light:#9DC0EE;--blue:#1E2A44;--blue-mid:#2F5DA8;--blue-light:#EEF3FB;--cream:#FFFFFF;--muted:#4A5670;--border:rgba(7,18,43,.14)}
@@ -93,8 +93,21 @@ body.gp-app .req{color:#B42335}
 body.gp-app input[type=text],body.gp-app input[type=email],body.gp-app input[type=tel],body.gp-app input[type=url],body.gp-app select,body.gp-app textarea{border-radius:12px;border-color:#C9D3E4;font-family:'Manrope',sans-serif}
 body.gp-app .submit-btn{background:#2F5DA8;color:#fff;border-radius:999px;font-family:'Manrope',sans-serif}
 body.gp-app .submit-btn:hover{background:#244A88}
-body.gp-app #success-screen h3{font-family:'Fraunces',Georgia,serif;font-weight:600}
+body.gp-app #success-screen :is(h2,h3){font-family:'Fraunces',Georgia,serif;font-weight:600}
 </style>
+
+<style id="gp-seo-sec">
+body.gp-app .ins-sec{max-width:1100px;margin:0 auto;padding:64px 24px 12px}
+body.gp-app .ins-sec h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,3.4vw,40px);font-weight:700;color:#07122B;line-height:1.15;margin:0 0 14px}
+body.gp-app .ins-sec h3{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;color:#07122B;margin:0 0 6px}
+body.gp-app .ins-sec p{color:#1E2A44;line-height:1.7;margin:0 0 14px;max-width:760px}
+body.gp-app .ins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:26px}
+body.gp-app .ins-grid > div{background:#fff;border:1px solid rgba(7,18,43,.14);border-radius:16px;padding:22px}
+body.gp-app .ins-grid p{font-size:14.5px;color:#4A5670;margin:0}
+body.gp-app .ins-sec ul{margin:0 0 14px;padding-left:20px;color:#1E2A44;line-height:1.7;max-width:760px}
+body.gp-app .ins-sec li{margin:6px 0}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"GCC Insiders: the GCC Inner Circle community","url":"https://www.gccpros.com/community-insider","description":"A verified community for professionals who have worked inside a Global Capability Centre in India.","isPartOf":{"@type":"WebSite","name":"GCCPROs","url":"https://www.gccpros.com/"},"about":{"@type":"Thing","name":"Global Capability Centre"},"publisher":{"@type":"Organization","name":"GCCPROs","url":"https://www.gccpros.com/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.gccpros.com/"},{"@type":"ListItem","position":2,"name":"Community","item":"https://www.gccpros.com/industry-council"},{"@type":"ListItem","position":3,"name":"GCC Insiders","item":"https://www.gccpros.com/community-insider"}]}}</script>
 </head>
 <body class="gp-app">
 <!-- gp:nav -->
@@ -102,7 +115,7 @@ body.gp-app #success-screen h3{font-family:'Fraunces',Georgia,serif;font-weight:
 <div class="gp-progress" aria-hidden="true"></div>
 <header class="gp-nav" id="gpNav">
   <div class="gp-nav__in">
-    <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt=""><span>GCC<b>PROs</b></span></a>
+    <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt="GCCPROs logo"><span>GCC<b>PROs</b></span></a>
     <nav aria-label="Primary">
       <ul class="gp-menu">
         <li class="has-drop">
@@ -133,11 +146,11 @@ body.gp-app #success-screen h3{font-family:'Fraunces',Georgia,serif;font-weight:
   </div>
 </header>
 <div class="gp-mobile" id="gpMobile">
-  <h6>Intelligence</h6>
+  <p class="gp-mobile__grp">Intelligence</p>
   <a href="/data">GCC Database</a><a href="/research">Research &amp; reports</a><a href="/newsroom">Newsroom</a><a href="/faq">FAQ &amp; glossary</a>
-  <h6>Work with us</h6>
+  <p class="gp-mobile__grp">Work with us</p>
   <a href="/consult">GCC Consulting</a><a href="/insights-events">Events &amp; summits</a><a href="/talent">Talent</a>
-  <h6>Community</h6>
+  <p class="gp-mobile__grp">Community</p>
   <a href="/industry-council">GCC Industry Council</a><a href="/council-signup">Join as a GCC leader</a><a href="/community-insider">GCC Insiders</a><a href="/council-console">Member sign-in</a>
   <a class="gp-cta" href="/consult#chat">Book a consultation</a>
 </div>
@@ -274,7 +287,7 @@ body.gp-app #success-screen h3{font-family:'Fraunces',Georgia,serif;font-weight:
 
     <div id="success-screen">
       <div class="tick">🎉</div>
-      <h3>Application received!</h3>
+      <h2>Application received!</h2>
       <p>Our team will review your profile. If approved, you will receive a confirmation and a WhatsApp group invite within 2–3 business days.</p>
       <div style="background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.25);border-radius:12px;padding:20px;margin-top:24px;">
         <div style="font-size:13px;font-weight:700;color:#25D366;margin-bottom:8px;">⏳ Approval pending</div>
@@ -485,12 +498,39 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
   });
 });
 </script>
+
+<section class="ins-sec" id="about-insiders">
+  <h2>What the GCC Inner Circle is</h2>
+  <p>Welcome to the GCC Inner Circle &mdash; the part of GCCPROs built for the practitioners rather than the platforms.</p>
+  <p>GCC Insiders is the open community that sits alongside the invite-only <a href="/industry-council">GCC Industry Council</a>. Where the Council is limited to the leaders who run a centre, the Inner Circle is open to anyone who has actually worked inside a Global Capability Centre in India &mdash; analyst to vice-president, across finance, technology, operations, human resources and sales.</p>
+  <p>Everyone is verified by hand before they are let in. That single rule is what keeps the room useful: no recruiters working a list, no vendors pitching a platform, no consultants prospecting. Just practitioners comparing notes on the problems GCCs actually have.</p>
+
+  <h2>Who should join</h2>
+  <div class="ins-grid">
+    <div><h3>Current GCC employees</h3><p>Anyone on the payroll of a captive centre in India, at any level and in any function.</p></div>
+    <div><h3>GCC alumni</h3><p>People who have moved on but built their craft inside a capability centre and still think like an operator.</p></div>
+    <div><h3>Functional specialists</h3><p>Finance, technology, operations, HR and sales leads who own a process end to end for a global parent.</p></div>
+    <div><h3>People weighing a move</h3><p>Professionals deciding whether a GCC is the right next step, who want a straight answer from people already there.</p></div>
+  </div>
+
+  <h2>What members get</h2>
+  <ul>
+    <li><strong>Peer knowledge exchange</strong> &mdash; ask the questions you cannot ask a vendor, and get answers from people running the same playbook.</li>
+    <li><strong>Industry updates</strong> &mdash; what is actually changing in India&rsquo;s GCC landscape, drawn from the <a href="/data">GCC database</a> and our <a href="/research">original research</a>.</li>
+    <li><strong>Early access to events</strong> &mdash; member invitations to the <a href="/insights-events">GCC Leadership Summits</a> and closed-door roundtables.</li>
+    <li><strong>A real network</strong> &mdash; practitioners across Bengaluru, Hyderabad, Pune, Chennai, the NCR and beyond.</li>
+  </ul>
+
+  <h2>How verification works</h2>
+  <p>Fill in the form above with your name, your current city and the GCC you work at or came from. Our team checks the details by hand against the centres in our database, which usually takes a working day or two. If anything is unclear we will write to you before deciding &mdash; we would rather ask than turn away a genuine practitioner.</p>
+  <p>Your details are never published and never sold. Read the <a href="/privacy">privacy policy</a> for exactly what we store and why. If you run a GCC rather than work in one, apply to the <a href="/council-signup">GCC Industry Council</a> instead &mdash; it is a different room, with its own benchmark console.</p>
+</section>
 <!-- gp:footer -->
 <footer class="gp-footer">
   <div class="gp-footer__in">
     <div class="gp-footer__top">
       <div class="gp-footer__brand">
-        <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt=""><span>GCC<b>PROs</b></span></a>
+        <a href="/" class="gp-logo" aria-label="GCCPROs home"><img src="/assets/img/logo-mark.png" width="29" height="34" alt="GCCPROs logo"><span>GCC<b>PROs</b></span></a>
         <p>The world&rsquo;s GCC ecosystem: verified intelligence, a peer council of GCC leaders, original research and practitioner-led advisory. A Chartered Times LLP initiative.</p>
         <div class="gp-social">
           <a href="https://www.linkedin.com/company/gccpros/" target="_blank" rel="noopener" aria-label="GCCPROs on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.75v5.7h-4v-5.05c0-1.2-.02-2.75-1.7-2.75-1.7 0-1.95 1.3-1.95 2.66v5.14h-4z"/></svg></a>
@@ -500,19 +540,19 @@ document.querySelectorAll('.mobile-menu a').forEach(a=>{
         </div>
       </div>
       <div>
-        <h4>Intelligence</h4>
+        <p class="gp-foot__h">Intelligence</p>
         <ul><li><a href="/data">GCC Database</a></li><li><a href="/research">Research &amp; reports</a></li><li><a href="/research#book">GCC Industry @ 2030</a></li><li><a href="/newsroom">Newsroom</a></li><li><a href="/faq">FAQ &amp; glossary</a></li></ul>
       </div>
       <div>
-        <h4>Work with us</h4>
+        <p class="gp-foot__h">Work with us</p>
         <ul><li><a href="/consult">GCC Consulting</a></li><li><a href="/consult#join">Join the expert network</a></li><li><a href="/expert-dashboard">Expert login</a></li><li><a href="/insights-events">Events &amp; summits</a></li><li><a href="/insights-events#rsvp">Register for an event</a></li><li><a href="/talent">Talent</a></li></ul>
       </div>
       <div>
-        <h4>Community</h4>
+        <p class="gp-foot__h">Community</p>
         <ul><li><a href="/industry-council">Industry Council</a></li><li><a href="/council-signup">Join as a GCC leader</a></li><li><a href="/community-insider">GCC Insiders</a></li><li><a href="/council-console">Member sign-in</a></li><li><a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu" target="_blank" rel="noopener">WhatsApp group</a></li></ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <p class="gp-foot__h">Contact</p>
         <address class="gp-footer__addr"><a href="https://www.google.com/maps/search/?api=1&amp;query=WeWork%20World%20Trade%20Centre%20EON%20Free%20Zone%20Kharadi%20Pune" target="_blank" rel="noopener">WeWork, 2nd Floor, Tower 5, World Trade Centre, Kharadi, Pune 411014</a></address>
         <ul style="margin-top:12px"><li><a href="mailto:admin@gccpros.com">admin@gccpros.com</a></li><li><a href="https://wa.me/918506976700" target="_blank" rel="noopener">WhatsApp +91 85069 76700</a></li></ul>
       </div>
