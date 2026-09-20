@@ -2591,7 +2591,7 @@ function downloadAgreementDraft() {
   <style>
     @page { size: A4; margin: 22mm 20mm; }
     body { font-family: Georgia, 'Times New Roman', serif; color:#111; line-height:1.55; font-size:12.5px; }
-    h1 { text-align:center; font-size:18px; margin:0 0 4px; }
+    h2 { text-align:center; font-size:18px; margin:0 0 4px; font-weight:bold; }
     .sub { text-align:center; color:#555; font-size:11px; margin-bottom:22px; }
     ol { padding-left:18px; } li { margin:7px 0; }
     .sign { margin-top:46px; display:flex; justify-content:space-between; }
@@ -2599,7 +2599,7 @@ function downloadAgreementDraft() {
     .pb { text-align:center; margin:14px 0; } @media print { .pb { display:none; } }
   </style></head><body>
   <div class="pb"><button onclick="window.print()" style="padding:8px 18px;font-size:13px;cursor:pointer;">Print / Save as PDF</button></div>
-  <h1>GCCPROs Partner Referral Agreement</h1>
+  <h2>GCCPROs Partner Referral Agreement</h2>
   <div class="sub">GCCPROs &middot; Talent &amp; Referral Network</div>
   <p>This Partner Referral Agreement ("Agreement") is entered into on <b>${today}</b> between <b>GCCPROs</b> ("Company") and the partner named below ("Partner").</p>
   <p><b>Partner name:</b> ${name}<br><b>Designation:</b> ${desig}${company ? ', ' + company : ''}<br><b>City:</b> ${city}<br><b>Email:</b> ${email}</p>
