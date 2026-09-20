@@ -4,6 +4,44 @@ Allow: /
 # Internal tools carry <meta name="robots" content="noindex"> and are left crawlable so that tag is seen.
 Disallow: /functions/
 
+
+# Answer engines are welcome to read and cite this site.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 # Plain-language site summary for AI crawlers
 # https://www.gccpros.com/llms.txt
 
