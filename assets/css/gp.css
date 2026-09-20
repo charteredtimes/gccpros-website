@@ -286,3 +286,26 @@ a.card:hover,.card.is-hover:hover{transform:translateY(-6px);box-shadow:var(--sh
 .city-strip .tag{font-size:13px;padding:8px 14px;transition:border-color .2s,color .2s,background .2s}
 .city-strip .tag b{font-weight:800;color:var(--brand-700);margin-left:2px}
 .city-strip .tag:hover{border-color:var(--brand);background:var(--brand-50);color:var(--brand-700)}
+
+
+/* ---------- business-line accents ----------
+   One brand, five signals. Buttons keep a single action colour sitewide;
+   only accents shift, so the part of GCCPROs you are in is legible at a glance. */
+:root{--accent:var(--brand);--accent-deep:var(--brand-700);--accent-50:var(--brand-50);--accent-100:var(--brand-100)}
+body[data-line="intel"]{--accent:#2F5DA8;--accent-deep:#163566;--accent-50:#EEF3FB;--accent-100:#DCE7F7}
+body[data-line="consult"]{--accent:#1E4478;--accent-deep:#0F2A55;--accent-50:#EDF1F8;--accent-100:#D7E1F0}
+body[data-line="community"]{--accent:#15807A;--accent-deep:#0E5B57;--accent-50:#E6F4F2;--accent-100:#CBE7E3}
+body[data-line="events"]{--accent:#5B4B9E;--accent-deep:#3F3374;--accent-50:#F0EDF9;--accent-100:#DED7F1}
+body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F4F8;--accent-100:#C9E5EE}
+:where(.gp) .eyebrow{color:var(--accent-deep)}
+:where(.gp) .eyebrow--pill{border-color:var(--accent-100);background:var(--accent-50)}
+:where(.gp) .eyebrow::before,:where(.gp) .eyebrow--pill::before{background:var(--accent)}
+:where(.gp) .icon-tile{background:var(--accent);box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 30%,transparent)}
+:where(.gp) .link-arrow{color:var(--accent-deep)}
+:where(.gp) .tag{background:var(--accent-50);color:var(--accent-deep);border-color:var(--accent-100)}
+:where(.gp) .page-hero__orb.orb-a{background:radial-gradient(circle,color-mix(in srgb,var(--accent) 26%,transparent),transparent 68%)}
+:where(.gp) .stat__num{color:var(--ink)}
+:where(.gp) h2 em,:where(.gp) h1 em{color:var(--accent-deep)}
+@supports not (color: color-mix(in srgb,red 50%,blue)){
+  :where(.gp) .icon-tile{box-shadow:0 8px 20px rgba(7,18,43,.22)}
+}
