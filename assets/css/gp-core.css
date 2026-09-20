@@ -72,7 +72,7 @@
   .gp-mobile .gp-mobile__grp{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 6px;font-weight:500}
   .gp-mobile a{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:17px;font-weight:600;color:var(--ink)}
   .gp-mobile a[aria-current="page"]{color:var(--brand)}
-  .gp-mobile .gp-cta{display:flex;width:100%;margin-top:26px;min-height:50px;font-size:16px;border-bottom:0}
+  .gp-mobile .gp-cta{display:flex;justify-content:center;text-align:center;width:100%;margin-top:26px;min-height:52px;font-size:16px;border-bottom:0;padding:14px 20px}
   html.gp-lock{overflow:hidden}
 }
 
@@ -97,7 +97,14 @@
 .gp-footer__addr{font-style:normal;line-height:1.6}
 .gp-footer__bottom{margin-top:56px;padding-top:24px;border-top:1px solid rgba(157,192,238,.14);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:13.5px;color:#7F8FB0}
 .gp-footer__bottom nav{display:flex;gap:18px;flex-wrap:wrap;background:none;padding:0;margin:0;position:static;height:auto;border:0;box-shadow:none}
-.gp-footer__word{font-family:var(--serif);font-weight:600;font-size:clamp(64px,15vw,210px);line-height:.8;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1px rgba(157,192,238,.16);margin-top:56px;user-select:none;white-space:nowrap;text-align:center}
+.gp-footer__sig{display:flex;align-items:center;gap:22px;margin:58px 0 8px}
+.gp-footer__hair{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(157,192,238,.30),transparent)}
+.gp-footer__lockup{display:inline-flex;align-items:center;gap:11px;white-space:nowrap}
+.gp-footer__lockup img{width:26px;height:30px;object-fit:contain;opacity:.85}
+.gp-footer__lockup b{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.01em;color:rgba(255,255,255,.82)}
+.gp-footer__lockup b i{font-style:normal;color:var(--ice)}
+.gp-footer__lockup small{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:rgba(157,192,238,.55);padding-left:12px;border-left:1px solid rgba(157,192,238,.22)}
+@media (max-width:620px){.gp-footer__sig{gap:14px}.gp-footer__lockup small{display:none}}
 @media (max-width:980px){.gp-footer__top{grid-template-columns:1fr 1fr}.gp-footer__brand{grid-column:1/-1}}
 @media (max-width:520px){.gp-footer__top{grid-template-columns:1fr}}
 
@@ -117,3 +124,18 @@
 /* app pages: offset their content below the fixed bar */
 body.gp-app{padding-top:var(--nav-h)}
 @media (prefers-reduced-motion:reduce){.gp-nav *,.gp-mobile,.gp-footer *{transition:none!important}}
+
+
+/* mobile ergonomics --------------------------------------------------------
+   Touch targets to 44px and no body text under 12px. Both come straight from
+   the 375px audit: the footer legal links were 20px tall, which is roughly half
+   a fingertip. */
+@media (max-width:760px){
+  .gp-footer__bottom{gap:14px}
+  .gp-footer__bottom nav{display:flex;flex-wrap:wrap;gap:4px 18px;margin-left:-10px}
+  .gp-footer__bottom nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px}
+  .gp-footer .gp-foot__h{font-size:12.5px}
+  .gp-footer li a,.gp-footer address a{display:inline-flex;align-items:center;min-height:40px;padding:2px 0}
+  .gp-logo{padding:5px 0}
+  .gp-footer__sig{margin-top:44px}
+}
