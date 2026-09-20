@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
 <link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
-<link rel="stylesheet" href="/assets/css/gp.css?v=0955e47a">
+<link rel="stylesheet" href="/assets/css/gp.css?v=b581762b">
 <!-- /gp:head -->
 <link rel="preload" href="/assets/data/globe-land.json" as="fetch" crossorigin>
 <script type="application/ld+json">
@@ -567,6 +567,51 @@
     </div>
   </section>
 
+  <!-- SUBSCRIBE -->
+  <section class="section section--alt" id="subscribe" aria-labelledby="sub-title">
+    <div class="shell shell--narrow">
+      <div class="sub-card" data-reveal>
+        <div class="sub-card__head">
+          <span class="eyebrow">Free &middot; no spam</span>
+          <h2 class="h2" id="sub-title">Subscribe to <em>GCC Intelligence.</em></h2>
+          <p class="lede">Data-driven updates on the GCC ecosystem: what the numbers are doing, what is changing in policy, and what leaders are actually seeing.</p>
+        </div>
+        <form class="sub-form" id="subForm" novalidate>
+          <div class="sub-field">
+            <label for="sub_name">Full name <span aria-hidden="true">*</span></label>
+            <input type="text" id="sub_name" name="fullName" required autocomplete="name" maxlength="160" placeholder="Your full name" aria-describedby="sub_name_err">
+            <p class="sub-err" id="sub_name_err" role="alert"></p>
+          </div>
+          <div class="sub-field">
+            <label for="sub_email">Work email <span aria-hidden="true">*</span></label>
+            <input type="email" id="sub_email" name="email" required autocomplete="email" maxlength="200" placeholder="you@company.com" aria-describedby="sub_email_err">
+            <p class="sub-err" id="sub_email_err" role="alert"></p>
+          </div>
+          <div class="sub-field">
+            <label for="sub_li">LinkedIn profile URL <span aria-hidden="true">*</span></label>
+            <input type="url" id="sub_li" name="linkedin" required inputmode="url" maxlength="300" placeholder="linkedin.com/in/your-name" aria-describedby="sub_li_hint sub_li_err">
+            <p class="sub-hint" id="sub_li_hint">We verify subscribers are real practitioners. Your profile URL, nothing else.</p>
+            <p class="sub-err" id="sub_li_err" role="alert"></p>
+          </div>
+          <fieldset class="sub-opts">
+            <legend>What are you looking for? <span>(optional)</span></legend>
+            <label><input type="checkbox" name="interests" value="GCC Industry Trends &amp; Market Intelligence"><span>GCC industry trends &amp; market intelligence</span></label>
+            <label><input type="checkbox" name="interests" value="Advertising &amp; Partnerships"><span>Advertising &amp; partnerships</span></label>
+            <label><input type="checkbox" name="interests" value="GCC Jobs &amp; Career Updates"><span>GCC jobs &amp; career updates</span></label>
+          </fieldset>
+          <div class="sub-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <button class="btn btn--primary sub-submit" type="submit" id="subBtn">Subscribe to GCC Intelligence <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          <p class="sub-msg" id="subMsg" role="status" aria-live="polite"></p>
+          <p class="sub-legal">By subscribing you agree to our <a href="/privacy">privacy policy</a>.</p>
+        </form>
+      </div>
+      <p class="sub-promise" data-reveal>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>No spam and no promotional clutter &mdash; only GCC intelligence worth the interruption. We write when the data says something, not on a schedule. Leave whenever you like, in one click.</span>
+      </p>
+    </div>
+  </section>
+
   <!-- FINAL CTA -->
   <section class="section section--tight">
     <div class="shell">
@@ -630,6 +675,66 @@
 <!-- /gp:footer -->
 
 <script src="/assets/js/gp.js?v=28e5f803" defer></script>
+<script>
+(function(){
+  var f=document.getElementById('subForm'); if(!f) return;
+  var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/newsletter-signup';
+  var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  // linkedin.com/in/slug or /pub/slug, scheme and www optional
+  var LI=/^(?:https?:\/\/)?(?:[a-z]{2,3}\.)?linkedin\.com\/(in|pub)\/[A-Za-z0-9\-_%.]{3,120}\/?(?:[?#].*)?$/i;
+  var msg=document.getElementById('subMsg'), btn=document.getElementById('subBtn');
+  function err(id,t){ var e=document.getElementById(id+'_err'), i=document.getElementById(id); if(e)e.textContent=t||''; if(i)i.setAttribute('aria-invalid',t?'true':'false'); return !t; }
+  function check(){
+    var n=document.getElementById('sub_name').value.trim();
+    var m=document.getElementById('sub_email').value.trim();
+    var l=document.getElementById('sub_li').value.trim().replace(/\s+/g,'');
+    var ok=true;
+    ok = err('sub_name', (n.length<2||!/[A-Za-z]/.test(n)) ? 'Please enter your full name.' : '') && ok;
+    ok = err('sub_email', !EMAIL.test(m) ? 'Please enter a valid email address.' : '') && ok;
+    ok = err('sub_li', !LI.test(l) ? 'Use your profile URL, e.g. linkedin.com/in/your-name' : '') && ok;
+    return ok;
+  }
+  ['sub_name','sub_email','sub_li'].forEach(function(id){
+    var el=document.getElementById(id);
+    el.addEventListener('blur',check);
+    el.addEventListener('input',function(){ if(el.getAttribute('aria-invalid')==='true') check(); });
+  });
+  f.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    msg.className='sub-msg';
+    if(!check()){ msg.textContent='Please fix the highlighted fields.'; msg.className='sub-msg is-err'; return; }
+    var interests=[].slice.call(f.querySelectorAll('input[name="interests"]:checked')).map(function(x){return x.value;});
+    btn.disabled=true; var label=btn.innerHTML; btn.textContent='Subscribing\u2026';
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      action:'subscribe',
+      fullName:document.getElementById('sub_name').value.trim(),
+      email:document.getElementById('sub_email').value.trim(),
+      linkedin:document.getElementById('sub_li').value.trim(),
+      interests:interests,
+      website:f.querySelector('input[name="website"]').value,
+      source:'homepage'
+    })}).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(res.ok){
+          f.querySelector('.sub-form__done')||0;
+          msg.textContent = res.j.already ? 'You are already on the list. Nothing more to do.' : 'You are subscribed. We will be in touch when there is something worth sending.';
+          msg.className='sub-msg is-ok';
+          if(!res.j.already) f.reset();
+          btn.disabled=true; btn.textContent='Subscribed';
+        } else {
+          var e=res.j&&res.j.errors;
+          if(e){ err('sub_name',e.fullName); err('sub_email',e.email); err('sub_li',e.linkedin); }
+          msg.textContent='Please check the highlighted fields and try again.';
+          msg.className='sub-msg is-err'; btn.disabled=false; btn.innerHTML=label;
+        }
+      })
+      .catch(function(){
+        msg.textContent='Could not reach the server. Please try again, or email admin@gccpros.com.';
+        msg.className='sub-msg is-err'; btn.disabled=false; btn.innerHTML=label;
+      });
+  });
+})();
+</script>
 <script src="/analytics.js" defer></script>
 <script src="https://widgets.sociablekit.com/linkedin-page-posts/widget.js" defer></script>
 <script>
