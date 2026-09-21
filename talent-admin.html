@@ -364,7 +364,7 @@ td.actions { white-space:nowrap; }
         <ul style="font-size:13px;line-height:1.75;color:var(--ink);padding-left:18px;margin-top:10px;">
           <li><strong>Encryption at rest:</strong> Supabase Postgres on AES-256 encrypted disks (platform default).</li>
           <li><strong>Encryption in transit:</strong> Every API call uses TLS 1.2+. No plaintext over the wire.</li>
-          <li><strong>Service-role key:</strong> Stored server-side only (Edge Function secrets) &mdash; never sent to a browser.</li>
+          <li><strong>Service-role key:</strong> Stored server-side only (Edge Function secrets), never sent to a browser.</li>
           <li><strong>Admin key:</strong> Required for every admin action in this console. Rotate periodically.</li>
           <li><strong>Row-level security:</strong> Enabled on all tables; end-users read only via credit-checked proxy endpoints.</li>
           <li><strong>Field-level filtering:</strong> Reveal returns only the locked B2C fields; other columns never leave the server.</li>
@@ -372,7 +372,7 @@ td.actions { white-space:nowrap; }
           <li><strong>Audit trail:</strong> Every credit spend, reveal, search, login, and admin action is logged with metadata.</li>
           <li><strong>Backups:</strong> Supabase daily backups (7-day retention); Pro tier adds point-in-time recovery.</li>
           <li><strong>Rate limits:</strong> Search and reveal throttled per user; monthly reveal cap enforced.</li>
-          <li><strong>Payments:</strong> Card data is entered on Razorpay&rsquo;s checkout only &mdash; it never touches our servers.</li>
+          <li><strong>Payments:</strong> Card data is entered on Razorpay&rsquo;s checkout only, it never touches our servers.</li>
         </ul>
       </div>
     </div>
@@ -391,7 +391,7 @@ td.actions { white-space:nowrap; }
 
     <div id="opp-jobs" class="panel active">
       <div class="card">
-        <h3>Opportunities &mdash; Jobs</h3>
+        <h3>Opportunities: Jobs</h3>
         <p class="muted">Live job postings in <code>opps_jobs</code>.</p>
         <div class="filter-row">
           <select id="f-jobs-status" onchange="loadJobs()">
@@ -411,7 +411,7 @@ td.actions { white-space:nowrap; }
 
     <div id="opp-apps" class="panel">
       <div class="card">
-        <h3>Opportunities &mdash; Applications</h3>
+        <h3>Opportunities: Applications</h3>
         <p class="muted">Job applications. Set status to <b>placed</b> to auto-grant partner earnings.</p>
         <div class="filter-row">
           <select id="f-apps-status" onchange="loadApps()">
@@ -439,7 +439,7 @@ td.actions { white-space:nowrap; }
 
     <div id="opp-partners" class="panel">
       <div class="card">
-        <h3>Opportunities &mdash; Partners</h3>
+        <h3>Opportunities: Partners</h3>
         <p class="muted">Partner accounts in <code>opps_partners</code>. Approve / reject + KYC review.</p>
         <div class="filter-row">
           <select id="f-partners-status" onchange="loadPartners()">
@@ -466,7 +466,7 @@ td.actions { white-space:nowrap; }
 
     <div id="opp-referrals" class="panel">
       <div class="card">
-        <h3>Opportunities &mdash; Referrals</h3>
+        <h3>Opportunities: Referrals</h3>
         <p class="muted">Partner-initiated referrals with skill assessments.</p>
         <div class="filter-row">
           <select id="f-referrals-status" onchange="loadReferrals()">
@@ -489,7 +489,7 @@ td.actions { white-space:nowrap; }
 
     <div id="opp-users" class="panel">
       <div class="card">
-        <h3>Opportunities &mdash; Users</h3>
+        <h3>Opportunities: Users</h3>
         <p class="muted">All users in <code>opps_users</code>.</p>
         <div class="filter-row">
           <select id="f-users-type" onchange="renderUsers()">
@@ -717,7 +717,7 @@ function fmtINR(n) { if (n == null || n === '' || isNaN(Number(n))) return ''; r
 function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString(); }
 function fmtDateTime(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleString(); }
 function badge(val) { if (!val) return ''; return `<span class="badge b-${esc(String(val).toLowerCase().replace(/\s+/g,'_'))}">${esc(val)}</span>`; }
-function bool(v) { return v ? '✓' : '—'; }
+function bool(v) { return v ? '✓' : '-'; }
 function _titleCase(s) { return String(s).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace(/\bInr\b/g, 'INR').replace(/\bCtc\b/g, 'CTC').replace(/\bPan\b/g, 'PAN').replace(/\bCv\b/g, 'CV').replace(/\bKyc\b/g, 'KYC').replace(/\bLpa\b/g, 'LPA').replace(/\bId\b/g, 'ID').replace(/\bUrl\b/g, 'URL').replace(/\bJson\b/g, 'JSON'); }
 
 function adminFetch(url, options) {
@@ -802,7 +802,7 @@ function renderBookOrders() {
     const addrLine = [esc(x.address), esc(x.city), esc(x.state)].filter(function(v){return v && v.trim();}).join(', ');
     const shipTo = (addrLine ? addrLine : '<span style="color:#b00">no address</span>')
       + '<br><b>PIN ' + (x.pincode ? esc(x.pincode) : '<span style="color:#b00">missing</span>') + '</b>';
-    const dash = '<span style="color:#aaa">—</span>';
+    const dash = '<span style="color:#aaa">-</span>';
     const typeCell = x.address_type ? '<span style="font-size:12px;background:#eef2fb;color:#33507d;border-radius:5px;padding:2px 8px;white-space:nowrap">' + esc(x.address_type) + '</span>' : dash;
     const delivCell = (x.delivery_days || x.delivery_time) ? ('<b>' + esc(x.delivery_days || 'Any day') + '</b>' + (x.delivery_time ? '<br><span style="font-size:12px;color:#5b6b84">' + esc(x.delivery_time) + '</span>' : '')) : dash;
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
@@ -1097,9 +1097,9 @@ function toast(msg, kind) {
 }
 
 // =========================================================
-// DATABASE — Credits + History
+// DATABASE, Credits + History
 // =========================================================
-// ===== DATABASE — Submissions (user GCC suggestions / corrections / waitlist) =====
+// ===== DATABASE, Submissions (user GCC suggestions / corrections / waitlist) =====
 // Ported from legacy admin.html. Read-only; uses adminSubmissions&kind=gcc|corrections|waitlist.
 let DB_SUBMISSIONS = [];
 let DB_SUB_KIND = 'gcc';
@@ -1155,7 +1155,7 @@ function dbShowSubmissionDetails(idx) {
     let v = merged[k];
     if (/_at$|date/i.test(k) && v) { try { v = fmtDate(v); } catch (_) {} }
     if (v && typeof v === 'object') v = JSON.stringify(v);
-    return '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:170px;padding:6px 12px;vertical-align:top;">' + esc(k.replace(/_/g, ' ')) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (v != null && v !== '' ? esc(String(v)) : '<span class="muted">—</span>') + '</td></tr>';
+    return '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:170px;padding:6px 12px;vertical-align:top;">' + esc(k.replace(/_/g, ' ')) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (v != null && v !== '' ? esc(String(v)) : '<span class="muted">-</span>') + '</td></tr>';
   }).join('');
   const html = '<div class="dbm" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px;" onclick="this.remove()">' +
     '<div onclick="event.stopPropagation()" style="background:#fff;border-radius:8px;max-width:720px;width:100%;max-height:88vh;overflow-y:auto;">' +
@@ -1176,7 +1176,7 @@ function dbExportSubmissionsCsv() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
-// ===== DATABASE — User accounts (approve/reject/suspend, balances, ledger) =====
+// ===== DATABASE, User accounts (approve/reject/suspend, balances, ledger) =====
 // Restored from the legacy admin.html. Uses adminHealth (user list) + adminApprove/
 // adminReject/adminSuspend + adminGrant + adminUserHistory. db-prefixed names so it
 // never collides with the Opportunities Users tab (loadUsers/renderUsers).
@@ -1285,7 +1285,7 @@ function dbShowDetails(i) {
     ['Balance', (Number(u.balance) || 0).toLocaleString('en-IN')], ['Monthly reveals', u.monthlyReveals], ['Lifetime spent', (Number(u.lifetimeSpent) || 0).toLocaleString('en-IN')], ['Lifetime purchased', (Number(u.lifetimePurchased) || 0).toLocaleString('en-IN')],
     ['Signup IP', extra.signup_ip], ['GCCs worked with', extra.gccs_worked_with], ['Eligibility pitch', extra.eligibility_pitch], ['Admin notes', extra.admin_notes]
   ];
-  const rowsHtml = F.map(p => '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:160px;padding:6px 12px;vertical-align:top;">' + esc(p[0]) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (p[1] ? esc(String(p[1])) : '<span class="muted">—</span>') + '</td></tr>').join('');
+  const rowsHtml = F.map(p => '<tr><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:160px;padding:6px 12px;vertical-align:top;">' + esc(p[0]) + '</td><td style="font-size:13px;padding:6px 12px;word-break:break-word;">' + (p[1] ? esc(String(p[1])) : '<span class="muted">-</span>') + '</td></tr>').join('');
   const btns = [
     (u.status === 'Pending') ? '<button class="btn" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'approve\');this.closest(\'.dbm\').remove()">Approve</button>' : '',
     (u.status === 'Approved') ? '<button class="btn secondary" onclick="dbSetStatus(\'' + esc(u.email) + '\',\'suspend\');this.closest(\'.dbm\').remove()">Suspend</button>' : '',
@@ -1374,8 +1374,8 @@ async function loadHistory() {
       } else if (meta != null) { details = String(meta); }
       if (!details) details = h.note || h.description || '';
       var amt = (h.amount != null) ? h.amount : (h.delta != null ? h.delta : '');
-      // v7.9.24 — flag India GCC Report 2026 activity. The report is a 4,999-credit
-      // item (Rs 4,999) — a value no standard top-up pack uses — so |amount| == 4999
+      // v7.9.24, flag India GCC Report 2026 activity. The report is a 4,999-credit
+      // item (Rs 4,999), a value no standard top-up pack uses, so |amount| == 4999
       // or paid_amount == 4999 uniquely identifies it. A positive amount is a paid
       // purchase; a negative amount is a redemption from wallet credits.
       var _paid = (h.metadata && h.metadata.paid_amount != null) ? Number(h.metadata.paid_amount) : null;
@@ -1383,7 +1383,7 @@ async function loadHistory() {
       var _isReport = (Math.abs(_na) === 4999) || (_paid === 4999);
       var typeLabel = h.reason || h.event_type || h.type || '';
       if (_isReport) {
-        typeLabel = (_na < 0) ? 'India GCC Report 2026 \u2014 redeemed (credits)' : 'India GCC Report 2026 \u2014 purchase';
+        typeLabel = (_na < 0) ? 'India GCC Report 2026, redeemed (credits)' : 'India GCC Report 2026, purchase';
         var _tag = (_na < 0) ? 'Report unlocked with 4,999 credits' : 'Report + 4,999 credits';
         details = details ? (_tag + ' \u00b7 ' + details) : _tag;
       }
@@ -1408,7 +1408,7 @@ function exportHistory() {
 }
 
 // =========================================================
-// COMMUNITY — Insider + Council
+// COMMUNITY, Insider + Council
 // =========================================================
 async function loadCommunity(kind) {
   const status = document.getElementById('f-' + kind + '-status').value;
@@ -1424,7 +1424,7 @@ async function loadCommunity(kind) {
     if (!rows.length) { box.innerHTML = '<p class="loading">No applications.</p>'; return; }
     let html = '<table><thead><tr><th>Created</th><th>Email</th><th>Name</th><th>LinkedIn</th><th>Company</th><th>Designation</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     rows.forEach((a, i) => {
-      const linkedinCell = a.linkedin ? '<a href="' + esc(a.linkedin) + '" target="_blank">link &#8599;</a>' : '&#8212;';
+      const linkedinCell = a.linkedin ? '<a href="' + esc(a.linkedin) + '" target="_blank">link &#8599;</a>' : '-';
       const company = a.current_company || a.company || a.employer || '';
       const designation = a.current_title || a.designation || a.role || a.title || '';
       const detId = 'det-' + kind + '-' + i;
@@ -1465,7 +1465,7 @@ async function decideCommApp(kind, id, decision) {
 
 
 // =========================================================
-// COMMUNITY — Event RSVPs (client-side filtered; status workflow)
+// COMMUNITY, Event RSVPs (client-side filtered; status workflow)
 // =========================================================
 // ---- Full-record detail expander for Community (Insider + Council) applications ----
 function toggleDet(id, btn) {
@@ -1503,7 +1503,7 @@ function appDetailGrid(a) {
   return '<div style="max-width:920px;">' + (rows || '<span class="muted">No additional fields.</span>') + '</div>';
 }
 
-// ===== DATABASE FEEDBACK moderation — added 2026-05-22 =====
+// ===== DATABASE FEEDBACK moderation, added 2026-05-22 =====
 let FEEDBACK_ROWS = [];
 function fbStarStr(n) { n = parseInt(n, 10) || 0; var s = ''; for (var i = 1; i <= 5; i++) { s += (i <= n) ? '★' : '☆'; } return s + ' (' + n + ')'; }
 async function loadFeedback() {
@@ -1559,7 +1559,7 @@ function exportFeedbackCsv() {
   toast('✓ Exported feedback', 'ok');
 }
 
-// ===== DATABASE — consolidated activity log + delete user (added 2026-05-22) =====
+// ===== DATABASE, consolidated activity log + delete user (added 2026-05-22) =====
 let ACTIVITY_ROWS = [];
 async function loadActivity() {
   const box = document.getElementById('activity-box');
@@ -1609,7 +1609,7 @@ function exportActivityCsv() {
 // Hard-delete a user + purge all their history (so they can re-register). Double-confirmed.
 async function dbDeleteUser(email) {
   if (!confirm('PERMANENTLY DELETE ' + email + '?\n\nThis purges their account, balance, credit transactions, reveals, searches and feedback. It cannot be undone. The person can register again afterwards.')) return;
-  if (!confirm('Final confirmation — delete and purge ALL history for ' + email + '?')) return;
+  if (!confirm('Final confirmation, delete and purge ALL history for ' + email + '?')) return;
   toast('Deleting ' + email + '…');
   try {
     const r = await adminFetch(SCRIPT_URL + '?action=adminDeleteUser&email=' + encodeURIComponent(email));
@@ -1620,7 +1620,7 @@ async function dbDeleteUser(email) {
   } catch (err) { toast('Delete failed: ' + err.message, 'err'); }
 }
 
-// ===== DATABASE — Deleted users archive (added 2026-05-22) =====
+// ===== DATABASE, Deleted users archive (added 2026-05-22) =====
 let DELETED_ROWS = [];
 async function loadDeletedUsers() {
   const box = document.getElementById('deleted-box');
@@ -1695,7 +1695,7 @@ function renderRsvps() {
   if (!RSVPS.length) { box.innerHTML = '<p class="loading">No RSVPs match.</p>'; return; }
   let html = '<table><thead><tr><th>When</th><th>Event</th><th>City</th><th>Name</th><th>Designation</th><th>Company</th><th>Email</th><th>Phone</th><th>LinkedIn</th><th>Status</th></tr></thead><tbody>';
   RSVPS.forEach(a => {
-    const li = a.linkedin_url ? '<a href="' + esc(a.linkedin_url) + '" target="_blank">link &#8599;</a>' : '—';
+    const li = a.linkedin_url ? '<a href="' + esc(a.linkedin_url) + '" target="_blank">link &#8599;</a>' : '-';
     const cur = a.status || 'New';
     const opts = RSVP_STATUSES.map(st => '<option value="' + st + '"' + (st === cur ? ' selected' : '') + '>' + st + '</option>').join('');
     html += '<tr>';
@@ -1726,7 +1726,7 @@ async function updateRsvpStatus(id, status) {
 }
 
 // =========================================================
-// OPPORTUNITIES — Jobs / Apps / Partners / Referrals / Users
+// OPPORTUNITIES, Jobs / Apps / Partners / Referrals / Users
 // (Same logic as admin-opps.html v10)
 // =========================================================
 
@@ -1749,7 +1749,7 @@ function renderJobs() {
   if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
   let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Urgent</th><th>Posted</th><th>Edit</th></tr></thead><tbody>';
   filtered.forEach(j => {
-    const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
+    const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '-');
     const apps = (j.applications_count > 0)
       ? '<button class="btn small" onclick="viewJobApplicants(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\', \'' + esc((j.title || '').replace(/'/g, "\\'")) + '\')">View ' + j.applications_count + ' &rarr;</button> <button class="btn small secondary" onclick="downloadJobCVsZip(\'' + esc(j.id) + '\', \'' + esc(j.job_code || j.id.slice(0,8)) + '\')" title="Download all applicant CVs for this job as a ZIP">&#128230; CVs</button>'
       : '<span class="muted">0</span>';
@@ -1767,7 +1767,7 @@ async function toggleJobUrgent(id, makeUrgent) {
     const r = await adminFetch(SCRIPT_URL + '?action=oppsAdminSetJobUrgent&id=' + encodeURIComponent(id) + '&urgent=' + (makeUrgent ? 'true' : 'false'));
     const j = await r.json();
     if (j.error) throw new Error(j.error);
-    toast(makeUrgent ? '\u2713 Marked urgent \u2014 it will rank first on the live page' : '\u2713 Urgent flag removed', 'ok');
+    toast(makeUrgent ? '\u2713 Marked urgent, it will rank first on the live page' : '\u2713 Urgent flag removed', 'ok');
     loadJobs();
   } catch (e) { toast('Failed: ' + e.message, 'err'); }
 }
@@ -1779,7 +1779,7 @@ function openNewJobModal(jobObj) {
   document.querySelectorAll('.new-job-modal').forEach(function(n) { n.remove(); });
   var j = jobObj || {};
   var isEdit = !!j.id;
-  var titleLbl = isEdit ? ('✎ Edit job — ' + (j.job_code || j.id.slice(0,8))) : '✚ Post a new job';
+  var titleLbl = isEdit ? ('✎ Edit job, ' + (j.job_code || j.id.slice(0,8))) : '✚ Post a new job';
   var submitLbl = isEdit ? 'Save changes' : 'Post job';
   var html = ''
     + '<div class="new-job-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:flex-start;justify-content:center;z-index:9998;padding:24px;overflow-y:auto;" onclick="if(event.target===this)this.remove()">'
@@ -1802,7 +1802,7 @@ function openNewJobModal(jobObj) {
     +       _njSelect('level', 'Seniority', ['','Junior','Mid','Senior','Lead','Director','Other'], _njSel(j,'level'))
     +       _njField('budget_text', 'Budget text (shown only if CTC empty)', 'text', false, _njV(j,'budget_text'), '', 'e.g. Competitive')
     +       _njField('qualification', 'Min. qualification', 'text', false, _njV(j,'qualification'), '', 'e.g. Graduate')
-    +       _njTextarea('skills', 'Skills (REQUIRED — comma-separated, 3+ recommended)', 2, 'e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX', _njV(j,'skills'))
+    +       _njTextarea('skills', 'Skills (REQUIRED, comma-separated, 3+ recommended)', 2, 'e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX', _njV(j,'skills'))
     +       _njTextarea('responsibilities', 'Responsibilities', 3, 'What the person will own day-to-day', _njV(j,'responsibilities'))
     +       _njTextarea('description', 'Description', 4, 'Role overview, responsibilities, what success looks like…', _njV(j,'description'))
     +       _njTextarea('requirements', 'Requirements', 3, 'Must-have skills / qualifications', _njV(j,'requirements'))
@@ -1846,10 +1846,10 @@ function _njTextarea(name, label, rows, ph, defVal) {
     + '</label>';
 }
 function editJob(id) {
-  // JOBS is a top-level `let` so it does NOT attach to window — refer to it directly
+  // JOBS is a top-level `let` so it does NOT attach to window, refer to it directly
   var list = (typeof JOBS !== 'undefined' && Array.isArray(JOBS)) ? JOBS : [];
   var j = list.find(function(x){ return String(x.id) === String(id); });
-  if (!j) { toast('Job not found — refresh the list', 'err'); return; }
+  if (!j) { toast('Job not found, refresh the list', 'err'); return; }
   openNewJobModal(j);
 }
 async function submitNewJob(form) {
@@ -1869,7 +1869,7 @@ async function submitNewJob(form) {
     if (btn) { btn.disabled = false; btn.textContent = 'Post job'; }
     return;
   }
-  // v7.11: skills are required — without them, candidates can't apply
+  // v7.11: skills are required, without them, candidates can't apply
   var sk = (payload.skills || '').split(/[,;|\n]/).map(function(x){return x.trim();}).filter(Boolean);
   if (sk.length < 3) {
     toast('Please list at least 3 skills (comma-separated). Candidates need them to apply.', 'err');
@@ -1884,7 +1884,7 @@ async function submitNewJob(form) {
     });
     var j = await r.json();
     if (j.error) throw new Error(j.error);
-    toast((payload.id ? '✓ Job updated — ' : '✓ Job posted — ') + (j.job && j.job.title ? j.job.title : payload.title), 'ok');
+    toast((payload.id ? '✓ Job updated, ' : '✓ Job posted, ') + (j.job && j.job.title ? j.job.title : payload.title), 'ok');
     // Close modal + refresh list
     var m = form.closest('.new-job-modal'); if (m) m.remove();
     loadJobs();
@@ -1898,7 +1898,7 @@ function viewJobApplicants(jobId, jobCode, jobTitle) {
   CURRENT_JOB_FILTER = { id: jobId, code: jobCode, title: jobTitle };
   document.getElementById('f-apps-status').value = '';
   document.getElementById('apps-jobfilter').style.display = '';
-  document.getElementById('apps-jobfilter-label').textContent = jobCode + ' — ' + jobTitle;
+  document.getElementById('apps-jobfilter-label').textContent = jobCode + ' · ' + jobTitle;
   pickDomain('opportunities');
   // switch to Apps sub-tab programmatically
   document.querySelectorAll('#domain-opportunities .tab').forEach(t => t.classList.remove('active'));
@@ -1928,12 +1928,12 @@ async function loadApps() {
 function _derivName(a) {
   if (a.applicant_name) return a.applicant_name;
   const e = String(a.applicant_email || '');
-  if (!e) return '—';
+  if (!e) return '-';
   const local = e.split('@')[0];
   return local.split(/[._-]/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 function _jobLabel(jobId) {
-  if (!jobId) return '—';
+  if (!jobId) return '-';
   const j = JOBS.find(x => x.id === jobId);
   if (j) return esc(j.job_code || jobId.slice(0,8)) + ' <span class="muted" style="font-size:10px;">' + esc((j.title || '').slice(0, 30)) + '</span>';
   return '<code style="font-size:10px;">' + esc(jobId.slice(0,8)) + '…</code>';
@@ -1945,7 +1945,7 @@ function renderApps() {
   if (!filtered.length) { document.getElementById('apps-box').innerHTML = '<p class="loading">No applications match.</p>'; return; }
   let html = '<table><thead><tr><th>Applied</th><th>Candidate</th><th>Email</th><th>Job</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
   filtered.forEach((a, i) => {
-    const cv = a.cv_storage_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(a.cv_storage_url) + '\')">&#8595;</button>' : '—';
+    const cv = a.cv_storage_url ? '<button class="btn small" onclick="downloadCV(\'' + esc(a.cv_storage_url) + '\')">&#8595;</button>' : '-';
     html += '<tr><td>' + fmtDate(a.applied_at) + '</td><td><strong>' + esc(_derivName(a)) + '</strong></td><td class="email">' + esc(a.applicant_email || '') + '</td><td class="email" title="' + esc(a.job_id || '') + '">' + _jobLabel(a.job_id) + '</td><td>' + esc(a.contact_phone || '') + '</td><td>' + esc(a.current_city || '') + '</td><td>' + esc(a.total_experience || '') + '</td><td>' + esc(a.current_ctc_inr || '') + '</td><td>' + esc(a.expected_ctc_inr || '') + '</td><td>' + esc(a.notice_period_days || '') + '</td><td>' + esc(a.work_mode_preference || '') + '</td><td>' + badge(a.application_status) + '</td><td>' + cv + '</td>';
     html += '<td style="white-space:nowrap;"><select class="btn small" onchange="if(this.value){setAppStatus(\'' + esc(a.id) + '\', this.value); this.value=\'\';}" style="padding:4px 6px;font-size:11px;">';
     html += '<option value="">Set status…</option><option value="shortlisted">→ Shortlisted</option><option value="interview">→ Interview</option><option value="offer">→ Offer</option><option value="placed">→ Placed (pays referrer)</option><option value="rejected">→ Rejected</option><option value="withdrawn">→ Withdrawn</option></select>';
@@ -1954,19 +1954,19 @@ function renderApps() {
     html += '<tr class="detail-row" id="app-detail-' + i + '" style="display:none;"><td colspan="14"><div class="detail-grid">';
     html += '<div><label>Designation</label><strong>' + esc(a.current_designation || '') + '</strong></div>';
     html += '<div><label>Company</label><strong>' + esc(a.current_company || '') + '</strong></div>';
-    html += '<div><label>LinkedIn</label><strong>' + (a.contact_linkedin ? '<a href="' + esc(a.contact_linkedin) + '" target="_blank">&#8599; link</a>' : '—') + '</strong></div>';
-    html += '<div><label>Alt phone</label><strong>' + esc(a.contact_alt_phone || '—') + '</strong></div>';
+    html += '<div><label>LinkedIn</label><strong>' + (a.contact_linkedin ? '<a href="' + esc(a.contact_linkedin) + '" target="_blank">&#8599; link</a>' : '-') + '</strong></div>';
+    html += '<div><label>Alt phone</label><strong>' + esc(a.contact_alt_phone || '-') + '</strong></div>';
     html += '<div><label>PAN</label><strong>' + esc(a.pan_number || '') + '</strong></div>';
     html += '<div><label>Qualification</label><strong>' + esc(a.qualification || '') + '</strong></div>';
     html += '<div><label>Earliest join</label><strong>' + fmtDate(a.earliest_join_date) + '</strong></div>';
     html += '<div><label>Relocate</label><strong>' + bool(a.willing_to_relocate) + '</strong></div>';
     html += '<div><label>Source</label><strong>' + esc(a.source || '') + '</strong></div>';
-    html += '<div><label>Referrer</label><strong>' + esc(a.referrer_partner || '—') + '</strong></div>';
+    html += '<div><label>Referrer</label><strong>' + esc(a.referrer_partner || '-') + '</strong></div>';
     html += '</div>';
-    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skills</label><br><strong>' + esc(a.selected_skills || '—') + '</strong></div>';
-    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>' + esc(a.eligibility_statement || '—') + '</span></div>';
-    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>' + esc(a.reference_1 || '—') + '</span></div>';
-    html += '<div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>' + esc(a.reference_2 || '—') + '</span></div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skills</label><br><strong>' + esc(a.selected_skills || '-') + '</strong></div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>' + esc(a.eligibility_statement || '-') + '</span></div>';
+    html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>' + esc(a.reference_1 || '-') + '</span></div>';
+    html += '<div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>' + esc(a.reference_2 || '-') + '</span></div>';
     if (a.cover_note) html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Cover note</label><br><em>' + esc(a.cover_note) + '</em></div>';
     html += '</td></tr>';
   });
@@ -2044,7 +2044,7 @@ function renderPartners() {
   let html = '<div class="kpi-row"><div class="kpi"><div class="kpi-n">' + pending + '</div><div class="kpi-l">Pending review</div></div><div class="kpi"><div class="kpi-n">' + accepted + '</div><div class="kpi-l">Accepted</div></div><div class="kpi"><div class="kpi-n">' + kycSubmitted + '</div><div class="kpi-l">KYC submitted</div></div><div class="kpi"><div class="kpi-n">' + PARTNERS.reduce((a,p) => a + (p.total_referrals||0), 0) + '</div><div class="kpi-l">Total referrals</div></div></div>';
   html += '<table><thead><tr><th class="cb-cell"><input type="checkbox" id="pt-select-all" onclick="togglePartnerSelectAll(this)"></th><th>Signup</th><th>Email</th><th>Name</th><th>Company</th><th>Domain</th><th>Exp</th><th>Status</th><th>KYC</th><th>Refs</th><th>Placed</th><th>Balance</th><th>Action</th></tr></thead><tbody>';
   filtered.forEach(p => {
-    html += '<tr><td class="cb-cell"><input type="checkbox" class="pt-cb" value="' + esc(p.email) + '" data-status="' + esc(p.partner_status||'') + '" onclick="updateBulkBar()"></td><td>' + fmtDate(p.signup_date || p.created_at) + '</td><td class="email">' + esc(p.email || '') + '</td><td>' + esc(p.full_name || '') + '</td><td>' + esc(p.current_company || '') + '</td><td>' + esc(p.primary_domain || '') + '</td><td>' + esc(p.total_exp || '') + 'y</td><td>' + badge(p.partner_status || 'Pending') + '</td><td>' + badge(p.kyc_status || 'not_started') + '</td><td>' + (p.total_referrals || 0) + '</td><td>' + (p.total_placements || 0) + '</td><td>' + (fmtINR(p.earnings_balance_inr) || '—') + '</td><td class="actions">';
+    html += '<tr><td class="cb-cell"><input type="checkbox" class="pt-cb" value="' + esc(p.email) + '" data-status="' + esc(p.partner_status||'') + '" onclick="updateBulkBar()"></td><td>' + fmtDate(p.signup_date || p.created_at) + '</td><td class="email">' + esc(p.email || '') + '</td><td>' + esc(p.full_name || '') + '</td><td>' + esc(p.current_company || '') + '</td><td>' + esc(p.primary_domain || '') + '</td><td>' + esc(p.total_exp || '') + 'y</td><td>' + badge(p.partner_status || 'Pending') + '</td><td>' + badge(p.kyc_status || 'not_started') + '</td><td>' + (p.total_referrals || 0) + '</td><td>' + (p.total_placements || 0) + '</td><td>' + (fmtINR(p.earnings_balance_inr) || '-') + '</td><td class="actions">';
     if ((p.partner_status||'').toLowerCase()==='pending') {
       html += '<button class="btn small" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Accepted\')">Approve</button> <button class="btn small danger" onclick="setPartnerStatus(\'' + esc(p.email) + '\',\'Rejected\')">Reject</button>';
     } else {
@@ -2105,13 +2105,13 @@ function renderReferrals() {
   if (!filtered.length) { document.getElementById('referrals-box').innerHTML = '<p class="loading">No referrals match.</p>'; return; }
   let html = '<table><thead><tr><th>Invited</th><th>Partner</th><th>Candidate</th><th>Email</th><th>Phone</th><th>Target Job</th><th>Status</th><th>Conf</th><th>Skill avg</th><th>Worked</th><th>Detail</th></tr></thead><tbody>';
   filtered.forEach((r, i) => {
-    html += '<tr><td>' + fmtDate(r.invited_at) + '</td><td class="email">' + esc(r.partner_email || '') + '</td><td>' + esc(r.candidate_name || '') + '</td><td class="email">' + esc(r.candidate_email || '') + '</td><td>' + esc(r.candidate_phone || '') + '</td><td class="email">' + esc((r.target_job_id || '').slice(0,8)) + '…</td><td>' + badge(r.referral_status) + '</td><td>' + esc(r.confidence_level || '') + '</td><td>' + (r.skill_avg_rating != null ? Number(r.skill_avg_rating).toFixed(2) : '—') + '</td><td>' + esc(r.worked_together || '') + '</td><td><button class="btn small secondary" onclick="toggleRefDetail(' + i + ')">+</button></td></tr>';
+    html += '<tr><td>' + fmtDate(r.invited_at) + '</td><td class="email">' + esc(r.partner_email || '') + '</td><td>' + esc(r.candidate_name || '') + '</td><td class="email">' + esc(r.candidate_email || '') + '</td><td>' + esc(r.candidate_phone || '') + '</td><td class="email">' + esc((r.target_job_id || '').slice(0,8)) + '…</td><td>' + badge(r.referral_status) + '</td><td>' + esc(r.confidence_level || '') + '</td><td>' + (r.skill_avg_rating != null ? Number(r.skill_avg_rating).toFixed(2) : '-') + '</td><td>' + esc(r.worked_together || '') + '</td><td><button class="btn small secondary" onclick="toggleRefDetail(' + i + ')">+</button></td></tr>';
     html += '<tr class="detail-row" id="ref-detail-' + i + '" style="display:none;"><td colspan="11"><div class="detail-grid">';
-    html += '<div><label>Relationship</label><strong>' + esc(r.relationship || '—') + '</strong></div>';
-    html += '<div><label>Known duration</label><strong>' + esc(r.known_duration || '—') + '</strong></div>';
-    html += '<div><label>LinkedIn</label><strong>' + (r.candidate_linkedin ? '<a href="' + esc(r.candidate_linkedin) + '" target="_blank">&#8599; link</a>' : '—') + '</strong></div>';
-    html += '<div><label>Placed</label><strong>' + (fmtDate(r.placed_at) || '—') + '</strong></div>';
-    html += '<div><label>Payout</label><strong>' + (fmtINR(r.payout_inr) || '—') + '</strong></div>';
+    html += '<div><label>Relationship</label><strong>' + esc(r.relationship || '-') + '</strong></div>';
+    html += '<div><label>Known duration</label><strong>' + esc(r.known_duration || '-') + '</strong></div>';
+    html += '<div><label>LinkedIn</label><strong>' + (r.candidate_linkedin ? '<a href="' + esc(r.candidate_linkedin) + '" target="_blank">&#8599; link</a>' : '-') + '</strong></div>';
+    html += '<div><label>Placed</label><strong>' + (fmtDate(r.placed_at) || '-') + '</strong></div>';
+    html += '<div><label>Payout</label><strong>' + (fmtINR(r.payout_inr) || '-') + '</strong></div>';
     html += '</div>';
     if (r.why_good_fit) html += '<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>' + esc(r.why_good_fit) + '</span></div>';
     html += '</td></tr>';
@@ -2160,7 +2160,7 @@ function renderUsers() {
   document.getElementById('users-box').innerHTML = html;
 }
 
-// ===== v4 — User management: CV-locate fallback + remove/restore =====
+// ===== v4, User management: CV-locate fallback + remove/restore =====
 async function findUserCV(email, btn, reload) {
   if (reload === undefined) reload = true;
   const orig = btn ? btn.textContent : '';
@@ -2171,7 +2171,7 @@ async function findUserCV(email, btn, reload) {
     if (j.error) throw new Error(j.error === 'no_cv_found' ? 'No CV found in storage for this user.' : j.error);
     window.open(j.signedUrl || j.url, '_blank');
     toast('✓ CV located' + (j.legacy ? ' (legacy link)' : ''), 'ok');
-    if (reload) loadUsers(); // refresh Users tab — cv_url backfilled, direct ↓ shows next time
+    if (reload) loadUsers(); // refresh Users tab, cv_url backfilled, direct ↓ shows next time
   } catch (err) {
     toast('CV: ' + err.message, 'err');
     if (btn) { btn.disabled = false; btn.textContent = orig || 'Find'; }
@@ -2214,7 +2214,7 @@ async function restoreUser(email) {
 }
 
 // =========================================================
-// EXCEL EXPORT — full join + blank-column pruning
+// EXCEL EXPORT, full join + blank-column pruning
 // =========================================================
 async function _ensureAllLoaded() {
   const tasks = [];
@@ -2342,7 +2342,7 @@ function exportXLSX(name, rows) {
   toast('✓ Exported ' + rows.length + ' rows × ' + cols.length + ' columns', 'ok');
 }
 
-// ===== v2 FEATURE 1 — Application Kanban view (drag-drop) =====
+// ===== v2 FEATURE 1, Application Kanban view (drag-drop) =====
 let APPS_VIEW = 'table';
 const KANBAN_COLS = ['submitted','shortlisted','interview','offer','placed','rejected'];
 function setAppsView(view) {
@@ -2401,21 +2401,21 @@ async function kanDrop(e) {
   } catch (err) { toast('Failed: ' + err.message + ' (reloading)', 'err'); loadApps(); }
 }
 
-// ===== v2 FEATURE 2 — One-click email templates =====
+// ===== v2 FEATURE 2, One-click email templates =====
 const EMAIL_TEMPLATES = {
   shortlist: {
     label: '✓ Shortlisted',
-    subject: (a, job) => 'You have been shortlisted' + (job ? ' for ' + job.title : '') + ' — GCCPROs',
-    body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nGood news — your application' + (job ? ' for ' + job.title + (job.company ? ' at ' + job.company : '') : '') + ' has been shortlisted. Our team would like to take it forward.\n\nWe will be in touch shortly with next steps. If you have any questions, just reply to this email.\n\nBest regards,\nGCCPROs Talent Team\nwww.gccpros.com'
+    subject: (a, job) => 'You have been shortlisted' + (job ? ' for ' + job.title : '') + ', GCCPROs',
+    body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nGood news, your application' + (job ? ' for ' + job.title + (job.company ? ' at ' + job.company : '') : '') + ' has been shortlisted. Our team would like to take it forward.\n\nWe will be in touch shortly with next steps. If you have any questions, just reply to this email.\n\nBest regards,\nGCCPROs Talent Team\nwww.gccpros.com'
   },
   interview: {
     label: '📅 Interview invite',
-    subject: (a, job) => 'Interview invitation' + (job ? ' — ' + job.title : '') + ' — GCCPROs',
+    subject: (a, job) => 'Interview invitation' + (job ? ' · ' + job.title : '') + ', GCCPROs',
     body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nWe would like to invite you for an interview' + (job ? ' for the ' + job.title + (job.company ? ' role at ' + job.company : '') : '') + '.\n\nPlease reply with your availability over the next few days and we will coordinate a slot with the hiring team.\n\nLooking forward to speaking with you.\n\nBest regards,\nGCCPROs Talent Team\nwww.gccpros.com'
   },
   regret: {
     label: '✕ Regret / not selected',
-    subject: (a, job) => 'Update on your application' + (job ? ' — ' + job.title : '') + ' — GCCPROs',
+    subject: (a, job) => 'Update on your application' + (job ? ' · ' + job.title : '') + ', GCCPROs',
     body: (a, job) => 'Hi ' + _derivName(a) + ',\n\nThank you for your interest' + (job ? ' in the ' + job.title + ' role' + (job.company ? ' at ' + job.company : '') : '') + ' and for the time you invested in your application.\n\nAfter careful consideration, we have decided to proceed with other candidates whose profiles more closely match the current requirements. This is not a reflection of your capabilities, and we encourage you to apply for future roles that fit your experience.\n\nWe will keep your profile on file and reach out if a suitable opportunity arises.\n\nWith appreciation,\nGCCPROs Talent Team\nwww.gccpros.com'
   }
 };
@@ -2452,7 +2452,7 @@ function openEmailMenuFor(appId, ev) {
 }
 function _closeEmailPop() { const p = document.getElementById('_email-pop'); if (p) p.remove(); }
 
-// ===== v2 FEATURE 3 — Bulk CV ZIP per job =====
+// ===== v2 FEATURE 3, Bulk CV ZIP per job =====
 function _showProgress(title) {
   document.getElementById('progress-title').textContent = title;
   document.getElementById('progress-bar').style.width = '0%';
@@ -2465,7 +2465,7 @@ function _setProgress(pct, msg) {
 }
 function _hideProgress() { document.getElementById('progress-modal').classList.remove('open'); }
 async function downloadJobCVsZip(jobId, jobCode) {
-  if (typeof JSZip === 'undefined') { toast('ZIP library still loading — try again in 2s.', 'err'); return; }
+  if (typeof JSZip === 'undefined') { toast('ZIP library still loading, try again in 2s.', 'err'); return; }
   _showProgress('Preparing CV archive for ' + jobCode);
   try {
     _setProgress(5, 'Loading applications…');
@@ -2478,7 +2478,7 @@ async function downloadJobCVsZip(jobId, jobCode) {
     let done = 0, ok = 0;
     for (const a of apps) {
       done++;
-      _setProgress(5 + Math.round((done / apps.length) * 90), 'Fetching ' + done + ' / ' + apps.length + ' — ' + _derivName(a));
+      _setProgress(5 + Math.round((done / apps.length) * 90), 'Fetching ' + done + ' / ' + apps.length + ' · ' + _derivName(a));
       try {
         const sr = await adminFetch(SCRIPT_URL + '?action=oppsAdminCvSignedUrl&path=' + encodeURIComponent(a.cv_storage_url));
         const sj = await sr.json();
@@ -2510,16 +2510,16 @@ async function downloadJobCVsZip(jobId, jobCode) {
 // ===== Bulk download ALL user CVs as one ZIP (added 2026-06-02) =====
 // Uses the EXISTING per-user signed-URL endpoint (oppsAdminUserCv) so the
 // edge function is unchanged. If a CV is missing or returns an error, it's
-// skipped and counted — never throws. Progress modal reuses _showProgress.
+// skipped and counted, never throws. Progress modal reuses _showProgress.
 async function downloadAllUserCVsZip() {
   if (typeof JSZip === 'undefined') { toast('ZIP library still loading - try again in 2s.', 'err'); return; }
-  // Ensure we have a USERS list — if not, load it first
+  // Ensure we have a USERS list, if not, load it first
   if (!Array.isArray(USERS) || USERS.length === 0) {
     try { await loadUsers(); } catch (e) { toast('Could not load users.', 'err'); return; }
   }
   var pool = (USERS || []).filter(function(u){ return !!(u && u.email); });
   if (!pool.length) { toast('No users found.', 'err'); return; }
-  // Confirm — this can take a while for hundreds of CVs
+  // Confirm, this can take a while for hundreds of CVs
   if (!confirm('Download CVs for ' + pool.length + ' users as a single ZIP? This may take a few minutes.')) return;
 
   _showProgress('Preparing CV archive (' + pool.length + ' users)');
@@ -2541,7 +2541,7 @@ async function downloadAllUserCVsZip() {
         else errored++;
         continue;
       }
-      // legacy external link (e.g. Google Drive) — can't fetch cross-origin reliably; record as text pointer
+      // legacy external link (e.g. Google Drive), can't fetch cross-origin reliably; record as text pointer
       if (sj.legacy) {
         zip.file('_LEGACY_LINKS/' + name + '__' + u.email + '.url.txt',
           '[InternetShortcut]\nURL=' + url + '\n');
@@ -2601,7 +2601,7 @@ async function downloadAllUserCVsZip() {
   toast('Downloaded ' + ok + ' CVs (' + skipped + ' missing, ' + errored + ' errors).', 'ok');
 }
 
-// ===== v2 FEATURE 4 — Bulk approve/reject Partners =====
+// ===== v2 FEATURE 4, Bulk approve/reject Partners =====
 function togglePartnerSelectAll(cb) { document.querySelectorAll('.pt-cb').forEach(c => { c.checked = cb.checked; }); updateBulkBar(); }
 function _selectedPartnerEmails() { return Array.from(document.querySelectorAll('.pt-cb:checked')).map(c => c.value); }
 function updateBulkBar() {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Admin Console · build: supabase-2026-05-19-admin-v6-opps-tabs · adds 4 Opportunities tabs (Jobs · Applications · Partners · Referrals) — parallel to Apps Script, never touches it -->
+<!-- GCCPROs Admin Console · build: supabase-2026-05-19-admin-v6-opps-tabs · adds 4 Opportunities tabs (Jobs · Applications · Partners · Referrals) - parallel to Apps Script, never touches it -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -71,7 +71,7 @@
   <p>Enter your <code>GCP_ADMIN_KEY</code> from Script Properties to continue. The key is cached in this tab's session storage so refresh won't kick you out.</p>
   <input id="admin-key" type="password" placeholder="Admin key" autofocus />
   <button class="primary" onclick="login()">Unlock</button>
-  <p class="muted" style="margin-top: 20px;">For your eyes only. Do not share this URL with users — only admins.</p>
+  <p class="muted" style="margin-top: 20px;">For your eyes only. Do not share this URL with users, only admins.</p>
 </div>
 
 <div id="app" style="display:none;">
@@ -141,7 +141,7 @@
 
       <div class="card">
         <h2>Quick presets</h2>
-        <p class="muted">Common grants — click to fill the form above.</p>
+        <p class="muted">Common grants, click to fill the form above.</p>
         <button onclick="fillGrant(200, 'Welcome bonus replacement')">+200 (Welcome bonus)</button>
         <button onclick="fillGrant(500, 'Goodwill credit')">+500 (Goodwill)</button>
         <button onclick="fillGrant(1000, 'Refund / compensation')">+1000 (Refund)</button>
@@ -153,7 +153,7 @@
     <div id="tab-history" class="panel">
       <div class="card">
         <h2>Download user history</h2>
-        <p class="muted">Pulls the full transaction log, reveal log, and search log for a user — all timestamped — and saves as CSV. Use for support investigations or compliance requests.</p>
+        <p class="muted">Pulls the full transaction log, reveal log, and search log for a user, all timestamped, and saves as CSV. Use for support investigations or compliance requests.</p>
         <div class="field-row">
           <label>Email <input id="history-email" placeholder="user@example.com" /></label>
           <button class="primary" onclick="downloadHistory()">Download CSV</button>
@@ -200,7 +200,7 @@
     <div id="tab-council" class="panel">
       <div class="card">
         <h2>Leadership Council applications</h2>
-        <p class="muted">Senior advisory body — GCC Heads, Country MDs, ex-CXOs, board advisors. Smaller, curated, by-invitation-or-application.</p>
+        <p class="muted">Senior advisory body, GCC Heads, Country MDs, ex-CXOs, board advisors. Smaller, curated, by-invitation-or-application.</p>
         <div class="filter-row">
           <select id="council-status" onchange="loadApplications('council')">
             <option value="pending" selected>Pending only</option>
@@ -216,17 +216,17 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         OPPORTUNITIES — JOBS · APPLICATIONS · PARTNERS · REFERRALS
+         OPPORTUNITIES - JOBS · APPLICATIONS · PARTNERS · REFERRALS
          All four tabs talk to Supabase Edge Function endpoints prefixed
          `opps*` (v7+). The Apps Script-backed talent.html is NOT
-         affected — these tabs operate on the new opps_* Supabase tables
+         affected, these tabs operate on the new opps_* Supabase tables
          that exist in parallel. Cutover happens at Phase D-6.
          ═══════════════════════════════════════════════════════════════ -->
 
     <!-- OPPS JOBS TAB -->
     <div id="tab-oppsJobs" class="panel">
       <div class="card">
-        <h2>Opportunities — Jobs</h2>
+        <h2>Opportunities: Jobs</h2>
         <p class="muted">Job postings stored in <code>opps_jobs</code>. These are the new Supabase-backed listings (parallel to the Apps Script Jobs sheet which still powers the live <code>talent.html</code>).</p>
         <div class="filter-row">
           <select id="oppsJobs-status" onchange="oppsLoadJobs()">
@@ -247,7 +247,7 @@
     <!-- OPPS APPLICATIONS TAB -->
     <div id="tab-oppsApps" class="panel">
       <div class="card">
-        <h2>Opportunities — Applications</h2>
+        <h2>Opportunities: Applications</h2>
         <p class="muted">Job applications submitted via the new Supabase backend (<code>opps_applications</code>). Marking an application <b>placed</b> auto-grants partner earnings if it was a referred application.</p>
         <div class="filter-row">
           <select id="oppsApps-status" onchange="oppsLoadApps()">
@@ -271,7 +271,7 @@
     <!-- OPPS PARTNERS TAB -->
     <div id="tab-oppsPartners" class="panel">
       <div class="card">
-        <h2>Opportunities — Partners</h2>
+        <h2>Opportunities: Partners</h2>
         <p class="muted">Partner accounts in the new Supabase backend (<code>opps_partners</code>). KYC review + earnings ledger.</p>
         <div class="filter-row">
           <select id="oppsPartners-kyc" onchange="oppsLoadPartners()">
@@ -291,7 +291,7 @@
     <!-- OPPS REFERRALS TAB -->
     <div id="tab-oppsReferrals" class="panel">
       <div class="card">
-        <h2>Opportunities — Referrals</h2>
+        <h2>Opportunities: Referrals</h2>
         <p class="muted">Partner-initiated candidate referrals tracked in <code>opps_referrals</code>. Each row = one token-gated invitation.</p>
         <div class="filter-row">
           <select id="oppsReferrals-status" onchange="oppsLoadReferrals()">
@@ -341,25 +341,25 @@
         <ul class="security">
           <li><strong>Encryption at rest:</strong> All Supabase Postgres data is stored on AES-256 encrypted disks. This is Supabase platform-default; no extra config needed.</li>
           <li><strong>Encryption in transit:</strong> Every API call (browser → Apps Script, Apps Script → Supabase, browser → Razorpay) uses TLS 1.2+. No plaintext over the wire.</li>
-          <li><strong>Service-role key:</strong> Stored in Apps Script <code>Script Properties</code>. Never sent to a browser. Bypasses Postgres row-level security. Anyone with this key has full DB access — treat like a root password.</li>
+          <li><strong>Service-role key:</strong> Stored in Apps Script <code>Script Properties</code>. Never sent to a browser. Bypasses Postgres row-level security. Anyone with this key has full DB access, treat like a root password.</li>
           <li><strong>Admin key:</strong> Required to call any admin endpoint (this panel, approve/reject/suspend, grant credits, user history). Stored as <code>GCP_ADMIN_KEY</code> in Script Properties. Rotate periodically.</li>
-          <li><strong>Row-level security:</strong> Enabled on every table. Authenticated end-users cannot read the full <code>companies</code> table directly — only through Apps Script proxy endpoints, which enforce credit checks and audit logging.</li>
+          <li><strong>Row-level security:</strong> Enabled on every table. Authenticated end-users cannot read the full <code>companies</code> table directly, only through Apps Script proxy endpoints, which enforce credit checks and audit logging.</li>
           <li><strong>Field-level filtering:</strong> Reveal endpoint returns only the 12 B2C fields locked on May 16. The other 32 columns (revenue, leader emails, audit notes, etc.) are never sent to a non-admin browser session.</li>
           <li><strong>Watermarking:</strong> Every revealed company card shows the viewer's email + timestamp + "Confidential" diagonally across the page. Designed to discourage screenshot leaks.</li>
-          <li><strong>Copy protection:</strong> Right-click disabled, text selection blocked, copy event intercepted on the reveal pages. Determined users can still inspect element — this is friction, not encryption.</li>
+          <li><strong>Copy protection:</strong> Right-click disabled, text selection blocked, copy event intercepted on the reveal pages. Determined users can still inspect element, this is friction, not encryption.</li>
           <li><strong>Audit trail:</strong> Every credit spend, reveal, search, login, and admin action is logged with timestamp + metadata. Retention is unlimited (no auto-purge configured).</li>
           <li><strong>Backups:</strong> Supabase Free tier provides daily backups (retained 7 days). Pro tier adds point-in-time recovery for the last 7 days at any second.</li>
           <li><strong>Rate limits:</strong> Search is throttled to 60/min and 600/hour per user. Reveal is capped at 50 unique companies per user per calendar month (resets on the 1st).</li>
-          <li><strong>Payment data:</strong> Card numbers are entered directly on Razorpay's checkout — never touch your servers. You only see the payment_id (a non-sensitive reference) and the amount.</li>
+          <li><strong>Payment data:</strong> Card numbers are entered directly on Razorpay's checkout, never touch your servers. You only see the payment_id (a non-sensitive reference) and the amount.</li>
         </ul>
       </div>
 
       <div class="card">
         <h2>What I would harden next</h2>
         <ul class="security">
-          <li><strong>Rotate the service-role key</strong> — Supabase lets you regenerate it. Currently in your Apps Script Script Properties.</li>
-          <li><strong>Add 2FA to your Supabase account</strong> — under Supabase → Account Settings.</li>
-          <li><strong>Enable email alerts on Razorpay refunds / chargebacks</strong> — caught early avoids credit-stuffing exploits.</li>
+          <li><strong>Rotate the service-role key</strong>: Supabase lets you regenerate it. Currently in your Apps Script Script Properties.</li>
+          <li><strong>Add 2FA to your Supabase account</strong>: under Supabase → Account Settings.</li>
+          <li><strong>Enable email alerts on Razorpay refunds / chargebacks</strong>: caught early avoids credit-stuffing exploits.</li>
           <li><strong>Periodically export the user_history CSV</strong> for compliance evidence; especially if anyone files a DSAR (data subject access request).</li>
         </ul>
       </div>
@@ -372,7 +372,7 @@ const SCRIPT_URL = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpro
 let ADMIN_KEY = '';
 let ALL_USERS = [];
 
-// C3 audit fix — never put the admin key in a URL. URL params leak into
+// C3 audit fix, never put the admin key in a URL. URL params leak into
 // browser history, proxy logs, Referer headers, and Supabase platform logs.
 // adminFetch() sends the key as X-Admin-Key. The Edge Function still accepts
 // the old ?key= URL param for one release as a backward-compat fallback.
@@ -542,7 +542,7 @@ function showDetails(idx) {
     ['Email domain',       u.emailDomain],
     ['Domain class',       u.domainClass],
     ['Source',             u.source],
-    ['—', '—'],
+    ['-', '-'],
     ['Status',             u.status],
     ['Signup date',        u.signupDate ? fmtDate(u.signupDate) : ''],
     ['Approved at',        u.approvedAt ? fmtDate(u.approvedAt) : ''],
@@ -550,12 +550,12 @@ function showDetails(idx) {
     ['Suspended reason',   u.suspendedReason],
     ['Last login',         u.lastActive ? fmtDate(u.lastActive) : 'never'],
     ['Login count',        u.loginCount],
-    ['—', '—'],
+    ['-', '-'],
     ['Balance',            (u.balance || 0).toLocaleString('en-IN')],
     ['Monthly reveals',    u.monthlyReveals],
     ['Lifetime spent',     (u.lifetimeSpent || 0).toLocaleString('en-IN')],
     ['Lifetime purchased', (u.lifetimePurchased || 0).toLocaleString('en-IN')],
-    ['—', '—'],
+    ['-', '-'],
     ['Signup IP',          extra.signup_ip],
     ['Signup user agent',  extra.signup_ua],
     ['GCCs worked with',   extra.gccs_worked_with],
@@ -566,9 +566,9 @@ function showDetails(idx) {
   ];
 
   const rowsHtml = fields.map(([k, v]) => {
-    if (k === '—') return '<tr><td colspan="2" style="border-bottom:1px solid #2D3A5C;"></td></tr>';
+    if (k === '-') return '<tr><td colspan="2" style="border-bottom:1px solid #2D3A5C;"></td></tr>';
     return `<tr><td style="color:#9CA3AF;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;width:170px;padding:7px 12px;vertical-align:top;">${esc(k)}</td>` +
-           `<td style="font-size:13px;padding:7px 12px;word-break:break-word;">${v ? esc(String(v)) : '<span class="muted">—</span>'}</td></tr>`;
+           `<td style="font-size:13px;padding:7px 12px;word-break:break-word;">${v ? esc(String(v)) : '<span class="muted">-</span>'}</td></tr>`;
   }).join('');
 
   const html = `
@@ -830,7 +830,7 @@ function showAppDetails(kind, idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:var(--muted);font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>' + (kind === 'insider' ? 'Insider' : 'Council') + ' — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;} h2{margin:0 0 12px;}</style></head><body><h2>' + (kind === 'insider' ? 'Insider Community' : 'Leadership Council') + ' application</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>' + (kind === 'insider' ? 'Insider' : 'Council') + ' · ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;} h2{margin:0 0 12px;}</style></head><body><h2>' + (kind === 'insider' ? 'Insider Community' : 'Leadership Council') + ' application</h2>' + html + '</body></html>');
 }
 
 function exportApplicationsCsv(kind) {
@@ -1015,14 +1015,14 @@ function fmtDate(s) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   OPPORTUNITIES — Jobs / Applications / Partners / Referrals
+   OPPORTUNITIES - Jobs / Applications / Partners / Referrals
    Calls Edge Function v7+ endpoints (oppsAdmin*) via adminFetch.
    Parallel to live Apps Script; never touches it.
    ════════════════════════════════════════════════════════════════ */
 
 let OPPS_JOBS = [], OPPS_APPS = [], OPPS_PARTNERS = [], OPPS_REFERRALS = [];
 
-// Common — INR formatter
+// Common, INR formatter
 function fmtINR(n) {
   if (n == null || n === '') return '';
   const num = Number(n); if (!isFinite(num)) return '';
@@ -1077,7 +1077,7 @@ function oppsOpenJobEditor(idx) {
   const modal = document.getElementById('opps-job-modal');
   const title = document.getElementById('opps-job-modal-title');
   const data = (idx === undefined) ? null : OPPS_JOBS[idx];
-  title.textContent = data ? ('Edit job — ' + (data.job_code || data.title)) : 'New job posting';
+  title.textContent = data ? ('Edit job, ' + (data.job_code || data.title)) : 'New job posting';
   function set(id, v) { document.getElementById(id).value = v == null ? '' : v; }
   set('oj-id', data ? data.id : '');
   set('oj-code', data ? data.job_code : '');
@@ -1211,7 +1211,7 @@ function oppsShowAppDetails(idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Application — ' + esc(r.applicant_email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;}</style></head><body><h2>Application detail</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>Application: ' + esc(r.applicant_email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;color:#1c1c1c;}</style></head><body><h2>Application detail</h2>' + html + '</body></html>');
 }
 
 // ─── PARTNERS ──────────────────────────────────────────────────
@@ -1276,7 +1276,7 @@ function oppsShowPartnerDetails(idx) {
   const html = Object.keys(r).filter(k => r[k] != null && r[k] !== '')
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:200px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Partner — ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Partner detail</h2>' + html + '</body></html>');
+  w.document.write('<html><head><title>Partner: ' + esc(r.email||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Partner detail</h2>' + html + '</body></html>');
 }
 
 // ─── REFERRALS ──────────────────────────────────────────────────
@@ -1329,7 +1329,7 @@ function oppsShowReferralDetails(idx) {
     .map(k => '<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px dashed #eee;"><div style="min-width:160px;color:#666;font-size:12px;">' + esc(k) + '</div><div style="flex:1;font-size:13px;word-break:break-word;">' + esc(String(r[k])) + '</div></div>').join('');
   const linkBlock = tokenUrl ? '<p style="margin:16px 0 8px;"><b>Candidate URL:</b><br><a href="' + esc(tokenUrl) + '" target="_blank" style="word-break:break-all;">' + esc(tokenUrl) + '</a></p>' : '';
   const w = window.open('', '_blank', 'width=720,height=860');
-  w.document.write('<html><head><title>Referral — ' + esc(r.candidate_name||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Referral detail</h2>' + linkBlock + html + '</body></html>');
+  w.document.write('<html><head><title>Referral: ' + esc(r.candidate_name||'') + '</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#FBFCFE;}</style></head><body><h2>Referral detail</h2>' + linkBlock + html + '</body></html>');
 }
 
 // ─── CSV EXPORT (shared) ───────────────────────────────────────

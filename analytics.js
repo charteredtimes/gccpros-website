@@ -2,7 +2,7 @@
    GCCPROs shared analytics  (GA4: G-1K276GXQK6)
    One file, loaded on every public page. Purely additive: it never touches
    Razorpay, Supabase, forms or any existing logic. It:
-     1. Loads GA4 once (idempotent — skips if a page already has gtag)
+     1. Loads GA4 once (idempotent - skips if a page already has gtag)
      2. Auto-fires  form_start  on first interaction with any form
      3. Auto-fires  file_download  on clicks to pdf/zip/xls/doc/ppt/csv
      4. Auto-fires  outbound_click  on links leaving gccpros.com

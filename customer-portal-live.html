@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  GCCPROs — Customer / Hiring-Manager Portal  (PROTOTYPE / DEMO)
+  GCCPROs - Customer / Hiring-Manager Portal  (PROTOTYPE / DEMO)
   ----------------------------------------------------------------
   Stack target (matches opportunities + admin-unified):
     Firebase Auth (Google / Microsoft SSO) + Supabase edge fn 'gccpros-api' + Supabase Storage.
@@ -29,7 +29,7 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCCPROs — Talent Engine</title>
+<title>GCCPROs | Talent Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -329,7 +329,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
     <h3 id="role-modal-title">✚ Post a new job</h3>
     <p style="color:var(--muted);font-size:13px;margin-bottom:6px;">Same form and rules as the GCCPROs jobs board. When posted, it goes live for applicants and referrers immediately.</p>
     <div class="field" style="background:#F0F7FF;border:1px solid var(--gold-light);border-radius:8px;padding:12px 14px;margin-top:10px;">
-      <label style="color:var(--gold);">✨ Autofill from a JD (PDF / Word) — optional</label>
+      <label style="color:var(--gold);">✨ Autofill from a JD (PDF / Word), optional</label>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;">
         <input type="file" id="jd-file" accept=".pdf,.docx,.doc,.txt" style="font-size:13px;flex:1;min-width:180px;background:#fff;">
         <button class="btn small" type="button" onclick="autofillFromJD()">Autofill with AI</button>
@@ -368,7 +368,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
       <div class="field"><label>Budget text (shown only if CTC empty)</label><input id="r-budget_text" placeholder="e.g. Competitive"></div>
       <div class="field"><label>Min. qualification</label><input id="r-qualification" placeholder="e.g. Graduate"></div>
     </div>
-    <div class="field"><label>Skills (REQUIRED — comma-separated, 3+ recommended) <span class="required">*</span></label><textarea id="r-skills" placeholder="e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX"></textarea></div>
+    <div class="field"><label>Skills (REQUIRED, comma-separated, 3+ recommended) <span class="required">*</span></label><textarea id="r-skills" placeholder="e.g. SAP FI, Oracle GL, NetSuite, IFRS, US GAAP, SOX"></textarea></div>
     <div class="field"><label>Responsibilities</label><textarea id="r-responsibilities" placeholder="What the person will own day-to-day"></textarea></div>
     <div class="field"><label>Description</label><textarea id="r-description" placeholder="Role overview, what success looks like…"></textarea></div>
     <div class="field"><label>Requirements</label><textarea id="r-requirements" placeholder="Must-have skills / qualifications"></textarea></div>
@@ -401,11 +401,11 @@ footer{background:var(--ink);color:rgba(255,255,255,.7);padding:24px 0;text-alig
 
 <script>
 /* =================================================================
-   CONFIG  — flip DEMO_MODE to false to use the live backend.
+   CONFIG  - flip DEMO_MODE to false to use the live backend.
    ================================================================= */
 const DEMO_MODE = false;
 const CUST_API = 'https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/gccpros-cust-api';
-// Firebase — same project as the Opportunities portal (Google + Microsoft SSO)
+// Firebase, same project as the Opportunities portal (Google + Microsoft SSO)
 firebase.initializeApp({ apiKey:'AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w', authDomain:'gccpros-9aadb.firebaseapp.com', projectId:'gccpros-9aadb', storageBucket:'gccpros-9aadb.firebasestorage.app', messagingSenderId:'764592723192', appId:'1:764592723192:web:002a03f217b57d47f0570d' });
 
 /* Lifecycle stages (ordered). 'rejected'/'on_hold' are off-track states. */
@@ -427,7 +427,7 @@ const stageLabel = k => (STAGES.find(s=>s.key===k)||{label:k}).label;
 const stageIndex = k => STAGES.findIndex(s=>s.key===k);
 
 /* =================================================================
-   LIVE DATA — loaded from gccpros-cust-api. CUSTOMERS is filled on login.
+   LIVE DATA - loaded from gccpros-cust-api. CUSTOMERS is filled on login.
    ================================================================= */
 let CUSTOMERS = {};  // { [customerId]: {name, short, logo, color, tagline, logo_url} }
 function mapRole(x){
@@ -446,7 +446,7 @@ function mapApp(x){
 function eventText(e){
   const d=e.detail||{};
   if(e.event_type==='stage_change') return 'Stage: '+stageLabel(d.from)+' → '+(d.to==='rejected'?'Rejected':stageLabel(d.to));
-  if(e.event_type==='duplicate_decision') return d.decision==='yes'?'Marked duplicate — application rejected':'Confirmed NOT a duplicate — unlocked';
+  if(e.event_type==='duplicate_decision') return d.decision==='yes'?'Marked duplicate, application rejected':'Confirmed NOT a duplicate, unlocked';
   if(e.event_type==='note') return 'Added a note';
   if(e.event_type==='cv_share') return 'Created a CV share link';
   return e.event_type;
@@ -505,7 +505,7 @@ firebase.auth().onAuthStateChanged(async (user)=>{
   if(!user) return; // stay on the login screen
   let res;
   try { res = await custCall('custCheckAccess'); }
-  catch(e){ showLoginMsg('Could not reach the server — please try again.'); return; }
+  catch(e){ showLoginMsg('Could not reach the server, please try again.'); return; }
   if(res && res.multiple){ showCompanyPicker(res.customers||[], user); return; }
   if(!res || !res.authorized || !res.customer){
     showLoginMsg('⛔ '+(user.email||'This account')+' is not authorized for any customer workspace. Ask your GCCPROs account manager to add your email.');
@@ -560,7 +560,7 @@ async function bootApp(){
   document.getElementById('user-pill').innerHTML = esc(SESSION.name)+' <span class="role-chip">'+(SESSION.isAdmin?'Admin':'Hiring Mgr')+'</span>';
   const sc=document.getElementById('switch-co-btn'); if(sc) sc.style.display = SESSION.isAdmin?'':'none';
   document.getElementById('hero-h1').textContent = 'Welcome, '+SESSION.name.split(' ')[0];
-  document.getElementById('hero-p').textContent = cust.name+' — recruitment workspace';
+  document.getElementById('hero-p').textContent = cust.name+', recruitment workspace';
 
   document.getElementById('login-section').style.display='none';
   document.getElementById('app').style.display='block';
@@ -573,7 +573,7 @@ function signOut(){ try{ firebase.auth().signOut(); }catch(_){} location.reload(
 function switchCompany(){ SELECTED_CID=null; location.reload(); }
 
 /* =================================================================
-   SCOPING — a hiring manager only sees their company's data
+   SCOPING - a hiring manager only sees their company's data
    ================================================================= */
 const myRoles = ()=> DB.roles.filter(r=>r.companyId===SESSION.companyId);
 const myApps  = ()=> DB.apps.filter(a=>a.companyId===SESSION.companyId);
@@ -646,9 +646,9 @@ function renderApps(){
     const src = a.source==='referral'?`<span class="src-pill src-referral">Referral</span>`:`<span class="src-pill src-direct">Direct</span>`;
     const ai = a.aiScore!=null
       ? `<span class="badge" style="background:#EEF2FF;color:#3730A3;cursor:help;" title="${esc(a.aiReason||'')}">${a.aiScore}</span>`
-      : `<span class="locked">—</span>`;
+      : `<span class="locked">-</span>`;
     return `<tr class="row-click"${a.accessRevoked?' style="opacity:.6;"':''} onclick="openCand('${a.id}')">
-      <td>${nameCell}</td><td>${esc(roleById(a.roleId)?.title||'—')}</td><td>${src}</td>
+      <td>${nameCell}</td><td>${esc(roleById(a.roleId)?.title||'-')}</td><td>${src}</td>
       <td><span class="badge ${stageBadge(a.stage)}">${stageLabel(a.stage)}</span></td><td>${dup}</td><td>${ai}</td><td>${fmtDate(a.received)}</td></tr>`;
   }).join('');
 }
@@ -689,7 +689,7 @@ function renderActivity(){
               : e.actorRole==='core'?'<span style="color:var(--gold);font-weight:700;">GCCPROs</span>'
               : '<span class="locked">system</span>';
     const cand = esc(e.app.candidate.name);
-    return `<tr><td style="white-space:nowrap;" class="locked">${fmtDateTime(e.ts)}</td><td>${who}</td><td>${esc(e.text)} — <em>${cand}</em></td></tr>`;
+    return `<tr><td style="white-space:nowrap;" class="locked">${fmtDateTime(e.ts)}</td><td>${who}</td><td>${esc(e.text)}, <em>${cand}</em></td></tr>`;
   }).join('')+'</tbody></table>';
 }
 
@@ -712,19 +712,19 @@ async function openCand(id){
 
   // referral privacy note + FULL referrer submission (everything except referrer identity)
   if(a.source==='referral'){
-    html += `<div style="font-size:12px;color:var(--brand-orange);background:#EEF3FB;border-radius:6px;padding:8px 12px;margin:10px 0;">🔒 Referred candidate — the referrer's identity is withheld by GCCPROs policy.</div>`;
+    html += `<div style="font-size:12px;color:var(--brand-orange);background:#EEF3FB;border-radius:6px;padding:8px 12px;margin:10px 0;">🔒 Referred candidate, the referrer's identity is withheld by GCCPROs policy.</div>`;
     html += referralPanelHTML(a, false);
   }
 
   // === MANDATORY duplicate gate ===
   if(a.duplicateStatus===null){
     html += `<div class="gate">
-      <h4>Step 1 — Mandatory: is this a duplicate CV in your database?</h4>
+      <h4>Step 1: Mandatory: is this a duplicate CV in your database?</h4>
       <p>You can see the candidate's <b>name and email</b> to check against your records. Their <b>phone number and full CV stay locked</b> until you confirm this isn't a duplicate.<br>
       <b>If yes</b>, the application is rejected and removed from your portal. <b>If no</b>, the phone number and full CV unlock.</p>
       <div class="gate-actions">
-        <button class="btn danger" onclick="answerDuplicate('${a.id}','yes')">Yes — it's a duplicate (reject)</button>
-        <button class="btn ok" onclick="answerDuplicate('${a.id}','no')">No — not a duplicate (unlock)</button>
+        <button class="btn danger" onclick="answerDuplicate('${a.id}','yes')">Yes, it's a duplicate (reject)</button>
+        <button class="btn ok" onclick="answerDuplicate('${a.id}','no')">No, not a duplicate (unlock)</button>
       </div></div>`;
     // pre-clearance preview: NAME + EMAIL visible; PHONE + full CV stay locked until "not a duplicate"
     html += `<div class="cand-meta">
@@ -755,7 +755,7 @@ async function openCand(id){
   if(a.aiScore!=null){
     html += `<div style="display:flex;gap:12px;align-items:flex-start;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:12px 14px;margin:0 0 6px;">
       <div style="text-align:center;min-width:64px;"><div style="font-size:24px;font-weight:800;color:#3730A3;font-family:'Playfair Display',serif;">${a.aiScore}</div><div style="font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:#4F46E5;">AI fit /100</div></div>
-      <div style="font-size:12.5px;color:#312E81;line-height:1.5;"><b>Why this score:</b> ${esc(a.aiReason||'—')}<br><span style="font-size:10.5px;color:#6366F1;">AI-assisted estimate of fit for this role. Use as a guide, not a decision.</span></div>
+      <div style="font-size:12.5px;color:#312E81;line-height:1.5;"><b>Why this score:</b> ${esc(a.aiReason||'-')}<br><span style="font-size:10.5px;color:#6366F1;">AI-assisted estimate of fit for this role. Use as a guide, not a decision.</span></div>
     </div>`;
   }
 
@@ -787,7 +787,7 @@ function pipelineHTML(a){
     return `<div class="pstep ${cls}">${s.label}</div>`;
   }).join('');
   if(a.stage==='rejected') steps = `<div class="pstep rej" style="flex:1;">Rejected</div>`;
-  // stage control — shared (HM here; core team has same control in admin console)
+  // stage control, shared (HM here; core team has same control in admin console)
   const opts = STAGES.map((s,i)=>`<option value="${s.key}" ${s.key===a.stage?'selected':''}>${i+1}. ${s.label}</option>`).join('');
   let auto='';
   if(a.joinDate){
@@ -801,15 +801,15 @@ function pipelineHTML(a){
       <button class="btn small" onclick="advanceStage('${a.id}')">Update stage</button>
       <button class="btn small danger" onclick="advanceStageTo('${a.id}','rejected')">Reject</button>
     </div>
-    <div style="font-size:11.5px;color:var(--muted);">Both your team and the GCCPROs core team can move stages — every change is logged with who made it.</div>
+    <div style="font-size:11.5px;color:var(--muted);">Both your team and the GCCPROs core team can move stages, every change is logged with who made it.</div>
     ${auto}`;
 }
 
 function cvHTML(a){
   return `<div class="cv-frame">
       <div class="doc">📄</div>
-      <div><b>${esc(a.candidate.name)} — Interview packet</b></div>
-      <div class="locked">Cover (referrer input · AI assessment · notes) + the candidate's CV — every page stamped</div>
+      <div><b>${esc(a.candidate.name)}, Interview packet</b></div>
+      <div class="locked">Cover (referrer input · AI assessment · notes) + the candidate's CV, every page stamped</div>
       <button class="btn cv-cta" onclick="openCVWindow('${a.id}')">📄 View CV &amp; Additional Info</button>
       <div class="no-dl">🔒 Opens the full stamped interview packet in a new window. If no CV was uploaded, you'll be told.</div>
     </div>
@@ -820,7 +820,7 @@ function cvHTML(a){
         <button class="btn small" onclick="genShare('${a.id}')">Generate link</button>
         <button class="btn small secondary" onclick="copyShare()">Copy</button>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px;">Creates a secure, view-only link (expires in 7 days). Recipients read the CV in-browser — no download button.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">Creates a secure, view-only link (expires in 7 days). Recipients read the CV in-browser, no download button.</div>
     </div>`;
 }
 function shareLink(a){ return 'https://portal.gccpros.com/cv/'+SESSION.companyId+'/'+a.id+'?t=share_'+Math.random().toString(36).slice(2,10); }
@@ -840,7 +840,7 @@ async function openCVWindow(id){
 }
 async function genShare(id){
   const res=await custCall('custCreateShareLink',null,{id});
-  if(res && res.token){ const i=document.getElementById('share-link'); if(i){ i.value='https://www.gccpros.com/cv-view.html?t='+res.token; } toast('Share link created — valid 7 days'); }
+  if(res && res.token){ const i=document.getElementById('share-link'); if(i){ i.value='https://www.gccpros.com/cv-view.html?t='+res.token; } toast('Share link created, valid 7 days'); }
   else toast(res && res.error==='resolve_duplicate_first' ? 'Clear the duplicate check first.' : 'Could not create link ('+((res&&res.error)||'error')+')');
 }
 // Share an open role on WhatsApp + copy its public referral link (drives applicants & referrals)
@@ -852,13 +852,13 @@ function shareJobWA(code, title){
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
   toast('Opening WhatsApp · job link copied');
 }
-// Share button handler — reads code/title from data-* attributes (avoids inline-quote bugs)
+// Share button handler, reads code/title from data-* attributes (avoids inline-quote bugs)
 function shareJobBtn(btn){ shareJobWA(btn.dataset.code||'', btn.dataset.title||''); }
 function buildSampleCV(a){
   const c=a.candidate; const role=roleById(a.roleId);
   const skills=(a.referral&&a.referral.skillRatings)?a.referral.skillRatings.map(s=>s.skill):['Communication','Problem Solving','Stakeholder Management','Analysis'];
   const org=CUSTOMERS[a.companyId]?CUSTOMERS[a.companyId].name:'your organization';
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(c.name)} — CV (view only)</title>
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(c.name)}: CV (view only)</title>
   <style>
    body{font-family:'Segoe UI',Arial,sans-serif;color:#1D2226;max-width:820px;margin:0 auto;padding:40px 48px;line-height:1.55;}
    .wm{position:fixed;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-28deg);font-size:62px;color:rgba(10,102,194,.07);font-weight:800;pointer-events:none;white-space:nowrap;}
@@ -875,9 +875,9 @@ function buildSampleCV(a){
    <div class="role">${esc(role?role.title:'Candidate')} · ${c.exp} yrs experience</div>
    <div class="contact">${esc(c.email)} · ${esc(c.phone||'')} · ${esc(c.city||'')} · ${esc(c.linkedin||'')}</div>
    <h2>Summary</h2>
-   <p style="font-size:13px;">${esc(c.name.split(' ')[0])} is a ${c.exp}-year professional based in ${esc(c.city||'India')}, with experience relevant to the ${esc(role?role.title:'role')}. Expected CTC ${esc(c.ctc||'—')} · notice ${esc(c.notice||'—')}.</p>
+   <p style="font-size:13px;">${esc(c.name.split(' ')[0])} is a ${c.exp}-year professional based in ${esc(c.city||'India')}, with experience relevant to the ${esc(role?role.title:'role')}. Expected CTC ${esc(c.ctc||'-')} · notice ${esc(c.notice||'-')}.</p>
    <h2>Experience</h2>
-   <div class="job"><b>Senior position — Confidential GCC</b><div class="muted">2021 – Present · ${esc(c.city||'')}</div>
+   <div class="job"><b>Senior position, Confidential GCC</b><div class="muted">2021 – Present · ${esc(c.city||'')}</div>
      <ul><li>Led key initiatives across ${esc((role&&role.domain)||'their domain')}.</li><li>Partnered cross-functionally to deliver measurable outcomes.</li><li>Mentored juniors and owned delivery quality.</li></ul></div>
    <h2>Key skills</h2><div class="chips">${skills.map(s=>'<span class="chip">'+esc(s)+'</span>').join('')}</div>
    <h2>Education</h2><p style="font-size:13px;">Bachelor's degree · India</p>
@@ -888,11 +888,11 @@ function referralPanelHTML(a, showIdentity){
   const r=a.referral; if(!r) return '<div style="font-size:12px;color:var(--muted);margin:0 0 12px;">Detailed referrer submission (skill ratings, relationship, recommendation) will appear here once the referral join is added to the live engine.</div>';
   const ident = showIdentity ? `<div style="margin-bottom:8px;"><strong>${esc(r.referrerName)}</strong> · <span class="locked">${esc(r.referrerEmail)}</span></div>` : '';
   const grid = `<div class="cand-meta" style="margin:0 0 10px;">
-    <div><label>Relationship</label><strong>${esc(r.relationship||'—')}</strong></div>
-    <div><label>Known for</label><strong>${esc(r.knownDuration||'—')}</strong></div>
-    <div><label>Worked together</label><strong>${esc(r.workedTogether||'—')}</strong></div>
-    <div><label>Referrer confidence</label><strong>${esc(r.confidence||'—')}</strong></div>
-    <div><label>Skill avg</label><strong>${r.skillAvg!=null?r.skillAvg.toFixed(2)+' / 5':'—'}</strong></div>
+    <div><label>Relationship</label><strong>${esc(r.relationship||'-')}</strong></div>
+    <div><label>Known for</label><strong>${esc(r.knownDuration||'-')}</strong></div>
+    <div><label>Worked together</label><strong>${esc(r.workedTogether||'-')}</strong></div>
+    <div><label>Referrer confidence</label><strong>${esc(r.confidence||'-')}</strong></div>
+    <div><label>Skill avg</label><strong>${r.skillAvg!=null?r.skillAvg.toFixed(2)+' / 5':'-'}</strong></div>
   </div>`;
   const skills=(r.skillRatings||[]).map(s=>`<div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
       <div style="flex:1;font-size:12.5px;">${esc(s.skill)}</div>
@@ -902,7 +902,7 @@ function referralPanelHTML(a, showIdentity){
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--brand-orange);margin-bottom:8px;">Referrer's submission ${showIdentity?'':'· identity withheld'}</div>
     ${ident}${grid}
     <label style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Why a good fit</label>
-    <div style="font-size:13px;margin:2px 0 10px;">${esc(r.whyGoodFit||'—')}</div>
+    <div style="font-size:13px;margin:2px 0 10px;">${esc(r.whyGoodFit||'-')}</div>
     <label style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Skill-wise rating</label>
     <div style="margin-top:6px;">${skills||'<span class="locked">none</span>'}</div>
   </div>`;
@@ -916,12 +916,12 @@ function notesHTML(a,kind){
       <textarea id="hm-note-text" placeholder="Your feedback / interview notes…"></textarea></div>
       <button class="btn small" style="margin-top:8px;" onclick="addNote('${a.id}','hm')">Add note</button>`;
   } else {
-    composer = `<div class="locked" style="font-size:12px;margin-top:8px;">Read-only — added by the GCCPROs core team.</div>`;
+    composer = `<div class="locked" style="font-size:12px;margin-top:8px;">Read-only, added by the GCCPROs core team.</div>`;
   }
   return `<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${kind==='core'?'Comments added by the GCCPROs core team for this candidate.':'Your notes for this application. These are visible to the GCCPROs admin team.'}</div>${list}${composer}`;
 }
 function actionsHTML(a){
-  return `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Send the candidate a real email from GCCPROs — they reply straight to you. Scheduling also attaches a calendar invite and advances the stage.</div>
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Send the candidate a real email from GCCPROs, they reply straight to you. Scheduling also attaches a calendar invite and advances the stage.</div>
   <div class="act-card">
     <div class="act-h">📅 Schedule interview</div>
     <div class="field-row">
@@ -970,7 +970,7 @@ async function sendAction(id, type){
     toast(pv.error==='email_not_configured'?'Email isn’t configured on the server.'
       :pv.error==='resolve_duplicate_first'?'Clear the duplicate check first.'
       :pv.error==='no_candidate_email'?'No candidate email on file.'
-      :('Could not prepare: '+pv.error+(pv.detail?(' — '+pv.detail):'')));
+      :('Could not prepare: '+pv.error+(pv.detail?(' · '+pv.detail):'')));
     return;
   }
   if(!pv || !pv.subject){ toast('Could not build the email preview.'); return; }
@@ -989,7 +989,7 @@ async function confirmSendAction(){
   btn.disabled=true; btn.textContent='Sending…';
   const res=await custCall('custCandidateAction', null, payload);
   btn.disabled=false; btn.textContent='✉ Send email now';
-  if(res && res.error){ toast('Could not send: '+res.error+(res.detail?(' — '+res.detail):'')); return; }
+  if(res && res.error){ toast('Could not send: '+res.error+(res.detail?(' · '+res.detail):'')); return; }
   PENDING_ACTION=null; closeModal('preview-overlay');
   await loadData(); openCand(id);
   setTimeout(()=>{ const tb=[...document.querySelectorAll('.detail-tab')].find(b=>/Actions/.test(b.textContent)); if(tb) dtab(tb,'d-actions'); }, 30);
@@ -1009,7 +1009,7 @@ function dtab(btn,id){
 }
 
 /* =================================================================
-   ACTIONS — all call the live gccpros-cust-api, then reload from server
+   ACTIONS - all call the live gccpros-cust-api, then reload from server
    ================================================================= */
 async function answerDuplicate(id,ans){
   const res = await custCall('custDuplicateDecision', null, {id, decision:ans});
@@ -1039,10 +1039,10 @@ async function toggleRole(id){
 }
 async function deleteRole(id, n){
   const r=roleById(id); if(!r) return;
-  if(n>0){ toast('This role has '+n+' application(s) — it can’t be deleted. Keep it disabled instead.'); return; }
+  if(n>0){ toast('This role has '+n+' application(s), it can’t be deleted. Keep it disabled instead.'); return; }
   if(!confirm('Delete the role “'+(r.title||r.code||id)+'” permanently?\n\nThis cannot be undone.')) return;
   const res = await custCall('custDeleteJob', null, {id});
-  if(res && res.error){ toast(res.error==='has_applications' ? 'This role has applications — it can’t be deleted.' : ('Could not delete: '+res.error)); return; }
+  if(res && res.error){ toast(res.error==='has_applications' ? 'This role has applications, it can’t be deleted.' : ('Could not delete: '+res.error)); return; }
   await loadData(); toast('✓ Role deleted');
 }
 async function toggleHistory(on){
@@ -1089,7 +1089,7 @@ function openRoleEdit(id){
   set('r-ctc_min_inr', x.ctc_min_inr); set('r-ctc_max_inr', x.ctc_max_inr);
   set('r-referral_amount_inr', x.referral_amount_inr); set('r-budget_text', x.budget_text);
   set('r-qualification', x.qualification);
-  // skills may be stored as a JSON array (roles created on the main jobs board) or a comma list — normalise to a clean comma list
+  // skills may be stored as a JSON array (roles created on the main jobs board) or a comma list, normalise to a clean comma list
   let skillsVal = x.skills;
   if(typeof skillsVal==='string' && skillsVal.trim().charAt(0)==='['){ try{ const arr=JSON.parse(skillsVal); if(Array.isArray(arr)) skillsVal=arr.join(', '); }catch(_){ } }
   else if(Array.isArray(skillsVal)){ skillsVal = skillsVal.join(', '); }
@@ -1128,11 +1128,11 @@ async function submitRole(){
   if(res && res.error){ fail('Could not save: '+res.error); return; }
   const wasEdit = !!EDIT_ROLE_ID; EDIT_ROLE_ID=null;
   closeModal('role-overlay'); await loadData();
-  toast(wasEdit ? '✓ Role updated — '+title : (payload.status==='active' ? '✓ Job posted — '+title+' is now live for applicants & referrers' : '✓ Job saved as '+payload.status));
+  toast(wasEdit ? '✓ Role updated, '+title : (payload.status==='active' ? '✓ Job posted, '+title+' is now live for applicants & referrers' : '✓ Job saved as '+payload.status));
 }
 
 /* =================================================================
-   AI — JD autofill + candidate ranking (economical: Gemini Flash, on-demand)
+   AI - JD autofill + candidate ranking (economical: Gemini Flash, on-demand)
    ================================================================= */
 function loadScriptOnce(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src)){ res(); return; } const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('load failed')); document.head.appendChild(s); }); }
 async function ensurePdfLib(){ if(!window.pdfjsLib) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); }
@@ -1169,7 +1169,7 @@ async function autofillFromJD(){
   const res=await custCall('custAiParseJD', null, { text:text.slice(0,12000) });
   if(!res || res.error){
     st.style.color='var(--red)';
-    st.textContent = (res&&res.error==='ai_not_configured') ? 'AI isn’t switched on yet — add the Gemini key in Supabase to enable autofill.' : ('AI error: '+((res&&res.error)||'unknown'));
+    st.textContent = (res&&res.error==='ai_not_configured') ? 'AI isn’t switched on yet, add the Gemini key in Supabase to enable autofill.' : ('AI error: '+((res&&res.error)||'unknown'));
     return;
   }
   const fl=res.fields||{};
@@ -1186,7 +1186,7 @@ async function autofillFromJD(){
   const selSet=(id,val)=>{ if(!val) return; const e=document.getElementById(id); if(!e) return; const v=String(val).toLowerCase();
     for(const o of e.options){ if(o.value.toLowerCase()===v || o.text.toLowerCase()===v){ e.value=o.value; return; } } };
   selSet('r-job_type',fl.job_type); selSet('r-mode',fl.mode); selSet('r-level',fl.level);
-  st.style.color='var(--green)'; st.textContent='✓ Fields autofilled from the JD — review, adjust, then post.';
+  st.style.color='var(--green)'; st.textContent='✓ Fields autofilled from the JD, review, adjust, then post.';
 }
 async function rankByAI(){
   const btn=document.getElementById('ai-rank-btn');
@@ -1197,12 +1197,12 @@ async function rankByAI(){
     const cleared=myApps().filter(a=>!a.accessRevoked && a.duplicateStatus==='no');
     roleIds=[...new Set(cleared.map(a=>a.roleId))];
   }
-  if(!roleIds.length){ toast('No cleared candidates to rank yet — clear the duplicate check first.'); return; }
+  if(!roleIds.length){ toast('No cleared candidates to rank yet, clear the duplicate check first.'); return; }
   const old=btn.textContent; btn.disabled=true; btn.textContent='Scoring…';
   let any=false, errMsg='';
   for(const rid of roleIds){
     const res=await custCall('custAiRankApplications', null, {role_id:rid});
-    if(!res || res.error){ errMsg=(res&&res.error==='ai_not_configured')?'AI isn’t switched on yet — add the Gemini key in Supabase to enable ranking.':('AI error: '+((res&&res.error)||'unknown')); continue; }
+    if(!res || res.error){ errMsg=(res&&res.error==='ai_not_configured')?'AI isn’t switched on yet, add the Gemini key in Supabase to enable ranking.':('AI error: '+((res&&res.error)||'unknown')); continue; }
     (res.ranked||[]).forEach(r=>{ const a=myApps().find(x=>x.id===r.id); if(a){ a.aiScore=r.ai_score; a.aiReason=r.ai_reason; } });
     any=true;
   }
@@ -1224,9 +1224,9 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); });
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function fmtDate(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
-function fmtCTC(v){ if(v==null||v==='') return '—'; const n=Number(v); if(isNaN(n)) return esc(String(v)); return n>=100000 ? (n/100000).toFixed(1).replace(/\.0$/,'')+' LPA' : (n>0? n+' LPA' : '—'); }
-function fmtDateTime(d){ if(!d)return'—'; const x=new Date(d); return isNaN(x)?'—':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(d){ if(!d)return'-'; const x=new Date(d); return isNaN(x)?'-':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtCTC(v){ if(v==null||v==='') return '-'; const n=Number(v); if(isNaN(n)) return esc(String(v)); return n>=100000 ? (n/100000).toFixed(1).replace(/\.0$/,'')+' LPA' : (n>0? n+' LPA' : '-'); }
+function fmtDateTime(d){ if(!d)return'-'; const x=new Date(d); return isNaN(x)?'-':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
 function nowISO(){ return new Date().toISOString(); }
 function todayISODate(){ return new Date().toISOString().slice(0,10); }
 function monthsSince(d){ return (Date.now()-new Date(d).getTime())/(1000*60*60*24*30.4375); }

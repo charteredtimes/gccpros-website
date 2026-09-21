@@ -69,7 +69,7 @@ input.valid { border-color:var(--ok); }
 
 <header>
   <h1>Complete your candidate profile</h1>
-  <div class="sub">A GCCPROs Partner has referred you for a GCC opportunity. Fill the form below — we'll handle the rest.</div>
+  <div class="sub">A GCCPROs Partner has referred you for a GCC opportunity. Fill the form below, we'll handle the rest.</div>
 </header>
 
 <main>
@@ -79,7 +79,7 @@ input.valid { border-color:var(--ok); }
 
   <div id="form-container" class="card" style="display:none;">
     <h2>Welcome <span id="cand-firstname"></span></h2>
-    <p class="sub">Referred by <span id="referrer-name" class="referrer-pill"></span><br><br>Please complete the profile below. All fields are required (mandatory) unless marked optional. Your details are processed under DPDP Act 2023 — see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
+    <p class="sub">Referred by <span id="referrer-name" class="referrer-pill"></span><br><br>Please complete the profile below. All fields are required (mandatory) unless marked optional. Your details are processed under DPDP Act 2023, see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
 
     <div id="target-job-block" class="alert info" style="display:none;">
       <b>Target role:</b> <span id="target-job-text"></span>
@@ -192,7 +192,7 @@ input.valid { border-color:var(--ok); }
         <input type="file" id="cf-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" onchange="cvSelected()">
         <div class="uz-prompt" id="cf-cv-prompt">&#128206; Click here or drag a file to upload your CV<br><span style="font-size:11px;">PDF / DOC / DOCX &middot; max 5 MB</span></div>
       </div>
-      <div class="hint">Stored securely in our private Supabase bucket. Only authorised GCCPROs recruiters can download via signed URL &mdash; never shared publicly.</div>
+      <div class="hint">Stored securely in our private Supabase bucket. Only authorised GCCPROs recruiters can download via signed URL, never shared publicly.</div>
     </div>
 
     <div class="consent">
@@ -238,7 +238,7 @@ function updateWordCount(ta, hintId, min) {
   h.className = 'hint ' + (n >= min ? 'ok' : (n > 0 ? 'err' : ''));
 }
 
-// CV file picker — drag-and-drop + click
+// CV file picker, drag-and-drop + click
 function cvSelected() {
   const f = document.getElementById('cf-cv').files[0];
   if (!f) return;
@@ -249,10 +249,10 @@ function cvSelected() {
   const sizeKB = (f.size / 1024).toFixed(1);
   if (f.size > CV_MAX_BYTES) {
     z.classList.remove('has-file');
-    p.innerHTML = '<span style="color:var(--err);">✗ ' + esc(f.name) + ' (' + sizeKB + ' KB) is over 5 MB &mdash; please pick a smaller file.</span>';
+    p.innerHTML = '<span style="color:var(--err);">✗ ' + esc(f.name) + ' (' + sizeKB + ' KB) is over 5 MB, please pick a smaller file.</span>';
     CV_FILE = null;
   } else {
-    p.innerHTML = '<span class="uz-file">✓ ' + esc(f.name) + ' (' + sizeKB + ' KB)</span> &mdash; click to change.';
+    p.innerHTML = '<span class="uz-file">✓ ' + esc(f.name) + ' (' + sizeKB + ' KB)</span>, click to change.';
   }
 }
 ['dragover','dragenter'].forEach(ev => document.addEventListener(ev, e => {
@@ -370,7 +370,7 @@ async function submitProfile() {
   const reasonWords = v('cf-reason').split(/\s+/).filter(Boolean).length;
   if (reasonWords < 20)                                   return err('"Reason for change" needs at least 20 words (you have ' + reasonWords + ').', 'cf-reason');
   if (!CV_FILE)                                           return err('Please upload your CV (PDF / DOC / DOCX, max 5 MB).');
-  if (CV_FILE.size > CV_MAX_BYTES)                        return err('CV is over 5 MB — please pick a smaller file.');
+  if (CV_FILE.size > CV_MAX_BYTES)                        return err('CV is over 5 MB, please pick a smaller file.');
   if (!document.getElementById('cf-consent').checked)     return err('Please accept the privacy notice to continue.', 'cf-consent');
 
   const btn = document.getElementById('cf-submit');
@@ -388,7 +388,7 @@ async function submitProfile() {
     });
     const uj = await ur.json();
     if (uj.error) {
-      const detail = [uj.error, uj.reason, uj.message, uj.hint, uj.details ? '— ' + uj.details : ''].filter(Boolean).join(' · ');
+      const detail = [uj.error, uj.reason, uj.message, uj.hint, uj.details ? '· ' + uj.details : ''].filter(Boolean).join(' · ');
       console.error('[CV upload failed]', uj);
       throw new Error('CV upload failed: ' + detail);
     }

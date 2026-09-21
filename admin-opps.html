@@ -3,7 +3,7 @@
      Standalone admin page for managing opps_jobs, opps_applications,
      opps_partners, opps_referrals. Uses the existing v7.8 Edge Function
      endpoints (oppsAdminListJobs/Applications/Partners/Referrals etc.).
-     Open at: https://gccpros.com/admin-opps.html — paste admin key, browse. -->
+     Open at: https://gccpros.com/admin-opps.html - paste admin key, browse. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -98,7 +98,7 @@ td.actions { white-space:nowrap; }
   <!-- JOBS -->
   <div id="tab-jobs" class="panel active">
     <div class="card">
-      <h3>Opportunities — Jobs</h3>
+      <h3>Opportunities: Jobs</h3>
       <p class="muted">Live job postings in <code>opps_jobs</code>. Edit, pause, close, or post new roles.</p>
       <div class="filter-row">
         <select id="f-jobs-status" onchange="loadJobs()">
@@ -108,9 +108,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-jobs-q" placeholder="🔍 Search title / company / job code" oninput="renderJobs()">
         <button class="btn" onclick="loadJobs()">↻ Refresh</button>
-        <button class="btn brand-orange" onclick="exportXLSX('jobs', JOBS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
-          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
+        <button class="btn brand-orange" onclick="exportXLSX('jobs', JOBS)" title="Proper Excel file, typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'recruiter')" title="Plain CSV, clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('jobs', JOBS, 'raw')" title="Plain CSV, every column">⬇ Raw CSV</button>
         <span class="muted" id="jobs-count"></span>
       </div>
       <div id="jobs-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -120,7 +120,7 @@ td.actions { white-space:nowrap; }
   <!-- APPLICATIONS -->
   <div id="tab-apps" class="panel">
     <div class="card">
-      <h3>Opportunities — Applications</h3>
+      <h3>Opportunities: Applications</h3>
       <p class="muted">Job applications in <code>opps_applications</code>. Marking <b>placed</b> auto-grants partner earnings if referred.</p>
       <div class="filter-row">
         <select id="f-apps-status" onchange="loadApps()">
@@ -134,9 +134,9 @@ td.actions { white-space:nowrap; }
         <input type="search" id="f-apps-q" placeholder="🔍 Search candidate / company / job code" oninput="renderApps()">
         <button class="btn" onclick="loadApps()">↻ Refresh</button>
         <button class="btn brand-orange" onclick="exportXLSXFullJoin('applications')" title="Joins opps_applications + opps_users + opps_jobs + opps_referrals into one row per application. ALL candidate data in one file.">📊 Export FULL Excel (joined)</button>
-          <button class="btn secondary" onclick="exportXLSX('apps', APPS)" title="Application table only — no joins">📋 Apps only</button>
-          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
+          <button class="btn secondary" onclick="exportXLSX('apps', APPS)" title="Application table only, no joins">📋 Apps only</button>
+          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'recruiter')" title="Plain CSV, clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('apps', APPS, 'raw')" title="Plain CSV, every column">⬇ Raw CSV</button>
         <span class="muted" id="apps-count"></span>
         <span id="apps-jobfilter" style="display:none;background:#EEF3FB;color:var(--brand-orange);padding:4px 10px;border-radius:12px;font-size:11.5px;font-weight:700;">
           Filtered to job: <span id="apps-jobfilter-label"></span>
@@ -150,7 +150,7 @@ td.actions { white-space:nowrap; }
   <!-- PARTNERS -->
   <div id="tab-partners" class="panel">
     <div class="card">
-      <h3>Opportunities — Partners</h3>
+      <h3>Opportunities: Partners</h3>
       <p class="muted">Partner accounts in <code>opps_partners</code>. Approve/reject new partner applications + review KYC.</p>
       <div class="filter-row">
         <select id="f-partners-status" onchange="loadPartners()">
@@ -168,9 +168,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-partners-q" placeholder="🔍 Search email / name / company" oninput="renderPartners()">
         <button class="btn" onclick="loadPartners()">↻ Refresh</button>
-        <button class="btn brand-orange" onclick="exportXLSX('partners', PARTNERS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
-          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
+        <button class="btn brand-orange" onclick="exportXLSX('partners', PARTNERS)" title="Proper Excel file, typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'recruiter')" title="Plain CSV, clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('partners', PARTNERS, 'raw')" title="Plain CSV, every column">⬇ Raw CSV</button>
         <span class="muted" id="partners-count"></span>
       </div>
       <div id="partners-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -180,7 +180,7 @@ td.actions { white-space:nowrap; }
   <!-- REFERRALS -->
   <div id="tab-referrals" class="panel">
     <div class="card">
-      <h3>Opportunities — Referrals</h3>
+      <h3>Opportunities: Referrals</h3>
       <p class="muted">Partner-initiated referrals in <code>opps_referrals</code>. Includes skill assessment ratings.</p>
       <div class="filter-row">
         <select id="f-referrals-status" onchange="loadReferrals()">
@@ -195,9 +195,9 @@ td.actions { white-space:nowrap; }
         <input type="search" id="f-referrals-q" placeholder="🔍 Search candidate / partner email" oninput="renderReferrals()">
         <button class="btn" onclick="loadReferrals()">↻ Refresh</button>
         <button class="btn brand-orange" onclick="exportXLSXFullJoin('referrals')" title="Joins opps_referrals + opps_partners + opps_users + opps_jobs + opps_applications. EVERY field the partner submitted AND the candidate filled, in one row.">📊 Export FULL Excel (joined)</button>
-          <button class="btn secondary" onclick="exportXLSX('referrals', REFERRALS)" title="Referral table only — no joins">📋 Refs only</button>
-          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Plain CSV — clean smart-merged columns">⬇ CSV (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Plain CSV — every column including legacy">⬇ Raw CSV</button>
+          <button class="btn secondary" onclick="exportXLSX('referrals', REFERRALS)" title="Referral table only, no joins">📋 Refs only</button>
+          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'recruiter')" title="Plain CSV, clean smart-merged columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('referrals', REFERRALS, 'raw')" title="Plain CSV, every column including legacy">⬇ Raw CSV</button>
         <span class="muted" id="referrals-count"></span>
       </div>
       <div id="referrals-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -207,7 +207,7 @@ td.actions { white-space:nowrap; }
   <!-- USERS -->
   <div id="tab-users" class="panel">
     <div class="card">
-      <h3>Opportunities — Users</h3>
+      <h3>Opportunities: Users</h3>
       <p class="muted">All users in <code>opps_users</code>. Filter by role, approve/suspend.</p>
       <div class="filter-row">
         <select id="f-users-type" onchange="renderUsers()">
@@ -225,9 +225,9 @@ td.actions { white-space:nowrap; }
         </select>
         <input type="search" id="f-users-q" placeholder="🔍 Search email / name / city" oninput="renderUsers()">
         <button class="btn" onclick="loadUsers()">↻ Refresh</button>
-        <button class="btn brand-orange" onclick="exportXLSX('users', USERS)" title="Proper Excel file — typed cells, frozen header, auto-width">📊 Export to Excel</button>
-          <button class="btn secondary" onclick="exportCSV('users', USERS, 'recruiter')" title="Plain CSV — clean columns">⬇ CSV (clean)</button>
-          <button class="btn secondary" onclick="exportCSV('users', USERS, 'raw')" title="Plain CSV — every column">⬇ Raw CSV</button>
+        <button class="btn brand-orange" onclick="exportXLSX('users', USERS)" title="Proper Excel file, typed cells, frozen header, auto-width">📊 Export to Excel</button>
+          <button class="btn secondary" onclick="exportCSV('users', USERS, 'recruiter')" title="Plain CSV, clean columns">⬇ CSV (clean)</button>
+          <button class="btn secondary" onclick="exportCSV('users', USERS, 'raw')" title="Plain CSV, every column">⬇ Raw CSV</button>
         <span class="muted" id="users-count"></span>
       </div>
       <div id="users-box"><p class="loading">Click ↻ Refresh to load.</p></div>
@@ -250,17 +250,17 @@ function fmtINR(n) { if (n == null || n === '' || isNaN(Number(n))) return ''; r
 function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString(); }
 function fmtDateTime(iso) { if (!iso) return ''; const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleString(); }
 function badge(val, cls) { if (!val) return ''; return `<span class="badge b-${esc(String(val).toLowerCase().replace(/\s+/g,'_'))}">${esc(val)}</span>`; }
-function bool(v) { return v ? '✓' : '—'; }
+function bool(v) { return v ? '✓' : '-'; }
 // v4: derive a display name when applicants only have an email + use a JOBS lookup for label
 function _derivName(a) {
   if (a.applicant_name) return a.applicant_name;
   const e = String(a.applicant_email || '');
-  if (!e) return '—';
+  if (!e) return '-';
   const local = e.split('@')[0];
   return local.split(/[._-]/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 function _jobLabel(jobId) {
-  if (!jobId) return '—';
+  if (!jobId) return '-';
   const j = JOBS.find(x => x.id === jobId);
   if (j) return esc(j.job_code || jobId.slice(0,8)) + ' <span class="muted" style="font-size:10px;">' + esc((j.title || '').slice(0, 30)) + '</span>';
   return '<code style="font-size:10px;">' + esc(jobId.slice(0,8)) + '…</code>';
@@ -316,7 +316,7 @@ function showTab(ev, name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
   else {
-    // Programmatic switch — find the tab button by name
+    // Programmatic switch, find the tab button by name
     const btn = document.querySelector(`.tab[onclick*="'${name}'"]`);
     if (btn) btn.classList.add('active');
   }
@@ -328,7 +328,7 @@ function showTab(ev, name) {
   else if (name === 'users' && !USERS.length) loadUsers();
 }
 
-// v4: drill from a Job row into its Applications — switch tab + set jobId filter
+// v4: drill from a Job row into its Applications, switch tab + set jobId filter
 function viewJobApplicants(jobId, jobCode, jobTitle) {
   CURRENT_JOB_FILTER = { id: jobId, code: jobCode, title: jobTitle };
   // Reset status filter so we see ALL applications for this job (not just submitted)
@@ -337,7 +337,7 @@ function viewJobApplicants(jobId, jobCode, jobTitle) {
   const chip = document.getElementById('apps-jobfilter');
   const label = document.getElementById('apps-jobfilter-label');
   chip.style.display = '';
-  label.textContent = jobCode + ' — ' + jobTitle;
+  label.textContent = jobCode + ' · ' + jobTitle;
   // Switch tab programmatically
   showTab(null, 'apps');
   // Load applications filtered to this job
@@ -372,7 +372,7 @@ function renderJobs() {
   if (!filtered.length) { document.getElementById('jobs-box').innerHTML = '<p class="loading">No jobs match.</p>'; return; }
   let html = '<table><thead><tr><th>Code</th><th>Title</th><th>Company</th><th>Domain</th><th>Location</th><th>Mode</th><th>CTC</th><th>Exp</th><th>Applicants</th><th>Status</th><th>Posted</th></tr></thead><tbody>';
   filtered.forEach(j => {
-    const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '—');
+    const ctc = (j.ctc_min_inr || j.ctc_max_inr) ? (fmtINR(j.ctc_min_inr) + '–' + fmtINR(j.ctc_max_inr)) : (j.budget_text || '-');
     html += `<tr>
       <td><b>${esc(j.job_code || '')}</b></td>
       <td>${esc(j.title || '')}</td>
@@ -421,7 +421,7 @@ function renderApps() {
   if (!filtered.length) { document.getElementById('apps-box').innerHTML = '<p class="loading">No applications match.</p>'; return; }
   let html = '<table><thead><tr><th>Applied</th><th>Candidate</th><th>Email</th><th>Job</th><th>Phone</th><th>City</th><th>Exp</th><th>Cur CTC</th><th>Exp CTC</th><th>Notice</th><th>Mode</th><th>Status</th><th>CV</th><th style="min-width:170px;">Actions</th></tr></thead><tbody>';
   filtered.forEach((a, i) => {
-    const cv = a.cv_storage_url ? `<button class="btn small" onclick="downloadCV('${esc(a.cv_storage_url)}')">⬇</button>` : '—';
+    const cv = a.cv_storage_url ? `<button class="btn small" onclick="downloadCV('${esc(a.cv_storage_url)}')">⬇</button>` : '-';
     html += `<tr>
       <td>${fmtDate(a.applied_at)}</td>
       <td><strong>${esc(_derivName(a))}</strong></td>
@@ -453,19 +453,19 @@ function renderApps() {
       <div class="detail-grid">
         <div><label>Designation</label><strong>${esc(a.current_designation || '')}</strong></div>
         <div><label>Company</label><strong>${esc(a.current_company || '')}</strong></div>
-        <div><label>LinkedIn</label><strong>${a.contact_linkedin ? `<a href="${esc(a.contact_linkedin)}" target="_blank">↗ link</a>` : '—'}</strong></div>
-        <div><label>Alt phone</label><strong>${esc(a.contact_alt_phone || '—')}</strong></div>
+        <div><label>LinkedIn</label><strong>${a.contact_linkedin ? `<a href="${esc(a.contact_linkedin)}" target="_blank">↗ link</a>` : '-'}</strong></div>
+        <div><label>Alt phone</label><strong>${esc(a.contact_alt_phone || '-')}</strong></div>
         <div><label>PAN</label><strong>${esc(a.pan_number || '')}</strong></div>
         <div><label>Qualification</label><strong>${esc(a.qualification || '')}</strong></div>
         <div><label>Earliest join</label><strong>${fmtDate(a.earliest_join_date)}</strong></div>
         <div><label>Relocate</label><strong>${bool(a.willing_to_relocate)}</strong></div>
         <div><label>Source</label><strong>${esc(a.source || '')}</strong></div>
-        <div><label>Referrer</label><strong>${esc(a.referrer_partner || '—')}</strong></div>
+        <div><label>Referrer</label><strong>${esc(a.referrer_partner || '-')}</strong></div>
       </div>
-      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skills</label><br><strong>${esc(a.selected_skills || '—')}</strong></div>
-      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>${esc(a.eligibility_statement || '—')}</span></div>
-      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>${esc(a.reference_1 || '—')}</span></div>
-      <div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>${esc(a.reference_2 || '—')}</span></div>
+      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skills</label><br><strong>${esc(a.selected_skills || '-')}</strong></div>
+      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>${esc(a.eligibility_statement || '-')}</span></div>
+      <div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 1</label><br><span>${esc(a.reference_1 || '-')}</span></div>
+      <div style="margin-top:6px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Reference 2</label><br><span>${esc(a.reference_2 || '-')}</span></div>
       ${a.cover_note ? `<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Cover note</label><br><em>${esc(a.cover_note)}</em></div>` : ''}
       <p class="muted" style="margin-top:12px;font-size:11px;">Status changes via the dropdown on the row above. Placed → auto-pays referrer.</p>
     </td></tr>`;
@@ -561,7 +561,7 @@ function renderPartners() {
       <td>${badge(p.kyc_status || 'not_started')}</td>
       <td>${p.total_referrals || 0}</td>
       <td>${p.total_placements || 0}</td>
-      <td>${fmtINR(p.earnings_balance_inr) || '—'}</td>
+      <td>${fmtINR(p.earnings_balance_inr) || '-'}</td>
       <td class="actions">
         ${(p.partner_status||'').toLowerCase()==='pending' ? `
           <button class="btn small" onclick="setPartnerStatus('${esc(p.email)}','Accepted')">Approve</button>
@@ -632,17 +632,17 @@ function renderReferrals() {
       <td class="email">${esc((r.target_job_id || '').slice(0,8))}…</td>
       <td>${badge(r.referral_status)}</td>
       <td>${esc(r.confidence_level || '')}</td>
-      <td>${r.skill_avg_rating != null ? Number(r.skill_avg_rating).toFixed(2) : '—'}</td>
+      <td>${r.skill_avg_rating != null ? Number(r.skill_avg_rating).toFixed(2) : '-'}</td>
       <td>${esc(r.worked_together || '')}</td>
       <td><button class="btn small secondary" onclick="toggleRefDetail(${i})">+</button></td>
     </tr>
     <tr class="detail-row" id="ref-detail-${i}" style="display:none;"><td colspan="11">
       <div class="detail-grid">
-        <div><label>Relationship</label><strong>${esc(r.relationship || '—')}</strong></div>
-        <div><label>Known duration</label><strong>${esc(r.known_duration || '—')}</strong></div>
-        <div><label>LinkedIn</label><strong>${r.candidate_linkedin ? `<a href="${esc(r.candidate_linkedin)}" target="_blank">↗ link</a>` : '—'}</strong></div>
-        <div><label>Placed</label><strong>${fmtDate(r.placed_at) || '—'}</strong></div>
-        <div><label>Payout</label><strong>${fmtINR(r.payout_inr) || '—'}</strong></div>
+        <div><label>Relationship</label><strong>${esc(r.relationship || '-')}</strong></div>
+        <div><label>Known duration</label><strong>${esc(r.known_duration || '-')}</strong></div>
+        <div><label>LinkedIn</label><strong>${r.candidate_linkedin ? `<a href="${esc(r.candidate_linkedin)}" target="_blank">↗ link</a>` : '-'}</strong></div>
+        <div><label>Placed</label><strong>${fmtDate(r.placed_at) || '-'}</strong></div>
+        <div><label>Payout</label><strong>${fmtINR(r.payout_inr) || '-'}</strong></div>
       </div>
       ${r.why_good_fit ? `<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Why a good fit</label><br><span>${esc(r.why_good_fit)}</span></div>` : ''}
       ${r.skill_ratings_json ? `<div style="margin-top:10px;"><label class="muted" style="font-size:10px;text-transform:uppercase;">Skill ratings</label><br><pre style="background:#fff;padding:8px;font-size:11px;border-radius:4px;">${esc(JSON.stringify(typeof r.skill_ratings_json === 'string' ? JSON.parse(r.skill_ratings_json) : r.skill_ratings_json, null, 2))}</pre></div>` : ''}
@@ -684,7 +684,7 @@ function renderUsers() {
   if (!filtered.length) { document.getElementById('users-box').innerHTML = '<p class="loading">No users match.</p>'; return; }
   let html = '<table><thead><tr><th>Signup</th><th>Email</th><th>Name</th><th>Role</th><th>Approval</th><th>Phone</th><th>City</th><th>Domain</th><th>Company</th><th>Exp</th><th>CV</th></tr></thead><tbody>';
   filtered.forEach(u => {
-    const cv = u.cv_url ? `<button class="btn small" onclick="downloadCV('${esc(u.cv_url)}')">⬇</button>` : '—';
+    const cv = u.cv_url ? `<button class="btn small" onclick="downloadCV('${esc(u.cv_url)}')">⬇</button>` : '-';
     html += `<tr>
       <td>${fmtDate(u.signup_date || u.created_at)}</td>
       <td class="email">${esc(u.email || '')}</td>
@@ -704,9 +704,9 @@ function renderUsers() {
 }
 
 // =========================================================
-// XLSX export — v8 the proper fix
+// XLSX export, v8 the proper fix
 // =========================================================
-// Produces a true .xlsx file via SheetJS — no CSV-to-Excel type guessing.
+// Produces a true .xlsx file via SheetJS, no CSV-to-Excel type guessing.
 // - Each column gets its proper type: dates as Excel dates, numbers as numbers,
 //   booleans as TRUE/FALSE, strings as strings.
 // - Header row is bold + frozen (you can scroll without losing column names).
@@ -748,7 +748,7 @@ function _xlsxCell(v, colName) {
 }
 
 // =========================================================
-// v10: EVERYTHING export — guaranteed complete candidate + reference data
+// v10: EVERYTHING export, guaranteed complete candidate + reference data
 // =========================================================
 // Approach:
 //   1. Before composing, AWAIT all 5 tables. If any not loaded yet, fetch synchronously.
@@ -840,7 +840,7 @@ function _composeReferralRowV10(ref, L) {
 }
 
 async function exportXLSXFullJoin(name) {
-  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading, try again in 2 seconds.', 'err'); return; }
   await _ensureAllLoaded();
   const sources = { applications: APPS, referrals: REFERRALS };
   const rows = sources[name];
@@ -908,7 +908,7 @@ async function exportXLSXFullJoin(name) {
 
 function exportXLSX(name, rows) {
   if (!rows || !rows.length) { toast('No rows to export.', 'err'); return; }
-  if (typeof XLSX === 'undefined') { toast('Excel library still loading — try again in 2 seconds.', 'err'); return; }
+  if (typeof XLSX === 'undefined') { toast('Excel library still loading, try again in 2 seconds.', 'err'); return; }
   // Smart-merge for referrals
   if (name === 'referrals' && APPS.length) {
     const appByEmail = {};
@@ -960,7 +960,7 @@ function exportXLSX(name, rows) {
 }
 
 // =========================================================
-// CSV export — v5 hardened
+// CSV export, v5 hardened
 // - canonical column list per resource (predictable order; clean export)
 // - any extra keys not in the canonical list are appended in stable order
 // - proper JSON serialization for objects/arrays (no more "[object Object]")
@@ -1056,7 +1056,7 @@ function _csvCell(v) {
   s = s.replace(/\r/g, '');
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
-// v7: smart-merge — given a referral + appByEmail map, return a copy where
+// v7: smart-merge, given a referral + appByEmail map, return a copy where
 // blank LEGACY candidate_* fields are filled from the candidate's application
 // row. Old/migrated referrals already have these populated; new (v7+) referrals
 // have them blank but the data exists on the application row. Result: a single
@@ -1103,7 +1103,7 @@ function _smartMergeReferral(r, appByEmail) {
   return m;
 }
 
-// v6: joined export — referrals enriched with their candidate's application data
+// v6: joined export, referrals enriched with their candidate's application data
 async function exportReferralsJoined() {
   if (!REFERRALS.length) { toast('Load referrals first.', 'err'); return; }
   toast('Fetching candidate applications to join…');
@@ -1148,7 +1148,7 @@ async function exportReferralsJoined() {
     'app_reference_1','app_reference_2',
     'app_cv_storage_url','app_cv_filename','app_cover_note','app_id'];
   const cols = refCols.concat(appCols);
-  const header = cols.map(c => _csvCell(_titleCase(c.replace(/^app_/, 'Candidate Submitted — ')))).join(',');
+  const header = cols.map(c => _csvCell(_titleCase(c.replace(/^app_/, 'Candidate Submitted, ')))).join(',');
   const lines = joined.map(r => cols.map(c => _csvCell(r[c])).join(','));
   const csv = '\uFEFF' + [header].concat(lines).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });

@@ -356,7 +356,7 @@ function demoEmail(){ try{ return sessionStorage.getItem("GCC_DEMO")||""; }catch
 function initDemoBar(){
   var em=demoEmail(); if(!em) return;
   var bar=$("demoBar"), t=$("demoBarText");
-  if(t) t.textContent="DEMO — signed in as "+em+" (admin). Anything you do writes to this user's real account.";
+  if(t) t.textContent="DEMO, signed in as "+em+" (admin). Anything you do writes to this user's real account.";
   if(bar) bar.classList.remove("hide");
 }
 function exitDemo(){
@@ -389,7 +389,7 @@ function showRecovery(){
   var p=document.querySelector("#wizPassword .wizhead p"); if(p) p.textContent="Choose a new password for your account. After saving, you'll go straight to your console.";
 }
 function showGate(){ hide("app"); hide("wizConfirm"); hide("wizPriorities"); hide("wizPassword"); show("gate");
-  // First-time approved members have no password yet — open in code mode.
+  // First-time approved members have no password yet, open in code mode.
   try{ var qp=new URLSearchParams(location.search); var m=(qp.get("mode")||"").toLowerCase();
     if(m==="code"||qp.get("first")==="1") setMode("code"); else setMode("pwd");
   }catch(_){ setMode("pwd"); }
@@ -555,7 +555,7 @@ async function submitPassword(){
     var em=String(res.error.message||"");
     if(/reauth/i.test(em)){
       // "Secure password change" is enabled on the project: email a one-time code,
-      // then finish with that nonce. If we can't, don't trap the user — let them in.
+      // then finish with that nonce. If we can't, don't trap the user, let them in.
       PWD_PENDING=a;
       try{
         var rr=await sb.auth.reauthenticate();
@@ -563,7 +563,7 @@ async function submitPassword(){
         show("reauthBox");
         msg("mPwdSet","One quick security step: we emailed you a 6-digit code. Enter it below to finish setting your password.","info");
       }catch(_){
-        msg("mPwdSet","You're all set — opening your benchmark. You can add a password anytime with ‘Reset password’ in the console.","info");
+        msg("mPwdSet","You're all set, opening your benchmark. You can add a password anytime with ‘Reset password’ in the console.","info");
         await finishPassword();
       }
       return;

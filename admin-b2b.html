@@ -185,15 +185,15 @@
       </div>
 
       <div class="dash-grid">
-        <div class="card span-3"><h4>Requests</h4><div class="big" id="dkReq">—</div><div class="delta flat" id="dkReqD"></div></div>
-        <div class="card span-3"><h4>Rows returned</h4><div class="big" id="dkRows">—</div><div class="delta flat" id="dkRowsD"></div></div>
-        <div class="card span-3"><h4>Active customers</h4><div class="big" id="dkAct">—</div><div class="delta flat" id="dkActD"></div></div>
-        <div class="card span-3"><h4>Unique users</h4><div class="big" id="dkUsers">—</div><div class="delta flat" id="dkUsersD"></div></div>
+        <div class="card span-3"><h4>Requests</h4><div class="big" id="dkReq">-</div><div class="delta flat" id="dkReqD"></div></div>
+        <div class="card span-3"><h4>Rows returned</h4><div class="big" id="dkRows">-</div><div class="delta flat" id="dkRowsD"></div></div>
+        <div class="card span-3"><h4>Active customers</h4><div class="big" id="dkAct">-</div><div class="delta flat" id="dkActD"></div></div>
+        <div class="card span-3"><h4>Unique users</h4><div class="big" id="dkUsers">-</div><div class="delta flat" id="dkUsersD"></div></div>
 
-        <div class="card span-3"><h4>Customers total</h4><div class="big" id="dkTotalCust">—</div></div>
-        <div class="card span-3"><h4>Suspended</h4><div class="big" id="dkSus">—</div></div>
-        <div class="card span-3"><h4>Idle 30 days</h4><div class="big" id="dkIdle">—</div></div>
-        <div class="card span-3"><h4>Errors in window</h4><div class="big" id="dkErr">—</div></div>
+        <div class="card span-3"><h4>Customers total</h4><div class="big" id="dkTotalCust">-</div></div>
+        <div class="card span-3"><h4>Suspended</h4><div class="big" id="dkSus">-</div></div>
+        <div class="card span-3"><h4>Idle 30 days</h4><div class="big" id="dkIdle">-</div></div>
+        <div class="card span-3"><h4>Errors in window</h4><div class="big" id="dkErr">-</div></div>
 
         <div class="chart-card span-8"><h4>Requests per day</h4><canvas id="chartDaily"></canvas></div>
         <div class="chart-card span-4"><h4>Plan distribution</h4><canvas id="chartPlans"></canvas></div>
@@ -212,10 +212,10 @@
     <div class="panel" id="panel-customers">
 
       <div class="kpis" id="kpis">
-        <div class="kpi"><div class="lbl">Customers</div><div class="v" id="kpiTotal">—</div></div>
-        <div class="kpi"><div class="lbl">Active</div><div class="v" id="kpiActive">—</div></div>
-        <div class="kpi"><div class="lbl">Suspended</div><div class="v" id="kpiSuspended">—</div></div>
-        <div class="kpi"><div class="lbl">Requests (MTD)</div><div class="v" id="kpiReq">—</div></div>
+        <div class="kpi"><div class="lbl">Customers</div><div class="v" id="kpiTotal">-</div></div>
+        <div class="kpi"><div class="lbl">Active</div><div class="v" id="kpiActive">-</div></div>
+        <div class="kpi"><div class="lbl">Suspended</div><div class="v" id="kpiSuspended">-</div></div>
+        <div class="kpi"><div class="lbl">Requests (MTD)</div><div class="v" id="kpiReq">-</div></div>
       </div>
 
       <div class="toolbar">
@@ -356,8 +356,8 @@ function toast(msg, isErr) {
   el.className = "show" + (isErr ? " err" : "");
   setTimeout(() => el.className = "", 3000);
 }
-function fmtDate(d) { if (!d) return "—"; const t = new Date(d); return t.toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }); }
-function fmtNum(n)  { return (n == null ? "—" : Number(n).toLocaleString()); }
+function fmtDate(d) { if (!d) return "-"; const t = new Date(d); return t.toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }); }
+function fmtNum(n)  { return (n == null ? "-" : Number(n).toLocaleString()); }
 function bar(used, lim) {
   if (!lim || lim <= 0) return "";
   const pct = Math.min(100, Math.round((used / lim) * 100));
@@ -522,8 +522,8 @@ async function loadPlans() {
       <td>${fmtNum(p.seat_limit)}</td>
       <td>${fmtNum(p.concurrent_limit)}</td>
       <td>${(p.allowed_countries && p.allowed_countries.length) ? esc(p.allowed_countries.join(", ")) : "Global"}</td>
-      <td>${p.bulk_export ? "✓" : "—"}</td>
-      <td>${p.api_access ? "✓" : "—"}</td>
+      <td>${p.bulk_export ? "✓" : "-"}</td>
+      <td>${p.api_access ? "✓" : "-"}</td>
       <td><span class="pill gold">${esc(p.field_tier)}</span></td>
     </tr>
   `).join("");
@@ -545,8 +545,8 @@ async function loadAudit() {
       <td class="muted">${fmtDate(r.ts)}</td>
       <td>${esc(r.actor_email)}</td>
       <td><span class="pill navy">${esc(r.action)}</span></td>
-      <td>${esc(lookup[r.client_id] || "—")}</td>
-      <td>${esc(r.target_email || "—")}</td>
+      <td>${esc(lookup[r.client_id] || "-")}</td>
+      <td>${esc(r.target_email || "-")}</td>
       <td>${esc(r.reason || "")}</td>
       <td><details class="json"><summary>view</summary><pre>${esc(JSON.stringify(r.details, null, 2))}</pre></details></td>
     </tr>
@@ -937,7 +937,7 @@ async function loadDashboard() {
 }
 
 function pctDelta(now, prev) {
-  if (!prev || prev === 0) return { label: now > 0 ? "new" : "—", cls: "flat" };
+  if (!prev || prev === 0) return { label: now > 0 ? "new" : "-", cls: "flat" };
   const d = ((now - prev) / prev) * 100;
   const cls = d > 1 ? "up" : (d < -1 ? "down" : "flat");
   const sign = d > 0 ? "+" : "";

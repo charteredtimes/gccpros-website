@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs — view-only CV viewer. Opened via a share link: cv-view.html?t=<token>.
+<!-- GCCPROs - view-only CV viewer. Opened via a share link: cv-view.html?t=<token>.
      Builds a single STAMPED packet in-browser: a GCCPROs cover (referrer input + AI
      recommendation + notes/feedback) followed by the candidate's actual CV, with a
      GCCPROs + sharer + date stamp on every page. Whatever is saved/printed is stamped. -->
@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCCPROs — Candidate Interview Packet (view only)</title>
+<title>GCCPROs | Candidate Interview Packet (view only)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -28,7 +28,7 @@
 </head>
 <body oncontextmenu="return false">
   <div class="bar"><span class="brand">GCC<span style="color:#1D2226;">PROs</span></span><span class="tag">Interview Packet · view-only</span><span class="who" id="who"></span></div>
-  <div class="note">🔒 Shared securely via GCCPROs for interview use only. Every page is stamped. Please do not redistribute — this link expires automatically.</div>
+  <div class="note">🔒 Shared securely via GCCPROs for interview use only. Every page is stamped. Please do not redistribute, this link expires automatically.</div>
   <div class="stage" id="stage"><div class="spin"></div><div>Preparing the interview packet…</div></div>
   <iframe id="frame" title="Candidate Interview Packet"></iframe>
 <script>
@@ -39,7 +39,7 @@
 
   function san(s){ return String(s==null?'':s)
     .replace(/[‘’]/g,"'").replace(/[“”]/g,'"')
-    .replace(/[–—]/g,'-').replace(/[•●]/g,'-').replace(/₹/g,'Rs ')
+    .replace(/[\u2013, ]/g,'-').replace(/[•●]/g,'-').replace(/₹/g,'Rs ')
     .replace(/→/g,'>').replace(/[ ]/g,' ')
     .replace(/[^\x09\x0A\x0D\x20-\x7E]/g,''); }
   function fmtDate(d){ if(!d)return''; const x=new Date(d); return isNaN(x)?'':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
@@ -54,10 +54,10 @@
       fail( j&&j.error==='expired'?'This share link has expired.'
         : j&&j.error==='invalid_or_revoked'?'This share link is no longer valid.'
         : j&&j.error==='no_cv'?'No CV file is available for this candidate.'
-        : 'Sorry — the CV could not be loaded.');
+        : 'Sorry, the CV could not be loaded.');
       return;
     }
-    if(j.external && j.url){ window.location.replace(j.url); return; }  // legacy CV (Google Doc/Drive) — open the original directly
+    if(j.external && j.url){ window.location.replace(j.url); return; }  // legacy CV (Google Doc/Drive), open the original directly
     document.getElementById('who').textContent = j.name?('Candidate: '+j.name):'';
     try{
       const blobUrl = await buildPacket(j);

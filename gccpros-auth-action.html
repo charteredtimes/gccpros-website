@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- GCCPROs Firebase auth action handler — build: auth-action-2026-05-20-v1
+<!-- GCCPROs Firebase auth action handler - build: auth-action-2026-05-20-v1
      Handles password reset (and email verification). The password requirements
      are read LIVE from the Firebase project policy via validatePassword(), so the
      on-screen guidance can never disagree with what the server will accept. -->
@@ -142,8 +142,8 @@ async function refresh() {
   const s = $("strength");
   if (!pw) { s.textContent = ""; }
   else if (!valid) { s.className = "strength bad"; s.textContent = "Password does not yet meet all requirements"; }
-  else if (!match) { s.className = "strength bad"; s.textContent = "Strong password ✓ — now confirm it below"; }
-  else { s.className = "strength ok"; s.textContent = "Strong password ✓ — passwords match"; }
+  else if (!match) { s.className = "strength bad"; s.textContent = "Strong password ✓, now confirm it below"; }
+  else { s.className = "strength ok"; s.textContent = "Strong password ✓, passwords match"; }
   $("submit").disabled = !(valid && match);
 }
 $("pw").addEventListener("input", refresh);
@@ -190,7 +190,7 @@ $("submit").addEventListener("click", async () => {
   // default: resetPassword
   try {
     const email = await verifyPasswordResetCode(auth, oobCode);
-    $("sub").innerHTML = "Setting a new password for <b>" + email.replace(/[<>&]/g, "") + "</b>. Meet every requirement below — the green ticks confirm it will be accepted.";
+    $("sub").innerHTML = "Setting a new password for <b>" + email.replace(/[<>&]/g, "") + "</b>. Meet every requirement below, the green ticks confirm it will be accepted.";
     $("form").style.display = "";
     refresh();
     $("pw").focus();

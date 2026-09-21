@@ -48,7 +48,7 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
 
 <header>
   <h1>Complete your candidate profile</h1>
-  <div class="sub">A GCCPROs Partner has referred you for a GCC opportunity. Fill the form below — we'll handle the rest.</div>
+  <div class="sub">A GCCPROs Partner has referred you for a GCC opportunity. Fill the form below, we'll handle the rest.</div>
 </header>
 
 <main>
@@ -57,8 +57,8 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
   <div id="error-state" style="display:none;"></div>
 
   <div id="form-container" class="card" style="display:none;">
-    <h2>Welcome — you've been referred by <span id="referrer-name"></span></h2>
-    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023 — see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
+    <h2>Welcome: you've been referred by <span id="referrer-name"></span></h2>
+    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023, see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
 
     <div id="target-job-block" class="alert info" style="display:none;">
       <b>Target role:</b> <span id="target-job-text"></span>
@@ -179,7 +179,7 @@ async function submitProfile() {
     if (j.error === 'rate_limited')  { resultEl.innerHTML = '<div class="alert err">Too many submissions. Please wait a few minutes.</div>'; btn.disabled = false; btn.textContent = 'Submit profile →'; return; }
     if (j.error) throw new Error(j.error);
 
-    // Success — swap to success card
+    // Success, swap to success card
     document.getElementById('form-container').style.display = 'none';
     document.getElementById('success-state').style.display = 'block';
   } catch (err) {
