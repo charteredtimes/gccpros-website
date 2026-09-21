@@ -5,7 +5,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>GCCPROS Admin — Demo / Sign in as user</title>
+<title>GCCPROs Admin | Demo / Sign in as user</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#2F5DA8;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
@@ -36,7 +36,7 @@
 <div class="wrap">
   <div class="card">
     <h2>Sign in as a registered user</h2>
-    <div class="warn"><b>This is a live demo.</b> You will enter the real console as the chosen leader. Anything you do — confirming their GCC, saving priorities, setting a password, searching — <b>writes to their real account</b>. For experiments, pick a test user you created for this purpose.</div>
+    <div class="warn"><b>This is a live demo.</b> You will enter the real console as the chosen leader. Anything you do, confirming their GCC, saving priorities, setting a password, searching, <b>writes to their real account</b>. For experiments, pick a test user you created for this purpose.</div>
 
     <div id="gate">
       <label>Admin key</label>
@@ -86,8 +86,8 @@ async function connect(){
   var r=await adminApi("adminCouncilMembers",{});
   if(r.error){ msg("Could not connect: "+(r.message||r.error),"bad"); return; }
   var rows=r.rows||[];
-  var opts='<option value="">— select a member —</option>'+rows.map(function(x){
-    var lbl=(x.full_name||"(no name)")+" — "+x.email+" ["+(x.status||"")+"]";
+  var opts='<option value="">Select a member</option>'+rows.map(function(x){
+    var lbl=(x.full_name||"(no name)")+" · "+x.email+" ["+(x.status||"")+"]";
     return '<option value="'+x.email+'">'+lbl.replace(/</g,"&lt;")+'</option>';
   }).join("");
   $("userSel").innerHTML=opts;
@@ -102,7 +102,7 @@ async function enterAs(){
   msg("Preparing a demo session for "+email+"…","info");
   var r=await adminApi("adminCouncilImpersonate",{ email:email });
   if(r.error){
-    var hint = r.error==="unknown_action" ? " (deploy the v7.9.37 edge first)" : (r.error==="not_registered" ? " — this email isn't registered." : "");
+    var hint = r.error==="unknown_action" ? " (deploy the v7.9.37 edge first)" : (r.error==="not_registered" ? ", this email isn't registered." : "");
     msg("Could not start demo: "+(r.message||r.error)+hint,"bad"); return;
   }
   try{
@@ -110,7 +110,7 @@ async function enterAs(){
     var res=await sb.auth.verifyOtp({ token_hash:r.token_hash, type:"magiclink" });
     if(res && res.error){ msg("Could not open session: "+res.error.message,"bad"); return; }
     try{ sessionStorage.setItem("GCC_DEMO", email); }catch(_){}
-    msg("Signed in as "+email+" — opening the console…","ok");
+    msg("Signed in as "+email+", opening the console…","ok");
     location.href="council-console.html?demo=1";
   }catch(err){ msg("Could not open session: "+((err&&err.message)?err.message:err),"bad"); }
 }

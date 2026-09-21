@@ -182,24 +182,24 @@ async function verifyKey(silent){
 /* Curated, standardised GCC sectors. Type to search; a custom value can still
    be typed for a genuinely new sector. Replaces the old 100+ raw DB list. */
 var CANON_SECTORS=[
-  "Software / Technology — Enterprise Applications",
-  "Software / Technology — Platform, Developer & Productivity",
-  "Software / Technology — Vertical / Industry SaaS",
-  "Software / Technology — Horizontal & Other Products",
-  "Software / Technology — Data, Analytics & AI",
-  "Software / Technology — Cloud & IT Infrastructure",
-  "Software / Technology — Cybersecurity",
-  "Software / Technology — Semiconductors & Chip Design",
-  "Software / Technology — Electronics & Hardware",
-  "BFSI — Banking & Financial Services",
-  "BFSI — Capital Markets & Investment Mgmt",
-  "BFSI — FinTech, Payments & Lending",
-  "BFSI — Insurance & InsurTech",
-  "Healthcare & Life Sciences — Pharma & Biotech",
-  "Healthcare & Life Sciences — Medical Devices & Diagnostics",
-  "Healthcare & Life Sciences — Providers & MedTech",
-  "Industrial & Manufacturing — Engineering & Mfg",
-  "Industrial & Manufacturing — Automation & Electrical",
+  "Software / Technology: Enterprise Applications",
+  "Software / Technology: Platform, Developer & Productivity",
+  "Software / Technology: Vertical / Industry SaaS",
+  "Software / Technology: Horizontal & Other Products",
+  "Software / Technology: Data, Analytics & AI",
+  "Software / Technology: Cloud & IT Infrastructure",
+  "Software / Technology: Cybersecurity",
+  "Software / Technology: Semiconductors & Chip Design",
+  "Software / Technology: Electronics & Hardware",
+  "BFSI: Banking & Financial Services",
+  "BFSI: Capital Markets & Investment Mgmt",
+  "BFSI: FinTech, Payments & Lending",
+  "BFSI: Insurance & InsurTech",
+  "Healthcare & Life Sciences: Pharma & Biotech",
+  "Healthcare & Life Sciences: Medical Devices & Diagnostics",
+  "Healthcare & Life Sciences: Providers & MedTech",
+  "Industrial & Manufacturing: Engineering & Mfg",
+  "Industrial & Manufacturing: Automation & Electrical",
   "Automotive & Mobility","Aerospace, Defense & Aviation",
   "Energy, Oil & Gas & Utilities","Chemicals & Materials","Metals & Mining",
   "Consumer, Food & Agriculture","Retail & E-commerce",
@@ -212,7 +212,7 @@ function ensureSectorList(){ /* no-op kept for compatibility */ }
 function sectorOptions(){
   var groups={}, order=[];
   CANON_SECTORS.forEach(function(s){
-    var pos=s.indexOf(" — "); var g=(pos>0)?s.slice(0,pos):"Other sectors";
+    var pos=s.indexOf(": "); var g=(pos>0)?s.slice(0,pos):"Other sectors";
     if(!groups[g]){ groups[g]=[]; order.push(g); }
     groups[g].push(s);
   });
@@ -220,7 +220,7 @@ function sectorOptions(){
   order.forEach(function(g){
     h+='<optgroup label="'+esc(g)+'">';
     groups[g].forEach(function(s){
-      var pos=s.indexOf(" — "); var lbl=(pos>0)?s.slice(pos+3):s;
+      var pos=s.indexOf(": "); var lbl=(pos>0)?s.slice(pos+2):s;
       h+='<option value="'+esc(s)+'">'+esc(lbl)+'</option>';
     });
     h+='</optgroup>';
