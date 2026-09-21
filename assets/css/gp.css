@@ -183,8 +183,10 @@ a.card:hover,.card.is-hover:hover{transform:translateY(-6px);box-shadow:var(--sh
 [data-reveal="scale"]{transform:scale(.96)}
 [data-reveal].in{opacity:1;transform:none}
 .no-js [data-reveal]{opacity:1;transform:none}
-.split-words .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
-.split-words .w>span{display:inline-block;transform:translateY(105%);transition:transform 1s var(--ease);transition-delay:calc(var(--i) * 55ms + 120ms)}
+/* Mask padded past the glyph box so italic overhangs and descenders are not
+   clipped; negative margins cancel the padding so layout is unchanged. */
+.split-words .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.12em .28em .26em .08em;margin:-.12em -.28em -.26em -.08em}
+.split-words .w>span{display:inline-block;transform:translateY(140%);transition:transform 1s var(--ease);transition-delay:calc(var(--i) * 55ms + 120ms)}
 .split-words.in .w>span{transform:none}
 
 /* ---------- forms (shared) ---------- */
