@@ -1,4 +1,4 @@
-/* GCCPROs shared UI layer — nav, motion, counters, charts, globe.
+/* GCCPROs shared UI layer - nav, motion, counters, charts, globe.
    Progressive enhancement only: every page works without this file. */
 (function () {
   'use strict';
