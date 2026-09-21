@@ -401,7 +401,7 @@ try{
   <div class="wrap">
     <span class="eyebrow eyebrow--pill">Research &amp; intelligence</span>
     <h1>The GCC <em>knowledge vault.</em></h1>
-    <p>Deep industry intelligence, simplified state GCC policies and the book <a href="#book">GCC Industry @ 2030</a> &mdash; the GCC knowledge base we have been building since day one. Members read every report in full, in the browser, and can ask a research assistant grounded in our work.</p>
+    <p>Deep industry intelligence, simplified state GCC policies and the book <a href="#book">GCC Industry @ 2030</a>: the GCC knowledge base we have been building since day one. Members read every report in full, in the browser, and can ask a research assistant grounded in our work.</p>
     <div class="rhero-cta"><a class="btn btn-primary" href="#book">Order the book</a><a class="btn btn-ghost" href="/data">Explore the GCC database</a></div>
   </div>
 </section>
@@ -894,7 +894,7 @@ try{
         },
         modal:{ ondismiss:function(){ reset(); } }
       });
-      rzp.on('payment.failed', function(){ fail('The payment did not complete. If any amount was debited, please do NOT pay again — it auto-refunds, or if it went through we will confirm your order by email shortly. Otherwise you may retry.'); });
+      rzp.on('payment.failed', function(){ fail('The payment did not complete. If any amount was debited, please do NOT pay again. It auto-refunds, or if it went through we will confirm your order by email shortly. Otherwise you may retry.'); });
       try{ if(window.gccTrack) gccTrack('begin_checkout',{currency:'INR',value:(j.amount||0)/100,quantity:getQty(),items:[{item_name:'GCC Industry @ 2030'}]}); }catch(_){ }
       rzp.open(); reset();
     }catch(err){ fail('Network error. Please try again.'); }

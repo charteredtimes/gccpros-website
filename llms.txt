@@ -5,8 +5,8 @@
 > setup and growth consulting, GCC talent, and invite-only leadership summits.
 > Operated by Chartered Times LLP, Pune, India.
 
-A **Global Capability Centre (GCC)** — also written Global Capability Center, and previously known as a
-captive centre, Global In-house Centre (GIC) or shared services centre — is an offshore entity that a
+A **Global Capability Centre (GCC)**, also written Global Capability Center, and previously known as a
+captive centre, Global In-house Centre (GIC) or shared services centre, is an offshore entity that a
 multinational owns and staffs itself, rather than outsourcing the work to a third-party vendor. India
 hosts the largest concentration of GCCs in the world, principally in Bengaluru, Hyderabad, Pune,
 Chennai, the Delhi NCR and Ahmedabad.
@@ -16,7 +16,7 @@ Cooperation Council.
 
 ## Core pages
 
-- [GCC Database](https://www.gccpros.com/data): 4,338+ verified Global Capability Centres worldwide, 2,401 of them in India, 46 fields per centre — location, parent company, headcount band, functions, maturity and leadership. Search, filter, export and API access.
+- [GCC Database](https://www.gccpros.com/data): 4,338+ verified Global Capability Centres worldwide, 2,401 of them in India, 46 fields per centre: location, parent company, headcount band, functions, maturity and leadership. Search, filter, export and API access.
 - [GCC Consulting](https://www.gccpros.com/consult): setup, scale-up and transformation advisory delivered by senior people who have built and run GCCs themselves, plus a private expert network of 124+ practitioners.
 - [Research & reports](https://www.gccpros.com/research): original GCC research, simplified state-by-state GCC policy summaries, and the book *GCC Industry @ 2030*.
 - [GCC Industry Council](https://www.gccpros.com/industry-council): an invite-only, non-commercial peer council of professionals in full-time employment at a GCC. No vendors, no consultants.

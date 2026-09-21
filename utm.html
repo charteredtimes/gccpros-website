@@ -30,7 +30,7 @@
 <body>
 <div class="wrap">
   <h1>UTM Link + QR Builder</h1>
-  <p class="sub">Tag every newsletter, WhatsApp, DM and QR link so it stops landing in "Direct". Internal tool — not indexed.</p>
+  <p class="sub">Tag every newsletter, WhatsApp, DM and QR link so it stops landing in "Direct". Internal tool, not indexed.</p>
 
   <div class="card">
     <label for="base">Destination URL</label>
@@ -44,16 +44,16 @@
     </div>
     <div class="row">
       <div><label for="camp">Campaign (utm_campaign)</label><input id="camp" placeholder="aug_digest"></div>
-      <div><label for="cont">Content (utm_content) — optional</label><input id="cont" placeholder="header_cta"></div>
+      <div><label for="cont">Content (utm_content), optional</label><input id="cont" placeholder="header_cta"></div>
     </div>
-    <label for="term">Term (utm_term) — optional</label>
+    <label for="term">Term (utm_term), optional</label>
     <input id="term" placeholder="">
   </div>
 
   <div class="card">
     <label>Your tagged link</label>
     <div class="out">
-      <div class="url" id="url">—</div>
+      <div class="url" id="url">-</div>
       <button class="act" id="copy" type="button">Copy</button>
     </div>
     <div id="qr"></div>
@@ -82,7 +82,7 @@
   var qr=null;
   function enc(v){ return encodeURIComponent((v||'').trim().toLowerCase().replace(/\s+/g,'_')); }
   function build(){
-    var base=(el('base').value||'').trim(); if(!base){ el('url').textContent='—'; return; }
+    var base=(el('base').value||'').trim(); if(!base){ el('url').textContent='-'; return; }
     var parts=[];
     var map={utm_source:el('src').value,utm_medium:el('med').value,utm_campaign:el('camp').value,utm_content:el('cont').value,utm_term:el('term').value};
     for(var k in map){ if(map[k] && map[k].trim()) parts.push(k+'='+enc(map[k])); }
@@ -93,7 +93,7 @@
   }
   ['base','src','med','camp','cont','term'].forEach(function(id){ el(id).addEventListener('input',build); });
   el('copy').addEventListener('click',function(){
-    var t=el('url').textContent; if(!t||t==='—')return;
+    var t=el('url').textContent; if(!t||t==='-')return;
     navigator.clipboard.writeText(t).then(function(){ el('copy').textContent='Copied'; setTimeout(function(){el('copy').textContent='Copy';},1500); });
   });
   build();
