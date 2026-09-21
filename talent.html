@@ -451,6 +451,36 @@ body.gp-app .ts-tbadge.orange{background:#E6F4F2;border-color:#9ED3CD}
 /* sister-platform strip (was the page footer) */
 body.gp-app .talent-strip{background:#EEF3FB;border-top:1px solid #DCE7F7;color:#4A5670;text-align:center;font-size:13.5px;padding:18px 24px}
 body.gp-app .talent-strip a{color:#2F5DA8;font-weight:700}
+/* signed in: compact header so the roles are visible straight away */
+body.gp-app.ts-signedin .ts-hero{padding:22px 0 8px}
+body.gp-app.ts-signedin .ts-hero .ts-hero-inner{max-width:1160px}
+body.gp-app.ts-signedin .ts-h1{font-size:clamp(24px,3vw,32px);margin:0}
+body.gp-app.ts-signedin .jobs-section{padding:14px 0 40px}
+body.gp-app.ts-signedin .jobs-section .section-intro{max-width:none;display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;text-align:left;margin:0 0 14px}
+body.gp-app.ts-signedin .jobs-section .section-intro h2{font-size:22px;margin:0}
+body.gp-app.ts-signedin .jobs-section .section-intro>p:nth-of-type(1){display:none}
+body.gp-app.ts-signedin .jobs-section .section-intro>p:last-child{margin:0!important}
+body.gp-app.ts-signedin .jobs-section .wa-inline{padding:9px 16px;font-size:13.5px}
+body.gp-app.ts-signedin #filter-bar{margin-top:0}
+@media(max-width:640px){body.gp-app.ts-signedin .jobs-section .section-intro{justify-content:center;text-align:center}}
+/* job detail: one window, two columns, no scrolling for a normal JD */
+body.gp-app .modal-overlay{z-index:3000}
+body:has(.modal-overlay.open) .wa-fab{display:none}
+#jd-modal .job-card-top{padding-right:34px}
+#jd-modal{align-items:center;padding:2vh 14px}
+#jd-modal .modal.wide{max-width:1180px;max-height:96vh;padding:22px 28px 18px}
+#jd-modal h3{font-size:22px!important;margin:0 0 2px}
+#jd-modal .modal-sub{margin:0 0 10px}
+#jd-modal .jd-meta-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px 14px;margin:0 0 12px;padding:10px 12px}
+#jd-modal .jd-cols{display:grid;grid-template-columns:1.35fr 1fr;gap:6px 30px}
+#jd-modal .jd-section{margin-top:10px}
+#jd-modal .jd-section h4{margin-bottom:4px}
+#jd-modal .jd-section p{font-size:13.5px;line-height:1.5}
+#jd-modal .jd-section ul li{font-size:13px;margin:2px 0;line-height:1.42}
+#jd-modal .jd-actions{margin-top:14px;padding-top:12px}
+#jd-modal .jd-foot{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px}
+@media(max-width:860px){#jd-modal{align-items:flex-start}#jd-modal .jd-cols{grid-template-columns:1fr}}
+@media(max-width:560px){#jd-modal .modal.wide{padding:18px 16px 14px}#jd-modal .jd-meta-grid{grid-template-columns:1fr 1fr}}
 
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"GCC Jobs & Talent","url":"https://www.gccpros.com/talent","description":"Jobs and hiring for Global Capability Centres in India — for employers building a GCC team, job seekers, and senior industry advisors.","isPartOf":{"@type":"WebSite","name":"GCCPROs","url":"https://www.gccpros.com/"},"publisher":{"@id":"https://www.gccpros.com/#org"},"about":{"@type":"Thing","name":"Global Capability Centre"}}</script>
@@ -1379,6 +1409,7 @@ function setSignedInChrome(signedIn) {
   const cta = document.getElementById('jobs-cta');
   const fb = document.getElementById('filter-bar');
   const dp = document.getElementById('domain-pills');
+  document.body.classList.toggle('ts-signedin', !!signedIn);
   if (signedIn) {
     hero.classList.add('is-signedin');
     if (h1) h1.textContent = 'Welcome back';
@@ -1873,15 +1904,21 @@ function openJobDetail(jobId) {
       <div><label>Compensation</label><strong>${esc(ctcText)}</strong></div>
       ${(CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0)) ? `<div><label>Referral payout</label><strong style="color:var(--brand-orange);">🪙 ${fmtINR(j.referral_amount_inr)}</strong></div>` : ''}
     </div>
-    ${j.description ? `<div class="jd-section"><h4>About the role</h4><p>${esc(j.description)}</p></div>` : ''}
-    ${resp.length ? `<div class="jd-section"><h4>Key responsibilities</h4><ul>${resp.map(r => '<li>' + esc(r) + '</li>').join('')}</ul></div>` : ''}
-    ${reqs.length ? `<div class="jd-section"><h4>Requirements</h4><ul>${reqs.map(r => '<li>' + esc(r) + '</li>').join('')}</ul></div>` : ''}
-    ${skills.length ? `<div class="jd-section"><h4>Skills</h4><div class="jd-skills-grid">${skills.map(s => '<span class="skill-chip">' + esc(s) + '</span>').join('')}</div></div>` : ''}
+    <div class="jd-cols">
+      <div>
+        ${j.description ? `<div class="jd-section"><h4>About the role</h4><p>${esc(j.description)}</p></div>` : ''}
+        ${resp.length ? `<div class="jd-section"><h4>Key responsibilities</h4><ul>${resp.map(r => '<li>' + esc(r) + '</li>').join('')}</ul></div>` : ''}
+      </div>
+      <div>
+        ${reqs.length ? `<div class="jd-section"><h4>Requirements</h4><ul>${reqs.map(r => '<li>' + esc(r) + '</li>').join('')}</ul></div>` : ''}
+        ${skills.length ? `<div class="jd-section"><h4>Skills</h4><div class="jd-skills-grid">${skills.map(s => '<span class="skill-chip">' + esc(s) + '</span>').join('')}</div></div>` : ''}
+      </div>
+    </div>
     <div class="jd-actions">
       ${actionHtml}
       <button class="btn secondary" onclick="closeModal('jd-modal')">Close</button>
     </div>
-    <p style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px;">
+    <p class="jd-foot">
       ${j.posted_at ? 'Posted ' + relTime(j.posted_at) : ''}${j.applications_count != null ? ' · ' + j.applications_count + ' application' + (j.applications_count === 1 ? '' : 's') : ''}
     </p>
   `;
