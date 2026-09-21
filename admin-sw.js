@@ -1,4 +1,4 @@
-/* GCCPROs Admin Console — service worker
+/* GCCPROs Admin Console - service worker
  * Build: admin-sw-2026-05-20-v1
  * Purpose: make the admin console installable + launchable offline. It caches
  * ONLY the static shell (HTML + icons). It never touches the Supabase API or

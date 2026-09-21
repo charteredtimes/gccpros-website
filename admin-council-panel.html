@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GCCPROS Admin — Leaders' Community</title>
+<title>GCCPROs Admin | Leaders' Community</title>
 <style>
   :root{--navy:#1F3864;--dark:#14213D;--steel:#2E5496;--ice:#CADCFC;--pale:#EEF3FB;--gold:#2F5DA8;--grey:#5B6472;--line:#D9E1F2;--ok:#1E7E45;--bad:#B3261E}
   *{box-sizing:border-box}
@@ -243,7 +243,7 @@ async function assignSector(i){
 }
 function showProposed(i){
   var tr=$('pdr'+i); if(!tr)return; var open=tr.classList.toggle('hide')===false; if(!open)return;
-  var pc=ROWS[i].proposed_company||{}; var h='<b>Submitted GCC details — added to the database when you approve:</b>';
+  var pc=ROWS[i].proposed_company||{}; var h='<b>Submitted GCC details, added to the database when you approve:</b>';
   Object.keys(pc).forEach(function(k){ h+='<div class="diff"><span class="f">'+esc(k)+':</span> '+esc(String(pc[k]))+'</div>'; });
   $('pdrc'+i).innerHTML=h;
 }
@@ -290,7 +290,7 @@ async function approve(i){
   msg('mApp','Approving '+x.full_name+'…','info');
   var r=await adminApi('adminCouncilApprove',{application_id:x.application_id,notes:notes});
   if(r.error){ msg('mApp',r.message||r.error,'bad'); return; }
-  msg('mApp','Approved. Access opened for sector: '+(r.industry||'')+'. '+(r.email_sent?'Welcome email sent ✓':'⚠ Welcome email was NOT sent — set the RESEND_API_KEY secret in Supabase (Edge Functions).'), r.email_sent?'ok':'bad'); load();
+  msg('mApp','Approved. Access opened for sector: '+(r.industry||'')+'. '+(r.email_sent?'Welcome email sent ✓':'⚠ Welcome email was NOT sent, set the RESEND_API_KEY secret in Supabase (Edge Functions).'), r.email_sent?'ok':'bad'); load();
 }
 async function reject(i){ var x=ROWS[i]; var notes=prompt('Reason for rejection:','')||''; var r=await adminApi('adminAppDecision',{kind:'council',id:x.application_id,decision:'rejected',notes:notes}); if(r.error){msg('mApp',r.message||r.error,'bad');return;} msg('mApp','Rejected.','ok'); load(); }
 
@@ -310,7 +310,7 @@ async function loadConf(){
       +'<td>'+esc(x.matched_company_name||'')+'</td><td>'+esc(x.matched_industry||'')+'</td>'
       +'<td>'+esc(x.overall_verdict||'')+'</td><td class="muted" style="max-width:220px">'+esc(x.confirm_comment||'')+'</td>'
       +'<td>'+(notable.length?('<button class="btn alt sm" onclick="cdraw('+i+')">review ('+notable.length+')</button>'):'<span class="muted">none</span>')+'</td>'
-      +'<td>'+(reviews.length?'<button class="btn gold sm" onclick="openApplyEditor('+i+')">Review &amp; apply</button>':'<span class="muted">—</span>')+'</td></tr>';
+      +'<td>'+(reviews.length?'<button class="btn gold sm" onclick="openApplyEditor('+i+')">Review &amp; apply</button>':'<span class="muted">-</span>')+'</td></tr>';
     h+='<tr id="cdr'+i+'" class="hide"><td colspan="7"><div class="drawer" id="cdrc'+i+'"></div></td></tr>';
   });
   if(!CONF.length) h='<tr><td colspan="7" class="muted">No GCC confirmations yet.</td></tr>';
@@ -320,8 +320,8 @@ function cdraw(i){ var tr=$('cdr'+i); var open=tr.classList.toggle('hide')===fal
   var all=(CONF[i].field_reviews||[]).filter(function(r){return r&&(r.verdict==='change'||r.verdict==='unknown'||r.comment);});
   var h='<b>Leader review notes:</b>';
   all.forEach(function(r){
-    if(r.verdict==='change'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="old">'+esc(r.current_value||'(blank)')+'</span> → <span class="new">'+esc(r.suggested_value||'')+'</span>'+(r.comment?(' <span class="muted">— '+esc(r.comment)+'</span>'):'')+'</div>'; }
-    else if(r.verdict==='unknown'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="muted">Don\'t know</span>'+(r.comment?(' <span class="muted">— '+esc(r.comment)+'</span>'):'')+'</div>'; }
+    if(r.verdict==='change'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="old">'+esc(r.current_value||'(blank)')+'</span> → <span class="new">'+esc(r.suggested_value||'')+'</span>'+(r.comment?(' <span class="muted">, '+esc(r.comment)+'</span>'):'')+'</div>'; }
+    else if(r.verdict==='unknown'){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="muted">Don\'t know</span>'+(r.comment?(' <span class="muted">, '+esc(r.comment)+'</span>'):'')+'</div>'; }
     else if(r.comment){ h+='<div class="diff"><span class="f">'+esc(r.field)+':</span> <span class="muted">'+esc(r.comment)+'</span></div>'; }
   });
   if(!all.length) h+='<div class="muted">No changes, comments, or unknowns.</div>';
@@ -356,7 +356,7 @@ function openApplyEditor(i){
     h+='<div style="margin:8px 0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff">'
       +'<div class="diff"><span class="f">'+esc(r.field)+'</span></div>'
       +'<div class="muted" style="font-size:11.5px">Current: '+esc(r.current_value||'(blank)')+'</div>'
-      +'<div class="muted" style="font-size:11.5px">Leader said: "'+esc(r.suggested_value||'')+'"'+(r.comment?(' &mdash; '+esc(r.comment)):'')+'</div>'
+      +'<div class="muted" style="font-size:11.5px">Leader said: "'+esc(r.suggested_value||'')+'"'+(r.comment?(' · '+esc(r.comment)):'')+'</div>'
       +'<label style="margin-top:6px">Value to save</label>'
       +'<input id="ae_'+i+'_'+j+'" data-field="'+esc(r.field)+'" value="'+esc(interp)+'" style="width:100%">'
       +'</div>';
@@ -391,9 +391,9 @@ async function loadMembers(){
     actions+=' <button class="btn sm" style="background:#6b7280;color:#fff" onclick="dm('+i+')">Delete</button>';
     h+='<tr><td><b>'+esc(x.full_name||'')+'</b><div class="muted">'+esc(x.current_title||'')+'</div></td>'
       +'<td>'+esc(x.email||'')+'</td>'
-      +'<td id="misec'+i+'">'+esc(x.industry_locked||'—')+' <a href="#" onclick="editIndustry('+i+');return false;" title="Change this member\'s sector" style="text-decoration:none;color:var(--steel)">&#9998;</a></td>'
+      +'<td id="misec'+i+'">'+esc(x.industry_locked||'-')+' <a href="#" onclick="editIndustry('+i+');return false;" title="Change this member\'s sector" style="text-decoration:none;color:var(--steel)">&#9998;</a></td>'
       +'<td class="muted" style="max-width:280px;font-size:11.5px">'+[['Tech',x.priority_1],['Growth',x.priority_2],['Financial',x.priority_3],['AI/Opt',x.priority_4]].filter(function(pp){return pp[1];}).map(function(pp){return '<b>'+pp[0]+':</b> '+esc(pp[1]);}).join('<br>')+'</td>'
-      +'<td>'+(x.onboarding_complete?'✓':'—')+'</td><td class="muted">'+esc(fmtDT(x.last_login))+'</td><td>'+(x.login_count||0)+'</td>'
+      +'<td>'+(x.onboarding_complete?'✓':'-')+'</td><td class="muted">'+esc(fmtDT(x.last_login))+'</td><td>'+(x.login_count||0)+'</td>'
       +'<td><span class="pill p-'+esc(x.status)+'">'+esc(x.status)+'</span></td>'
       +'<td><div class="row">'+actions+'</div></td></tr>';
   });
@@ -428,7 +428,7 @@ async function mstatus(i,status){
   if(r.error){ msg('mMem',r.message||r.error,'bad'); return; }
   msg('mMem',(x.full_name||x.email)+' is now '+status+'.','ok'); loadMembers();
 }
-/* Hard delete — removes application, membership, confirmations & activity for a
+/* Hard delete - removes application, membership, confirmations & activity for a
    person. The GCC company record in the database is NOT deleted. Two-step confirm. */
 async function doDelete(email,name){
   var who=name||email;
@@ -443,7 +443,7 @@ async function doDelete(email,name){
     alert('Partly deleted '+who+'.\n\nThese parts failed:\n- '+failed.map(function(k){return k+': '+steps[k];}).join('\n- ')+'\n\nUsually a database foreign-key or permission issue. The rest was removed.');
   } else {
     var au=steps.auth_login||'';
-    msg('mMem','Deleted '+who+' — access revoked'+(au==='deleted'?' (login removed)':(au==='no_auth_user'?' (no login existed)':''))+'.','ok');
+    msg('mMem','Deleted '+who+', access revoked'+(au==='deleted'?' (login removed)':(au==='no_auth_user'?' (no login existed)':''))+'.','ok');
   }
   return true;   // refresh either way
 }
@@ -501,7 +501,7 @@ async function loadSubmissions(){
 }
 function csvCell(v){ v=(v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"'; }
 function downloadSubmissionsCSV(){
-  if(!SUBS.length){ alert('Nothing to export yet — click Refresh first.'); return; }
+  if(!SUBS.length){ alert('Nothing to export yet, click Refresh first.'); return; }
   var head=['Submitted at','Leader','Email','GCC','Sector','Overall verdict','Overall comment','Field','Field verdict','Current value','Suggested value','Field comment'];
   var lines=[head.map(csvCell).join(',')];
   SUBS.forEach(function(s){ lines.push([s.at,s.name,s.email,s.gcc,s.sector,s.overall,s.ocomment,s.field,s.verdict,s.current,s.suggested,s.comment].map(csvCell).join(',')); });
