@@ -174,10 +174,16 @@
     e.preventDefault(); pick(el.getAttribute('data-name') || el.getAttribute('data-city'));
   });
 
-  Promise.all([
-    fetch('/assets/data/gcc-map.json', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }),
-    fetch('/assets/data/gcc-atlas.json', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-  ]).then(function (res) {
+  function getJson(url, bust) {
+    return fetch(url + (bust ? '?t=' + Date.now() : ''), { cache: bust ? 'reload' : 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); });
+  }
+  Promise.all([getJson('/assets/data/gcc-map.json'), getJson('/assets/data/gcc-atlas.json')])
+  .then(function (res) {
+    // Right after a publish the CDN can still hand out the previous data file; fetch a fresh copy past the cache.
+    if (res[1].by_country) return res;
+    return getJson('/assets/data/gcc-atlas.json', true).then(function (d) { return [res[0], d]; });
+  }).then(function (res) {
     M = res[0]; D = res[1];
     if (!D.by_country) throw new Error('gcc-atlas.json has no by_country; rebuild it with buildatlas.js');
     (D.by_country || []).forEach(function (r) { byName[r[0].toLowerCase()] = r[1]; dbName[r[0].toLowerCase()] = r[0]; });
