@@ -19,7 +19,10 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const root = path.join(__dirname, '..');
 const P = f => path.join(root, f);
 const read = f => fs.readFileSync(P(f), 'utf8');
-const hash = f => crypto.createHash('md5').update(fs.readFileSync(P(f))).digest('hex').slice(0, 8);
+// Line endings are normalised before hashing. These four are text, and the same file checked out on
+// Windows and on the Actions runner would otherwise hash differently, re-busting every returning
+// visitor's cache on a run where nothing actually changed.
+const hash = f => crypto.createHash('md5').update(fs.readFileSync(P(f), 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
 const md5 = s => crypto.createHash('md5').update(s).digest('hex');
 const parts = { head: read('_partials/head.html'), 'head-app': read('_partials/head-app.html'), nav: read('_partials/nav.html'), footer: read('_partials/footer.html') };
 const ver = { core: hash('assets/css/gp-core.css'), css: hash('assets/css/gp.css'), js: hash('assets/js/gp.js'), map: hash('assets/js/gp-map.js') };
@@ -45,8 +48,14 @@ function render(tpl, file, extra) {
 }
 
 // strip everything sync.js itself writes, so a page's fingerprint only moves when its real content does
+// Line endings are normalised first. The same page is written with CRLF by a Windows editor and with
+// LF by the Actions runner, and without this the fingerprint moves on the bytes alone, which sets the
+// page's "Updated" date to today and its sitemap lastmod with it. That is a false freshness signal on
+// every page at once, and it devalues the real updates. A .gitattributes cannot prevent it on its own,
+// because content published straight through the GitHub blob API never passes through git's filters.
 function fingerprint(c) {
   return md5(c
+    .replace(/\r\n/g, '\n')
     .replace(/(<span data-stat="[a-z0-9_]+">)[^<]*(<\/span>)/g, '$1$2')
     .replace(/(<time data-updated[^>]*>)[^<]*(<\/time>)/g, '$1$2')
     .replace(/(<time data-updated) datetime="[^"]*"/g, '$1')

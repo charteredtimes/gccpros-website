@@ -1,0 +1,26 @@
+# Line endings are LF everywhere, in the repository and in the working tree.
+#
+# Without this the site was published from three places that disagreed: a Windows checkout writing
+# CRLF, the GitHub Actions runner writing LF, and a browser upload route that sends raw bytes to the
+# blob API and never passes through git's filters at all. The first nightly run produced a commit of
+# 2,725 insertions and 2,725 deletions in which nothing had actually changed.
+#
+# eol=lf rather than the default native checkout, so a Windows working tree matches what the runner
+# and the upload route produce. No file in this repository needs CRLF: there are no .bat, .cmd or
+# .ps1 files in it.
+#
+# This alone is not enough, which is why _tools/sync.js also normalises line endings before it
+# fingerprints a page or hashes an asset. A blob uploaded through the API can still arrive with CRLF.
+* text=auto eol=lf
+
+# Never touched: these are binary and any substitution would corrupt them.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.pdf  binary
+*.mp4  binary
+*.webm binary
