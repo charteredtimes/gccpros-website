@@ -436,3 +436,4 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 @media (max-width:900px){.gmap__body{grid-template-columns:minmax(0,1fr)}.gmap{padding:12px}}
 @media (max-width:600px){.gmap__lbl{font-size:22px;stroke-width:6px}.gmap__legend{display:none}}
 @media (prefers-reduced-motion:reduce){.gmap__svg,.gmap__hint circle{animation:none}}
+.home-map{margin-top:56px}.home-map .section-head{margin-bottom:20px}
