@@ -447,3 +447,12 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 .lede.answer strong{color:var(--ink)}
 .cite-box{border:1px solid var(--line);border-left:4px solid var(--accent,var(--brand));background:var(--surface);border-radius:var(--r-lg);padding:22px 24px}
 .cite-box p{margin:8px 0 0;color:var(--ink-2)}
+
+/* ---------- body prose ----------
+   :where(.gp) resets every link to inherit colour with no underline, which is right for nav items,
+   cards and buttons but leaves a link inside a sentence looking exactly like the sentence around it.
+   Same story for p{margin:0}: fine where a card or an accordion supplies its own spacing, wrong for
+   running text, which is why the paragraphs on /about ran together. */
+.shell > p + p,.shell > .lede + p{margin-top:14px}
+.shell > p > a:not(.link-arrow):not(.btn),.acc__body a:not(.link-arrow):not(.btn){color:var(--brand);font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.shell > p > a:not(.link-arrow):not(.btn):hover,.acc__body a:not(.link-arrow):not(.btn):hover{color:var(--brand-700)}
