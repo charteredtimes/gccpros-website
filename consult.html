@@ -304,7 +304,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 .guide-list li strong{color:var(--ink)}
 @media (max-width:900px){.guide-grid-2{grid-template-columns:minmax(0,1fr)}.guide-section{padding-top:44px}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
 <script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/consult#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/consult&quot;,&quot;name&quot;:&quot;GCC Consulting &amp; Setup Advisory in India&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/consult#webpage","url":"https://www.gccpros.com/consult","name":"GCC Consulting & Setup Advisory in India","inLanguage":"en-IN","dateModified":"2026-09-23","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
 </head>
 <body class="gp" data-line="consult">
@@ -815,9 +815,19 @@ function failureMessage(){return 'We could not confirm receipt. Your details are
 function conversion(kind,capability){try{if(window.gccTrack)window.gccTrack('enquiry_submit',{form_type:kind,capability,page:'consult'})}catch{}}
 async function submitClient(){if(clientSending||clientSubmitted)return;const f=$('#brief-form');const d=briefData();if(d.website){$('#brief-error').textContent='Please refresh the page and try again.';return}for(const step of [0,1]){const fields=$$(`[data-panel="${step}"] input,[data-panel="${step}"] select,[data-panel="${step}"] textarea`);if(fields.some(field=>!field.checkValidity())){briefStep=step;showStep();validStep();return}}clientSending=true;$('#brief-submit').disabled=true;$('#brief-back').disabled=true;$('#brief-submit').textContent='Sending securely…';$('#brief-error').textContent='';f.setAttribute('aria-busy','true');try{await sendInquiry(clientPayload(d));receivedBrief={...d,status:'Received by GCCPROs'};clientSubmitted=true;$('#brief-result').innerHTML='<strong>Your consultation request has been received.</strong>The GCCPROs team will review your requirement and contact you at '+escapeHtml(d.email)+'. A match, booking and client price will be confirmed separately.';$('#brief-result').hidden=false;$('#brief-submit').hidden=true;$('#brief-back').hidden=true;conversion('client_brief',d.capability);$('#brief-result').scrollIntoView({behavior:'smooth',block:'nearest'})}catch{$('#brief-error').innerHTML=failureMessage()}finally{clientSending=false;$('#brief-submit').disabled=false;$('#brief-back').disabled=false;$('#brief-submit').textContent='Send consultation request';f.removeAttribute('aria-busy')}}
 $('#brief-submit').addEventListener('click',submitClient);
-$('#brief-download').addEventListener('click',()=>{const d=briefData();delete d.website;
+// the PDF library is 356 KB; it loads once somebody actually starts using the brief
+let jspdfPending=null;
+function loadJsPdf(){
+ if(window.jspdf) return Promise.resolve();
+ if(!jspdfPending) jspdfPending=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=()=>{jspdfPending=null;rej(new Error('jspdf'))};document.head.appendChild(s)});
+ return jspdfPending;
+}
+{const bf=document.getElementById('brief-form')||document.getElementById('brief-download');
+ if(bf){const warm=()=>loadJsPdf().catch(()=>{});bf.addEventListener('pointerdown',warm,{once:true});bf.addEventListener('focusin',warm,{once:true});}}
+$('#brief-download').addEventListener('click',async()=>{const d=briefData();delete d.website;
  const statusMsg=clientSubmitted?'Your PDF copy is ready to save. Your request has already been received.':'Your PDF draft is ready to save. Downloading does not submit the brief.';
  const doJson=()=>{const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='GCCPROs-project-brief.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+ await loadJsPdf().catch(()=>{});
  try{
   const J=window.jspdf&&window.jspdf.jsPDF; if(!J){doJson();$('#brief-download-status').textContent=statusMsg;return;}
   const doc=new J({unit:'pt',format:'a4'}); const M=48,W=595-2*M; let y=64;

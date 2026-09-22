@@ -840,7 +840,6 @@ try{
 })();
 </script>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <script>
 (function(){
   var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/book-order';
@@ -849,7 +848,19 @@ try{
   var form=document.getElementById('bkForm'), msg=document.getElementById('bkMsg'),
       done=document.getElementById('bkDone'), wrap=document.getElementById('bkFormWrap'),
       btn=document.getElementById('bkSubmit');
-  function openM(){ modal.classList.add('open'); }
+  // the payment SDK is 1.8 MB; it loads when the order form opens, not on page load
+  var rzpPending=null;
+  function loadRazorpay(){
+    if(window.Razorpay) return Promise.resolve();
+    if(!rzpPending) rzpPending=new Promise(function(res,rej){
+      var s=document.createElement('script');
+      s.src='https://checkout.razorpay.com/v1/checkout.js';
+      s.onload=res; s.onerror=function(){ rzpPending=null; rej(new Error('razorpay')); };
+      document.head.appendChild(s);
+    });
+    return rzpPending;
+  }
+  function openM(){ modal.classList.add('open'); loadRazorpay().catch(function(){}); }
   function closeM(){ modal.classList.remove('open'); }
   var buy=document.getElementById('buyBook'); if(buy) buy.addEventListener('click', openM);
   var x=document.getElementById('bkClose'); if(x) x.addEventListener('click', closeM);
@@ -928,6 +939,7 @@ try{
       var r=await fetch(API+'?action=createOrder',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
       var j=await r.json();
       if(j.error){ fail(j.fields? ('Please check: '+j.fields.join(', ')) : ('Could not start payment ('+j.error+').')); return; }
+      try{ await loadRazorpay(); }catch(_){}
       if(typeof Razorpay==='undefined'){ fail('Payment library did not load. Please refresh and try again.'); return; }
       var rzp=new Razorpay({
         key:j.key_id, amount:j.amount, currency:j.currency, order_id:j.order_id,
