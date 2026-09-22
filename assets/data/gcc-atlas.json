@@ -18,6 +18,10 @@
     ["Bengaluru",1377], ["Pune",559], ["Hyderabad",522], ["Chennai",364], ["Mumbai",364], ["Gurugram",320], ["Noida",130], ["New Delhi",63], ["Navi Mumbai",40], ["Kolkata",39], ["Ahmedabad",32], ["Vadodara",27], ["Coimbatore",26], ["Kochi",21], ["Thiruvananthapuram",20], ["Gandhinagar",12], ["Thane",11], ["Chandigarh",9], ["Greater Noida",9], ["Mohali",9], ["Indore",8], ["Jaipur",8], ["Manesar",7], ["Visakhapatnam",7], ["Nagpur",6], ["Mysuru",5], ["Bhubaneswar",4], ["Madurai",4], ["Mangaluru",4], ["Faridabad",3], ["Hosur",3], ["Aurangabad",2], ["Bhiwadi",2], ["Bhopal",2], ["Goa",2], ["Nashik",2], ["Surat",2]
   ],
   "cities_single": 20,
+  "cities_one": ["Belagavi","Chengalpattu","Dehradun","Hubballi","Kalyani","Kolhapur","Kozhikode","Lalru","Lucknow","Neemrana","Panaji","Puducherry","Rajkot","Ranipet","Rohtak","Salem","Shimoga","Silvassa","Tumakuru","Vijayawada"],
+  "by_country": [
+    ["India",2503], ["Philippines",344], ["Mexico",229], ["Poland",158], ["Romania",136], ["Czech Republic",116], ["Portugal",116], ["Hungary",111], ["Brazil",86], ["United Kingdom",78], ["Malaysia",72], ["Costa Rica",61], ["Slovakia",60], ["Ireland",46], ["Bulgaria",38], ["Colombia",36], ["Germany",32], ["Singapore",32], ["Vietnam",31], ["Lithuania",23], ["Chile",22], ["Canada",20], ["Australia",18], ["Latvia",18], ["Egypt",17], ["Sri Lanka",15], ["United Arab Emirates",14], ["Estonia",13], ["Taiwan",10], ["Netherlands",9], ["Thailand",8], ["Morocco",7], ["South Africa",7], ["Argentina",5], ["Austria",3], ["Spain",3], ["Belgium",2], ["Uruguay",2], ["Greece",1], ["Italy",1], ["Serbia",1], ["Switzerland",1], ["Ukraine",1]
+  ],
   "dims": {
     "industry": {
       "label": "Industry",
