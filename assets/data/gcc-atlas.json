@@ -3,9 +3,9 @@
     "source": "GCCPROs verified GCC database",
     "as_of": "2026-09-22",
     "total_india": 2503,
-    "total_global": 4440,
+    "total_global": 4506,
     "multi_city": 870,
-    "countries": 41,
+    "countries": 43,
     "ncr_sum": 534,
     "method": "Counted at unit level. A GCC that operates units in more than one city is counted once in every city where it has a unit, so city figures sum to more than the national total. Each scope's own total is a distinct count of GCCs, never a sum of its cities."
   },
