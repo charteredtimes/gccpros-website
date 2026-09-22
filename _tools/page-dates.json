@@ -1,0 +1,246 @@
+{
+ "404.html": {
+  "fp": "91a6617a5b473081f35a7dbd70a11277",
+  "date": "2026-09-22"
+ },
+ "admin-b2b.html": {
+  "fp": "466592a75ffca317387468a9a8f976f5",
+  "date": "2026-09-22"
+ },
+ "admin-council-panel.html": {
+  "fp": "967549a14e418c91bc2e1ad91ba05e1f",
+  "date": "2026-09-22"
+ },
+ "admin-customers.html": {
+  "fp": "dd93fce9b2a474a2eb7d6df0c3bcfa98",
+  "date": "2026-09-22"
+ },
+ "admin-health.html": {
+  "fp": "f72796088b38db578878dae0f1d779bb",
+  "date": "2026-09-22"
+ },
+ "admin-opps.html": {
+  "fp": "e6e196af50d81fc802dbf1b21740a481",
+  "date": "2026-09-22"
+ },
+ "admin-unified.html": {
+  "fp": "13e94ea02c445adcf695f2834a67695e",
+  "date": "2026-09-22"
+ },
+ "admin.html": {
+  "fp": "f7753ab3d9e23b47b09535f553936f24",
+  "date": "2026-09-22"
+ },
+ "awards-admin.html": {
+  "fp": "7f1f21876d35205e6d3672f46e972df1",
+  "date": "2026-09-22"
+ },
+ "awards-nominations.html": {
+  "fp": "ebff1df72ba8e7519ffec3c3ed916d68",
+  "date": "2026-09-22"
+ },
+ "book.html": {
+  "fp": "034ca18e40b52adcd5782ec20fe48deb",
+  "date": "2026-09-22"
+ },
+ "candidate-referral-v2.html": {
+  "fp": "738805e42da395ad78d5a6698d96f24f",
+  "date": "2026-09-22"
+ },
+ "candidate-referral.html": {
+  "fp": "03382c279beeeba94a26e0f40200899c",
+  "date": "2026-09-22"
+ },
+ "community-insider.html": {
+  "fp": "2401932255fb9ae451c7bbef17c61068",
+  "date": "2026-09-22"
+ },
+ "community-leaders.html": {
+  "fp": "19dab4f7db0afe15b82bacc29f8fc2ce",
+  "date": "2026-09-22"
+ },
+ "console-demo.html": {
+  "fp": "a7e53f2cb6292a35fc8fc936243b4241",
+  "date": "2026-09-22"
+ },
+ "console.html": {
+  "fp": "d69fa1acac8981ce7d6763592f37dd3e",
+  "date": "2026-09-22"
+ },
+ "consult.html": {
+  "fp": "db4009d594dcbb21ced22a73539f764c",
+  "date": "2026-09-22"
+ },
+ "council-console.html": {
+  "fp": "609c186bf19ad54cb5485c68d7f2c6c1",
+  "date": "2026-09-22"
+ },
+ "council-demo.html": {
+  "fp": "181966e7969efc3c0207eaa3b5f5f521",
+  "date": "2026-09-22"
+ },
+ "council-signup.html": {
+  "fp": "aa72980674a8955d6f8f6316870cf4e6",
+  "date": "2026-09-22"
+ },
+ "customer-portal-live.html": {
+  "fp": "e5f46887955f549c1426977fcb4b462a",
+  "date": "2026-09-22"
+ },
+ "cv-view.html": {
+  "fp": "0a3c58d50338742d8be308c5d0097d9e",
+  "date": "2026-09-22"
+ },
+ "data.html": {
+  "fp": "27ec53df263e81f9c34a70694c8e2eaa",
+  "date": "2026-09-22"
+ },
+ "database-pro.html": {
+  "fp": "699a7dff8e311e03cbf200530f9a6c36",
+  "date": "2026-09-22"
+ },
+ "database.html": {
+  "fp": "4c3c0261bd341ff07551312e07579c1e",
+  "date": "2026-09-22"
+ },
+ "events-media.html": {
+  "fp": "a69360ad1853f00c76ed861dc65108c0",
+  "date": "2026-09-22"
+ },
+ "events.html": {
+  "fp": "48f17b15d55567236f56f0d2219b5293",
+  "date": "2026-09-22"
+ },
+ "expert-admin.html": {
+  "fp": "af9b1e20fb05f40071508e34cf02169b",
+  "date": "2026-09-22"
+ },
+ "expert-dashboard.html": {
+  "fp": "359c0480b292355938d803165b37991a",
+  "date": "2026-09-22"
+ },
+ "faq.html": {
+  "fp": "1163a17e3ce8ca38c9cbae42b6e89245",
+  "date": "2026-09-22"
+ },
+ "gcc-database.html": {
+  "fp": "b4487886471d95d7375baeb0035f2af6",
+  "date": "2026-09-22"
+ },
+ "gcc-in-bengaluru.html": {
+  "fp": "6e1eaead304d989a75e6f3f35dd86915",
+  "date": "2026-09-22"
+ },
+ "gcc-in-chennai.html": {
+  "fp": "6bcf6b49c25adb50941856c6980df9ac",
+  "date": "2026-09-22"
+ },
+ "gcc-in-delhi-ncr.html": {
+  "fp": "c31a977a92b480bcd6e1df6904f79a25",
+  "date": "2026-09-22"
+ },
+ "gcc-in-hyderabad.html": {
+  "fp": "0ea65b5c2531d8815b7aab9936194b9e",
+  "date": "2026-09-22"
+ },
+ "gcc-in-mumbai.html": {
+  "fp": "952aa1a35220f893f4dd711aeebbcf36",
+  "date": "2026-09-22"
+ },
+ "gcc-in-pune.html": {
+  "fp": "c216bdee94fd8c38aada2366f87f8dcd",
+  "date": "2026-09-22"
+ },
+ "gcc-india-atlas.html": {
+  "fp": "3fc7ef2efaa7eb07d25e76f57d3f9fbd",
+  "date": "2026-09-22"
+ },
+ "gcc-summit-dubai-2027.html": {
+  "fp": "2fca0913401b53aabf20df17f1716727",
+  "date": "2026-09-22"
+ },
+ "gcc-summit-hyderabad-2026.html": {
+  "fp": "674ad3d68dbd459c54529d38a55ab9a2",
+  "date": "2026-09-22"
+ },
+ "gccpros-auth-action.html": {
+  "fp": "b24b899f7327654e90e7684cb20f60a0",
+  "date": "2026-09-22"
+ },
+ "home.html": {
+  "fp": "09fef625fd676016c2e2b758828f5b1c",
+  "date": "2026-09-22"
+ },
+ "how-to-choose-a-gcc-consulting-firm.html": {
+  "fp": "b9eee4f594db0ec54d39b1507811ca41",
+  "date": "2026-09-22"
+ },
+ "index.html": {
+  "fp": "1e54385a0b760152acd375a9344b60f1",
+  "date": "2026-09-22"
+ },
+ "industry-council.html": {
+  "fp": "c3b821923261b6d583a6e89ca55b49f1",
+  "date": "2026-09-22"
+ },
+ "insights-events.html": {
+  "fp": "353b95cce6cb1ced8a8bb0d4ea7ac373",
+  "date": "2026-09-22"
+ },
+ "insights.html": {
+  "fp": "48f17b15d55567236f56f0d2219b5293",
+  "date": "2026-09-22"
+ },
+ "jobs.html": {
+  "fp": "854aa2d8e9fb987ec046a0613445e95d",
+  "date": "2026-09-22"
+ },
+ "newsroom.html": {
+  "fp": "6fd1631231c4f76b53b3c64c5565d7e7",
+  "date": "2026-09-22"
+ },
+ "opportunities.html": {
+  "fp": "aa6c253475865efc46ead81f7b6447bc",
+  "date": "2026-09-22"
+ },
+ "privacy.html": {
+  "fp": "6c8890d92f640d2a4fa93c178b96e977",
+  "date": "2026-09-22"
+ },
+ "r.html": {
+  "fp": "80b91ca6fdac868954c3011dc704af14",
+  "date": "2026-09-22"
+ },
+ "research.html": {
+  "fp": "68b19685c9c134aca8020f4f0ac20e4f",
+  "date": "2026-09-22"
+ },
+ "reset.html": {
+  "fp": "b24b899f7327654e90e7684cb20f60a0",
+  "date": "2026-09-22"
+ },
+ "talent-admin.html": {
+  "fp": "0c3f2a900d1d420f6f728279c621d17f",
+  "date": "2026-09-22"
+ },
+ "talent.html": {
+  "fp": "f5dce92cb0a5e44e55c081237afe9f49",
+  "date": "2026-09-22"
+ },
+ "terms.html": {
+  "fp": "4363f22716e31c880d57ff898adfc116",
+  "date": "2026-09-22"
+ },
+ "thought-leadership.html": {
+  "fp": "ec672df171c04940ef1034ad17632164",
+  "date": "2026-09-22"
+ },
+ "utm.html": {
+  "fp": "7e39b65d1c0e65738e4ccf1cbf4a9a01",
+  "date": "2026-09-22"
+ },
+ "what-is-a-gcc.html": {
+  "fp": "2705054cf47e9f8bd7fb4d7d6a245362",
+  "date": "2026-09-22"
+ }
+}

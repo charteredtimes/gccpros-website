@@ -1,0 +1,50 @@
+name: Refresh GCC figures from the database
+
+# Every night, and on demand: rebuild every figure on the site from the live database
+# (atlas, city pages, hand-built pages, meta tags, JSON-LD, llms.txt, sitemap), run the
+# house-rule checks, and publish only if something changed and every check passed.
+on:
+  schedule:
+    - cron: '30 21 * * *'   # 03:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-figures
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild figures, stamp every page, run checks
+        run: node _tools/refresh.js
+
+      - name: Publish if anything changed
+        id: publish
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No figures changed."
+          else
+            git commit -m "Auto: refresh GCC figures from the database ($(TZ=Asia/Kolkata date +%Y-%m-%d))"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tell search engines (IndexNow)
+        if: steps.publish.outputs.changed == 'true'
+        run: sleep 90 && node _tools/indexnow.js || true

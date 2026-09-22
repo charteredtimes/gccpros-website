@@ -1,0 +1,225 @@
+{
+ "world": [
+  "4,338",
+  "4,339",
+  "4,370",
+  "4,700",
+  "4,506"
+ ],
+ "world_floor": [
+  "4,300+",
+  "4,338+",
+  "4,370+",
+  "4,500+"
+ ],
+ "india": [
+  "2,400",
+  "2,401",
+  "2,402",
+  "2,404",
+  "2,503"
+ ],
+ "india_floor": [
+  "2,400+",
+  "2,500+"
+ ],
+ "bengaluru": [
+  "1,324",
+  "1,377"
+ ],
+ "setup_captive": [
+  "2,257",
+  "2,272",
+  "2,371"
+ ],
+ "setup_recorded": [
+  "2,298",
+  "2,399"
+ ],
+ "as_of": [
+  "22 September 2026"
+ ],
+ "as_of_iso": [
+  "2026-09-22"
+ ],
+ "year": [
+  "2026"
+ ],
+ "countries": [
+  "43"
+ ],
+ "india_cities": [
+  "57"
+ ],
+ "multi_city": [
+  "870"
+ ],
+ "multi_city_pct": [
+  "34.8%"
+ ],
+ "gen34_pct": [
+  "47%"
+ ],
+ "gen4": [
+  "325"
+ ],
+ "under500_pct": [
+  "61%"
+ ],
+ "size_5000": [
+  "108"
+ ],
+ "since2023": [
+  "458"
+ ],
+ "pharma_india": [
+  "93"
+ ],
+ "setup_bot": [
+  "20"
+ ],
+ "setup_jv": [
+  "6"
+ ],
+ "setup_blank": [
+  "104"
+ ],
+ "setup_captive_acq": [
+  "6"
+ ],
+ "setup_captive_pct": [
+  "99%"
+ ],
+ "pre2015_gen34_pct": [
+  "69%"
+ ],
+ "bengaluru_share": [
+  "55%"
+ ],
+ "bengaluru_since2023": [
+  "212"
+ ],
+ "bengaluru_since2023_pct": [
+  "15.4%"
+ ],
+ "bengaluru_dataai_pct": [
+  "46.2%"
+ ],
+ "bengaluru_pharma": [
+  "55"
+ ],
+ "pune": [
+  "559"
+ ],
+ "pune_share": [
+  "22.3%"
+ ],
+ "pune_since2023": [
+  "81"
+ ],
+ "pune_since2023_pct": [
+  "14.5%"
+ ],
+ "pune_dataai_pct": [
+  "41.3%"
+ ],
+ "pune_pharma": [
+  "17"
+ ],
+ "hyderabad": [
+  "522"
+ ],
+ "hyderabad_share": [
+  "20.9%"
+ ],
+ "hyderabad_since2023": [
+  "115"
+ ],
+ "hyderabad_since2023_pct": [
+  "22%"
+ ],
+ "hyderabad_dataai_pct": [
+  "52.9%"
+ ],
+ "hyderabad_pharma": [
+  "39"
+ ],
+ "ncr": [
+  "478"
+ ],
+ "ncr_share": [
+  "19.1%"
+ ],
+ "ncr_since2023": [
+  "41"
+ ],
+ "ncr_since2023_pct": [
+  "8.6%"
+ ],
+ "ncr_dataai_pct": [
+  "46.9%"
+ ],
+ "ncr_pharma": [
+  "8"
+ ],
+ "mumbai": [
+  "364"
+ ],
+ "mumbai_share": [
+  "14.5%"
+ ],
+ "mumbai_since2023": [
+  "32"
+ ],
+ "mumbai_since2023_pct": [
+  "8.8%"
+ ],
+ "mumbai_dataai_pct": [
+  "50.5%"
+ ],
+ "mumbai_pharma": [
+  "15"
+ ],
+ "chennai": [
+  "364"
+ ],
+ "chennai_share": [
+  "14.5%"
+ ],
+ "chennai_since2023": [
+  "30"
+ ],
+ "chennai_since2023_pct": [
+  "8.2%"
+ ],
+ "chennai_dataai_pct": [
+  "41.5%"
+ ],
+ "chennai_pharma": [
+  "9"
+ ],
+ "city_noida": [
+  "130"
+ ],
+ "city_gurugram": [
+  "320"
+ ],
+ "city_greater_noida": [
+  "9"
+ ],
+ "city_coimbatore": [
+  "26"
+ ],
+ "city_ahmedabad": [
+  "32"
+ ],
+ "city_kolkata": [
+  "39"
+ ],
+ "top_cities": [
+  "Bengaluru 1,377, Pune 559, Hyderabad 522, Delhi NCR 478, Mumbai 364, Chennai 364"
+ ],
+ "gen_known": [
+  "2,177"
+ ]
+}
