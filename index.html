@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
 <link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
-<link rel="stylesheet" href="/assets/css/gp.css?v=dd5d5939">
+<link rel="stylesheet" href="/assets/css/gp.css?v=554683e4">
 <!-- /gp:head -->
 <link rel="preload" href="/assets/data/globe-land.json" as="fetch" crossorigin>
 <script type="application/ld+json">
@@ -406,6 +406,12 @@
           <a class="tag tag--line" href="/gcc-in-chennai">Chennai <b>364</b></a>
         </div>
       </div>
+      <div class="home-map" id="map">
+        <div class="section-head"><span class="eyebrow" data-reveal>Interactive map</span>
+        <h3 class="h3" data-reveal style="--d:1">Explore the database on the map.</h3>
+        <p class="lede" data-reveal style="--d:2">Click any country for its verified GCC count. Click India to open the city map.</p></div>
+        <div data-gccmap class="gmap"><p class="gmap__note">Loading the map&hellip;</p></div>
+      </div>
     </div>
   </section>
 
@@ -671,6 +677,7 @@
 <!-- /gp:footer -->
 
 <script src="/assets/js/gp.js?v=2867d9ce" defer></script>
+<script src="/assets/js/gp-map.js?v=1c391db5" defer></script>
 <script>
 (function(){
   var f=document.getElementById('subForm'); if(!f) return;
