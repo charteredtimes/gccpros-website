@@ -28,7 +28,9 @@ function bars(rows, denom, limit) {
 }
 
 function statStrip(items) {
-  return `<div class="stats" data-reveal>` + items.map(([n, l]) =>
+  // --n is the column count. Without it .stats falls back to three columns, so a strip of four left
+  // the fourth stat alone on its own row with two empty cells beside it, on every generated page.
+  return `<div class="stats" data-reveal style="--n:${items.length}">` + items.map(([n, l]) =>
     `<div class="stat"><div class="stat__num" data-count>${n}</div><div class="stat__label">${esc(l)}</div></div>`).join('') + `</div>`;
 }
 

@@ -93,6 +93,21 @@ for (const f of files.filter(f => /\.html$/i.test(f))) {
   if (!bad && stack.length) problems.push(`nesting: ${rel(f)}: ${stack.length} unclosed <${stack[stack.length - 1].name}>`);
 }
 
+// 5. stat strips declare their own column count
+// .stats is a grid of repeat(var(--n,3)). A strip of four stats without --n falls back to three
+// columns and leaves the fourth alone on a row of its own with two empty cells beside it. That was
+// live on 14 pages. buildpages.js now emits --n; this catches a hand-built page that forgets it.
+for (const f of files.filter(f => /\.html$/i.test(f))) {
+  const s = fs.readFileSync(f, 'utf8');
+  for (const m of s.matchAll(/<div class="stats"([^>]*)>([\s\S]*?)(?=<div class="stats"|<\/section>|$)/g)) {
+    const count = (m[2].match(/<div class="stat"/g) || []).length;
+    if (count < 2) continue;
+    const n = (m[1].match(/--n:\s*(\d+)/) || [])[1];
+    if (!n) problems.push(`stats: ${rel(f)}: a strip of ${count} stats has no --n, so it renders in 3 columns`);
+    else if (+n !== count) problems.push(`stats: ${rel(f)}: --n is ${n} but the strip holds ${count} stats`);
+  }
+}
+
 const uniq = [...new Set(problems)];
 if (uniq.length) { console.error(`CHECKS FAILED (${uniq.length}):\n  ` + uniq.slice(0, 60).join('\n  ') + (uniq.length > 60 ? `\n  ...and ${uniq.length - 60} more` : '')); process.exit(1); }
 console.log('checks passed: no em-dashes, all scripts and JSON parse, no banned accent colours, tags balance');
