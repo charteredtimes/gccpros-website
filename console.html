@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -98,7 +98,7 @@
 #customFilters .cf-head-title{font-family:Georgia,serif;font-size:14px;color:var(--navy);font-weight:bold;line-height:1.15}
 #customFilters .cf-head-sub{font-size:11px;color:var(--grey);margin-top:2px;line-height:1.35}
 #customFilters .cf-head-badge{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:#1A3A6E;font-weight:bold;background:#EEF3FB;border:1px solid #9DC0EE;padding:3px 8px;border-radius:999px;white-space:nowrap}
-#customFilterRows{display:grid;grid-template-columns:1fr;gap:10px}
+#customFilterRows{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px 10px;transition:border-color .2s,box-shadow .2s}
 .cf-row:hover{border-color:#A8C2E8;box-shadow:0 2px 6px rgba(31,56,100,.08)}
 .cf-row.filled{border-color:var(--navy);box-shadow:0 2px 8px rgba(31,56,100,.10)}
@@ -156,7 +156,7 @@ header .brand small{color:#B7C5D8;letter-spacing:.5px;margin-top:4px}
 .filter-sidebar::-webkit-scrollbar-thumb:hover{background:rgba(31,56,100,.32)}
 .filter-sidebar .card{margin-bottom:0;padding:18px 18px 20px}
 .filter-sidebar .card h2{font-size:15px;margin-bottom:12px}
-.filter-sidebar .grid{grid-template-columns:1fr;gap:10px}
+.filter-sidebar .grid{grid-template-columns:minmax(0,1fr);gap:10px}
 .filter-sidebar .chips{gap:5px}
 .filter-sidebar .chip{padding:5px 11px;font-size:11.5px}
 .filter-sidebar .chips-label{margin:8px 0 4px}
@@ -351,7 +351,7 @@ button{
 
 /* Responsive: stack sidebar under main content on narrow viewports */
 @media (max-width:900px){
-  .console-layout{grid-template-columns:1fr;gap:14px}
+  .console-layout{grid-template-columns:minmax(0,1fr);gap:14px}
   .filter-sidebar{position:static;max-height:none;overflow:visible;padding-right:0}
   .filter-sidebar .card{padding:20px 22px}
   .filter-sidebar .grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
@@ -360,7 +360,7 @@ button{
   .filter-sidebar .btn, .filter-sidebar .btn.alt{width:auto}
 }
 @media (max-width:640px){
-  #customFilterRows{grid-template-columns:1fr}
+  #customFilterRows{grid-template-columns:minmax(0,1fr)}
 }
 
 

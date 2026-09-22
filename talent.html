@@ -53,7 +53,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
 <!-- /gp:head-app -->
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -259,10 +259,10 @@ footer a { color: var(--gold-light); }
 footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6px; }
 @media (max-width: 768px) {
   .hero h1 { font-size: 30px; }
-  .tile-grid { grid-template-columns: 1fr; }
+  .tile-grid { grid-template-columns:minmax(0,1fr); }
   .nav-pills { display: none; }
   .modal { padding: 22px 18px; }
-  .jobs-grid { grid-template-columns: 1fr; }
+  .jobs-grid { grid-template-columns:minmax(0,1fr); }
 }
 
 /* ===== Console (v8 parity port) ===== */
@@ -396,8 +396,8 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .ts-marketing .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
 .ts-hero .container{max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;}
 html{scroll-behavior:smooth;}
-@media(max-width:900px){.ts-aud-grid{grid-template-columns:1fr;}.ts-pgrid{grid-template-columns:1fr 1fr;}.ts-proof-row{grid-template-columns:1fr 1fr;gap:22px 14px;}.ts-cta-inner{flex-direction:column;align-items:flex-start;}}
-@media(max-width:600px){.ts-pgrid{grid-template-columns:1fr;}.ts-ul.two{grid-template-columns:1fr;}.ts-diff-row{grid-template-columns:1fr;text-align:center;gap:6px;}.ts-old,.ts-new{text-align:center;}.ts-arrow{transform:rotate(90deg);}}
+@media(max-width:900px){.ts-aud-grid{grid-template-columns:minmax(0,1fr);}.ts-pgrid{grid-template-columns:1fr 1fr;}.ts-proof-row{grid-template-columns:1fr 1fr;gap:22px 14px;}.ts-cta-inner{flex-direction:column;align-items:flex-start;}}
+@media(max-width:600px){.ts-pgrid{grid-template-columns:minmax(0,1fr);}.ts-ul.two{grid-template-columns:minmax(0,1fr);}.ts-diff-row{grid-template-columns:minmax(0,1fr);text-align:center;gap:6px;}.ts-old,.ts-new{text-align:center;}.ts-arrow{transform:rotate(90deg);}}
 </style>
 <style id="gp-theme">
 /* ===== GCCPROs light theme for Talent (class names kept; JS selectors unchanged) ===== */
@@ -479,7 +479,7 @@ body:has(.modal-overlay.open) .wa-fab{display:none}
 #jd-modal .jd-section ul li{font-size:13px;margin:2px 0;line-height:1.42}
 #jd-modal .jd-actions{margin-top:14px;padding-top:12px}
 #jd-modal .jd-foot{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px}
-@media(max-width:860px){#jd-modal{align-items:flex-start}#jd-modal .jd-cols{grid-template-columns:1fr}}
+@media(max-width:860px){#jd-modal{align-items:flex-start}#jd-modal .jd-cols{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){#jd-modal .modal.wide{padding:18px 16px 14px}#jd-modal .jd-meta-grid{grid-template-columns:1fr 1fr}}
 
 </style>

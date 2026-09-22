@@ -16,7 +16,7 @@ textarea{min-height:84px;resize:vertical}
 .btn.dark{background:var(--navy)}.btn.ghost{background:#fff;color:var(--navy);border:1px solid #cfd8e3}
 .btn.warn{background:var(--warn)}.btn.err{background:var(--err)}.btn.sm{padding:7px 12px;font-size:13px}
 .btn:disabled{opacity:.55;cursor:default}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.row{grid-template-columns:1fr}}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.row{grid-template-columns:minmax(0,1fr)}}
 .muted{color:var(--muted);font-size:13px}.link{color:var(--azure);cursor:pointer;background:none;border:none;font:inherit;padding:0}
 .badge{display:inline-block;padding:3px 11px;border-radius:999px;color:#fff;font:700 12px system-ui}
 .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:640px){.kpi{grid-template-columns:1fr 1fr}}
@@ -24,7 +24,7 @@ textarea{min-height:84px;resize:vertical}
 .msg{font-size:13.5px;margin-top:8px}.err{color:var(--err)}.ok{color:var(--ok)}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px;border-bottom:1px solid #EEF1F5;vertical-align:top}
 .hide{display:none}
-.gridfields{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}@media(max-width:640px){.gridfields{grid-template-columns:1fr}}
+.gridfields{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}@media(max-width:640px){.gridfields{grid-template-columns:minmax(0,1fr)}}
 .gridfields .f{padding:7px 0;border-bottom:1px solid #F1F4F8}.gridfields .f small{display:block;font-size:10.5px;text-transform:uppercase;color:#8A98A8}
 .banner{border-radius:10px;padding:11px 14px;font-size:13.5px;margin:0 0 12px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;font:600 13px system-ui;opacity:0;transition:.25s;pointer-events:none}.toast.show{opacity:1}
@@ -38,7 +38,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
 <!-- /gp:head-app -->
 <style id="gp-theme">
 body.gp-app{font-family:'Manrope',system-ui,sans-serif;background:#FFFFFF}

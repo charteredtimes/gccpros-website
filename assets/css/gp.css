@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    GCCPROs design system (2026): marketing components. Loaded after gp-core.css.
    Light editorial base, navy ink, royal-blue accent, ice-blue on dark bands.
    ========================================================================== */
@@ -84,7 +84,7 @@ body.gp{margin:0;background:var(--bg);color:var(--ink-2);font-family:var(--sans)
 .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:980px){.grid-3,.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+@media (max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:minmax(0,1fr)}}
 
 /* dark band â€” ice-blue accent */
 .band-dark{background:var(--navy);color:#C9D4E8;position:relative;overflow:hidden;isolation:isolate}
@@ -387,3 +387,5 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 @media (max-width:760px){
   [data-reveal="left"],[data-reveal="right"]{transform:translateY(22px)}
 }
+/* long button labels wrap on phones */
+@media (max-width:640px){.btn{white-space:normal;text-align:center;max-width:100%}}

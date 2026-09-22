@@ -61,7 +61,7 @@ body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--ink)
 .domain-card.opps.active { border-color:var(--brand-orange); }
 .domain-card.comm { border-top-color:var(--purple); }
 .domain-card.comm.active { border-color:var(--purple); }
-@media (max-width:900px) { .domain-row { grid-template-columns:1fr; } }
+@media (max-width:900px) { .domain-row { grid-template-columns:minmax(0,1fr); } }
 
 /* Sub-tabs */
 .tabs { display:flex; gap:4px; margin-bottom:18px; border-bottom:2px solid var(--border); flex-wrap:wrap; }

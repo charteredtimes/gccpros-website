@@ -41,7 +41,7 @@
     box-shadow:0 30px 70px rgba(10,22,40,.14);padding:clamp(24px,4vw,44px)}
 
   .cats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 4px}
-  @media(max-width:560px){.cats{grid-template-columns:1fr}}
+  @media(max-width:560px){.cats{grid-template-columns:minmax(0,1fr)}}
   .cat{position:relative;display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--line);
     border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .18s,background .18s,box-shadow .18s;background:var(--field)}
   .cat:hover{border-color:#A9CBF6}
@@ -53,7 +53,7 @@
   .cat .ctxt{font-size:14px;font-weight:600;color:var(--navy);line-height:1.35}
 
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+  @media(max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}}
   .field{margin-top:18px}
   label.lab{display:block;font-size:12.5px;font-weight:700;color:var(--navy);letter-spacing:.2px;margin-bottom:6px}
   label.lab .req{color:#D8543B}
@@ -118,7 +118,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
 <!-- /gp:head-app -->
 <style id="gp-theme">
 body.gp-app{font-family:'Manrope',system-ui,sans-serif;background:#FFFFFF}

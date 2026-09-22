@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-IN" class="no-js">
 <head>
 <meta charset="UTF-8">
@@ -24,8 +24,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
-<link rel="stylesheet" href="/assets/css/gp.css?v=de8635e0">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
+<link rel="stylesheet" href="/assets/css/gp.css?v=96b56cc9">
 <!-- /gp:head -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -61,7 +61,7 @@
 .feature .btn-row{margin-top:28px}
 .feature .fine{margin-top:14px;font-size:14px;color:var(--muted)}
 .fine a{color:var(--brand);font-weight:700}
-@media (max-width:900px){.ev-hero,.feature,.feature--rev{grid-template-columns:1fr}.feature--rev .feature__media{order:0}.feature__media{max-width:520px}}
+@media (max-width:900px){.ev-hero,.feature,.feature--rev{grid-template-columns:minmax(0,1fr)}.feature--rev .feature__media{order:0}.feature__media{max-width:520px}}
 
 /* cinematic recap band */
 .cine{position:relative;min-height:min(86vh,760px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate;color:#fff;background:#07122B}
@@ -91,7 +91,7 @@
 .dig h3{font-size:19px;line-height:1.25}
 .dig p{font-size:14.5px;margin-top:6px}
 @media (max-width:1000px){.dig{grid-template-columns:1fr 1fr}}
-@media (max-width:520px){.dig{grid-template-columns:1fr}}
+@media (max-width:520px){.dig{grid-template-columns:minmax(0,1fr)}}
 
 /* gallery */
 .gal{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:170px;gap:12px}
@@ -146,7 +146,7 @@
 .qfaces button{aspect-ratio:1;border-radius:18px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;font-weight:800;font-size:14px;color:var(--brand-700);transition:transform .35s var(--ease),border-color .2s,background .2s,color .2s;padding:0}
 .qfaces button:hover{transform:translateY(-3px);border-color:var(--brand)}
 .qfaces button[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 10px 24px rgba(47,93,168,.3)}
-@media (max-width:900px){.spot-q{grid-template-columns:1fr}.qfaces{grid-template-columns:repeat(8,1fr)}}
+@media (max-width:900px){.spot-q{grid-template-columns:minmax(0,1fr)}.qfaces{grid-template-columns:repeat(8,1fr)}}
 @media (max-width:560px){.qfaces{grid-template-columns:repeat(4,1fr)}}
 
 /* reels */
@@ -175,8 +175,8 @@
 .rsvp-perks{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:12px}
 .rsvp-perks li{display:flex;gap:12px;align-items:flex-start;color:var(--ink-2)}
 .rsvp-perks svg{flex:none;width:22px;height:22px;color:var(--teal);margin-top:2px}
-@media (max-width:900px){.rsvp-wrap{grid-template-columns:1fr}}
-@media (max-width:600px){.rsvp-form{grid-template-columns:1fr}}
+@media (max-width:900px){.rsvp-wrap{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){.rsvp-form{grid-template-columns:minmax(0,1fr)}}
 .council-strip{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:26px 30px;border-radius:var(--r-lg);background:var(--brand-50);border:1px solid var(--brand-100)}
 .council-strip h3{font-size:22px}
 .council-strip p{color:var(--muted);margin-top:4px}
