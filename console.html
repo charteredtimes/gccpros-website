@@ -667,16 +667,17 @@ var CUSTOM_FIELDS=[
   ['group_company',            'Group / parent company', 'e.g. Deutsche Bank AG'],
   ['state_province',           'State',                   'e.g. Karnataka'],
   ['year_established',         'Established (year)',      'e.g. 2015'],
-  ['setup_model',              'Setup model',             'Captive | BOT | GIC'],
-  ['maturity_level',           'Maturity level',          'e.g. Mature'],
+  ['setup_model',              'Setup model',             'Captive | BOT | JV'],
+  ['maturity_level',           'Maturity level',          'Gen 1 | Gen 2 | Gen 3 | Gen 4'],
   ['gptw_certified',           'GPTW certified',          'Yes | No'],
   ['glassdoor_rating',         'Glassdoor rating (>=)',   'e.g. 4.0'],
   ['sez_stpi_peza',            'SEZ / STPI',              'e.g. SEZ'],
   ['tech_stack',               'Tech stack contains',     'e.g. Java, AWS'],
-  ['legal_structure',          'Legal structure',         'e.g. Pvt Ltd'],
+  ['legal_structure',          'Legal structure',         'e.g. Private Limited'],
   ['site_head',                'India site head',         'name contains'],
   ['office_addresses',         'Office address contains', 'e.g. Whitefield'],
-  ['finance_domain_active',    'Finance domain active',   'Yes | No']
+  ['finance_domain_active',    'Finance domain active',   'Yes | No'],
+  ['cx_domain',                'CX operations',           'Yes | No']
 ];
 function buildCustomFilters(){
   var host=$('customFilterRows'); if(!host) return;
