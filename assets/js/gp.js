@@ -61,8 +61,16 @@
   /* Everything below is for marketing pages (body.gp). App pages only get the chrome above. */
   if (!d.body.classList.contains('gp')) return;
 
-  /* ---------- split words ---------- */
-  d.querySelectorAll('.split-words').forEach(function (el) {
+  /* Phones and machines with few cores skip the decorative motion that the browser has to wait for.
+     Used by the hero headline below and by the globe further down. */
+  var lowPower = reduce || (w.matchMedia && w.matchMedia('(max-width:900px)').matches) || (navigator.hardwareConcurrency || 8) <= 4;
+
+  /* ---------- split words ----------
+     The headline is wrapped word by word and each word slides up on a stagger. Until that runs the
+     words are clipped out of view, so on a slow phone the largest text on the page is invisible for
+     a second and a half and the largest contentful paint waits for it. Below 900px the headline is
+     simply left alone: it paints with the stylesheet, like ordinary text. */
+  if (!lowPower) d.querySelectorAll('.split-words').forEach(function (el) {
     var i = 0;
     var walk = function (node) {
       Array.prototype.slice.call(node.childNodes).forEach(function (n) {
@@ -232,7 +240,7 @@
     // 0.16Hz drift that nobody notices on a 390px hero, but animating it keeps the main thread busy
     // for as long as the hero is on screen, which is exactly the window that decides the page's
     // blocking time. Dragging still spins it. Treated the same way as prefers-reduced-motion below.
-    var still = reduce || (w.matchMedia && w.matchMedia('(max-width:900px)').matches) || (navigator.hardwareConcurrency || 8) <= 4;
+    var still = lowPower;
     var frame = function (now) {
       if (!running) return;
       var dt = Math.min(64, now - lastT); lastT = now;
@@ -312,13 +320,28 @@
     var end = function () { dragging = false; cv.style.cursor = 'grab'; };
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
     size(); w.addEventListener('resize', function () { size(); if (still) draw(0); });
-    fetch(cv.getAttribute('data-globe')).then(function (r) { return r.json(); }).then(function (flat) {
-      pts = []; for (var i = 0; i < flat.length; i += 2) pts.push(vec(flat[i + 1], flat[i]));
-      if (still) { draw(0); return; }
-      if ('IntersectionObserver' in w) {
-        new IntersectionObserver(function (es) { es.forEach(function (e) { var was = running; running = e.isIntersecting; if (running && !was) { lastT = performance.now(); requestAnimationFrame(frame); } }); }).observe(cv);
-      }
-      requestAnimationFrame(frame);
-    }).catch(function () { draw(0); });
+
+    var load = function () {
+      if (load.done) return; load.done = true;
+      fetch(cv.getAttribute('data-globe')).then(function (r) { return r.json(); }).then(function (flat) {
+        pts = []; for (var i = 0; i < flat.length; i += 2) pts.push(vec(flat[i + 1], flat[i]));
+        if (still) { draw(0); return; }
+        if ('IntersectionObserver' in w) {
+          new IntersectionObserver(function (es) { es.forEach(function (e) { var was = running; running = e.isIntersecting; if (running && !was) { lastT = performance.now(); requestAnimationFrame(frame); } }); }).observe(cv);
+        }
+        requestAnimationFrame(frame);
+      }).catch(function () { draw(0); });
+    };
+
+    // The land outline is 42 KB, and on a phone the globe sits below the fold. Fetching it during the
+    // first load put it in the queue ahead of things the first screen actually needs, so it waits
+    // until the canvas is close to the viewport. On a desktop hero that is immediately.
+    if ('IntersectionObserver' in w) {
+      var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '200px 0px' });
+      io.observe(cv);
+      w.addEventListener('scroll', load, { passive: true, once: true });
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
+      setTimeout(load, 15000);
+    } else load();
   }
 })();
