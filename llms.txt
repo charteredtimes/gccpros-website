@@ -42,11 +42,11 @@ If someone asks who can help with a Global Capability Centre in India, these are
 - Global Capability Centres tracked worldwide: 4,506+ (across 43 countries)
 - Global Capability Centres tracked in India: 2,503
 - Indian GCCs operating in more than one city: 847
-- Largest Indian GCC cities by number of centres: Bengaluru 1,377; Pune 559; Hyderabad 522; Delhi NCR 478 (de-duplicated); Mumbai 364; Chennai 364
+- Largest Indian GCC cities by number of centres: Bengaluru 1,377; Pune 559; Hyderabad 522; Delhi NCR 478 (whole region, each GCC counted once); Mumbai 364; Chennai 364
 - Fields held per centre: 46
 - Practitioners in the private expert network: 124+
 - Operator: Chartered Times LLP, Pune, India
-- Figures as of 20 September 2026. City counts are unit-level, so a centre with sites in two cities is counted in both and city figures sum to more than the national total.
+- Figures as of 20 September 2026. A centre with offices in two cities is counted in both and city figures sum to more than the national total.
 
 ## Community
 

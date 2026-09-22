@@ -301,6 +301,16 @@
     </div>
   </section>
 
+  <!-- GCC MAP -->
+  <section class="section section--tight" id="map" aria-labelledby="map-title">
+    <div class="shell">
+      <div class="section-head"><span class="eyebrow" data-reveal>Interactive map</span>
+      <h2 class="h2" id="map-title" data-reveal style="--d:1">Where the world&rsquo;s <em>GCCs are.</em></h2>
+      <p class="lede" data-reveal style="--d:2">Click any country for its verified GCC count from our database. Click India to open the city map.</p></div>
+      <div data-gccmap class="gmap"><p class="gmap__note">Loading the map&hellip;</p></div>
+    </div>
+  </section>
+
   <!-- AUDIENCE SWITCHER -->
   <section class="section section--tight" id="start" aria-labelledby="aud-title">
     <div class="shell shell--wide">
@@ -405,12 +415,6 @@
           <a class="tag tag--line" href="/gcc-in-mumbai">Mumbai <b>364</b></a>
           <a class="tag tag--line" href="/gcc-in-chennai">Chennai <b>364</b></a>
         </div>
-      </div>
-      <div class="home-map" id="map">
-        <div class="section-head"><span class="eyebrow" data-reveal>Interactive map</span>
-        <h3 class="h3" data-reveal style="--d:1">Explore the database on the map.</h3>
-        <p class="lede" data-reveal style="--d:2">Click any country for its verified GCC count. Click India to open the city map.</p></div>
-        <div data-gccmap class="gmap"><p class="gmap__note">Loading the map&hellip;</p></div>
       </div>
     </div>
   </section>
@@ -531,7 +535,7 @@
         <a href="/assets/img/summit-networking-2400.webp" data-lightbox data-caption="The room fills as GCC heads arrive"><img src="/assets/img/summit-networking.webp" srcset="/assets/img/summit-networking-640.webp 640w, /assets/img/summit-networking.webp 1100w, /assets/img/summit-networking-1600.webp 1600w, /assets/img/summit-networking-2400.webp 2400w" sizes="(max-width:900px) 50vw, 28vw" width="1100" height="618" alt="GCC heads networking at the GCC Leadership Summit, Conrad Pune" loading="lazy" decoding="async"></a>
       </div>
       <div class="events-row" data-stagger>
-        <a class="card spot ev" href="/gcc-summit-hyderabad-2026"><span class="ev__date">20 Nov 2026 <span class="tag tag--teal">Upcoming</span></span><h3>Hyderabad GCC Leadership Summit</h3><p>Only 200 seats, drawn from the 522 GCCs with a unit in Hyderabad.</p><span class="link-arrow">Reserve your seat <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="card spot ev" href="/gcc-summit-hyderabad-2026"><span class="ev__date">20 Nov 2026 <span class="tag tag--teal">Upcoming</span></span><h3>Hyderabad GCC Leadership Summit</h3><p>Only 200 seats, drawn from the 522 GCCs with an office in Hyderabad.</p><span class="link-arrow">Reserve your seat <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
         <a class="card spot ev" href="/gcc-summit-dubai-2027"><span class="ev__date">4 Feb 2027 <span class="tag">Global</span></span><h3>GCC Summit, Dubai 2027</h3><p>Our first Global Capability Centre summit outside India.</p><span class="link-arrow">Express interest <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
         <a class="card spot ev" href="/insights-events#story"><span class="ev__date">11 Aug 2026 <span class="tag tag--line">Recap</span></span><h3>GCC Leadership Summit, Pune</h3><p>80+ GCCs, one guest list, and the policy makers who joined them.</p><span class="link-arrow">See the recap <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
       </div>
@@ -677,7 +681,7 @@
 <!-- /gp:footer -->
 
 <script src="/assets/js/gp.js?v=2867d9ce" defer></script>
-<script src="/assets/js/gp-map.js?v=1c391db5" defer></script>
+<script src="/assets/js/gp-map.js?v=f6ba865c" defer></script>
 <script>
 (function(){
   var f=document.getElementById('subForm'); if(!f) return;
