@@ -2,6 +2,7 @@
    1. No em-dashes anywhere in the site (character, entity or escape).
    2. Every inline script, JSON-LD block, .js and .json file parses.
    3. No yellow, amber, gold or orange colour values in CSS or inline styles.
+   4. Element nesting balances, so a mistyped closing tag cannot quietly restructure a page.
    Run: node _tools/checks.js */
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const root = path.join(__dirname, '..');
@@ -59,6 +60,39 @@ for (const f of files.filter(f => /\.(css|html)$/i.test(f) && !/^(admin|console|
   for (const m of s.matchAll(/:\s*(gold|orange|yellow|amber|goldenrod|darkorange)\b/gi)) problems.push(`colour: ${rel(f)}: named colour "${m[1]}"`);
 }
 
+// 4. element nesting
+// Two links on /about were closed with </div> instead of </a>. Nothing complained: the page still
+// rendered, the card simply ended early and the rest of its paragraph became a sibling, which left a
+// hole in the grid. A browser silently repairs this, so it has to be caught here.
+// Only elements that always carry a closing tag are tracked; p and li may be closed implicitly, and
+// the void elements never are.
+const TRACK = /^(div|section|main|article|aside|nav|header|footer|a|ul|ol|table|form|details|summary|figure|figcaption|button|h1|h2|h3|h4|h5|h6|span|em|strong|label|select|blockquote)$/;
+for (const f of files.filter(f => /\.html$/i.test(f))) {
+  const s = fs.readFileSync(f, 'utf8')
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/gi, '');
+  const stack = [];
+  let bad = 0;
+  for (const m of s.matchAll(/<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g)) {
+    const [, close, rawName, attrs] = m;
+    const name = rawName.toLowerCase();
+    if (!TRACK.test(name)) continue;
+    if (attrs.trimEnd().endsWith('/')) continue;
+    if (!close) { stack.push({ name, at: m.index }); continue; }
+    if (!stack.length) { problems.push(`nesting: ${rel(f)}: stray </${name}>`); bad++; continue; }
+    const top = stack[stack.length - 1];
+    if (top.name === name) { stack.pop(); continue; }
+    // a closing tag that does not match what is open: report it with the text around it
+    const ctx = s.slice(Math.max(0, m.index - 70), m.index + 20).replace(/\s+/g, ' ');
+    problems.push(`nesting: ${rel(f)}: </${name}> closes <${top.name}> ...${ctx}...`);
+    bad++;
+    // resync on the nearest matching open tag so one mistake does not cascade
+    const back = stack.map(x => x.name).lastIndexOf(name);
+    if (back >= 0) stack.length = back; else stack.pop();
+    if (bad >= 5) break;
+  }
+  if (!bad && stack.length) problems.push(`nesting: ${rel(f)}: ${stack.length} unclosed <${stack[stack.length - 1].name}>`);
+}
+
 const uniq = [...new Set(problems)];
 if (uniq.length) { console.error(`CHECKS FAILED (${uniq.length}):\n  ` + uniq.slice(0, 60).join('\n  ') + (uniq.length > 60 ? `\n  ...and ${uniq.length - 60} more` : '')); process.exit(1); }
-console.log('checks passed: no em-dashes, all scripts and JSON parse, no banned accent colours');
+console.log('checks passed: no em-dashes, all scripts and JSON parse, no banned accent colours, tags balance');
