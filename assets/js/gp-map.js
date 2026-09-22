@@ -178,6 +178,8 @@
     return fetch(url + (bust ? '?t=' + Date.now() : ''), { cache: bust ? 'reload' : 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); });
   }
+  function start() {
+  if (start.done) return; start.done = true;
   Promise.all([getJson('/assets/data/gcc-map.json'), getJson('/assets/data/gcc-atlas.json')])
   .then(function (res) {
     // Right after a publish the CDN can still hand out the previous data file; fetch a fresh copy past the cache.
@@ -193,4 +195,8 @@
     if (window.console) console.error('GCC map:', err);
     root.innerHTML = '<p class="gmap__note">The map could not load. Country and city figures are in the tables below and in the <a href="/data">GCC database</a>.</p>';
   });
+  }
+  // Load the map data only when the map is close to the screen, so it never delays the first paint.
+  if (/^#map/.test(location.hash) || !('IntersectionObserver' in window)) start();
+  else { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' }); io.observe(root); }
 })();

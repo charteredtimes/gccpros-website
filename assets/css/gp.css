@@ -183,6 +183,8 @@ a.card:hover,.card.is-hover:hover{transform:translateY(-6px);box-shadow:var(--sh
 [data-reveal="scale"]{transform:scale(.96)}
 [data-reveal].in{opacity:1;transform:none}
 .no-js [data-reveal]{opacity:1;transform:none}
+/* first-screen content paints at once (fast largest-contentful-paint); only the motion is animated */
+.hero [data-reveal],.page-hero [data-reveal]{opacity:1}
 /* Mask padded past the glyph box so italic overhangs and descenders are not
    clipped; negative margins cancel the padding so layout is unchanged. */
 .split-words .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.12em .28em .26em .08em;margin:-.12em -.28em -.26em -.08em}

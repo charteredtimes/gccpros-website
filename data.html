@@ -29,7 +29,9 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
 <link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
 <!-- /gp:head-app -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1656,11 +1658,8 @@ body:not(.is-authed) .ent-pre-auth-teaser {
 
 </style>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+
+
 <!-- Cloudflare Turnstile (visible CAPTCHA on signup + enterprise waitlist).
      Replace TURNSTILE_SITE_KEY constant below with your real key from
      dash.cloudflare.com → Turnstile → Add Site. The default value is
@@ -1803,6 +1802,11 @@ body.gp-app .personal-badge,body.gp-app .credit-meter{border-radius:12px}
   body.gp-app .gs-tablewrap::after{content:"Swipe to see all 46 fields";display:block;padding:8px 2px 0;font-size:12px;color:#4A5670}
 }
 </style>
+<script>/* payment and PDF libraries: loaded on first interaction or when idle, never during first paint */
+(function(){var LIBS=['https://checkout.razorpay.com/v1/checkout.js','https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js'];var done=false;
+function load(){if(done)return;done=true;LIBS.forEach(function(u){var s=document.createElement('script');s.src=u;s.async=true;document.head.appendChild(s);});}
+['pointerdown','keydown','touchstart','focusin'].forEach(function(e){window.addEventListener(e,load,{once:true,passive:true});});
+window.addEventListener('load',function(){setTimeout(load,12000);});})();</script>
 </head>
 <body class="gp-app" data-line="intel">
 <!-- gp:nav -->
@@ -2957,6 +2961,10 @@ body.gp-app .personal-badge,body.gp-app .credit-meter{border-radius:12px}
 </footer>
 <!-- /gp:footer -->
 
+<!-- Firebase loads here, just before its first use, so the page above paints first -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
 <script>
 /* ════════════════════════════════════════════════════════════════
    GCCPROs Intelligence Portal - v2 client

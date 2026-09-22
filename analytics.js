@@ -18,10 +18,15 @@
   if (!window.gtag) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-    document.head.appendChild(s);
+    var gaLoaded = false;
+    var loadGA = function () {
+      if (gaLoaded) return; gaLoaded = true;
+      var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    };
+    // deferred so it never competes with first paint
+    ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (ev) { window.addEventListener(ev, loadGA, { once: true, passive: true }); });
+    window.addEventListener('load', function () { setTimeout(loadGA, 6000); });
     window.gtag('js', new Date());
     window.gtag('config', GA_ID);
   }

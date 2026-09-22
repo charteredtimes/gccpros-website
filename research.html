@@ -15,9 +15,11 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
 <link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
-<link rel="stylesheet" href="/assets/css/gp.css?v=554683e4">
+<link rel="stylesheet" href="/assets/css/gp.css?v=bdcf713f">
 <!-- /gp:head -->
 <script defer src="/analytics.js"></script>
 <script defer src="/assets/js/gp.js?v=2867d9ce"></script>
@@ -789,7 +791,7 @@ try{
 })();
 </script>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <script>
 (function(){
   var API='https://fufnvnvufmrhrzhcoeil.supabase.co/functions/v1/book-order';
