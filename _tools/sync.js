@@ -9,7 +9,7 @@ const root = path.join(__dirname, '..');
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const hash = f => crypto.createHash('md5').update(fs.readFileSync(path.join(root, f))).digest('hex').slice(0, 8);
 const parts = { head: read('_partials/head.html'), 'head-app': read('_partials/head-app.html'), nav: read('_partials/nav.html'), footer: read('_partials/footer.html') };
-const ver = { core: hash('assets/css/gp-core.css'), css: hash('assets/css/gp.css'), js: hash('assets/js/gp.js') };
+const ver = { core: hash('assets/css/gp-core.css'), css: hash('assets/css/gp.css'), js: hash('assets/js/gp.js'), map: hash('assets/js/gp-map.js') };
 let changed = 0; const urls = [];
 for (const f of fs.readdirSync(root).filter(f => f.endsWith('.html'))) {
   let c = read(f), o = c;
@@ -19,7 +19,8 @@ for (const f of fs.readdirSync(root).filter(f => f.endsWith('.html'))) {
   }
   c = c.replace(/\/assets\/css\/gp-core\.css(\?v=[\w]+)?/g, '/assets/css/gp-core.css?v=' + ver.core)
        .replace(/\/assets\/css\/gp\.css(\?v=[\w]+)?/g, '/assets/css/gp.css?v=' + ver.css)
-       .replace(/\/assets\/js\/gp\.js(\?v=[\w]+)?/g, '/assets/js/gp.js?v=' + ver.js);
+       .replace(/\/assets\/js\/gp\.js(\?v=[\w]+)?/g, '/assets/js/gp.js?v=' + ver.js)
+       .replace(/\/assets\/js\/gp-map\.js(\?v=[\w]+)?/g, '/assets/js/gp-map.js?v=' + ver.map);
   if (c !== o) { fs.writeFileSync(path.join(root, f), c); changed++; }
   const canon = (c.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
   const noindex = /<meta name="robots" content="[^"]*noindex/i.test(c);
