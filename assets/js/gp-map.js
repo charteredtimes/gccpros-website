@@ -204,6 +204,8 @@
     // belt and braces: a tab that loads hidden, or is restored, throttles observer callbacks
     addEventListener('scroll', start, { once: true, passive: true });
     addEventListener('pointerdown', start, { once: true });
-    setTimeout(start, 6000);
+    // a tab that loaded hidden starts the moment it is shown; the timer is only a last resort
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) start(); });
+    setTimeout(start, 15000);
   }
 })();

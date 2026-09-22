@@ -3,9 +3,9 @@
     "source": "GCCPROs verified GCC database",
     "as_of": "2026-09-22",
     "total_india": 2503,
-    "total_global": 4506,
+    "total_global": 4611,
     "multi_city": 870,
-    "countries": 43,
+    "countries": 44,
     "ncr_sum": 534,
     "method": "A GCC with offices in more than one city is counted in each of those cities, so the city figures add up to more than the national total. Every city, region and country total counts each GCC only once."
   },
@@ -20,7 +20,7 @@
   "cities_single": 20,
   "cities_one": ["Belagavi","Chengalpattu","Dehradun","Hubballi","Kalyani","Kolhapur","Kozhikode","Lalru","Lucknow","Neemrana","Panaji","Puducherry","Rajkot","Ranipet","Rohtak","Salem","Shimoga","Silvassa","Tumakuru","Vijayawada"],
   "by_country": [
-    ["India",2503], ["Philippines",344], ["Mexico",229], ["Poland",158], ["Romania",136], ["Czech Republic",116], ["Portugal",116], ["Hungary",111], ["Brazil",86], ["United Kingdom",78], ["Malaysia",72], ["Costa Rica",61], ["Slovakia",60], ["Ireland",46], ["Bulgaria",38], ["Colombia",36], ["Germany",32], ["Singapore",32], ["Vietnam",31], ["Lithuania",23], ["Chile",22], ["Canada",20], ["Australia",18], ["Latvia",18], ["Egypt",17], ["Sri Lanka",15], ["United Arab Emirates",14], ["Estonia",13], ["Taiwan",10], ["Netherlands",9], ["Thailand",8], ["Morocco",7], ["South Africa",7], ["Argentina",5], ["Austria",3], ["Spain",3], ["Belgium",2], ["Uruguay",2], ["Greece",1], ["Italy",1], ["Serbia",1], ["Switzerland",1], ["Ukraine",1]
+    ["India",2503], ["Philippines",344], ["Mexico",229], ["Poland",158], ["Romania",136], ["Czech Republic",116], ["Portugal",116], ["Hungary",111], ["Brazil",86], ["United Kingdom",78], ["Malaysia",72], ["Costa Rica",61], ["Egypt",60], ["Slovakia",60], ["South Africa",57], ["Ireland",46], ["Bulgaria",38], ["Colombia",36], ["Germany",32], ["Singapore",32], ["Vietnam",31], ["Lithuania",23], ["Chile",22], ["Canada",20], ["Australia",18], ["Latvia",18], ["Sri Lanka",15], ["United Arab Emirates",14], ["Estonia",13], ["Kenya",12], ["Taiwan",10], ["Netherlands",9], ["Thailand",8], ["Morocco",7], ["Argentina",5], ["Austria",3], ["Spain",3], ["Belgium",2], ["Uruguay",2], ["Greece",1], ["Italy",1], ["Serbia",1], ["Switzerland",1], ["Ukraine",1]
   ],
   "dims": {
     "industry": {

@@ -11,7 +11,7 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const steps = ['buildatlas.js', 'buildpages.js', 'stats.js', 'sync.js', 'checks.js'];
+const steps = ['buildatlas.js', 'buildpages.js', 'stats.js', 'critical.js', 'sync.js', 'checks.js'];
 for (const s of steps) {
   process.stdout.write(`\n> ${s}\n`);
   const r = spawnSync(process.execPath, [path.join(__dirname, s)], { cwd: root, stdio: 'inherit' });
