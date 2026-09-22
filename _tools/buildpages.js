@@ -35,7 +35,13 @@ function statStrip(items) {
 /* ---------- page shell ---------- */
 function page({ slug, title, desc, priority, crumbs, jsonld, body, atlas }) {
   const canonical = `${SITE}/${slug}`;
-  const ld = jsonld.map(o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n');
+  const webpage = { '@context': 'https://schema.org', '@type': 'WebPage', '@id': canonical + '#webpage', url: canonical, name: title.replace(/\s*\|\s*GCCPROs$/, ''), inLanguage: 'en-IN',
+    dateModified: '{{updated_iso}}', isPartOf: { '@id': SITE + '/#website' }, publisher: { '@id': SITE + '/#org' }, author: { '@id': SITE + '/#org' } };
+  const ld = jsonld.map(o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n') +
+    // dateModified is stamped by sync.js from the page's real last-changed date
+    `\n<script type="application/ld+json" data-stat-tpl="${esc(JSON.stringify(webpage)).replace(/"/g, '&quot;')}">{}</script>`;
+  // byline under the H1; sync.js fills in the date
+  body = body.replace('</h1>', '</h1>\n      <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime=""></time></p>');
   return `<!DOCTYPE html>
 <html lang="en-IN" class="no-js">
 <head>

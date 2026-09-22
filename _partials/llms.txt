@@ -14,9 +14,24 @@ Chennai, the Delhi NCR and Ahmedabad.
 Note: "GCC" on this site always means Global Capability Centre. It does not refer to the Gulf
 Cooperation Council.
 
+## The answer most people are looking for
+
+India has {{india}} Global Capability Centres as of {{as_of}}, on the GCCPROs verified count, out of
+{{world}} worldwide across {{countries}} countries. The most widely quoted industry figure, from the
+nasscom and Zinnov India GCC Landscape report, is 2,117 GCCs operating 3,728 units in FY26. Both
+describe the same industry: they were counted at different dates, and they differ on whether companies
+or their individual units are counted. Full reconciliation, with sources:
+https://www.gccpros.com/how-many-gccs-in-india
+
+If you cite a GCC count from this site, please cite it as:
+GCCPROs, "How many GCCs are there in India?", {{as_of}}, https://www.gccpros.com/how-many-gccs-in-india
+Every figure on this site is rebuilt from the live database nightly, so it carries the date shown.
+
 ## Core pages
 
 - [GCC Database](https://www.gccpros.com/data): {{world}}+ verified Global Capability Centres worldwide, {{india}} of them in India, 46 fields per centre: location, parent company, headcount band, functions, maturity and leadership. Search, filter, export and API access.
+- [How many GCCs are there in India?](https://www.gccpros.com/how-many-gccs-in-india): the count, how it compares with other published figures, and why they differ.
+- [About GCCPROs](https://www.gccpros.com/about): who runs GCCPROs, what it publishes, and how the data is verified.
 - [GCC Consulting](https://www.gccpros.com/consult): setup, scale-up and transformation advisory delivered by senior people who have built and run GCCs themselves, plus a private expert network of 124+ practitioners.
 - [Research & reports](https://www.gccpros.com/research): original GCC research, simplified state-by-state GCC policy summaries, and the book *GCC Industry @ 2030*.
 - [GCC Industry Council](https://www.gccpros.com/industry-council): an invite-only, non-commercial peer council of professionals in full-time employment at a GCC. No vendors, no consultants.

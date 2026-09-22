@@ -439,3 +439,11 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 @media (max-width:600px){.gmap__lbl{font-size:22px;stroke-width:6px}.gmap__legend{display:none}}
 @media (prefers-reduced-motion:reduce){.gmap__svg,.gmap__hint circle{animation:none}}
 .home-map{margin-top:56px}.home-map .section-head{margin-bottom:20px}
+
+/* byline + "last updated" on content pages, answer-first lede, citation box */
+.byline{font-size:14px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+.byline a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.byline time{font-variant-numeric:tabular-nums}
+.lede.answer strong{color:var(--ink)}
+.cite-box{border:1px solid var(--line);border-left:4px solid var(--accent,var(--brand));background:var(--surface);border-radius:var(--r-lg);padding:22px 24px}
+.cite-box p{margin:8px 0 0;color:var(--ink-2)}

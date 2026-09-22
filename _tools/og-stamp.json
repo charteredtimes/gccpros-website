@@ -1,0 +1,4 @@
+{
+ "note": "Figure painted into og-default.jpg and og-data.jpg. If world_floor changes, rebuild them.",
+ "world_floor": "4,500+"
+}
