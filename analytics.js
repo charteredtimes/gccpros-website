@@ -38,12 +38,35 @@
       window.addEventListener(ev, function () { if (document.visibilityState === 'hidden') loadGA(); }, { once: true });
     });
     window.gtag('js', new Date());
-    window.gtag('config', GA_ID);
+    // content_group is a built-in GA4 dimension, so reports can compare sections
+    // (city pages against consulting, say) without registering a custom dimension.
+    window.gtag('config', GA_ID, { content_group: section() });
+  }
+
+  // --- 1b) Which part of the site a page belongs to ----------------------
+  function section(p) {
+    p = (p || location.pathname).replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+    if (p === '/' || p === '') return 'Home';
+    if (/^\/gcc-in-/.test(p)) return 'City pages';
+    if (/^\/(gcc-india-atlas|what-is-a-gcc|how-many-gccs-in-india|faq)/.test(p)) return 'Free data and explainers';
+    if (/^\/(data|database)/.test(p)) return 'Database';
+    if (/^\/(consult|how-to-choose)/.test(p)) return 'Consulting';
+    if (/^\/(insights-events|events|gcc-summit)/.test(p)) return 'Events';
+    if (/^\/(talent|jobs|opportunities|candidate)/.test(p)) return 'Talent';
+    if (/^\/(council|community|industry-council|awards)/.test(p)) return 'Community and council';
+    if (/^\/(research|newsroom|insights|thought-leadership)/.test(p)) return 'Research and newsroom';
+    if (/^\/(about|privacy|terms)/.test(p)) return 'About and legal';
+    return 'Other';
   }
 
   // --- 6) Explicit event helper (safe to call anywhere) ------------------
   var track = window.gccTrack = function (name, params) {
-    try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {}
+    try {
+      var p = params || {};
+      if (p.section === undefined) p.section = section();      // every event knows its part of the site
+      if (p.page === undefined) p.page = location.pathname;
+      if (window.gtag) window.gtag('event', name, p);
+    } catch (e) {}
   };
 
   // --- 2) form_start: first interaction with any form --------------------
