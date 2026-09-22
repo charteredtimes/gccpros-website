@@ -99,9 +99,9 @@
       var inNcr = NCR.indexOf(sel) >= 0;
       var link = CITY_PAGE[sel] ? '/gcc-in-' + CITY_PAGE[sel] : inNcr ? '/gcc-in-delhi-ncr' : null;
       return '<p class="gmap__eyebrow">City</p><h3 class="gmap__title">' + esc(sel) + '</h3>' +
-        '<p class="gmap__big"><b>' + fmt(row[1]) + '</b> GCC' + (row[1] === 1 ? '' : 's') + ' with a unit here</p>' +
+        '<p class="gmap__big"><b>' + fmt(row[1]) + '</b> GCC' + (row[1] === 1 ? '' : 's') + ' with an office here</p>' +
         '<ul class="gmap__facts"><li><span>Share of India&rsquo;s ' + fmt(t) + '</span><b>' + pct(row[1], t) + '%</b></li>' +
-        (inNcr ? '<li><span>Delhi NCR, de-duplicated</span><b>' + fmt(D.scope_totals['Delhi NCR']) + '</b></li>' : '') + '</ul>' +
+        (inNcr ? '<li><span>All of Delhi NCR</span><b>' + fmt(D.scope_totals['Delhi NCR']) + '</b></li>' : '') + '</ul>' +
         (link ? '<a class="btn btn--primary gmap__go" href="' + link + '">' + (inNcr ? 'GCCs in Delhi NCR' : 'GCCs in ' + esc(sel)) + '</a>' : '') +
         '<button type="button" class="gmap__back" data-clear>All cities</button>';
     }
@@ -109,7 +109,7 @@
       return '<li><button type="button" data-pick="' + esc(r[0]) + '"><span>' + esc(r[0]) + '</span><b>' + fmt(r[1]) + '</b></button></li>';
     }).join('');
     return '<p class="gmap__eyebrow">India</p><h3 class="gmap__title">' + fmt(t) + ' GCCs across ' + (D.cities.length + D.cities_single) + ' cities</h3>' +
-      '<p class="gmap__hintline">Circle size shows the number of GCCs with a unit in each city. Click one for detail.</p>' +
+      '<p class="gmap__hintline">Circle size shows the number of GCCs with an office in each city. Click one for detail.</p>' +
       '<ol class="gmap__list">' + top + '</ol>';
   }
 
@@ -127,7 +127,7 @@
       '<div class="gmap__tip" role="presentation" hidden></div></div>' +
       '<aside class="gmap__panel" aria-live="polite">' + (view === 'world' ? worldPanel() : indiaPanel()) + '</aside></div>' +
       '<p class="gmap__note">Counts from the GCCPROs verified database, ' + esc(D.meta.as_of) +
-      '. City figures count every centre with a unit in that city. Boundaries: Natural Earth, India&rsquo;s official view.</p>';
+      '. City figures count every centre with an office in that city. Boundaries: Natural Earth, India&rsquo;s official view.</p>';
     if (sel) {
       var el = root.querySelector(view === 'world' ? '[data-name="' + cssq(sel) + '"].has-data' : '[data-city="' + cssq(sel) + '"]');
       if (el) { el.classList.add('is-sel'); if (focusSel) el.focus({ preventScroll: true }); }

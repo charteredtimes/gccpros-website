@@ -7,12 +7,12 @@
     "multi_city": 870,
     "countries": 43,
     "ncr_sum": 534,
-    "method": "Counted at unit level. A GCC that operates units in more than one city is counted once in every city where it has a unit, so city figures sum to more than the national total. Each scope's own total is a distinct count of GCCs, never a sum of its cities."
+    "method": "A GCC with offices in more than one city is counted in each of those cities, so the city figures add up to more than the national total. Every city, region and country total counts each GCC only once."
   },
   "scopes": ["India","Bengaluru","Pune","Hyderabad","Delhi NCR","Mumbai","Chennai"],
   "scope_totals": {"India":2503,"Bengaluru":1377,"Pune":559,"Hyderabad":522,"Delhi NCR":478,"Mumbai":364,"Chennai":364},
   "scope_note": {
-    "Delhi NCR": "Gurugram, Noida, New Delhi, Greater Noida, Manesar and Faridabad, de-duplicated: 478 distinct GCCs, not the 534 you get by adding the cities up."
+    "Delhi NCR": "Gurugram, Noida, New Delhi, Greater Noida, Manesar and Faridabad together: 478 GCCs. Adding up the city figures gives 534, because some GCCs have offices in more than one of these cities."
   },
   "cities": [
     ["Bengaluru",1377], ["Pune",559], ["Hyderabad",522], ["Chennai",364], ["Mumbai",364], ["Gurugram",320], ["Noida",130], ["New Delhi",63], ["Navi Mumbai",40], ["Kolkata",39], ["Ahmedabad",32], ["Vadodara",27], ["Coimbatore",26], ["Kochi",21], ["Thiruvananthapuram",20], ["Gandhinagar",12], ["Thane",11], ["Chandigarh",9], ["Greater Noida",9], ["Mohali",9], ["Indore",8], ["Jaipur",8], ["Manesar",7], ["Visakhapatnam",7], ["Nagpur",6], ["Mysuru",5], ["Bhubaneswar",4], ["Madurai",4], ["Mangaluru",4], ["Faridabad",3], ["Hosur",3], ["Aurangabad",2], ["Bhiwadi",2], ["Bhopal",2], ["Goa",2], ["Nashik",2], ["Surat",2]
@@ -25,7 +25,7 @@
   "dims": {
     "industry": {
       "label": "Industry",
-      "note": "Each GCC is classified into exactly one industry, so these sum to the scope total.",
+      "note": "Each GCC is classified into exactly one industry, so these add up to the total.",
       "India": [["Technology: SaaS & Software",377],["BFSI: Banking, FinTech & Capital Markets",312],["Industrial, Engineering & Manufacturing",183],["Technology: Semiconductors & Hardware",158],["Technology: Data, Analytics & AI",145],["Retail, Consumer & FMCG",139],["Automotive & Auto Components",128],["Professional Services & Consulting",116],["Healthcare & MedTech",110],["Technology: Cybersecurity",99],["Pharma & Life Sciences",93],["BFSI: Insurance",91],["Energy, Power & Oil & Gas",80],["Technology: Cloud, Infrastructure & DevTools",80],["Chemicals, Materials & Mining",71],["Logistics & Supply Chain",68],["Media, Advertising & Gaming",61],["Aerospace, Defense & Aviation",57],["Telecom & Networks",57],["Construction & Real Estate",34],["Education & EdTech",23],["Travel, Hospitality & Leisure",21]],
       "Bengaluru": [["Technology: SaaS & Software",242],["BFSI: Banking, FinTech & Capital Markets",154],["Technology: Semiconductors & Hardware",114],["Technology: Data, Analytics & AI",87],["Retail, Consumer & FMCG",82],["Industrial, Engineering & Manufacturing",74],["Technology: Cybersecurity",71],["Automotive & Auto Components",69],["Healthcare & MedTech",63],["Professional Services & Consulting",61],["Pharma & Life Sciences",55],["Technology: Cloud, Infrastructure & DevTools",54],["BFSI: Insurance",39],["Telecom & Networks",39],["Aerospace, Defense & Aviation",37],["Energy, Power & Oil & Gas",34],["Media, Advertising & Gaming",33],["Logistics & Supply Chain",21],["Chemicals, Materials & Mining",15],["Construction & Real Estate",13],["Education & EdTech",10],["Travel, Hospitality & Leisure",10]],
       "Pune": [["Technology: SaaS & Software",74],["Industrial, Engineering & Manufacturing",65],["BFSI: Banking, FinTech & Capital Markets",60],["Automotive & Auto Components",57],["Technology: Semiconductors & Hardware",32],["Professional Services & Consulting",29],["Technology: Data, Analytics & AI",26],["Energy, Power & Oil & Gas",25],["Technology: Cybersecurity",25],["Chemicals, Materials & Mining",23],["BFSI: Insurance",21],["Healthcare & MedTech",18],["Pharma & Life Sciences",17],["Technology: Cloud, Infrastructure & DevTools",17],["Logistics & Supply Chain",15],["Retail, Consumer & FMCG",15],["Construction & Real Estate",11],["Telecom & Networks",11],["Media, Advertising & Gaming",8],["Aerospace, Defense & Aviation",6],["Travel, Hospitality & Leisure",3],["Education & EdTech",1]],
@@ -48,7 +48,7 @@
     },
     "domain": {
       "label": "Domain (function run)",
-      "note": "Most GCCs run several functions, so a centre appears under every domain it operates. These deliberately sum to more than the scope total.",
+      "note": "Most GCCs run several functions, so a centre appears under every domain it operates. These deliberately add up to more than the total.",
       "multi": true,
       "India": [["Technology",1898],["Engineering & R&D",1832],["Data, Analytics & AI",1032],["Operations & Business Excellence",600],["Finance & Accounting",553],["Product Management",537],["Customer Operations",384],["Risk & Compliance",252],["Cybersecurity",246],["HR Shared Services",229],["Manufacturing Technology",229],["Supply Chain",183],["Clinical & Medical",86],["Procurement",83],["Sales & Marketing Operations",63],["Legal",40]],
       "Bengaluru": [["Technology",1091],["Engineering & R&D",1071],["Data, Analytics & AI",636],["Product Management",347],["Operations & Business Excellence",296],["Finance & Accounting",284],["Customer Operations",223],["Cybersecurity",174],["Risk & Compliance",138],["HR Shared Services",123],["Manufacturing Technology",117],["Supply Chain",95],["Clinical & Medical",50],["Sales & Marketing Operations",40],["Procurement",36],["Legal",22]],
