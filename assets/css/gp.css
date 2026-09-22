@@ -389,3 +389,50 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
 }
 /* long button labels wrap on phones */
 @media (max-width:640px){.btn{white-space:normal;text-align:center;max-width:100%}}
+/* interactive GCC map */
+.gmap{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--sh-2);padding:18px 18px 14px;position:relative}
+.gmap__bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.gmap__crumbs{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gmap__crumbs [aria-current]{color:var(--ink);font-weight:500}
+.gmap__crumb{background:none;border:0;padding:4px 2px;font:inherit;color:var(--brand);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gmap__crumb--back{font-family:var(--sans);font-size:14px;font-weight:700;text-transform:none;letter-spacing:0;text-decoration:none;background:var(--brand-50);border-radius:999px;padding:8px 14px}
+.gmap__crumb--back:hover{background:var(--brand-100)}
+.gmap__legend{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.gmap__legend i{width:18px;height:10px;border-radius:3px;display:inline-block}
+.gmap__body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.gmap__stage{position:relative;min-width:0}
+.gmap__svg{display:block;width:100%;height:auto;animation:gmapIn .45s ease both}
+.gmap__svg--india{max-height:640px}
+@keyframes gmapIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.gmap__c{fill:#E8EDF5;stroke:#fff;stroke-width:.5;vector-effect:non-scaling-stroke}
+.gmap__c.has-data{cursor:pointer;transition:filter .15s}
+.gmap__c.has-data:hover,.gmap__c.has-data:focus-visible,.gmap__dot:hover{filter:brightness(1.12) saturate(1.1);stroke:var(--ink);stroke-width:1.2;outline:none}
+.gmap__c.is-sel,.gmap__city.is-sel{stroke:var(--ink);stroke-width:2}
+.gmap__c.is-india{stroke:#0F2A55;stroke-width:1}
+.gmap__dot{stroke:#fff;stroke-width:1.2;cursor:pointer}
+.gmap__hint circle{fill:none;stroke:#0F2A55;stroke-width:1.5;opacity:0;animation:gmapPulse 2.4s ease-out infinite;pointer-events:none;transform-box:fill-box;transform-origin:center}
+@keyframes gmapPulse{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(3)}}
+.gmap__nb{fill:#F1F4F9;stroke:#D5DDEA;stroke-width:.8}
+.gmap__in{fill:#E6EEFA;stroke:#2F5DA8;stroke-width:1.4;stroke-linejoin:round}
+.gmap__city{fill:rgba(47,93,168,.55);stroke:#fff;stroke-width:1.2;cursor:pointer;transition:fill .15s}
+.gmap__city:hover,.gmap__city:focus-visible{fill:#0F2A55;outline:none}
+.gmap__lbl{font-family:var(--sans);font-size:13px;font-weight:800;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.gmap__tip{position:absolute;z-index:3;pointer-events:none;background:var(--ink);color:#fff;border-radius:10px;padding:7px 11px;font-size:13px;line-height:1.35;box-shadow:var(--sh-2);white-space:nowrap}
+.gmap__tip b{font-weight:800;margin-right:4px}.gmap__tip em{display:block;font-style:normal;color:var(--ice);font-size:12px}
+.gmap__panel{background:var(--brand-50);border-radius:18px;padding:18px}
+.gmap__eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.gmap__title{font-family:var(--serif);font-size:22px;line-height:1.2;margin:0 0 8px;color:var(--ink)}
+.gmap__big{font-size:15px;color:var(--muted);margin:0 0 12px}.gmap__big b{display:block;font-family:var(--serif);font-size:44px;line-height:1;color:var(--brand);font-weight:600}
+.gmap__hintline{font-size:14px;color:var(--muted);margin:0 0 12px}
+.gmap__facts{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}
+.gmap__facts li{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-top:1px solid var(--line);padding-top:6px}.gmap__facts b{color:var(--ink)}
+.gmap__list{list-style:none;margin:0;padding:0;display:grid;gap:2px;counter-reset:g}
+.gmap__list button{width:100%;display:flex;justify-content:space-between;gap:8px;background:none;border:0;border-radius:9px;padding:6px 8px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;text-align:left}
+.gmap__list button:hover,.gmap__list button:focus-visible{background:#fff}
+.gmap__list button span::before{counter-increment:g;content:counter(g) ". ";color:var(--muted)}
+.gmap__go{width:100%;margin-bottom:8px}
+.gmap__back{background:none;border:0;padding:6px 0;font:inherit;font-size:14px;font-weight:700;color:var(--brand);cursor:pointer}
+.gmap__note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+@media (max-width:900px){.gmap__body{grid-template-columns:minmax(0,1fr)}.gmap{padding:12px}}
+@media (max-width:600px){.gmap__lbl{font-size:22px;stroke-width:6px}.gmap__legend{display:none}}
+@media (prefers-reduced-motion:reduce){.gmap__svg,.gmap__hint circle{animation:none}}
