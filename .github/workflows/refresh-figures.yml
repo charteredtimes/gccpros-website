@@ -5,7 +5,9 @@ name: Refresh GCC figures from the database
 # house-rule checks, and publish only if something changed and every check passed.
 on:
   schedule:
-    - cron: '30 21 * * *'   # 03:00 IST
+    # 03:17 IST. Deliberately not on the hour or the half hour: GitHub runs scheduled workflows on a
+    # best-effort basis and delays or drops them when load is high, which it always is at :00 and :30.
+    - cron: '47 21 * * *'
   workflow_dispatch:
 
 permissions:
