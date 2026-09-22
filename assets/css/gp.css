@@ -460,4 +460,4 @@ body[data-line="talent"]{--accent:#0E7490;--accent-deep:#085368;--accent-50:#E7F
    Fraunces or Manrope it makes the browser fetch their latin-ext files, 72.8 KB for one glyph, on
    nine pages including the homepage. Rendering it in the font the device already has removes both
    files from the load. Wrapped by C:/gw/_work/rupee.js; re-run it after adding new rupee amounts. */
-.rupee{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans',Arial,sans-serif}
+#reveal-price-display,#buy-selected,#pay-btn,.rupee{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans',Arial,sans-serif}
