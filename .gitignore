@@ -1,0 +1,3 @@
+# Local editor and preview config, not part of the site
+.claude/
+node_modules/
