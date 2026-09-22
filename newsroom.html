@@ -24,8 +24,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
-<link rel="stylesheet" href="/assets/css/gp-core.css?v=ee7a731c">
-<link rel="stylesheet" href="/assets/css/gp.css?v=de8635e0">
+<link rel="stylesheet" href="/assets/css/gp-core.css?v=a136178e">
+<link rel="stylesheet" href="/assets/css/gp.css?v=96b56cc9">
 <!-- /gp:head -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.gccpros.com/"},{"@type":"ListItem","position":2,"name":"Newsroom","item":"https://www.gccpros.com/newsroom"}]}
@@ -80,10 +80,10 @@
 .nbody h2{font-size:20px;line-height:1.25;letter-spacing:-.01em}
 .nbody p{color:var(--muted);font-size:15px}
 .nbody .link-arrow{margin-top:auto;padding-top:8px}
-@media (max-width:1000px){.news{grid-template-columns:1fr 1fr}.nr-hero{grid-template-columns:1fr}}
-@media (max-width:680px){.news{grid-template-columns:1fr}.ncard.is-feature{grid-column:auto;flex-direction:column}.ncard.is-feature .nthumb{min-height:0;aspect-ratio:16/9}}
+@media (max-width:1000px){.news{grid-template-columns:1fr 1fr}.nr-hero{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:680px){.news{grid-template-columns:minmax(0,1fr)}.ncard.is-feature{grid-column:auto;flex-direction:column}.ncard.is-feature .nthumb{min-height:0;aspect-ratio:16/9}}
 .press-card{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
-@media (max-width:760px){.press-card{grid-template-columns:1fr}}
+@media (max-width:760px){.press-card{grid-template-columns:minmax(0,1fr)}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"GCCPROs Newsroom","url":"https://www.gccpros.com/newsroom","description":"Press, media and government coverage of GCCPROs and India’s Global Capability Centre industry.","isPartOf":{"@type":"WebSite","name":"GCCPROs","url":"https://www.gccpros.com/"},"publisher":{"@id":"https://www.gccpros.com/#org"},"about":{"@type":"Thing","name":"Global Capability Centre"}}</script>
 </head>
