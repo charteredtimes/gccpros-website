@@ -84,13 +84,23 @@ function stamp(c, file) {
 
 // ---- guard: any figure ever published must sit inside a slot ------------------------------
 // <span data-stat-ignore>...</span> marks a number that only looks like a site figure (a sample record, a price)
+//
+// JSON-LD is policed like any other content. It used to be skipped whole, which let hand-typed
+// figures sit in structured data and go stale unseen: /data and /research were serving 4,506 GCCs in
+// their schema long after the site said 4,611, and structured data is precisely what search engines
+// and AI answer engines read. So the rendered body is dropped (sync writes it) but the template is
+// kept and searched, minus its {{slots}}.
 function unslotted(c) {
   return c
     .replace(/<span data-stat-ignore>[\s\S]*?<\/span>/g, '')
     .replace(/<span data-stat="[a-z0-9_]+">[^<]*<\/span>/g, '')
     .replace(/<title data-stat-tpl="[^"]*">[^<]*<\/title>/g, '')
     .replace(/<meta [^>]*data-stat-tpl[^>]*>/g, '')
-    .replace(/<script type="application\/ld\+json" data-stat-tpl="[^"]*">[\s\S]*?<\/script>/g, '')
+    .replace(/<script type="application\/ld\+json"([^>]*)>([\s\S]*?)<\/script>/g, (_, attrs, body) => {
+      const tpl = (attrs.match(/data-stat-tpl="([^"]*)"/) || [])[1];
+      // no template means the body is hand-written, so the body is what gets policed
+      return tpl === undefined ? body : unattr(tpl).replace(/\{\{[a-z0-9_]+\}\}/g, '');
+    })
     .replace(/<script(?![^>]*ld\+json)[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '');
 }
 // Figures distinctive enough to police: four-digit counts. Small numbers (e.g. "20", "364") are too
