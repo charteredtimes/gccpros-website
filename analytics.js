@@ -24,9 +24,19 @@
       var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
       document.head.appendChild(s);
     };
-    // deferred so it never competes with first paint
+    // Deferred so it never competes with first paint, but only until the browser is idle:
+    // waiting for an interaction or a fixed 6s lost every short visit, which is most of them.
     ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (ev) { window.addEventListener(ev, loadGA, { once: true, passive: true }); });
-    window.addEventListener('load', function () { setTimeout(loadGA, 6000); });
+    var whenIdle = function () {
+      if (window.requestIdleCallback) window.requestIdleCallback(loadGA, { timeout: 1500 });
+      else setTimeout(loadGA, 1200);
+    };
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle);
+    // a visit that ends before the script loads is still worth counting
+    ['pagehide', 'visibilitychange'].forEach(function (ev) {
+      window.addEventListener(ev, function () { if (document.visibilityState === 'hidden') loadGA(); }, { once: true });
+    });
     window.gtag('js', new Date());
     window.gtag('config', GA_ID);
   }
@@ -43,6 +53,25 @@
       f.__gccStarted = 1;
       track('form_start', { form_id: f.id || f.name || 'form', page: location.pathname });
     }
+  }, true);
+
+  // --- 2b) form_submit: every form that actually submits -----------------
+  document.addEventListener('submit', function (e) {
+    var f = e.target;
+    if (!f || f.tagName !== 'FORM') return;
+    track('form_submit', { form_id: f.id || f.name || 'form', page: location.pathname });
+  }, true);
+
+  // --- 2c) cta_click: the buttons and links that lead to a conversion ----
+  // Pages drive most conversions from JavaScript rather than a form submit, so the click
+  // itself is the only reliable signal without touching each page's own logic.
+  var CTA = /book a consultation|register|apply|join|subscribe|sign ?up|get started|request|enquir|download|start free|open the (full )?database|reserve/i;
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('a,button,[role=button]') : null;
+    if (!el) return;
+    var label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+    if (!label || !CTA.test(label)) return;
+    track('cta_click', { cta_label: label, page: location.pathname, cta_href: el.getAttribute('href') || '' });
   }, true);
 
   // --- 3 + 4) file_download and outbound_click ---------------------------
