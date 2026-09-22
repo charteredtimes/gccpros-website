@@ -188,16 +188,20 @@
 
   function initGlobe(cv) {
     var ctx = cv.getContext('2d'); if (!ctx) return;
-    var DEG = Math.PI / 180, pts = null, W = 0, H = 0, R = 0, cx = 0, cy = 0, dpr = Math.min(w.devicePixelRatio || 1, 2);
+    var DEG = Math.PI / 180, pts = null, W = 0, H = 0, R = 0, cx = 0, cy = 0, dpr = Math.min(w.devicePixelRatio || 1, 1.5);
     var hubs = [];
     try { hubs = JSON.parse(cv.getAttribute('data-hubs') || '[]'); } catch (e) {}
     var origin = hubs[0] || { lat: 20.6, lon: 78.9 };
     var baseYaw = -origin.lon * DEG - 0.15, yaw = baseYaw, swayT = 0, tilt = -16 * DEG, dragging = false, lastX = 0, lastY = 0, inertia = 0;
     var ink = cv.getAttribute('data-ink') || '47,93,168', hot = cv.getAttribute('data-hot') || '21,128,122';
     var vec = function (lat, lon, r) { r = r || 1; var la = lat * DEG, lo = lon * DEG; return [r * Math.cos(la) * Math.sin(lo), r * Math.sin(la), r * Math.cos(la) * Math.cos(lo)]; };
+    // yaw and tilt are the same for every point in a frame, so the four trig calls are done once
+    // per frame rather than four times per land dot (there are about 4,200 of them)
+    var cyw = 1, syw = 0, ct = 1, st = 0;
+    var orient = function () { cyw = Math.cos(yaw); syw = Math.sin(yaw); ct = Math.cos(tilt); st = Math.sin(tilt); };
     var proj = function (v) {
-      var cyw = Math.cos(yaw), syw = Math.sin(yaw), x = v[0] * cyw + v[2] * syw, z = -v[0] * syw + v[2] * cyw, y = v[1];
-      var ct = Math.cos(tilt), st = Math.sin(tilt), y2 = y * ct - z * st, z2 = y * st + z * ct;
+      var x = v[0] * cyw + v[2] * syw, z = -v[0] * syw + v[2] * cyw, y = v[1];
+      var y2 = y * ct - z * st, z2 = y * st + z * ct;
       return [cx + x * R, cy - y2 * R, z2, x, y2];
     };
     var hubV = hubs.map(function (h) { return vec(h.lat, h.lon); });
@@ -210,13 +214,25 @@
       }
       return { pts: seg, off: Math.random(), speed: 0.12 + Math.random() * 0.1 };
     });
+    // the two background gradients depend only on the geometry, so they are built when the canvas is
+    // sized rather than on every frame
+    var gAtmos = null, gBody = null;
     var size = function () {
       var r = cv.getBoundingClientRect(); W = r.width; H = r.height; if (!W || !H) return;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       R = Math.min(W, H) * 0.44; cx = W / 2; cy = H / 2;
+      gAtmos = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.25);
+      gAtmos.addColorStop(0, 'rgba(' + ink + ',0.10)'); gAtmos.addColorStop(0.72, 'rgba(' + ink + ',0.06)'); gAtmos.addColorStop(1, 'rgba(' + ink + ',0)');
+      gBody = ctx.createRadialGradient(cx - R * .35, cy - R * .4, R * .1, cx, cy, R);
+      gBody.addColorStop(0, 'rgba(255,255,255,0.95)'); gBody.addColorStop(1, 'rgba(226,235,248,0.9)');
     };
     var visibleArcPt = function (p) { return p[2] > 0 || (p[3] * p[3] + p[4] * p[4]) > 1; };
     var t0 = performance.now(), running = true, lastT = t0;
+    // On phones and low-core machines the globe is drawn once and left still. The sway is a slow
+    // 0.16Hz drift that nobody notices on a 390px hero, but animating it keeps the main thread busy
+    // for as long as the hero is on screen, which is exactly the window that decides the page's
+    // blocking time. Dragging still spins it. Treated the same way as prefers-reduced-motion below.
+    var still = reduce || (w.matchMedia && w.matchMedia('(max-width:900px)').matches) || (navigator.hardwareConcurrency || 8) <= 4;
     var frame = function (now) {
       if (!running) return;
       var dt = Math.min(64, now - lastT); lastT = now;
@@ -230,25 +246,26 @@
       requestAnimationFrame(frame);
     };
     function draw(time) {
+      orient();
       ctx.clearRect(0, 0, W, H);
       // atmosphere
-      var g = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.25);
-      g.addColorStop(0, 'rgba(' + ink + ',0.10)'); g.addColorStop(0.72, 'rgba(' + ink + ',0.06)'); g.addColorStop(1, 'rgba(' + ink + ',0)');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 1.25, 0, 7); ctx.fill();
+      ctx.fillStyle = gAtmos; ctx.beginPath(); ctx.arc(cx, cy, R * 1.25, 0, 7); ctx.fill();
       // sphere body
-      var body = ctx.createRadialGradient(cx - R * .35, cy - R * .4, R * .1, cx, cy, R);
-      body.addColorStop(0, 'rgba(255,255,255,0.95)'); body.addColorStop(1, 'rgba(226,235,248,0.9)');
-      ctx.fillStyle = body; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
+      ctx.fillStyle = gBody; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
       ctx.strokeStyle = 'rgba(' + ink + ',0.16)'; ctx.lineWidth = 1; ctx.stroke();
       // land dots
       if (pts) {
         // batch dots into depth buckets: one path + fill per bucket
         var s = Math.max(1.4, R / 125), B = 6, paths = [];
         for (var b = 0; b < B; b++) paths.push(new Path2D());
+        // the projection is written out here instead of calling proj(), which would allocate an
+        // array per dot: 4,200 short-lived arrays a frame is enough garbage to show up in a profile
         for (var i = 0; i < pts.length; i++) {
-          var p = proj(pts[i]); if (p[2] <= 0) continue;
-          var k = Math.min(B - 1, (p[2] * B) | 0), rr = s * (0.55 + p[2] * 0.45) / 2 + 0.3;
-          paths[k].moveTo(p[0] + rr, p[1]); paths[k].arc(p[0], p[1], rr, 0, 6.2832);
+          var v = pts[i], z = -v[0] * syw + v[2] * cyw, dz = v[1] * st + z * ct;
+          if (dz <= 0) continue;
+          var dx = cx + (v[0] * cyw + v[2] * syw) * R, dy = cy - (v[1] * ct - z * st) * R;
+          var k = Math.min(B - 1, (dz * B) | 0), rr = s * (0.55 + dz * 0.45) / 2 + 0.3;
+          paths[k].moveTo(dx + rr, dy); paths[k].arc(dx, dy, rr, 0, 6.2832);
         }
         for (b = 0; b < B; b++) { ctx.fillStyle = 'rgba(' + ink + ',' + (0.28 + ((b + .5) / B) * 0.62).toFixed(3) + ')'; ctx.fill(paths[b]); }
       }
@@ -290,14 +307,14 @@
     cv.addEventListener('pointerdown', function (e) { dragging = true; lastX = e.clientX; lastY = e.clientY; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
     cv.addEventListener('pointermove', function (e) {
       if (!dragging) return; var dx = e.clientX - lastX, dy = e.clientY - lastY; lastX = e.clientX; lastY = e.clientY;
-      baseYaw += dx * 0.006; yaw += dx * 0.006; tilt = Math.max(-1.1, Math.min(1.1, tilt + dy * 0.004)); inertia = dx * 0.0008; if (reduce) draw(0);
+      baseYaw += dx * 0.006; yaw += dx * 0.006; tilt = Math.max(-1.1, Math.min(1.1, tilt + dy * 0.004)); inertia = dx * 0.0008; if (still) draw(0);
     });
     var end = function () { dragging = false; cv.style.cursor = 'grab'; };
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
-    size(); w.addEventListener('resize', function () { size(); if (reduce) draw(0); });
+    size(); w.addEventListener('resize', function () { size(); if (still) draw(0); });
     fetch(cv.getAttribute('data-globe')).then(function (r) { return r.json(); }).then(function (flat) {
       pts = []; for (var i = 0; i < flat.length; i += 2) pts.push(vec(flat[i + 1], flat[i]));
-      if (reduce) { draw(0); return; }
+      if (still) { draw(0); return; }
       if ('IntersectionObserver' in w) {
         new IntersectionObserver(function (es) { es.forEach(function (e) { var was = running; running = e.isIntersecting; if (running && !was) { lastT = performance.now(); requestAnimationFrame(frame); } }); }).observe(cv);
       }

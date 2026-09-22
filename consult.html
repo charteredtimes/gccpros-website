@@ -539,7 +539,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 
 <script>
 (function(){
-  /* site navigation is handled by /assets/js/gp.js?v=2867d9ce */
+  /* site navigation is handled by /assets/js/gp.js?v=c61a36bf */
   var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.14});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 })();
@@ -735,7 +735,7 @@ html{scroll-padding-top:calc(var(--nav-h) + 70px)}
 })();
 </script>
   <script defer src="/analytics.js"></script>
-<script defer src="/assets/js/gp.js?v=2867d9ce"></script>
+<script defer src="/assets/js/gp.js?v=c61a36bf"></script>
 <script>
 /* talkToUsEngage: make the "Talk to us" nav button actually engage the assistant
    instead of scrolling to a chat that is already at the top of the page. */
