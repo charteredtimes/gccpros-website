@@ -198,5 +198,12 @@
   }
   // Load the map data only when the map is close to the screen, so it never delays the first paint.
   if (/^#map/.test(location.hash) || !('IntersectionObserver' in window)) start();
-  else { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' }); io.observe(root); }
+  else {
+    var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' });
+    io.observe(root);
+    // belt and braces: a tab that loads hidden, or is restored, throttles observer callbacks
+    addEventListener('scroll', start, { once: true, passive: true });
+    addEventListener('pointerdown', start, { once: true });
+    setTimeout(start, 6000);
+  }
 })();

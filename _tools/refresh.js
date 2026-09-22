@@ -17,4 +17,15 @@ for (const s of steps) {
   const r = spawnSync(process.execPath, [path.join(__dirname, s)], { cwd: root, stdio: 'inherit' });
   if (r.status !== 0) { console.error(`\nrefresh stopped: ${s} failed (exit ${r.status}). Nothing further was changed.`); process.exit(1); }
 }
+// the share images have a rounded figure painted in; they cannot be re-rendered here, so say so loudly
+const fsx = require('fs');
+const stampF = path.join(__dirname, 'og-stamp.json');
+if (fsx.existsSync(stampF)) {
+  const stamp = JSON.parse(fsx.readFileSync(stampF, 'utf8'));
+  const now = JSON.parse(fsx.readFileSync(path.join(root, 'assets/data/site-stats.json'), 'utf8')).values.world_floor;
+  if (stamp.world_floor !== now) {
+    console.error(`\nog images need rebuilding: they show ${stamp.world_floor}, the figure is now ${now}.\n  Run: node C:/gw/_work/meta-og.js  (needs sharp), then commit the images and og-stamp.json.`);
+    process.exit(1);
+  }
+}
 console.log('\nrefresh complete: every figure on the site matches the database.');
