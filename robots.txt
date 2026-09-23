@@ -3,6 +3,7 @@ Allow: /
 
 # Internal tools carry <meta name="robots" content="noindex"> and are left crawlable so that tag is seen.
 Disallow: /functions/
+Disallow: /*.pdf$
 
 
 # Answer engines are welcome to read and cite this site.
