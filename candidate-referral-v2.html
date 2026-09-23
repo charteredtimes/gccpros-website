@@ -43,7 +43,7 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
 <body>
 
 <div class="test-banner">
-  <b>TEST PAGE</b> · candidate-referral v2 (Supabase). The live <a href="/candidate-referral.html">candidate-referral.html</a> on Apps Script is unchanged.
+  <b>TEST PAGE</b> · candidate-referral v2 (Supabase). The live <a href="/candidate-referral">candidate-referral.html</a> on Apps Script is unchanged.
 </div>
 
 <header>
@@ -58,7 +58,7 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
 
   <div id="form-container" class="card" style="display:none;">
     <h2>Welcome: you've been referred by <span id="referrer-name"></span></h2>
-    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023, see <a href="/privacy.html" target="_blank">Privacy Policy</a>.</p>
+    <p class="sub">Please complete the profile below. Fields marked * are required. Your details are processed under DPDP Act 2023, see <a href="/privacy" target="_blank">Privacy Policy</a>.</p>
 
     <div id="target-job-block" class="alert info" style="display:none;">
       <b>Target role:</b> <span id="target-job-text"></span>
@@ -77,7 +77,7 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
 
     <div class="consent">
       <input type="checkbox" id="cf-consent" required>
-      <span>I consent to GCCPROs processing the data above to evaluate me for the referred opportunity, per the <a href="/privacy.html" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span>
+      <span>I consent to GCCPROs processing the data above to evaluate me for the referred opportunity, per the <a href="/privacy" target="_blank">Privacy Policy</a> (DPDP Act 2023).</span>
     </div>
 
     <button class="btn" id="cf-submit" onclick="submitProfile()">Submit profile →</button>
@@ -87,7 +87,7 @@ input, select, textarea { width:100%; padding:9px 12px; border:1px solid var(--l
   <div id="success-state" class="card success-card" style="display:none;">
     <h2>✓ Profile received</h2>
     <p id="success-msg">We'll evaluate your profile against the role and the GCCPROs team will be in touch shortly.</p>
-    <p style="margin-top:18px;"><a class="btn" href="/talent.html" style="display:inline-block;width:auto;text-decoration:none;">Explore more opportunities →</a></p>
+    <p style="margin-top:18px;"><a class="btn" href="/talent" style="display:inline-block;width:auto;text-decoration:none;">Explore more opportunities →</a></p>
   </div>
 
 </main>

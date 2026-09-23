@@ -7,39 +7,51 @@ Disallow: /functions/
 
 # Answer engines are welcome to read and cite this site.
 User-agent: GPTBot
+Disallow: /functions/
 Allow: /
 
 User-agent: OAI-SearchBot
+Disallow: /functions/
 Allow: /
 
 User-agent: ChatGPT-User
+Disallow: /functions/
 Allow: /
 
 User-agent: ClaudeBot
+Disallow: /functions/
 Allow: /
 
 User-agent: Claude-Web
+Disallow: /functions/
 Allow: /
 
 User-agent: anthropic-ai
+Disallow: /functions/
 Allow: /
 
 User-agent: Google-Extended
+Disallow: /functions/
 Allow: /
 
 User-agent: PerplexityBot
+Disallow: /functions/
 Allow: /
 
 User-agent: Perplexity-User
+Disallow: /functions/
 Allow: /
 
 User-agent: Bingbot
+Disallow: /functions/
 Allow: /
 
 User-agent: Applebot-Extended
+Disallow: /functions/
 Allow: /
 
 User-agent: CCBot
+Disallow: /functions/
 Allow: /
 
 # Plain-language site summary for AI crawlers
