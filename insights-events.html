@@ -85,7 +85,8 @@
 @media (max-width:640px){.cine .stats{--n:2}}
 
 /* dignitaries */
-.dig{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+/* auto-fit rather than a fixed 4, so adding a dignitary does not leave one card alone on its own row */
+.dig{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:16px}
 .dig .card{padding:26px;text-align:left}
 .dig .mono-av{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:21px;color:#fff;background:linear-gradient(135deg,var(--brand),#5B86C9);margin-bottom:18px}
 .dig .card:nth-child(2) .mono-av{background:linear-gradient(135deg,var(--teal),#3AA89F)}
@@ -183,7 +184,7 @@
 .council-strip h3{font-size:22px}
 .council-strip p{color:var(--muted);margin-top:4px}
 </style>
-<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/insights-events#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/insights-events&quot;,&quot;name&quot;:&quot;GCC Events &amp; Summits: Pune, Hyderabad, Dubai&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/insights-events#webpage","url":"https://www.gccpros.com/insights-events","name":"GCC Events & Summits: Pune, Hyderabad, Dubai","inLanguage":"en-IN","dateModified":"2026-09-23","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
+<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/insights-events#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/insights-events&quot;,&quot;name&quot;:&quot;GCC Events &amp; Summits: Pune, Hyderabad, Dubai&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/insights-events#webpage","url":"https://www.gccpros.com/insights-events","name":"GCC Events & Summits: Pune, Hyderabad, Dubai","inLanguage":"en-IN","dateModified":"2026-09-24","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
 </head>
 <body class="gp" data-line="events">
 <!-- gp:nav -->
@@ -245,7 +246,7 @@
         <div>
           <span class="eyebrow eyebrow--pill" data-reveal>GCC Leadership Summits</span>
           <h1 class="display split-words">One room. <em>The people who decide.</em></h1>
-      <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-09-23">23 September 2026</time></p>
+      <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-09-24">24 September 2026</time></p>
           <p class="lede" data-reveal style="--d:3">Invite-only summits and closed-door roundtables where GCC site heads, country heads and policy makers talk about <strong>what is working, and what is not</strong>. Built by GCC leaders, for GCC leaders.</p>
           <div class="btn-row" data-reveal style="--d:4">
             <a class="btn btn--primary btn--magnetic" href="#rsvp" data-rsvp-event="Hyderabad GCC Leadership Summit (20 Nov 2026)" data-rsvp-city="Hyderabad">Register for Hyderabad <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
@@ -317,11 +318,12 @@
         <span class="eyebrow" data-reveal>Recap &middot; Conrad, Pune &middot; 11 August 2026</span>
         <h2 id="pune-title" data-reveal style="--d:1">GCC Leadership Summit <em>2026.</em></h2>
         <p data-reveal style="--d:2">One room with the people who actually run India&rsquo;s GCCs. A closed-door, vendor-free forum where site heads, country heads and domain heads sat with the state&rsquo;s top policy makers. From the ceremonial lamp-lighting to frank panels on talent and innovation, the day was built on real conversation, not pitches.</p>
+        <p data-reveal style="--d:2"><strong>Protiviti</strong> joined as Silver Partner, represented by Managing Directors <strong>Nancy Bhatt</strong> and <strong>Tarun Arora</strong>. The talent track ran twice: a panel on talent roles and bottlenecks with Anthony Hayward (Hardskills), Kalpesh Seta (TomTom) and Ashutosh Sharma (Checkmarx), moderated by GCCPROs CEO Shammi Prabhakar Singh; and a live GCC talent survey taken with the room. A second panel, on emerging industries and domains, featured <strong>Gopinath R Mujumdar</strong>, Centre Head at <strong>Bosch Global Software Technologies</strong> Pune. The accounts published by Protiviti and Bosch are collected in the <a href="/newsroom">newsroom</a>.</p>
         <span class="done-badge" data-reveal style="--d:3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> A resounding success</span>
         <div class="stats" data-reveal style="--n:4;--d:4">
           <div class="stat"><div class="stat__num" data-count="100">100<span class="u">+</span></div><div class="stat__label">GCC leaders in the room</div></div>
           <div class="stat"><div class="stat__num" data-count="80">80<span class="u">+</span></div><div class="stat__label">Companies represented</div></div>
-          <div class="stat"><div class="stat__num" data-count="4">4</div><div class="stat__label">Dignitaries on stage</div></div>
+          <div class="stat"><div class="stat__num" data-count="5">5</div><div class="stat__label">Dignitaries on stage</div></div>
           <div class="stat"><div class="stat__num" data-count="19">19</div><div class="stat__label">CEOs at the CM roundtable</div></div>
         </div>
       </div>
@@ -340,6 +342,7 @@
         <div class="card"><div class="mono-av">SP</div><span class="tag tag--teal">Guest of Honour</span><h3 style="margin-top:12px">Hon&rsquo;ble Smt. Sunetra Pawar</h3><p>Deputy Chief Minister of Maharashtra</p></div>
         <div class="card"><div class="mono-av">US</div><span class="tag">Special Guest</span><h3 style="margin-top:12px">Hon&rsquo;ble Shri Uday Samant</h3><p>Minister of Industries, Maharashtra</p></div>
         <div class="card"><div class="mono-av">MS</div><span class="tag tag--line">Special Address</span><h3 style="margin-top:12px">Shri Manoj Kumar Singh, IAS</h3><p>CEO, STC, Government of Uttar Pradesh</p></div>
+        <div class="card"><div class="mono-av">MN</div><span class="tag">Special Guest</span><h3 style="margin-top:12px">Smt. Manjusha Nagpure</h3><p>Mayor of Pune</p></div>
       </div>
     </div>
   </section>
