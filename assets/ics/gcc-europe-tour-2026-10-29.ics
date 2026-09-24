@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GCCPROs//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:gcc-europe-tour-2026-10-29@gccpros.com
+DTSTAMP:20260924T000000Z
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261106
+SUMMARY:GCCPROs Europe Tour: roadshows and roundtables
+LOCATION:London, Netherlands, Germany, Switzerland
+DESCRIPTION:GCC roadshows and curated, closed-door roundtables across Europe. Roundtables are by invitation. Details: https://www.gccpros.com/event
+URL:https://www.gccpros.com/event
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
