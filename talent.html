@@ -2069,7 +2069,7 @@ async function jsSubmit() {
       cvWhy = 'the file could not be read on this device';
     }
     if (cvDone) showResult('js-result-3', '✓ Registration complete. You are auto-approved, browse and apply.', true);
-    else showResult('js-result-3', '✓ You are registered and approved. Only the CV did not attach (' + cvWhy + '). Sign in and upload it from your dashboard, or email it to admin@gccpros.com.', 'warn');
+    else showResult('js-result-3', '✓ You are registered and approved. Only the CV did not attach (' + cvWhy + '). Sign in and add it under Profile in your dashboard, or email it to admin@gccpros.com.', 'warn');
     setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
@@ -2590,10 +2590,52 @@ function renderProfileTab() {
     '<div class="profile-meter"><div class="profile-meter-label">Profile completeness: <b>' + pct + '%</b></div>' +
     '<div class="profile-bar"><div class="profile-bar-fill" style="width:' + pct + '%;"></div></div></div>' +
     '<div class="profile-grid">' + rows + '</div>' +
+    (CURRENT_ACTIVE_VIEW === 'partner' ? '' :
+      '<div class="field" style="margin-top:20px;max-width:520px;">' +
+        '<label>CV / Resume</label>' +
+        '<input type="file" id="pf-cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">' +
+        '<div id="pf-cv-info" class="field-hint">' + (p.cvFilename || p.cv_filename ? 'On file: ' + esc(String(p.cvFilename || p.cv_filename)) + '. Choosing a new file replaces it.' : 'Add your CV here if it did not attach when you registered.') + '</div>' +
+        '<div id="pf-cv-result" class="result-line"></div>' +
+        '<button class="btn brand-orange" style="margin-top:10px;" onclick="savePfCv()">Upload CV</button>' +
+      '</div>') +
     '<div id="pf-result" class="result-line"></div>' +
     '<button class="btn brand-orange" onclick="saveProfile()">Save profile</button>';
+  bindPfCv();
 }
 
+function bindPfCv() {
+  const inp = document.getElementById('pf-cv');
+  if (inp) inp.onchange = function () { holdCv(inp, document.getElementById('pf-cv-info'), 'pf'); };
+}
+async function savePfCv() {
+  if (!CURRENT_EMAIL) return showResult('pf-cv-result', 'Not signed in.', false);
+  const inp = document.getElementById('pf-cv');
+  const file = inp && inp.files && inp.files[0];
+  if (!file) return showResult('pf-cv-result', 'Choose a CV file first.', false);
+  if (file.size > CV_MAX_BYTES) return showResult('pf-cv-result', 'CV exceeds 5 MB.', false);
+  const btn = document.querySelector('#console-content button[onclick="savePfCv()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Uploading\u2026'; }
+  try {
+    const p = await cvPayload('pf', file);
+    const r = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileBase64: p.b64, fileName: p.name, mimeType: p.type })
+    });
+    const j = await r.json();
+    if (j && j.error) {
+      console.error('[CV upload failed]', j);
+      showResult('pf-cv-result', 'Upload failed: ' + [j.error, j.hint].filter(Boolean).join(' \u00b7 ') + '. You can also email it to admin@gccpros.com.', false);
+    } else {
+      CURRENT_PROFILE = Object.assign({}, CURRENT_PROFILE, { cvFilename: j && j.filename ? j.filename : p.name });
+      showResult('pf-cv-result', '\u2713 CV uploaded. Recruiters download it by signed link only.', true);
+    }
+  } catch (e) {
+    console.error('[CV could not be read or sent]', e);
+    showResult('pf-cv-result', 'We could not read ' + file.name + ' on this device. Please choose the file again, from your phone storage rather than from a cloud app.', false);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Upload CV'; }
+  }
+}
 async function saveProfile() {
   if (!CURRENT_EMAIL) return showResult('pf-result', 'Not signed in.', false);
   const g = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
