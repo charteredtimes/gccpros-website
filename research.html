@@ -58,6 +58,21 @@
   .rhero h1 em{font-style:italic;color:var(--blue)}
   .rhero p{color:var(--mut);max-width:640px;margin:0 auto;font-size:16px;line-height:1.7}
 
+/* PREVIEW (signed out): the shelf, with the documents still locked */
+#preview{padding-bottom:6px}
+.pv-head{max-width:660px;margin:38px auto 24px;text-align:center}
+.pv-head h2{font-family:'Fraunces',Georgia,serif;font-weight:600;color:#07122B;font-size:28px;line-height:1.15;margin:0 0 10px}
+.pv-head p{color:#4A5670;font-size:15px;line-height:1.65;margin:0}
+.pv-card .doc-thumb{position:relative}
+.pv-lock{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:rgba(7,18,43,.72);color:#DCE7F7;font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.pv-lock svg{width:11px;height:11px}
+.pv-what{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px}
+.pv-what li{position:relative;padding-left:18px;font-size:14px;line-height:1.55;color:#4A5670}
+.pv-what li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:#2F5DA8}
+.pv-read{display:block;width:100%;margin-top:14px;border:0;cursor:pointer;background:#2F5DA8;color:#fff;font:700 13.5px/1 'Manrope',system-ui,sans-serif;padding:12px;border-radius:999px;transition:background .2s}
+.pv-read:hover{background:#244A88}
+.pv-note{margin:8px 0 0;font-size:12.5px;color:#6B7690;text-align:center}
+
   /* GATE */
   #gate{display:none;max-width:520px;margin:40px auto 90px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:36px 30px;text-align:center}
   #gate h2{font-family:'Playfair Display',serif;font-size:26px;margin:6px 0 8px}
@@ -361,7 +376,6 @@ try{
           <ul class="gp-drop">
             <li><a href="/data"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>GCC Database</b><small><span data-stat="world">4,611</span>+ verified Global Capability Centres</small></a></li>
             <li><a href="/research"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/></svg></span><b>Research &amp; reports</b><small>GCC Industry @ 2030, policy handbooks</small></a></li>
-            <li><a href="/newsroom"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/></svg></span><b>Newsroom</b><small>Press and government coverage</small></a></li>
             <li><a href="/gcc-india-atlas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>GCC India Atlas</b><small><span data-stat="india">2,503</span> GCCs by city, industry and maturity</small></a></li>
             <li><a href="/how-many-gccs-in-india"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg></span><b>How many GCCs in India?</b><small>The count, and why sources differ</small></a></li>
             <li><a href="/what-is-a-gcc"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14M12 17.5h.01"/></svg></span><b>What is a GCC?</b><small>The plain-English explainer</small></a></li>
@@ -369,6 +383,7 @@ try{
           </ul>
         </li>
         <li><a href="/consult">Consulting</a></li>
+        <li><a href="/newsroom">Newsroom</a></li>
         <li class="has-drop">
           <button type="button" aria-expanded="false" aria-haspopup="true">Community <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5 6 7.5l3-3"/></svg></button>
           <ul class="gp-drop">
@@ -389,9 +404,9 @@ try{
 </header>
 <div class="gp-mobile" id="gpMobile">
   <p class="gp-mobile__grp">Intelligence</p>
-  <a href="/data">GCC Database</a><a href="/research">Research &amp; reports</a><a href="/newsroom">Newsroom</a><a href="/gcc-india-atlas">GCC India Atlas</a><a href="/how-many-gccs-in-india">How many GCCs in India?</a><a href="/what-is-a-gcc">What is a GCC?</a><a href="/faq">FAQ &amp; glossary</a>
+  <a href="/data">GCC Database</a><a href="/research">Research &amp; reports</a><a href="/gcc-india-atlas">GCC India Atlas</a><a href="/how-many-gccs-in-india">How many GCCs in India?</a><a href="/what-is-a-gcc">What is a GCC?</a><a href="/faq">FAQ &amp; glossary</a>
   <p class="gp-mobile__grp">Work with us</p>
-  <a href="/consult">GCC Consulting</a><a href="/event">Events &amp; summits</a><a href="/talent">Talent</a>
+  <a href="/consult">GCC Consulting</a><a href="/newsroom">Newsroom</a><a href="/event">Events &amp; summits</a><a href="/talent">Talent</a>
   <p class="gp-mobile__grp">Community</p>
   <a href="/council-console">GCC Leaders&rsquo; Sign-in</a><a href="/council-signup">Join as a GCC leader</a><a href="/community-insider">GCC Insiders</a><a href="/industry-council">GCC Industry Council</a><a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu" target="_blank" rel="noopener">GCC Enthusiasts (WhatsApp)</a>
   <a class="gp-cta" href="/consult#book">Book a consultation</a>
@@ -407,16 +422,66 @@ try{
     <span class="eyebrow eyebrow--pill">Research &amp; intelligence</span>
     <h1>The GCC <em>knowledge vault.</em></h1>
       <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-09-24">24 September 2026</time></p>
-    <p>Deep industry intelligence, simplified state GCC policies and the book <a href="#book">GCC Industry @ 2030</a>: the GCC knowledge base we have been building since day one. Members read every report in full, in the browser, and can ask a research assistant grounded in our work.</p>
+    <p>Deep industry intelligence, simplified state GCC policies and the book <a href="#book">GCC Industry @ 2030</a>: the GCC knowledge base we have been building since day one. A free account opens every report in full, in the browser, along with a research assistant that answers from our own work.</p>
     <div class="rhero-cta"><a class="btn btn-primary" href="#book">Order the book</a><a class="btn btn-ghost" href="/data">Explore the GCC database</a></div>
   </div>
 </section>
 
+<!-- PREVIEW (signed out): what is on the shelf -->
+<div class="wrap" id="preview">
+  <div class="pv-head">
+    <h2>What is on the shelf</h2>
+    <p>Three publications, written by our own research team. An account is free, and it is the same login as the GCC Database.</p>
+  </div>
+  <div class="tiles">
+
+    <div class="tile pv-card">
+      <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg></div>
+      <h3>GCC Wave Report</h3>
+      <p>Our long-form read on where the GCC industry is going next. Updated September 2026.</p>
+      <div class="doc-thumb"><div class="cover" data-cover="magazine"><span class="cv-k">GCCPROS Research</span><span class="cv-t">GCC Wave</span><span class="cv-s">Report</span></div><span class="pv-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>Members only</span></div>
+      <ul class="pv-what">
+        <li>Growth: which cities and sectors are adding centres</li>
+        <li>Talent: what is getting harder to hire, and why</li>
+        <li>AI, location strategy and operating models</li>
+      </ul>
+      <button class="pv-read" onclick="openSignin()">Read it free</button>
+    </div>
+
+    <div class="tile pv-card">
+      <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 10 12 4l9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18"/></svg></div>
+      <h3>GCC Policies, simplified</h3>
+      <p>State GCC policies rewritten in plain English, so you can see what you would actually get.</p>
+      <div class="doc-grid">
+        <div class="doc-thumb"><div class="cover" data-cover="maharashtra"><span class="cv-k">GCCPROS Research</span><span class="cv-t">Maharashtra</span><span class="cv-s">GCC Policy, Simplified</span></div><span class="pv-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>Members only</span></div>
+        <div class="doc-thumb"><div class="cover" data-cover="uttar-pradesh"><span class="cv-k">GCCPROS Research</span><span class="cv-t">Uttar Pradesh</span><span class="cv-s">GCC Policy, Simplified</span></div><span class="pv-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>Members only</span></div>
+      </div>
+      <ul class="pv-what">
+        <li>Maharashtra and Uttar Pradesh, with more states to come</li>
+        <li>What each state offers, in language you can act on</li>
+      </ul>
+      <button class="pv-read" onclick="openSignin()">Read them free</button>
+    </div>
+
+    <div class="tile pv-card">
+      <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg></div>
+      <h3>Podcasts</h3>
+      <p>Candid conversations with GCC leaders about what is working, and what is not.</p>
+      <span class="soon">Coming soon, stay tuned</span>
+      <ul class="pv-what">
+        <li>Members get these as they are published</li>
+      </ul>
+    </div>
+
+  </div>
+  <p class="pv-note">Reports open in the browser. Nothing is emailed to you and nothing is downloaded.</p>
+</div>
+
 <!-- GATE (signed out) -->
 <div class="wrap"><div id="gate">
   <div class="lock"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
-  <h2>Members-only access</h2>
-  <p>This vault is open to GCCPROs Database members. Sign in with your GCCPROs account, or create a free account, to unlock the reports, handbooks and podcasts.</p>
+  <h2>Read the full reports, free</h2>
+  <p>Creating an account costs nothing and takes a minute. It is the same login as the GCC Database, so if you already have one, just sign in.</p>
   <div class="g-actions">
     <a class="btn btn-primary" id="btnSignin">Sign in</a>
     <a class="btn btn-ghost" id="btnSignup">Create free account</a>
@@ -702,6 +767,7 @@ try{
     document.getElementById('botfab').style.display='none';
   }
   function showHub(){
+    var pv=document.getElementById('preview'); if(pv) pv.style.display='none';
     document.getElementById('gate').style.display='none';
     document.getElementById('hub').style.display='block';
     document.getElementById('botfab').style.display='block';
