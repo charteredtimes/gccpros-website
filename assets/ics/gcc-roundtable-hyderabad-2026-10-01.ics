@@ -6,13 +6,13 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:gcc-roundtable-hyderabad-2026-10-01@gccpros.com
 DTSTAMP:20260924T000000Z
-DTSTART;VALUE=DATE:20261001
-DTEND;VALUE=DATE:20261002
+DTSTART:20261001T023000Z
+DTEND:20261001T043000Z
 SUMMARY:GCC breakfast roundtable, Hyderabad (GCCPROs)
 LOCATION:HITEC City, Hyderabad, India
-DESCRIPTION:A curated breakfast roundtable for twenty selected GCC site heads, hosted with a GCC founder and CEO. By invitation. Details: https://www.gccpros.com/event
+DESCRIPTION:A curated breakfast roundtable from 8:00 AM IST for twenty selected GCC site heads, hosted by the GCCPROs Founder and CEO. By invitation. Details: https://www.gccpros.com/event
 URL:https://www.gccpros.com/event
 STATUS:CONFIRMED
-TRANSP:TRANSPARENT
+TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR

@@ -6,13 +6,13 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:gcc-summit-hyderabad-2026-11-20@gccpros.com
 DTSTAMP:20260924T000000Z
-DTSTART;VALUE=DATE:20261120
-DTEND;VALUE=DATE:20261121
+DTSTART:20261120T033000Z
+DTEND:20261120T123000Z
 SUMMARY:GCC Leadership Summit, Hyderabad (GCCPROs)
 LOCATION:Hyderabad, Telangana, India
-DESCRIPTION:The GCC Leadership Summit with 200 GCC CXOs. Invitation only. Details: https://www.gccpros.com/gcc-summit-hyderabad-2026
+DESCRIPTION:The GCC Leadership Summit with 200 GCC CXOs, from 9:00 AM IST. Invitation only. Details: https://www.gccpros.com/gcc-summit-hyderabad-2026
 URL:https://www.gccpros.com/event
 STATUS:CONFIRMED
-TRANSP:TRANSPARENT
+TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR
