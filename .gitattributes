@@ -6,8 +6,8 @@
 # 2,725 insertions and 2,725 deletions in which nothing had actually changed.
 #
 # eol=lf rather than the default native checkout, so a Windows working tree matches what the runner
-# and the upload route produce. No file in this repository needs CRLF: there are no .bat, .cmd or
-# .ps1 files in it.
+# and the upload route produce. There are no .bat, .cmd or .ps1 files here. The one exception is
+# calendar files, handled below.
 #
 # This alone is not enough, which is why _tools/sync.js also normalises line endings before it
 # fingerprints a page or hashes an asset. A blob uploaded through the API can still arrive with CRLF.
@@ -24,3 +24,8 @@
 *.pdf  binary
 *.mp4  binary
 *.webm binary
+
+# Calendar files are the one place CRLF is correct: RFC 5545 specifies it as the line ending, and
+# some calendar clients are strict about it. -text means git stores and checks out the bytes exactly
+# as written, on every platform, so these stay CRLF while the rest of the site stays LF.
+*.ics  -text

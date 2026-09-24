@@ -51,7 +51,7 @@
     if (/^\/(gcc-india-atlas|what-is-a-gcc|how-many-gccs-in-india|faq)/.test(p)) return 'Free data and explainers';
     if (/^\/(data|database)/.test(p)) return 'Database';
     if (/^\/(consult|how-to-choose)/.test(p)) return 'Consulting';
-    if (/^\/(insights-events|events|gcc-summit)/.test(p)) return 'Events';
+    if (/^\/(event|insights-events|gcc-summit)/.test(p)) return 'Events';
     if (/^\/(talent|jobs|opportunities|candidate)/.test(p)) return 'Talent';
     if (/^\/(council|community|industry-council|awards)/.test(p)) return 'Community and council';
     if (/^\/(research|newsroom|insights|thought-leadership)/.test(p)) return 'Research and newsroom';
