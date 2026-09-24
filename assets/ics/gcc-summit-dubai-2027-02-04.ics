@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GCCPROs//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:gcc-summit-dubai-2027-02-04@gccpros.com
+DTSTAMP:20260924T000000Z
+DTSTART;VALUE=DATE:20270204
+DTEND;VALUE=DATE:20270205
+SUMMARY:The GCCPROs Global Summit, Dubai
+LOCATION:Dubai, United Arab Emirates
+DESCRIPTION:The first global edition of the GCCPROs summit. By invitation. Details: https://www.gccpros.com/gcc-summit-dubai-2027
+URL:https://www.gccpros.com/event
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
