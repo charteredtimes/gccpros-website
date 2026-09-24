@@ -1325,6 +1325,35 @@ async function verifyOtp(pfx) {
 function emailVerifiedFor(pfx, email) {
   return (!!googleVerifiedEmail && googleVerifiedEmail === email) || !!OTP_VERIFIED[pfx];
 }
+const CV_HELD = {};
+// Read the chosen file straight away, while the browser's grant on it is certainly still good,
+// and keep the bytes. Waiting until submit is what let the file reference go stale.
+async function holdCv(input, info, slot, note) {
+  CV_HELD[slot] = null;
+  const f = input.files && input.files[0];
+  if (!f) { info.textContent = ''; info.className = 'field-hint'; return; }
+  const label = f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)' + (note || '');
+  if (f.size > CV_MAX_BYTES) { info.textContent = label; info.className = 'field-hint err'; return; }
+  info.textContent = label + ' Reading\u2026';
+  info.className = 'field-hint';
+  try {
+    const b64 = await fileToBase64(f);
+    CV_HELD[slot] = { name: f.name, type: f.type || 'application/octet-stream', b64: b64 };
+    info.textContent = label;
+    info.className = 'field-hint ok';
+  } catch (e) {
+    console.error('[CV could not be read]', e);
+    info.textContent = 'Could not read ' + f.name + ' on this device. Please choose it again, from your phone storage rather than from a cloud app.';
+    info.className = 'field-hint err';
+  }
+}
+// Use the bytes captured at selection. If they are missing, try once more before giving up.
+async function cvPayload(slot, file) {
+  const held = CV_HELD[slot];
+  if (held && held.b64) return held;
+  const b64 = await fileToBase64(file);
+  return { name: file.name, type: file.type || 'application/octet-stream', b64: b64 };
+}
 async function fileToBase64(file) {
   if (file && typeof file.arrayBuffer === 'function') {
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -1952,14 +1981,7 @@ function openJobSeekerSignup() {
   openModal('js-modal');
   setTimeout(() => mountTS('turnstile-js'), 80);
   const cv = document.getElementById('js-cv');
-  if (cv) cv.onchange = function() {
-    const info = document.getElementById('js-cv-info');
-    if (cv.files && cv.files[0]) {
-      const f = cv.files[0];
-      info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB)';
-      info.className = 'field-hint ' + (f.size > CV_MAX_BYTES ? 'err' : 'ok');
-    }
-  };
+  if (cv) cv.onchange = function() { holdCv(cv, document.getElementById('js-cv-info'), 'js'); };
 }
 
 function jsStep1to2() {
@@ -2030,18 +2052,24 @@ async function jsSubmit() {
         }
       }
     }
-    const b64 = await fileToBase64(cvFile);
-    const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type })
-    });
-    const uj = await ur.json();
-    if (uj.error) {
-      const detailMsg = [uj.error, uj.hint, uj.details ? ',  ' + uj.details : ''].filter(Boolean).join(' · ');
-      console.error('[CV upload failed]', uj);
-      showResult('js-result-3', '✓ Account created but CV upload failed: ' + detailMsg + '. You can re-upload from your dashboard.', 'warn');
+    // The account exists by this point. Whatever happens to the CV, say so plainly, because the
+    // candidate previously saw a bare browser error and had no way to know they were registered.
+    let cvDone = false, cvWhy = '';
+    try {
+      const p = await cvPayload('js', cvFile);
+      const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(email), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileBase64: p.b64, fileName: p.name, mimeType: p.type })
+      });
+      const uj = await ur.json();
+      if (uj.error) { cvWhy = [uj.error, uj.hint, uj.details ? ',  ' + uj.details : ''].filter(Boolean).join(' · '); console.error('[CV upload failed]', uj); }
+      else cvDone = true;
+    } catch (ce) {
+      console.error('[CV could not be read or sent]', ce);
+      cvWhy = 'the file could not be read on this device';
     }
-    else showResult('js-result-3', '✓ Registration complete. You are auto-approved, browse and apply.', true);
+    if (cvDone) showResult('js-result-3', '✓ Registration complete. You are auto-approved, browse and apply.', true);
+    else showResult('js-result-3', '✓ You are registered and approved. Only the CV did not attach (' + cvWhy + '). Sign in and upload it from your dashboard, or email it to admin@gccpros.com.', 'warn');
     setTimeout(() => { closeModal('js-modal'); loadProfileAndDashboard(); }, 1800);
   } catch (err) {
     showResult('js-result-3', err.message, false);
@@ -2162,14 +2190,7 @@ function openApplyModal(jobId, title, company) {
   const cv = document.getElementById('ap-cv');
   if (cv) {
     cv.value = '';
-    cv.onchange = function() {
-      const info = document.getElementById('ap-cv-info');
-      if (cv.files && cv.files[0]) {
-        const f = cv.files[0];
-        info.textContent = f.name + ' (' + (f.size/1024).toFixed(1) + ' KB), recruiters download via signed URL only.';
-        info.className = 'field-hint ' + (f.size > CV_MAX_BYTES ? 'err' : 'ok');
-      }
-    };
+    cv.onchange = function() { holdCv(cv, document.getElementById('ap-cv-info'), 'ap', ', recruiters download via signed URL only.'); };
   }
   const pan = document.getElementById('ap-pan');
   if (pan) pan.oninput = () => {
@@ -2231,11 +2252,16 @@ async function _apSubmitInner() {
   const btn = document.querySelector('#apply-modal .btn:not(.secondary)');
   btn.disabled = true; btn.textContent = 'Uploading CV…';
   try {
-    const b64 = await fileToBase64(cvFile);
+    let p;
+    try { p = await cvPayload('ap', cvFile); }
+    catch (ce) {
+      console.error('[CV could not be read]', ce);
+      throw new Error('We could not read ' + cvFile.name + ' on this device. Please choose the file again, from your phone storage rather than from a cloud app.');
+    }
     const ur = await apiFetch(SCRIPT_URL + '?action=oppsUploadCV&email=' + encodeURIComponent(CURRENT_EMAIL) + '&context=application', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      // v8.19-fix F5: mimeType fallback, some browsers return empty string for cvFile.type
-      body: JSON.stringify({ fileBase64: b64, fileName: cvFile.name, mimeType: cvFile.type || 'application/octet-stream' })
+      // mimeType fallback: some browsers return an empty string for file.type
+      body: JSON.stringify({ fileBase64: p.b64, fileName: p.name, mimeType: p.type })
     });
     const uj = await ur.json();
     if (uj.error) {
