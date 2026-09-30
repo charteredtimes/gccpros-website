@@ -8,7 +8,8 @@
   "4,611",
   "4,625",
   "4,639",
-  "4,640"
+  "4,640",
+  "4,641"
  ],
  "world_floor": [
   "4,300+",
@@ -25,7 +26,8 @@
   "2,503",
   "2,517",
   "2,531",
-  "2,532"
+  "2,532",
+  "2,533"
  ],
  "india_floor": [
   "2,400+",
@@ -43,13 +45,15 @@
   "2,371",
   "2,370",
   "2,384",
-  "2,398"
+  "2,398",
+  "2,399"
  ],
  "setup_recorded": [
   "2,298",
   "2,399",
   "2,413",
-  "2,427"
+  "2,427",
+  "2,428"
  ],
  "as_of": [
   "22 September 2026",
@@ -58,7 +62,8 @@
   "25 September 2026",
   "26 September 2026",
   "27 September 2026",
-  "29 September 2026"
+  "29 September 2026",
+  "30 September 2026"
  ],
  "as_of_iso": [
   "2026-09-22",
@@ -67,7 +72,8 @@
   "2026-09-25",
   "2026-09-26",
   "2026-09-27",
-  "2026-09-29"
+  "2026-09-29",
+  "2026-09-30"
  ],
  "year": [
   "2026"
@@ -86,7 +92,8 @@
  ],
  "multi_city_pct": [
   "34.8%",
-  "34.6%"
+  "34.6%",
+  "34.7%"
  ],
  "gen34_pct": [
   "47%"
@@ -106,7 +113,8 @@
   "458",
   "457",
   "466",
-  "470"
+  "470",
+  "471"
  ],
  "pharma_india": [
   "93"
@@ -134,7 +142,8 @@
  "bengaluru_share": [
   "55%",
   "54.9%",
-  "54.7%"
+  "54.7%",
+  "54.6%"
  ],
  "bengaluru_since2023": [
   "212",
@@ -176,7 +185,8 @@
   "17"
  ],
  "hyderabad": [
-  "522"
+  "522",
+  "523"
  ],
  "hyderabad_share": [
   "20.9%",
@@ -184,13 +194,16 @@
   "20.6%"
  ],
  "hyderabad_since2023": [
-  "115"
+  "115",
+  "116"
  ],
  "hyderabad_since2023_pct": [
-  "22%"
+  "22%",
+  "22.2%"
  ],
  "hyderabad_dataai_pct": [
-  "52.9%"
+  "52.9%",
+  "52.8%"
  ],
  "hyderabad_pharma": [
   "39"
@@ -298,7 +311,8 @@
   "Bengaluru 1,377, Pune 559, Hyderabad 522, Delhi NCR 478, Mumbai 364, Chennai 364",
   "Bengaluru 1,381, Pune 559, Hyderabad 522, Delhi NCR 478, Chennai 367, Mumbai 365",
   "Bengaluru 1,384, Pune 559, Hyderabad 522, Delhi NCR 482, Chennai 370, Mumbai 366",
-  "Bengaluru 1,384, Pune 559, Hyderabad 522, Delhi NCR 482, Chennai 370, Mumbai 367"
+  "Bengaluru 1,384, Pune 559, Hyderabad 522, Delhi NCR 482, Chennai 370, Mumbai 367",
+  "Bengaluru 1,384, Pune 559, Hyderabad 523, Delhi NCR 482, Chennai 370, Mumbai 367"
  ],
  "gen_known": [
   "2,177"
