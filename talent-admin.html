@@ -205,8 +205,8 @@ td.actions { white-space:nowrap; }
     </div>
     <div class="domain-card rsvp" onclick="pickDomain('rsvp')" id="card-rsvp">
       <div class="icon">&#128197;</div>
-      <h2>Roundtable RSVPs</h2>
-      <p>Interest captured from the Insights &amp; Events page: city, company, designation &amp; topics.</p>
+      <h2>Events RSVPs</h2>
+      <p>Interest captured from the Events page: city, company, designation &amp; topics.</p>
       <div class="pills"><span>City</span><span>Interest</span><span>Topics</span></div>
     </div>
     <div class="domain-card research" onclick="pickDomain('research')" id="card-research">
@@ -527,6 +527,9 @@ td.actions { white-space:nowrap; }
       #consult-box .qa{margin:6px 0 0;padding:8px 10px;background:#FFFFFF;border:1px solid #e5e9f0;border-radius:8px}
       #consult-box .qa .q{color:#5b6b84}#consult-box .qa .a{font-weight:600}
       .pill-int{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF5FF;color:#125BD0;border:1px solid #CFE2FB}
+      #consult-box .lead-status{font:inherit;font-size:12px;font-weight:600;padding:4px 6px;border:1px solid #CFE2FB;border-radius:7px;background:#fff;color:#12203a;cursor:pointer;min-width:104px}
+      #consult-box .lead-status:disabled{opacity:.55;cursor:progress}
+      #consult-box .lead-status:focus-visible{outline:2px solid #2F5DA8;outline-offset:1px}
     </style>
     <div class="card">
       <h3>Consulting Leads &middot; GCC Consulting chat bot</h3>
@@ -940,7 +943,7 @@ async function loadConsultLeads() {
 function consultFiltered() {
   const q = (document.getElementById('consult-q').value || '').trim().toLowerCase();
   if (!q) return CONSULT_ROWS;
-  return CONSULT_ROWS.filter(x => [x.company, x.email, x.focus, x.intent, x.summary].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+  return CONSULT_ROWS.filter(x => [x.company, x.email, x.focus, x.intent, x.summary, x.status].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
 }
 function transcriptText(t) {
   if (!Array.isArray(t)) return '';
@@ -952,7 +955,7 @@ function renderConsultLeads() {
   if (st) st.textContent = rows.length + ' / ' + CONSULT_ROWS.length + ' leads';
   const box = document.getElementById('consult-box');
   if (!CONSULT_ROWS.length) { box.innerHTML = '<p class="loading">No leads yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Company</th><th>Email</th><th>Type</th><th>Focus</th><th>Summary</th><th>Conversation</th></tr></thead><tbody>';
+  let h = '<table><thead><tr><th>When</th><th>Status</th><th>Company</th><th>Email</th><th>Type</th><th>Focus</th><th>Summary</th><th>Conversation</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
     let qa = '';
@@ -962,15 +965,50 @@ function renderConsultLeads() {
         (x.extra ? '<div class="qa"><div class="q">Also noted</div><div class="a">' + esc(x.extra) + '</div></div>' : '') + '</details>';
     }
     h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
+      + '<td>' + statusSelect(x) + '</td>'
       + '<td><b>' + esc(x.company) + '</b></td><td>' + esc(x.email) + '</td>'
       + '<td><span class="pill-int">' + esc(x.intent) + '</span></td><td>' + esc(x.focus) + '</td>'
       + '<td>' + esc(x.summary) + '</td><td>' + qa + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
+const CONSULT_STATUSES = [['open','Open'],['in_progress','In Progress'],['completed','Completed'],['closed','Closed'],['irrelevant','Irrelevant']];
+function statusSelect(x) {
+  // Anything unrecognised falls back to Open rather than rendering an empty select, so a row
+  // written by an older client still shows something sensible.
+  const cur = CONSULT_STATUSES.some(s => s[0] === x.status) ? x.status : 'open';
+  return '<select class="lead-status" data-id="' + esc(x.id) + '" data-prev="' + esc(cur) + '" onchange="setConsultStatus(this)">'
+    + CONSULT_STATUSES.map(s => '<option value="' + s[0] + '"' + (s[0] === cur ? ' selected' : '') + '>' + s[1] + '</option>').join('')
+    + '</select>';
+}
+async function setConsultStatus(sel) {
+  const id = sel.getAttribute('data-id'), prev = sel.getAttribute('data-prev'), next = sel.value;
+  if (next === prev) return;
+  sel.disabled = true;
+  try {
+    const r = await fetch(CONSULT_URL + '?action=adminSetStatus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+      body: JSON.stringify({ id: id, status: next })
+    });
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status));
+    // Keep the in-memory row in step: the filter box and the CSV export both read CONSULT_ROWS.
+    const row = CONSULT_ROWS.find(z => z.id === id);
+    if (row) row.status = j.newStatus || next;
+    sel.setAttribute('data-prev', next);
+    sel.style.outline = '2px solid #1C7C3C';
+    setTimeout(function () { sel.style.outline = ''; }, 900);
+  } catch (e) {
+    sel.value = prev;                       // put it back; nothing was saved
+    alert('Could not update status: ' + (e && e.message ? e.message : 'unknown error'));
+  } finally {
+    sel.disabled = false;
+  }
+}
 function exportConsultLeads() {
   if (!CONSULT_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Company','company'],['Email','email'],['Intent','intent'],['Focus','focus'],['Summary','summary'],['Extra','extra'],['Transcript','transcript']];
+  const cols = [['When','created_at'],['Status','status'],['Company','company'],['Email','email'],['Intent','intent'],['Focus','focus'],['Summary','summary'],['Extra','extra'],['Transcript','transcript']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
   CONSULT_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'transcript') v = transcriptText(v); if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
