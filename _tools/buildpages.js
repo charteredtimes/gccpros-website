@@ -559,7 +559,8 @@ console.log('gcc-india-atlas.html\nwhat-is-a-gcc.html\nwrote', n, 'pages');
     return `  <div class="bar${i === 0 ? ' bar--hi' : ''}" role="listitem" style="--w:${w}%;--i:${i}">`
       + `<span class="bar__name">${esc(name)}</span>`
       + `<span class="bar__track"><span class="bar__fill"></span></span>`
-      + `<span class="bar__val">${fmt(count)}</span></div>`;
+      + `<span class="bar__val">${fmt(count)}</span>`
+      + `<a class="bar__link" href="/data" aria-label="${esc(name)}: ${fmt(count)} verified Global Capability Centres. Open the GCC database"></a></div>`;
   };
   const html = '<div class="bars" data-bars role="list">\n' + rows.map(bar).join('\n') + '\n</div>';
   fs.writeFileSync(S + '_partials/country-bars.html', html + '\n');

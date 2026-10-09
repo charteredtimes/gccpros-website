@@ -158,6 +158,10 @@ a.card:hover,.card.is-hover:hover{transform:translateY(-6px);box-shadow:var(--sh
 /* ---------- stats ---------- */
 .stats{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));border-top:1px solid var(--line-2)}
 .stat{padding:26px 26px 6px 0}
+a.stat{display:block;color:inherit;text-decoration:none;transition:opacity .18s ease}
+a.stat:hover .stat__num,a.stat:focus-visible .stat__num{color:var(--brand)}
+.band-dark a.stat:hover .stat__num,.band-dark a.stat:focus-visible .stat__num{color:var(--ice)}
+a.stat:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
 .stat+.stat{padding-left:26px;border-left:1px solid var(--line)}
 .stat__num{font-family:var(--serif);font-size:clamp(42px,4.8vw,64px);font-weight:700;color:var(--ink);letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;font-optical-sizing:auto}
 .stat__num sup,.stat__num .u{font-size:.5em;color:var(--brand);vertical-align:.7em;margin-left:2px;font-weight:600}
