@@ -108,6 +108,37 @@ for (const f of files.filter(f => /\.html$/i.test(f))) {
   }
 }
 
+// 6. a hand-written data-count must never sit on an element that holds a live figure
+// gp.js counts up by replacing the element's innerHTML frame by frame, so a data-count on an
+// element containing a data-stat slot silently overwrites the stamped figure the moment the
+// animation runs. The homepage stamped 4,641 and then animated to a stale 4506, and 4,506 is what
+// every visitor was left looking at. gp.js now counts up to the slot instead, and this stops the
+// pairing being reintroduced.
+for (const f of files.filter(f => /\.html$/i.test(f))) {
+  const s = fs.readFileSync(f, 'utf8');
+  for (const m of s.matchAll(/<([a-z]+)[^>]*\bdata-count="([^"]*)"[^>]*>([\s\S]*?)<\/\1>/g)) {
+    const slot = m[3].match(/data-stat="([a-z0-9_]+)"/);
+    if (slot) problems.push(`countup: ${rel(f)}: data-count="${m[2]}" wraps the live slot "${slot[1]}"; drop data-count and let the animation read the slot`);
+  }
+}
+
+// 7. figures that belong to the database must not be typed into a page by hand
+// The homepage carried ten hand-typed country figures ("South Africa 120+") beside the Atlas
+// table's live count of 57, and the two disagreed in public. The chart is generated now; this
+// makes sure it stays generated and never silently empties.
+{
+  const idx = files.find(f => /[\\/]index\.html$/i.test(f));
+  if (idx) {
+    const s = fs.readFileSync(idx, 'utf8');
+    const m = s.match(/<!-- gp:country-bars -->([\s\S]*?)<!-- \/gp:country-bars -->/);
+    if (!m) problems.push('country-bars: index.html no longer has the <!-- gp:country-bars --> markers, so the chart is hand-written again');
+    else {
+      const rows = (m[1].match(/class="bar[ "]/g) || []).length;
+      if (rows < 5) problems.push(`country-bars: index.html chart holds only ${rows} rows; the partial did not build`);
+    }
+  }
+}
+
 const uniq = [...new Set(problems)];
 if (uniq.length) { console.error(`CHECKS FAILED (${uniq.length}):\n  ` + uniq.slice(0, 60).join('\n  ') + (uniq.length > 60 ? `\n  ...and ${uniq.length - 60} more` : '')); process.exit(1); }
-console.log('checks passed: no em-dashes, all scripts and JSON parse, no banned accent colours, tags balance');
+console.log('checks passed: no em-dashes, all scripts and JSON parse, no banned accent colours, tags balance, no figure typed over a live slot');

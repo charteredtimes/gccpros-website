@@ -24,7 +24,9 @@ const read = f => fs.readFileSync(P(f), 'utf8');
 // visitor's cache on a run where nothing actually changed.
 const hash = f => crypto.createHash('md5').update(fs.readFileSync(P(f), 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
 const md5 = s => crypto.createHash('md5').update(s).digest('hex');
-const parts = { head: read('_partials/head.html'), 'head-app': read('_partials/head-app.html'), nav: read('_partials/nav.html'), footer: read('_partials/footer.html') };
+// country-bars.html is not hand-written like the others: buildpages.js regenerates it from the
+// same by_country data the Atlas table uses, so the homepage chart cannot drift from the database.
+const parts = { head: read('_partials/head.html'), 'head-app': read('_partials/head-app.html'), nav: read('_partials/nav.html'), footer: read('_partials/footer.html'), 'country-bars': read('_partials/country-bars.html') };
 const ver = { core: hash('assets/css/gp-core.css'), css: hash('assets/css/gp.css'), js: hash('assets/js/gp.js'), map: hash('assets/js/gp-map.js') };
 
 // ---- figures ------------------------------------------------------------------------------

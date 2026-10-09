@@ -535,3 +535,33 @@ for (const [slug, C] of Object.entries(CITIES)) {
 fs.writeFileSync(S + 'gcc-india-atlas.html', atlasPage()); n++;
 fs.writeFileSync(S + 'what-is-a-gcc.html', whatIsPage()); n++;
 console.log('gcc-india-atlas.html\nwhat-is-a-gcc.html\nwrote', n, 'pages');
+
+/* ---- homepage country chart -------------------------------------------------------------
+   The homepage used to carry ten hand-typed country figures ("Philippines 1,200+", "South
+   Africa 120+") beside one live slot for India. They were market estimates, the atlas table
+   beside them was the verified database count, and the two disagreed in public: South Africa
+   read 120+ on the homepage and 57 on the atlas. Rather than keep two sets of numbers in step
+   by hand, the chart is now generated here from the same by_country data the atlas uses, and
+   injected into index.html by sync.js through the <!-- gp:country-bars --> markers.
+   Names, values, order and bar widths all come from the database, so a country overtaking
+   another re-orders the chart on its own. */
+{
+  const india = (D.by_country || []).find(r => r[0] === 'India');
+  const rows = (D.by_country || []).filter(r => r[0] && r[0] !== 'India').slice(0, 10);
+  if (!rows.length || !india) throw new Error('by_country missing from gcc-atlas.json; run buildatlas.js');
+  // India is left out of the bars and named in the heading instead. It holds 2,532 of 4,640, so
+  // including it would scale every other country to a 3-14% sliver and the chart would show
+  // nothing except that India is large, which the page already says twice. Bars are scaled to the
+  // largest market outside India, and the caption gives India's figure so nothing is hidden.
+  const max = rows[0][1];
+  const bar = ([name, count], i) => {
+    const w = Math.round(count / max * 1000) / 10;
+    return `  <div class="bar${i === 0 ? ' bar--hi' : ''}" role="listitem" style="--w:${w}%;--i:${i}">`
+      + `<span class="bar__name">${esc(name)}</span>`
+      + `<span class="bar__track"><span class="bar__fill"></span></span>`
+      + `<span class="bar__val">${fmt(count)}</span></div>`;
+  };
+  const html = '<div class="bars" data-bars role="list">\n' + rows.map(bar).join('\n') + '\n</div>';
+  fs.writeFileSync(S + '_partials/country-bars.html', html + '\n');
+  console.log('_partials/country-bars.html', rows.length, 'countries outside India, largest', rows[0][0], fmt(max), '| India', fmt(india[1]));
+}

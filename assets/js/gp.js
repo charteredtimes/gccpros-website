@@ -99,7 +99,16 @@
   /* ---------- counters ---------- */
   var fmt = function (n, loc) { return n.toLocaleString(loc || 'en-US'); };
   var countUp = function (el) {
-    var to = parseFloat(el.getAttribute('data-count')), dec = +(el.getAttribute('data-decimals') || 0), loc = el.getAttribute('data-locale') || 'en-US';
+    // Count up to the LIVE figure, not to a hand-written data-count. This element's HTML is
+    // replaced frame by frame, so whatever the build pipeline stamped into a data-stat slot inside
+    // it is destroyed the moment the animation starts. Reading the slot first means the animation
+    // can never disagree with the database: before this, the homepage stamped 4,641 and then
+    // animated to a stale data-count of 4506, and 4,506 is what every visitor was left looking at.
+    // data-count is still honoured for elements that have no slot.
+    var slot = el.querySelector && el.querySelector('[data-stat]');
+    var raw = slot ? slot.textContent : el.getAttribute('data-count');
+    var to = parseFloat(String(raw == null ? '' : raw).replace(/,/g, '').replace(/[^0-9.-]/g, ''));
+    var dec = +(el.getAttribute('data-decimals') || 0), loc = el.getAttribute('data-locale') || 'en-US';
     var suffix = el.querySelector('.u'), sufHTML = suffix ? suffix.outerHTML : '';
     if (reduce || isNaN(to)) return;
     var t0 = performance.now(), dur = +(el.getAttribute('data-dur') || 1600);
