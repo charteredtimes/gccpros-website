@@ -55,7 +55,11 @@
 .globe-chip i svg{width:18px;height:18px}
 /* The chips are links to the database now, so they must not inherit link underline or colour,
    and they need a visible affordance that they can be clicked, including from the keyboard. */
-a.globe-chip{text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+/* The base .globe-chip rule sets pointer-events:none, from when these chips were purely
+   decorative and aria-hidden. They are real links now, so the ones that are anchors have to take
+   the pointer back or they look clickable and do nothing. Left off the base rule on purpose: a
+   chip that is still a plain div stays non-interactive and out of the way of the globe canvas. */
+a.globe-chip{pointer-events:auto;text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
 a.globe-chip:hover,a.globe-chip:focus-visible{transform:translateY(-2px);box-shadow:0 10px 26px rgba(7,18,43,.16)}
 a.globe-chip:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
 .globe-chip--a{left:-2%;top:16%}
