@@ -1,11 +1,11 @@
 {
  "404.html": {
-  "fp": "bcf6e39e06ef3e9adc917ad14bcac794",
-  "date": "2026-09-24"
+  "fp": "8902cd9c9cdbdccde634f338abdf9648",
+  "date": "2026-10-10"
  },
  "about.html": {
-  "fp": "f11c7eccf2ad58242667beec03e990be",
-  "date": "2026-09-24"
+  "fp": "1917e5e0e86595042591cab9abe2c583",
+  "date": "2026-10-10"
  },
  "admin-b2b.html": {
   "fp": "72c4364eb475784b7dc904153e3c7a7c",
@@ -56,8 +56,8 @@
   "date": "2026-09-23"
  },
  "community-insider.html": {
-  "fp": "c4d4a04210efbf5382ac34c2bd5ec9b9",
-  "date": "2026-09-24"
+  "fp": "3d4a92c6ab4d2595b7f50101c1c037ac",
+  "date": "2026-10-10"
  },
  "community-leaders.html": {
   "fp": "2d18476c48ce7012d86e5639c3d1a823",
@@ -72,20 +72,20 @@
   "date": "2026-09-22"
  },
  "consult.html": {
-  "fp": "abc79b45378d4758624c3aed7661fa67",
-  "date": "2026-09-24"
+  "fp": "a37b9e261ba5309da8e249c3760eb68e",
+  "date": "2026-10-10"
  },
  "council-console.html": {
-  "fp": "83976c6648beeaa104e220630d71b87d",
-  "date": "2026-09-24"
+  "fp": "b3b6203f33db0c5a51ae95f9a5143342",
+  "date": "2026-10-10"
  },
  "council-demo.html": {
   "fp": "9bcd12ad4dfac723f97b3fbf27314b48",
   "date": "2026-09-22"
  },
  "council-signup.html": {
-  "fp": "24566959e64a315f5285b98d69b9a042",
-  "date": "2026-09-24"
+  "fp": "2c8046ed6efc004d65708b383a615630",
+  "date": "2026-10-10"
  },
  "customer-portal-live.html": {
   "fp": "ae15fb9a317ea5ad7c60a452a98dcde4",
@@ -96,7 +96,7 @@
   "date": "2026-09-22"
  },
  "data.html": {
-  "fp": "ef2c45b8e9e9aa23ffeec7a95fa4217f",
+  "fp": "14e6dc68b81c613e96441f44e6443fa3",
   "date": "2026-10-10"
  },
  "database-pro.html": {
@@ -108,8 +108,8 @@
   "date": "2026-09-23"
  },
  "event.html": {
-  "fp": "93f078fa192df945ee66abd6ad2ef637",
-  "date": "2026-09-29"
+  "fp": "b6464ce2e810e2c2f50dbb1131197a26",
+  "date": "2026-10-10"
  },
  "events-media.html": {
   "fp": "d039da6bd83ff88cb7bd5931f239fe65",
@@ -124,52 +124,52 @@
   "date": "2026-09-22"
  },
  "expert-dashboard.html": {
-  "fp": "4c24ffc84c43ad4947853c666e11ea58",
-  "date": "2026-09-24"
+  "fp": "22eee991886bcb6d97b37f0537468d1a",
+  "date": "2026-10-10"
  },
  "faq.html": {
-  "fp": "70f2ea33d50298ca25d8969e57f3deeb",
-  "date": "2026-09-24"
+  "fp": "33927d10d3c335c07fd53ea0fc0ad312",
+  "date": "2026-10-10"
  },
  "gcc-database.html": {
   "fp": "cf8409089f6affca04a386c664a53bd1",
   "date": "2026-09-23"
  },
  "gcc-in-bengaluru.html": {
-  "fp": "e10ba17ca8f21e4cf32f26590a87e5bd",
-  "date": "2026-10-09"
+  "fp": "4a693058bc03441034c081461e1f9f21",
+  "date": "2026-10-10"
  },
  "gcc-in-chennai.html": {
-  "fp": "789be58a0098220382ec1752e0a450a6",
-  "date": "2026-10-09"
+  "fp": "8f85eef3a25b2e6cf1fbd495fe727f97",
+  "date": "2026-10-10"
  },
  "gcc-in-delhi-ncr.html": {
-  "fp": "1879c0ad292f15e5772a5c7b08fefc47",
-  "date": "2026-10-09"
+  "fp": "c417a55007112e489c36defa6ca114b0",
+  "date": "2026-10-10"
  },
  "gcc-in-hyderabad.html": {
-  "fp": "a1f27537cc8fd43dc1e67098b69c8ade",
-  "date": "2026-10-09"
+  "fp": "7a537cef917d45fd08a2b1beb715b946",
+  "date": "2026-10-10"
  },
  "gcc-in-mumbai.html": {
-  "fp": "4a8f4cd8b7434d4d91f1b471767253d0",
-  "date": "2026-10-09"
+  "fp": "8e5878e998dda2802d5a62a29f01f13d",
+  "date": "2026-10-10"
  },
  "gcc-in-pune.html": {
-  "fp": "6ef788f633cf59b18a9b97549451e764",
-  "date": "2026-10-09"
+  "fp": "7d163de28f7a94e568a178c99e808f24",
+  "date": "2026-10-10"
  },
  "gcc-india-atlas.html": {
-  "fp": "46917e5ce5a0d6c8191dbdd0eb3484cf",
-  "date": "2026-10-09"
+  "fp": "69fb5ee09ac4a32d05d12f61b34911e4",
+  "date": "2026-10-10"
  },
  "gcc-summit-dubai-2027.html": {
-  "fp": "2fcc9f085d4a682e05364f5a46a05cf4",
-  "date": "2026-09-29"
+  "fp": "374c7b96c961cc0e3a71e846a98cddfd",
+  "date": "2026-10-10"
  },
  "gcc-summit-hyderabad-2026.html": {
-  "fp": "d945ef6912da0b1845d252720004c154",
-  "date": "2026-09-29"
+  "fp": "56a22e777037d7161fb589a888fbd207",
+  "date": "2026-10-10"
  },
  "gccpros-auth-action.html": {
   "fp": "bc44bafc85a0bf4f3a754adb655e082a",
@@ -180,20 +180,20 @@
   "date": "2026-09-23"
  },
  "how-many-gccs-in-india.html": {
-  "fp": "265b235b27626c76709cd86017a6d56b",
-  "date": "2026-09-24"
+  "fp": "a64e4f4583be872e02f68b433073517c",
+  "date": "2026-10-10"
  },
  "how-to-choose-a-gcc-consulting-firm.html": {
-  "fp": "a1bdb3a1986025d38640ab4ff577dca9",
-  "date": "2026-09-24"
+  "fp": "39371874c96f5ceabc9a469893f4dc29",
+  "date": "2026-10-10"
  },
  "index.html": {
-  "fp": "14403d0d16051de2fc1d5ffffbd2b3d8",
-  "date": "2026-10-09"
+  "fp": "fed94fa8a0cd038c54cb506448bce772",
+  "date": "2026-10-10"
  },
  "industry-council.html": {
-  "fp": "8b8e7c2aee2234888d3dfb269af675a9",
-  "date": "2026-09-24"
+  "fp": "d29abfa73d0929b0dea6da5095e1d7fc",
+  "date": "2026-10-10"
  },
  "insights-events.html": {
   "fp": "d039da6bd83ff88cb7bd5931f239fe65",
@@ -208,24 +208,24 @@
   "date": "2026-09-23"
  },
  "newsroom.html": {
-  "fp": "92f4ee20adb504aeb9f3ba349b7561a0",
-  "date": "2026-09-24"
+  "fp": "8281b9e9c6a853908fc534c709f381b6",
+  "date": "2026-10-10"
  },
  "opportunities.html": {
   "fp": "fa0237fe2cb1bf49297eaf65145194e7",
   "date": "2026-09-23"
  },
  "privacy.html": {
-  "fp": "1a818215450291efb9a66a3704ff88d1",
-  "date": "2026-09-24"
+  "fp": "2fdca047a27787d5c7e08a0a193a1d91",
+  "date": "2026-10-10"
  },
  "r.html": {
   "fp": "80b91ca6fdac868954c3011dc704af14",
   "date": "2026-09-22"
  },
  "research.html": {
-  "fp": "dad5aa84944f74e5464cd569295fbb24",
-  "date": "2026-09-24"
+  "fp": "6bff53214561faa6ccdea23d8fb27832",
+  "date": "2026-10-10"
  },
  "reset.html": {
   "fp": "bc44bafc85a0bf4f3a754adb655e082a",
@@ -236,12 +236,12 @@
   "date": "2026-10-10"
  },
  "talent.html": {
-  "fp": "957aade0c78f4939698d2e3a6a055ff6",
-  "date": "2026-09-24"
+  "fp": "db06b0ef37cc2e10c444800840968d9a",
+  "date": "2026-10-10"
  },
  "terms.html": {
-  "fp": "594e6816f1747c6d056ece622773f3ab",
-  "date": "2026-09-24"
+  "fp": "7dc4ec1d9ca5ffa755a18032e848c3cb",
+  "date": "2026-10-10"
  },
  "thought-leadership.html": {
   "fp": "40ad7646f0a1486778fb14e928bf882a",
@@ -252,7 +252,7 @@
   "date": "2026-09-24"
  },
  "what-is-a-gcc.html": {
-  "fp": "4b6d7d81388323df0b9e6250d9898b4f",
-  "date": "2026-10-09"
+  "fp": "da21f8188dc547c86bed98997989251f",
+  "date": "2026-10-10"
  }
 }
