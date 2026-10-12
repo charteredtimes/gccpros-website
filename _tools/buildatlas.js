@@ -49,7 +49,7 @@ const fmt = n => n.toLocaleString('en-US');
       multi_city: X.multi_city,
       countries: X.countries,
       ncr_sum: X.ncr_sum,
-      method: 'A GCC with offices in more than one city is counted in each of those cities, so the city figures add up to more than the national total. Every city, region and country total counts each GCC only once.'
+      method: 'A company that runs centres in more than one city counts once in the national and global totals, and appears in the count for each of those cities. So the city figures add up to more than the national total, and no company is counted twice within one city.'
     },
     scopes: SCOPES,
     scope_totals: Object.fromEntries(SCOPES.map(s => [s, X.scope_totals[s]])),
