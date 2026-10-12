@@ -61,4 +61,4 @@ for (const p of ['_partials/head.html', '_partials/head-app.html']) {
   fs.writeFileSync(P(p), t);
   n++;
 }
-console.log(`critical.css inlined into ${n} head partials: ${(critical.length / 1024).toFixed(1)} KB (gp.css now loads without blocking)`);
+console.log(`critical.css inlined into ${n} head partials: ${(critical.length / 1024).toFixed(1)} KB (first screen paints before gp.css)`);
