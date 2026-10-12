@@ -191,8 +191,8 @@ function cityPage(slug, C) {
   const n = D.scope_totals[C.scope], t = D.meta.total_india;
   const ind = T('industry', C.scope), dom = T('domain', C.scope), gen = T('generation', C.scope);
   const size = T('size', C.scope), vin = T('vintage', C.scope);
-  const title = `GCCs in ${C.name}: ${fmt(n)} Global Capability Centres | GCCPROs`;
-  const desc = `${fmt(n)} verified Global Capability Centres operate in ${C.name}, ${pc(n, t)}% of India\u2019s ${fmt(t)}. Breakdown by industry, function, maturity, size and year established.`;
+  const title = `GCCs in ${C.name}: List of ${fmt(n)} GCC Companies | GCCPROs`;
+  const desc = `A list of the ${fmt(n)} verified Global Capability Centres in ${C.name}, ${pc(n, t)}% of India\u2019s ${fmt(t)}, with the breakdown by industry, function, maturity, size and year established.`;
 
   const body = `      <span class="eyebrow eyebrow--pill" data-reveal>GCC city profile &middot; ${esc(C.state)}</span>
       <h1 class="display split-words">GCCs in <em>${esc(C.name)}.</em></h1>
@@ -270,7 +270,7 @@ function cityPage(slug, C) {
       </div>
       <div class="cta-panel" data-reveal style="margin-top:46px">
         <div><span class="eyebrow">The underlying records</span>
-        <h2 class="h3">Every one of these ${fmt(n)} centres, in full.</h2>
+        <h2 class="h3">The list of GCC companies in ${esc(C.name)}</h2>
         <p>Names, parent company, site leadership, headcount, functions and 46 fields per centre, all searchable, filterable and exportable.</p>
         <div class="btn-row"><a class="btn btn--primary" href="/data">Open the GCC database</a><a class="btn btn--ghost" href="/consult">Talk to a GCC advisor</a></div></div>
       </div>
