@@ -192,7 +192,7 @@ function cityPage(slug, C) {
   const ind = T('industry', C.scope), dom = T('domain', C.scope), gen = T('generation', C.scope);
   const size = T('size', C.scope), vin = T('vintage', C.scope);
   const title = `GCCs in ${C.name}: List of ${fmt(n)} GCC Companies | GCCPROs`;
-  const desc = `A list of the ${fmt(n)} verified Global Capability Centres in ${C.name}, ${pc(n, t)}% of India\u2019s ${fmt(t)}, with the breakdown by industry, function, maturity, size and year established.`;
+  const desc = `A list of the ${fmt(n)} verified Global Capability Centres in ${C.name}, ${pc(n, t)}% of India\u2019s ${fmt(t)}, by industry, function, maturity, size and year.`;
 
   const body = `      <span class="eyebrow eyebrow--pill" data-reveal>GCC city profile &middot; ${esc(C.state)}</span>
       <h1 class="display split-words">GCCs in <em>${esc(C.name)}.</em></h1>
