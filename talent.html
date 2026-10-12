@@ -165,6 +165,35 @@ a:hover { text-decoration: underline; }
 .filter-pill.your-domain { border-color: var(--brand-orange); color: var(--brand-orange); }
 .filter-pill.your-domain.active { background: var(--brand-orange); border-color: var(--brand-orange); color: #fff; }
 .your-domain-note { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+/* Job list: one role per row, three or four lines, scannable at 100+ roles */
+.jobs-list { display: grid; gap: 10px; }
+.jl-empty { text-align: center; color: var(--muted); padding: 28px 0; }
+.jrow { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px 22px; align-items: start; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: border-color .15s, box-shadow .25s, transform .25s; }
+.jrow:hover { border-color: var(--gold); box-shadow: 0 6px 20px rgba(47,93,168,.10); transform: translateY(-1px); }
+.jrow--urgent { border-left: 3px solid var(--gold); }
+.jrow__h { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.jrow__h h3 { font-family: 'Inter', system-ui, sans-serif; font-size: 16.5px; font-weight: 700; color: var(--ink); margin: 0; line-height: 1.3; }
+.jrow__urgent { font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #fff; background: var(--gold); padding: 3px 8px; border-radius: 999px; }
+.jrow__co { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); }
+.jrow__meta { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 9px 0 0; padding: 0; }
+.jrow__meta li { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink); font-weight: 600; }
+.jrow__meta svg { width: 13px; height: 13px; flex: none; color: var(--muted); }
+.jrow__skills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.jrow__skills span { font-size: 11px; color: var(--muted); background: #F1F5F9; border-radius: 5px; padding: 3px 7px; }
+.jrow__side { display: grid; justify-items: end; align-content: start; gap: 6px; text-align: right; min-width: 172px; }
+.jrow__ctc { font-family: 'Inter', system-ui, sans-serif; font-size: 15px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.jrow__ctc small { font-size: 11px; font-weight: 600; color: var(--muted); }
+.jrow__sub { font-size: 11.5px; color: var(--muted); }
+.jrow__act { display: flex; gap: 7px; margin-top: 4px; }
+.jrow__act .btn { padding: 8px 14px; font-size: 13px; }
+.jl-count { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+.jl-count b { color: var(--ink); }
+@media (max-width: 760px) {
+  .jrow { grid-template-columns: minmax(0,1fr); }
+  .jrow__side { justify-items: start; text-align: left; min-width: 0; }
+  .jrow__act { width: 100%; }
+  .jrow__act .btn { flex: 1; }
+}
 .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
 .job-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; transition: all 0.15s; display: flex; flex-direction: column; position: relative; }
 .job-card:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(10,102,194,0.08); transform: translateY(-2px); }
@@ -302,7 +331,7 @@ footer .ft-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 6
 .btn.employer-login{background:var(--brand-orange);color:#fff;border:none;text-decoration:none;}
 .btn.employer-login:hover{background:var(--brand-orange-dark);color:#fff;text-decoration:none;}
 /* ===== Guest sample teaser ===== */
-.guest-teaser{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#FFF7ED 0%,#DCE7F7 100%);border:2px dashed var(--brand-orange);border-radius:10px;padding:30px 24px;}
+.guest-teaser{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#EEF3FB 0%,#DCE7F7 100%);border:2px dashed var(--brand-orange);border-radius:10px;padding:30px 24px;}
 .guest-teaser-n{font-family:'Playfair Display',serif;font-size:42px;font-weight:800;color:var(--brand-orange);line-height:1;}
 .guest-teaser h3{font-family:'Inter';font-size:18px;font-weight:800;color:var(--ink);margin:4px 0 6px;}
 .guest-teaser p{font-size:13.5px;color:var(--muted);margin-bottom:14px;max-width:420px;}
@@ -499,9 +528,9 @@ body:has(.modal-overlay.open) .wa-fab{display:none}
         <li class="has-drop">
           <button type="button" aria-expanded="false" aria-haspopup="true">Intelligence <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5 6 7.5l3-3"/></svg></button>
           <ul class="gp-drop">
-            <li><a href="/data"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>GCC Database</b><small><span data-stat="world">4,658</span>+ verified Global Capability Centres</small></a></li>
+            <li><a href="/data"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>GCC Database</b><small><span data-stat="world">4,659</span>+ verified Global Capability Centres</small></a></li>
             <li><a href="/research"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/></svg></span><b>Research &amp; reports</b><small>GCC Industry @ 2030, policy handbooks</small></a></li>
-            <li><a href="/gcc-india-atlas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>GCC India Atlas</b><small><span data-stat="india">2,550</span> GCCs by city, industry and maturity</small></a></li>
+            <li><a href="/gcc-india-atlas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>GCC India Atlas</b><small><span data-stat="india">2,551</span> GCCs by city, industry and maturity</small></a></li>
             <li><a href="/how-many-gccs-in-india"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg></span><b>How many GCCs in India?</b><small>The count, and why sources differ</small></a></li>
             <li><a href="/what-is-a-gcc"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14M12 17.5h.01"/></svg></span><b>What is a GCC?</b><small>The plain-English explainer</small></a></li>
             <li><a href="/faq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7.5h7M8 11h5"/></svg></span><b>GCC FAQ &amp; glossary</b><small>Practitioner answers and the jargon</small></a></li>
@@ -589,7 +618,7 @@ body:has(.modal-overlay.open) .wa-fab{display:none}
 
   <section class="ts-panel" id="panel-employer">
     <div class="ts-proof"><div class="container ts-proof-row">
-      <div class="ts-stat"><div class="ts-stat-n"><span data-stat="world">4,658</span>+</div><div class="ts-stat-l">GCCs in our intelligence database</div></div>
+      <div class="ts-stat"><div class="ts-stat-n"><span data-stat="world">4,659</span>+</div><div class="ts-stat-l">GCCs in our intelligence database</div></div>
       <div class="ts-stat"><div class="ts-stat-n">9</div><div class="ts-stat-l">talent domains covered</div></div>
       <div class="ts-stat"><div class="ts-stat-n">70+</div><div class="ts-stat-l">verified partners in the network</div></div>
       <div class="ts-stat"><div class="ts-stat-n">100%</div><div class="ts-stat-l">identity protected sourcing</div></div>
@@ -674,7 +703,7 @@ body:has(.modal-overlay.open) .wa-fab{display:none}
         <a class="wa-inline" href="https://chat.whatsapp.com/FFMFERXMqaGJwurD7cY5J1" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 01-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg> Join the &ldquo;GCC Jobs&rdquo; WhatsApp group</a>
       </p>
     </div>
-    <div class="filter-bar" id="filter-bar" style="display:none;">
+    <div class="filter-bar" id="filter-bar">
       <input type="search" id="f-search" placeholder="&#128269; Search title, company, or skill&hellip;" oninput="renderJobs()">
       <select id="f-location" onchange="renderJobs()"><option value="">All locations</option></select>
       <select id="f-experience" onchange="renderJobs()">
@@ -687,10 +716,11 @@ body:has(.modal-overlay.open) .wa-fab{display:none}
       </select>
       <button class="btn secondary" onclick="resetFilters()" style="padding:8px 14px;">Reset</button>
     </div>
-    <div class="filter-pills" id="domain-pills" style="display:none;">
+    <div class="filter-pills" id="domain-pills">
       <button class="filter-pill active" data-domain="">All domains</button>
     </div>
-    <div id="job-list" class="jobs-grid">
+    <p class="jl-count" id="jl-count"></p>
+    <div id="job-list" class="jobs-list">
       <p style="grid-column: 1/-1; text-align: center; color: var(--muted);">Loading roles&hellip;</p>
     </div>
   </div>
@@ -1457,8 +1487,9 @@ function setSignedInChrome(signedIn) {
     if (h1) h1.innerHTML = "The talent engine for India&#39;s <span class=\"ts-grad\">Global Capability Centres.</span>";
     tiles.style.display = '';
     if (cta) cta.style.display = 'inline-block';
-    if (fb) fb.style.display = 'none';
-    if (dp) dp.style.display = 'none';
+    // Signed-out visitors browse the urgent roles, so they need the search and filters too.
+    if (fb) fb.style.display = '';
+    if (dp) dp.style.display = '';
   }
 }
 
@@ -1746,8 +1777,17 @@ async function loadJobs() {
   }
 }
 
+// Signed out, the listing is the urgent roles; signed in, it is everything.
+function isUrgentJob(j) {
+  return (j && (j.is_urgent === true || j.is_urgent === 'true')) || String((j && j.status) || '').toLowerCase() === 'urgent';
+}
+function visibleJobs() {
+  return CURRENT_EMAIL ? JOB_LIST : JOB_LIST.filter(isUrgentJob);
+}
+
 function populateFilters() {
-  const domains = Array.from(new Set(JOB_LIST.map(j => j.primary_domain).filter(Boolean))).sort();
+  const pool = visibleJobs();
+  const domains = Array.from(new Set(pool.map(j => j.primary_domain).filter(Boolean))).sort();
   const dp = document.getElementById('domain-pills');
   let html = '<button class="filter-pill' + (ACTIVE_DOMAIN === '' ? ' active' : '') + '" data-domain="">All domains</button>';
   domains.forEach(d => {
@@ -1768,7 +1808,7 @@ function populateFilters() {
       renderJobs();
     };
   });
-  const locs = Array.from(new Set(JOB_LIST.map(j => j.location).filter(Boolean))).sort();
+  const locs = Array.from(new Set(pool.map(j => j.location).filter(Boolean))).sort();
   const ls = document.getElementById('f-location');
   const prev = ls.value;
   ls.innerHTML = '<option value="">All locations</option>' + locs.map(l => '<option>' + esc(l) + '</option>').join('');
@@ -1807,29 +1847,88 @@ function renderJobs() {
   const el = document.getElementById('job-list');
   if (!el) return;
   if (!CURRENT_EMAIL) { renderGuestSample(el); return; }
-  const _isUrgent = j => (j && (j.is_urgent === true || j.is_urgent === 'true' || String(j.status || '').toLowerCase() === 'urgent')) ? 1 : 0;
-  const filtered = applyFilters(JOB_LIST).slice().sort((a, b) => _isUrgent(b) - _isUrgent(a));
-  if (!filtered.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No roles match the current filters. Try clearing them.</p>'; return; }
-  el.innerHTML = filtered.map(j => renderJobCard(j)).join('');
+  const filtered = applyFilters(JOB_LIST).slice().sort((a, b) => isUrgentJob(b) - isUrgentJob(a));
+  setJobCount(filtered.length, JOB_LIST.length, false);
+  if (!filtered.length) { el.innerHTML = '<p class="jl-empty">No roles match the current filters. Try clearing them.</p>'; return; }
+  el.innerHTML = filtered.map(j => renderJobRow(j)).join('');
+}
+
+function setJobCount(shown, total, guest) {
+  const n = document.getElementById('jl-count');
+  if (!n) return;
+  if (!total) { n.textContent = ''; return; }
+  n.innerHTML = guest
+    ? 'Showing <b>' + shown + '</b> of <b>' + total + '</b> roles marked urgent. Sign in for all <b>' + JOB_LIST.length + '</b>.'
+    : 'Showing <b>' + shown + '</b> of <b>' + total + '</b> open roles.';
 }
 
 function renderGuestSample(el) {
-  if (!JOB_LIST.length) { el.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">Loading roles&hellip;</p>'; return; }
-  const dom = d => JOB_LIST.filter(j => String(j.primary_domain || '').toLowerCase() === d);
-  const fin = dom('finance').slice(0, 2);
-  const tech = dom('technology').slice(0, 2);
-  let sample = fin.concat(tech);
-  const ids = new Set(sample.map(j => j.id));
-  for (const j of JOB_LIST) { if (sample.length >= 4) break; if (!ids.has(j.id)) { sample.push(j); ids.add(j.id); } }
-  const more = Math.max(0, JOB_LIST.length - sample.length);
-  const cards = sample.map(j => renderJobCard(j, true)).join('');
+  if (!JOB_LIST.length) { el.innerHTML = '<p class="jl-empty">Loading roles&hellip;</p>'; return; }
+  // Every role marked urgent is open to signed-out visitors, filters and all. Applying needs an account.
+  const urgent = JOB_LIST.filter(isUrgentJob);
+  const sample = applyFilters(urgent);
+  const more = Math.max(0, JOB_LIST.length - urgent.length);
+  setJobCount(sample.length, urgent.length, true);
+  if (!sample.length) { el.innerHTML = '<p class="jl-empty">No urgent roles match the current filters. Try clearing them.</p>'; return; }
+  const cards = sample.map(j => renderJobRow(j, true)).join('');
   const teaser = '<div class="guest-teaser">'
     + '<div class="guest-teaser-n">' + more + '+</div>'
     + '<h3>more roles inside the portal</h3>'
-    + '<p>Sign in for the full list and to apply or refer candidates.</p>'
+    + '<p>These are the roles not marked urgent. Sign in for the full list, and to apply or refer candidates.</p>'
     + '<button class="btn" onclick="openLoginModal()">🔓 Sign in for full view &rarr;</button>'
     + '</div>';
   el.innerHTML = cards + teaser;
+}
+
+// One role, one row. renderJobCard below is left alone: the Recommended tab still uses it.
+function renderJobRow(j, guest) {
+  const urgent = isUrgentJob(j);
+  const skills = splitToArr(j.skills);
+  // A role with only one bound used to render as " - <rupee>3,00,000", because fmtINR returns an
+  // empty string for null. Say "Up to" or "from" rather than leaving a dangling dash.
+  const lo = fmtINR(j.ctc_min_inr), hi = fmtINR(j.ctc_max_inr);
+  const ctcText = (lo && hi) ? lo + ' - ' + hi + ' <small>LPA</small>'
+    : hi ? 'Up to ' + hi + ' <small>LPA</small>'
+    : lo ? lo + '+ <small>LPA</small>'
+    : (j.budget_text ? esc(j.budget_text) : '<small>Competitive</small>');
+  const chips = skills.slice(0, 4).map(s => '<span>' + esc(s) + '</span>').join('')
+    + (skills.length > 4 ? '<span>+' + (skills.length - 4) + '</span>' : '');
+  const jsSafe = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+  const safeId = jsSafe(j.id), safeTitle = jsSafe(j.title), safeCo = jsSafe(j.company);
+  let detailBtn, actionBtn;
+  if (guest) {
+    detailBtn = '<button class="btn secondary" onclick="openLoginModal()">Details</button>';
+    actionBtn = '<button class="btn" onclick="openLoginModal()">Sign in to apply</button>';
+  } else if (CURRENT_ACTIVE_VIEW === 'partner') {
+    detailBtn = "<button class=\"btn secondary\" onclick=\"openJobDetail('" + safeId + "')\">Details</button>";
+    actionBtn = "<button class=\"btn brand-orange\" onclick=\"openReferModal('" + safeId + "')\">Refer &rarr;</button>";
+  } else {
+    detailBtn = "<button class=\"btn secondary\" onclick=\"openJobDetail('" + safeId + "')\">Details</button>";
+    actionBtn = "<button class=\"btn\" onclick=\"openApplyModal('" + safeId + "', '" + safeTitle + "', '" + safeCo + "')\">Apply &rarr;</button>";
+  }
+  const referral = (CURRENT_ACTIVE_VIEW === 'partner' && (j.referral_amount_inr || j.referral_amount_inr === 0))
+    ? '<div class="jrow__sub">' + fmtINR(j.referral_amount_inr) + ' referral</div>' : '';
+  const sub2 = [j.job_code ? esc(j.job_code) : '', j.posted_at ? 'Posted ' + relTime(j.posted_at) : ''].filter(Boolean).join(' &middot; ');
+  return '<article class="jrow' + (urgent ? ' jrow--urgent' : '') + '">'
+    + '<div class="jrow__main">'
+      + '<div class="jrow__h"><h3>' + esc(j.title || '') + '</h3>'
+      + (urgent ? '<span class="jrow__urgent">Urgent</span>' : '') + '</div>'
+      + '<p class="jrow__co">' + esc(j.company || '') + (j.primary_domain ? ' &middot; ' + esc(j.primary_domain) : '') + '</p>'
+      + '<ul class="jrow__meta">'
+        + (j.location ? '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>' + esc(j.location) + '</li>' : '')
+        + (j.experience_band ? '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>' + esc(j.experience_band) + '</li>' : '')
+        + (j.mode ? '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h2M13 10h2M9 14h2M13 14h2"/></svg>' + esc(j.mode) + '</li>' : '')
+        + (j.level ? '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>' + esc(j.level) + '</li>' : '')
+      + '</ul>'
+      + (chips ? '<div class="jrow__skills">' + chips + '</div>' : '')
+    + '</div>'
+    + '<div class="jrow__side">'
+      + '<div class="jrow__ctc">' + ctcText + '</div>'
+      + (sub2 ? '<div class="jrow__sub">' + sub2 + '</div>' : '')
+      + referral
+      + '<div class="jrow__act">' + detailBtn + actionBtn + '</div>'
+    + '</div>'
+  + '</article>';
 }
 
 function renderJobCard(j, guest) {
