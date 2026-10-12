@@ -1,0 +1,28 @@
+# Cache headers the site has always wanted, for whichever host serves it.
+#
+# GitHub Pages pins every response to max-age=600 and offers no way to change it, which is the whole
+# of PageSpeed's "use efficient cache lifetimes, 287 KiB". The font filenames carry a content hash and
+# the CSS and JS carry a ?v= hash, so a year is the correct answer for them.
+#
+# HTML is deliberately left on a short cache: the nightly refresh rewrites those pages from the live
+# database, and a long HTML cache would serve figures that have already changed.
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=600, must-revalidate"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
