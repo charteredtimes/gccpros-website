@@ -201,7 +201,7 @@ function cityPage(slug, C) {
         <a class="btn btn--primary btn--magnetic" href="/data">Search the full database <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
         <a class="btn btn--ghost" href="/gcc-india-atlas">Compare every city</a>
       </div>
-      ${statStrip([[fmt(n), `GCCs in ${C.name}`], [pc(n, t) + '%', 'of India\u2019s total'], [fmt(ind[0][1]), 'in ' + ind[0][0].replace(/.*/, '')], [fmt(val('size', C.scope, '5000+')), 'with 5,000+ staff']])}
+      ${statStrip([[fmt(n), `GCCs in ${C.name}`], [pc(n, t) + '%', 'of India\u2019s total'], [fmt(ind[0][1]), 'in ' + ind[0][0]], [fmt(val('size', C.scope, '5000+')), 'with 5,000+ staff']])}
     </div>
   </section>
 
