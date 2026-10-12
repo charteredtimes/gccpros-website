@@ -2609,51 +2609,84 @@ window.addEventListener('load',function(){setTimeout(load,12000);});})();</scrip
   </div>
 </section>
 
-<!-- The Indian coverage as a plain list. Added 12 October 2026 because the page ranked for nothing
-     on "list of GCC companies in India", the highest intent query in this space, while never using
-     those words. Every figure is a live slot, so the nightly refresh keeps it honest. -->
+<!-- The coverage as a plain list, India first and then the rest of the world. Added 12 October
+     2026 because the page ranked for nothing on "list of GCC companies in India", the highest intent
+     query in this space, while never using those words. Every figure is a live slot, so the nightly
+     refresh keeps it honest; the global tiles reorder themselves if a country overtakes another. -->
 <section id="gcc-india-list" style="padding:52px 20px;background:var(--ivory);border-top:1px solid var(--line);">
   <div style="max-width:980px;margin:0 auto;">
     <div style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:700;">India coverage</div>
     <h2 style="font-family:'Playfair Display',serif;font-size:clamp(22px,3.4vw,30px);line-height:1.25;color:var(--ink);margin:12px 0 10px;">The list of GCC companies in India, city by city</h2>
     <p style="font-size:15px;line-height:1.65;color:var(--muted);max-width:680px;margin:0 0 26px;">
-      India holds <span data-stat="india">2,551</span> of the <span data-stat="world">4,659</span> Global Capability Centres in the database, across <span data-stat="india_cities">57</span> cities. Six of them carry most of the total. Open a city to see which companies are there, what work they run and who leads them, or search the whole database above.
+      India holds <span data-stat="india">2,551</span> of the <span data-stat="world">4,659</span> Global Capability Centres in the database, across <span data-stat="india_cities">57</span> cities. Six of them carry most of the total. Open one to see which companies are there, what work they run and who leads them, or search the whole database above.
     </p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;">
       <a href="/gcc-in-bengaluru" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="bengaluru">1,387</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Bengaluru</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Bengaluru</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
       <a href="/gcc-in-pune" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="pune">560</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Pune</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Pune</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
       <a href="/gcc-in-hyderabad" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hyderabad">539</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Hyderabad</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Hyderabad</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
       <a href="/gcc-in-delhi-ncr" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="ncr">482</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Delhi NCR</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Delhi NCR</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
       <a href="/gcc-in-chennai" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="chennai">370</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Chennai</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Chennai</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
       <a href="/gcc-in-mumbai" style="display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;text-decoration:none;color:var(--ink);">
         <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="mumbai">367</span></div>
-        <div style="font-size:14px;font-weight:600;margin-top:6px;">GCC companies in Mumbai</div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;">Mumbai</div>
         <div style="font-size:12px;color:var(--gold);margin-top:4px;">See the list</div>
       </a>
     </div>
     <p style="font-size:13px;line-height:1.65;color:var(--muted);margin:22px 0 0;max-width:680px;">
-      A company with offices in more than one city is listed under each of them, so the city numbers add up to more than <span data-stat="india">2,551</span>. The <a href="/gcc-india-atlas" style="color:var(--gold);">GCC India Atlas</a> has the full city table, and <a href="/how-many-gccs-in-india" style="color:var(--gold);">how many GCCs are in India</a> explains how the national figure is counted. Outside India the database covers <span data-stat="countries">44</span> countries, the largest after India being <span data-stat="top_countries">the Philippines, Mexico, Poland and Romania</span>.
+      A company with offices in more than one city is counted under each of them, so these add up to more than <span data-stat="india">2,551</span>. The <a href="/gcc-india-atlas" style="color:var(--gold);">GCC India Atlas</a> has the full city table, and <a href="/how-many-gccs-in-india" style="color:var(--gold);">how many GCCs are in India</a> explains how the national figure is counted.
     </p>
+
+    <div style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-top:40px;">Outside India</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,26px);line-height:1.25;color:var(--ink);margin:12px 0 10px;">The largest markets beyond India</h2>
+    <p style="font-size:15px;line-height:1.65;color:var(--muted);max-width:680px;margin:0 0 26px;">
+      The database runs to <span data-stat="countries">44</span> countries. These six are the largest after India. Most of the Philippine centres sit in Metro Manila, and the European totals are concentrated in a handful of capitals.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;">
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub1">344</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub1_name">Philippines</span></div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub2">229</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub2_name">Mexico</span></div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub3">158</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub3_name">Poland</span></div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub4">136</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub4_name">Romania</span></div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub5">116</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub5_name">Czech Republic</span></div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;"><span data-stat="hub6">116</span></div>
+        <div style="font-size:15px;font-weight:600;margin-top:6px;"><span data-stat="hub6_name">Portugal</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
