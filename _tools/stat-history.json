@@ -42,7 +42,8 @@
   "1,377",
   "1,381",
   "1,384",
-  "1,388"
+  "1,388",
+  "1,387"
  ],
  "setup_captive": [
   "2,257",
@@ -123,12 +124,14 @@
   "872",
   "880",
   "883",
-  "882"
+  "882",
+  "881"
  ],
  "multi_city_pct": [
   "34.8%",
   "34.6%",
-  "34.7%"
+  "34.7%",
+  "34.5%"
  ],
  "gen34_pct": [
   "47%"
@@ -199,7 +202,8 @@
   "46.2%",
   "46.1%",
   "46%",
-  "45.8%"
+  "45.8%",
+  "45.9%"
  ],
  "bengaluru_pharma": [
   "55"
@@ -365,7 +369,8 @@
   "Bengaluru 1,384, Pune 559, Hyderabad 522, Delhi NCR 482, Chennai 370, Mumbai 366",
   "Bengaluru 1,384, Pune 559, Hyderabad 522, Delhi NCR 482, Chennai 370, Mumbai 367",
   "Bengaluru 1,384, Pune 559, Hyderabad 523, Delhi NCR 482, Chennai 370, Mumbai 367",
-  "Bengaluru 1,388, Pune 560, Hyderabad 539, Delhi NCR 482, Chennai 370, Mumbai 367"
+  "Bengaluru 1,388, Pune 560, Hyderabad 539, Delhi NCR 482, Chennai 370, Mumbai 367",
+  "Bengaluru 1,387, Pune 560, Hyderabad 539, Delhi NCR 482, Chennai 370, Mumbai 367"
  ],
  "gen_known": [
   "2,177"
