@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+    <defs>
+      <radialGradient id="g1" cx="85%" cy="0%" r="75%"><stop offset="0" stop-color="#2F5DA8" stop-opacity=".75"/><stop offset="1" stop-color="#2F5DA8" stop-opacity="0"/></radialGradient>
+      <radialGradient id="g2" cx="0%" cy="100%" r="60%"><stop offset="0" stop-color="#15807A" stop-opacity=".35"/><stop offset="1" stop-color="#15807A" stop-opacity="0"/></radialGradient>
+      <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#9DC0EE" stroke-opacity=".08"/></pattern>
+      <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#0B1733"/><stop offset=".55" stop-color="#0B1733" stop-opacity=".92"/><stop offset="1" stop-color="#0B1733" stop-opacity=".35"/></linearGradient>
+    </defs>
+    <rect width="1200" height="630" fill="#0B1733"/>
+    <rect width="1200" height="630" fill="url(#grid)"/><rect width="1200" height="630" fill="url(#g1)"/><rect width="1200" height="630" fill="url(#g2)"/>
+    <rect x="72" y="70" width="84" height="84" rx="20" fill="#fff"/>
+    <image href="data:image/png;base64,{{logo}}" x="84" y="82" width="60" height="60" preserveAspectRatio="xMidYMid meet"/>
+    <text x="176" y="126" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#fff">GCC<tspan fill="#9DC0EE">PROs</tspan></text>
+    <text x="72" y="262" font-family="Consolas, monospace" font-size="22" letter-spacing="4" fill="#9DC0EE">{{kicker}}</text>
+    {{titleLines}}
+    <text x="72" y="{{subY}}" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#C9D4E8">{{sub}}</text>
+    <rect x="72" y="560" width="120" height="4" rx="2" fill="#9DC0EE"/>
+    <text x="1128" y="566" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#AFBCD6">www.gccpros.com</text>
+  </svg>

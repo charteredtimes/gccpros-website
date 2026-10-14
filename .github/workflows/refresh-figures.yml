@@ -29,6 +29,13 @@ jobs:
         with:
           node-version: '20'
 
+      # Only used on the rare run where the database crosses a hundred and the two share images have
+      # to be repainted. Installed every time because it costs seconds, and because the alternative
+      # was the 14 October 2026 failure: the figure moved, the images could not be rebuilt here, and
+      # the whole nightly run stopped with the site frozen a day behind the database.
+      - name: Install sharp, used only when the share images need repainting
+        run: npm install --no-save --no-audit --no-fund sharp
+
       - name: Rebuild figures, stamp every page, run checks
         run: node _tools/refresh.js
 
