@@ -11,14 +11,16 @@
   "4,640",
   "4,641",
   "4,658",
-  "4,659"
+  "4,659",
+  "4,799"
  ],
  "world_floor": [
   "4,300+",
   "4,338+",
   "4,370+",
   "4,500+",
-  "4,600+"
+  "4,600+",
+  "4,700+"
  ],
  "india": [
   "2,400",
@@ -86,7 +88,8 @@
   "10 October 2026",
   "11 October 2026",
   "12 October 2026",
-  "13 October 2026"
+  "13 October 2026",
+  "14 October 2026"
  ],
  "as_of_iso": [
   "2026-09-22",
@@ -109,7 +112,8 @@
   "2026-10-10",
   "2026-10-11",
   "2026-10-12",
-  "2026-10-13"
+  "2026-10-13",
+  "2026-10-14"
  ],
  "year": [
   "2026"
@@ -378,7 +382,8 @@
   "2,177"
  ],
  "top_countries": [
-  "the Philippines, Mexico, Poland and Romania"
+  "the Philippines, Mexico, Poland and Romania",
+  "the Philippines, Poland, Mexico and Romania"
  ],
  "top_country": [
   "the Philippines"
@@ -393,16 +398,20 @@
   "344"
  ],
  "hub2_name": [
-  "Mexico"
- ],
- "hub2": [
-  "229"
- ],
- "hub3_name": [
+  "Mexico",
   "Poland"
  ],
+ "hub2": [
+  "229",
+  "298"
+ ],
+ "hub3_name": [
+  "Poland",
+  "Mexico"
+ ],
  "hub3": [
-  "158"
+  "158",
+  "229"
  ],
  "hub4_name": [
   "Romania"
