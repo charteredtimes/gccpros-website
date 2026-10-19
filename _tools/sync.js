@@ -101,6 +101,12 @@ function stamp(c, file) {
 // their schema long after the site said 4,611, and structured data is precisely what search engines
 // and AI answer engines read. So the rendered body is dropped (sync writes it) but the template is
 // kept and searched, minus its {{slots}}.
+// A published figure only counts when it stands alone. Without the boundaries, "2,500" matches
+// inside "12,500", and a ranking of company headcounts trips the guard on every other row.
+function hasFigure(text, fig) {
+  return new RegExp('(?<![\\d,.])' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\function unslotted(c) {') + '(?![\\d,.])').test(text);
+}
+
 function unslotted(c) {
   return c
     .replace(/<span data-stat-ignore>[\s\S]*?<\/span>/g, '')
@@ -138,7 +144,7 @@ for (const f of fs.readdirSync(root).filter(f => f.endsWith('.html'))) {
   if (!GUARD_EXEMPT.test(f)) {
     const bare = unslotted(c);
     for (const k of POLICED) for (const old of (HIST[k] || [])) {
-      if (old !== STATS[k] && bare.includes(old)) errors.push(`${f}: stale figure "${old}" (${k} is now ${STATS[k]}) outside a data-stat slot`);
+      if (old !== STATS[k] && hasFigure(bare, old)) errors.push(`${f}: stale figure "${old}" (${k} is now ${STATS[k]}) outside a data-stat slot`);
     }
   }
   const canon = (c.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
