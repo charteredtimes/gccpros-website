@@ -28,8 +28,8 @@
   "date": "2026-09-22"
  },
  "admin-unified.html": {
-  "fp": "ab3f0383dc4bb6a7ca4ec4e1a17f9813",
-  "date": "2026-10-10"
+  "fp": "449b41adb2185c80ea0628fe89757d63",
+  "date": "2026-10-22"
  },
  "admin.html": {
   "fp": "e534c5582b92f5247645809c17afff4e",
@@ -108,8 +108,8 @@
   "date": "2026-09-23"
  },
  "event.html": {
-  "fp": "f41adeb1c479fa005b31d16bc254e58e",
-  "date": "2026-10-19"
+  "fp": "ba253a0592536d8efca7169ff2a963bb",
+  "date": "2026-10-22"
  },
  "events-media.html": {
   "fp": "d039da6bd83ff88cb7bd5931f239fe65",
@@ -160,8 +160,8 @@
   "date": "2026-10-21"
  },
  "gcc-india-atlas.html": {
-  "fp": "15769e431363d4ce163edfd29e491fa2",
-  "date": "2026-10-21"
+  "fp": "d2bbfb086c7d47e5d48dacee94a3c0d8",
+  "date": "2026-10-22"
  },
  "gcc-summit-dubai-2027.html": {
   "fp": "6f88d74efd19c36a11b475d568ffbd6c",
@@ -192,8 +192,8 @@
   "date": "2026-10-19"
  },
  "index.html": {
-  "fp": "1f24481096cb743673ed027876f08e2d",
-  "date": "2026-10-19"
+  "fp": "281fd8c18e30e95b9f82a939c45e5a64",
+  "date": "2026-10-22"
  },
  "industry-council.html": {
   "fp": "2ea58e3bc2ec12a06603c262a3608792",
@@ -256,7 +256,7 @@
   "date": "2026-09-24"
  },
  "what-is-a-gcc.html": {
-  "fp": "bfa0a2f46e2f5fdf9997cfc545c0a483",
-  "date": "2026-10-19"
+  "fp": "c3d6cc6bf080195dce87e604b8073cea",
+  "date": "2026-10-22"
  }
 }
