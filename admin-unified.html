@@ -557,13 +557,31 @@ td.actions { white-space:nowrap; }
       #rsvp-box td{padding:8px 9px;border-bottom:1px solid #e5e9f0;vertical-align:top;max-width:320px;word-break:break-word}
       #rsvp-box tr:nth-child(even) td{background:#f8fbff}
       #rsvp-box .pill-city{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EEF5FF;color:#125BD0;border:1px solid #CFE2FB}
+      #rsvp-box tr.rsvp-row{cursor:pointer}
+      #rsvp-box tr.rsvp-row:hover td{background:#eef4ff}
+      #rsvp-box .rsvp-li{font-weight:600;color:#125BD0;text-decoration:none;white-space:nowrap}
+      #rsvp-box .rsvp-li.find{color:#8694ab;font-weight:500}
+      #rsvp-box select.rsvp-st{font:inherit;font-size:12px;font-weight:700;padding:4px 6px;border-radius:7px;border:1px solid #cfd6e2;cursor:pointer}
+      #rsvp-box select.rsvp-st[data-v=new]{background:#EEF1F6;color:#5B6B84}
+      #rsvp-box select.rsvp-st[data-v=accepted]{background:#E6F6EF;color:#11704A;border-color:#B6E3CF}
+      #rsvp-box select.rsvp-st[data-v=rejected]{background:#FDECEC;color:#A32020;border-color:#F3C9C9}
+      #rsvp-box select.rsvp-st[data-v=waitlisted]{background:#EEF5FF;color:#125BD0;border-color:#CFE2FB}
+      #rsvp-box select.rsvp-st[data-v=vendor]{background:#F1ECFD;color:#5B3FB0;border-color:#D9CDF6}
+      #rsvp-box select.rsvp-st[data-v=blocked]{background:#E3E6EB;color:#2A2F3A;border-color:#C3C9D2}
+      #rsvp-box select.rsvp-st.saving{opacity:.55}
+      #rsvp-box tr.rsvp-more td{background:#f4f7fc!important;border-bottom:2px solid #dfe6f1}
+      #rsvp-box .rsvp-more__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 22px}
+      #rsvp-box .rsvp-more__grid div{min-width:0}
+      #rsvp-box .rsvp-more__k{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8694ab;margin-bottom:2px}
+      #rsvp-box .rsvp-more__v{font-size:12.5px;color:#12203a;word-break:break-word}
     </style>
     <div class="card">
       <h3>Roundtable / Event RSVPs &middot; Insights &amp; Events</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 8px">
         <button class="btn" onclick="loadRSVPs()">&#8635; Refresh</button>
         <button class="btn" onclick="exportRSVPs()">&#128202; Export CSV</button>
-        <input type="text" id="rsvp-q" placeholder="Filter name, email, company, city, topics" oninput="renderRSVPs()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
+        <select id="rsvp-status-f" onchange="renderRSVPs()" style="padding:8px 11px;border:1px solid #d9dee7;border-radius:8px"><option value="">All statuses</option><option value="new">New (untriaged)</option><option value="accepted">Accepted</option><option value="rejected">Rejected</option><option value="waitlisted">Waitlisted</option><option value="vendor">Vendor</option><option value="blocked">Blocked</option></select>
+        <input type="text" id="rsvp-q" placeholder="Filter name, email, company, city, topics, LinkedIn" oninput="renderRSVPs()" style="flex:1;min-width:200px;padding:8px 11px;border:1px solid #d9dee7;border-radius:8px">
         <span id="rsvp-stats" style="font-size:13px;color:#5B6B84"></span>
       </div>
       <div id="rsvp-box" style="overflow:auto;max-height:70vh"><p class="loading">Click Refresh to load.</p></div>
@@ -1041,36 +1059,142 @@ async function loadRSVPs() {
     RSVP_ROWS = j.rows || []; renderRSVPs();
   } catch (e) { box.innerHTML = '<p class="loading">Network error.</p>'; }
 }
+// RSVP_TRIAGE, not RSVP_STATUSES: the community panel further down this file already owns
+// that name for a different vocabulary (New/Confirmed/Waitlist/Cancelled/Attended/No-show),
+// and both panels run in the same global scope.
+const RSVP_TRIAGE = [['new','New'],['accepted','Accepted'],['rejected','Rejected'],
+                      ['waitlisted','Waitlisted'],['vendor','Vendor'],['blocked','Blocked']];
+
 function rsvpFiltered() {
   const q = (document.getElementById('rsvp-q').value || '').trim().toLowerCase();
-  if (!q) return RSVP_ROWS;
-  return RSVP_ROWS.filter(x => [x.name, x.email, x.company, x.city, x.designation, x.topics, x.interest, x.event, x.org_type].some(v => String(v || '').toLowerCase().indexOf(q) >= 0));
+  const sf = (document.getElementById('rsvp-status-f') || {}).value || '';
+  return RSVP_ROWS.filter(x => {
+    if (sf && (x.status || 'new') !== sf) return false;
+    if (!q) return true;
+    return [x.name, x.email, x.company, x.city, x.designation, x.topics, x.interest, x.event,
+            x.org_type, x.country, x.linkedin].some(v => String(v || '').toLowerCase().indexOf(q) >= 0);
+  });
 }
+
+// Rows taken before 22 Oct 2026 have no profile because the form never asked. Rather than an empty
+// cell, offer the search that would find them, clearly labelled so it is not mistaken for a stored
+// profile.
+function rsvpLinkedIn(x) {
+  if (x.linkedin) return '<a class="rsvp-li" href="' + esc(x.linkedin) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Profile &#8599;</a>';
+  const terms = [x.name, x.company].filter(Boolean).join(' ');
+  if (!terms) return '<span style="color:#b6bfcd">-</span>';
+  return '<a class="rsvp-li find" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Not captured for this RSVP. This searches LinkedIn for the name and company."'
+    + ' href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(terms) + '">Search &#8599;</a>';
+}
+
+function rsvpStatusCell(x) {
+  const cur = x.status || 'new';
+  let o = '';
+  RSVP_TRIAGE.forEach(p => {
+    o += '<option value="' + p[0] + '"' + (p[0] === cur ? ' selected' : '') + '>' + p[1] + '</option>';
+  });
+  return '<select class="rsvp-st" data-v="' + esc(cur) + '" data-id="' + esc(x.id || '') + '"'
+    + ' onclick="event.stopPropagation()" onchange="setRsvpStatus(this)">' + o + '</select>';
+}
+
 function renderRSVPs() {
   const rows = rsvpFiltered();
   const st = document.getElementById('rsvp-stats');
-  if (st) st.textContent = rows.length + ' / ' + RSVP_ROWS.length + ' RSVPs';
+  if (st) {
+    const by = {};
+    RSVP_ROWS.forEach(x => { const k = x.status || 'new'; by[k] = (by[k] || 0) + 1; });
+    const parts = RSVP_TRIAGE.filter(p => by[p[0]]).map(p => by[p[0]] + ' ' + p[1].toLowerCase());
+    st.textContent = rows.length + ' / ' + RSVP_ROWS.length + ' RSVPs' + (parts.length ? '  \u00b7  ' + parts.join(', ') : '');
+  }
   const box = document.getElementById('rsvp-box');
   if (!RSVP_ROWS.length) { box.innerHTML = '<p class="loading">No RSVPs yet.</p>'; return; }
-  let h = '<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Company</th><th>Designation</th><th>Type</th><th>Event</th><th>City</th><th>Interest</th><th>Topics</th></tr></thead><tbody>';
+  if (!rows.length) { box.innerHTML = '<p class="loading">Nothing matches that filter.</p>'; return; }
+
+  let h = '<table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Company</th>'
+        + '<th>Designation</th><th>Type</th><th>LinkedIn</th><th>Country</th><th>City</th><th>Event</th>'
+        + '<th>Interest</th><th>Status</th></tr></thead><tbody>';
   rows.forEach(x => {
     const dt = x.created_at ? new Date(x.created_at).toLocaleString() : '';
-    h += '<tr><td style="white-space:nowrap">' + esc(dt) + '</td>'
+    const id = esc(x.id || '');
+    h += '<tr class="rsvp-row" onclick="toggleRsvpMore(this)" data-id="' + id + '">'
+      + '<td style="white-space:nowrap">' + esc(dt) + '</td>'
       + '<td><b>' + esc(x.name) + '</b></td><td>' + esc(x.email) + '</td><td>' + esc(x.phone) + '</td>'
       + '<td>' + esc(x.company) + '</td><td>' + esc(x.designation) + '</td>'
       + '<td>' + esc(x.org_type || '-') + '</td>'
+      + '<td>' + rsvpLinkedIn(x) + '</td>'
+      + '<td>' + esc(x.country || '-') + '</td>'
+      + '<td><span class="pill-city">' + esc(x.city) + '</span></td>'
       + '<td>' + (x.event && x.event !== 'General interest' ? '<b>' + esc(x.event) + '</b>' : esc(x.event || 'General interest')) + '</td>'
-      + '<td><span class="pill-city">' + esc(x.city) + '</span></td><td>' + esc(x.interest) + '</td>'
-      + '<td>' + esc(x.topics) + '</td></tr>';
+      + '<td>' + esc(x.interest) + '</td>'
+      + '<td>' + rsvpStatusCell(x) + '</td></tr>';
   });
   box.innerHTML = h + '</tbody></table>';
 }
+
+// The fields that are either long or only matter once you are looking closely.
+function toggleRsvpMore(tr) {
+  const nxt = tr.nextElementSibling;
+  if (nxt && nxt.classList.contains('rsvp-more')) { nxt.remove(); return; }
+  const x = RSVP_ROWS.find(r => String(r.id) === tr.getAttribute('data-id'));
+  if (!x) return;
+  const f = (k, v) => '<div><span class="rsvp-more__k">' + k + '</span><span class="rsvp-more__v">' + (v ? esc(v) : '-') + '</span></div>';
+  const when = x.status_at ? new Date(x.status_at).toLocaleString() : '';
+  const body = '<div class="rsvp-more__grid">'
+    + f('Topics / notes', x.topics)
+    + f('LinkedIn (stored)', x.linkedin)
+    + f('Status set by', x.status_by)
+    + f('Status set at', when)
+    + f('IP address', x.ip)
+    + f('Browser', x.user_agent)
+    + f('Record id', x.id)
+    + '</div>';
+  const row = document.createElement('tr');
+  row.className = 'rsvp-more';
+  row.innerHTML = '<td colspan="13">' + body + '</td>';
+  tr.parentNode.insertBefore(row, tr.nextSibling);
+}
+
+// Write the new status through the function, then repaint from the row it returns.
+async function setRsvpStatus(sel) {
+  const id = sel.getAttribute('data-id');
+  const was = sel.getAttribute('data-v');
+  const want = sel.value;
+  if (!id) { alert('This RSVP has no record id, so it cannot be updated.'); sel.value = was; return; }
+  if (want === was) return;
+  sel.disabled = true; sel.classList.add('saving');
+  try {
+    const r = await fetch(RSVP_URL + '?action=setRSVPStatus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+      body: JSON.stringify({ id: id, status: want, by: (window.ADMIN_EMAIL || 'admin') })
+    });
+    const j = await r.json();
+    if (!j || j.status !== 'ok' || !j.row) throw new Error((j && j.error) || 'save failed');
+    const i = RSVP_ROWS.findIndex(x => String(x.id) === String(id));
+    if (i >= 0) RSVP_ROWS[i] = j.row;
+    sel.setAttribute('data-v', j.row.status);
+    sel.value = j.row.status;
+    const st = document.getElementById('rsvp-stats');
+    if (st) renderRSVPs();
+  } catch (err) {
+    sel.value = was;
+    alert('Could not save that status: ' + (err && err.message ? err.message : err)
+      + '\nThe row has been put back to "' + was + '".');
+  } finally {
+    sel.disabled = false; sel.classList.remove('saving');
+  }
+}
+
 function exportRSVPs() {
   if (!RSVP_ROWS.length) { alert('Nothing to export yet.'); return; }
-  const cols = [['When','created_at'],['Name','name'],['Email','email'],['WhatsApp','phone'],['Company','company'],['Designation','designation'],['Company type','org_type'],['Event','event'],['City','city'],['Interest','interest'],['Topics','topics']];
+  const cols = [['When','created_at'],['Name','name'],['Email','email'],['WhatsApp','phone'],
+                ['Company','company'],['Designation','designation'],['Company type','org_type'],
+                ['LinkedIn','linkedin'],['Country','country'],['Event','event'],['City','city'],
+                ['Interest','interest'],['Topics','topics'],['Status','status'],
+                ['Status set by','status_by'],['Status set at','status_at'],['IP','ip'],['Record id','id']];
   const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
   let csv = cols.map(c => c[0]).join(',') + '\n';
-  RSVP_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if (c[1] === 'created_at' && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
+  RSVP_ROWS.forEach(x => { csv += cols.map(c => { let v = x[c[1]]; if ((c[1] === 'created_at' || c[1] === 'status_at') && v) v = new Date(v).toLocaleString(); return q(v); }).join(',') + '\n'; });
   const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'GCCPROs_RSVPs_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
