@@ -25,6 +25,15 @@ const fmt = n => n.toLocaleString('en-US');
   if (!r.ok) throw 'atlas_stats failed: ' + r.status + ' ' + await r.text();
   const X = await r.json();
 
+  // The named lists the city pages print. Separate function, same city rules, so a page cannot
+  // show companies that disagree with the count above them.
+  const rTop = await fetch(SUPA + '/rest/v1/rpc/atlas_top_companies', {
+    method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lim: 30 })
+  });
+  if (!rTop.ok) throw 'atlas_top_companies failed: ' + rTop.status + ' ' + await rTop.text();
+  const TOP = await rTop.json();
+
   // Rows per scope: ordered dims follow their order list; others by count desc, then label.
   const dim = (key, extra) => {
     const out = Object.assign({}, extra);
@@ -67,7 +76,8 @@ const fmt = n => n.toLocaleString('en-US');
       size: dim('size', { label: 'Headcount', order: ORDERS.size }),
       vintage: dim('vintage', { label: 'Year established', order: ORDERS.vintage })
     },
-    by_year: X.by_year
+    by_year: X.by_year,
+    top_companies: TOP
   };
 
   // Sanity: single-label dimensions must sum to each scope total.
@@ -91,11 +101,16 @@ const fmt = n => n.toLocaleString('en-US');
     + '  "cities_one": ' + j(D.cities_one) + ',\n'
     + '  "by_country": [\n    ' + D.by_country.map(j).join(', ') + '\n  ],\n'
     + '  "dims": {\n' + Object.entries(D.dims).map(([k, v]) => `    ${j(k)}: ${dimTxt(v)}`).join(',\n') + '\n  },\n'
-    + '  "by_year": ' + j(D.by_year) + '\n}\n';
+    + '  "by_year": ' + j(D.by_year) + ',\n'
+    + '  "top_companies": {\n' + Object.entries(D.top_companies)
+        .map(([k, v]) => `    ${j(k)}: [\n      ` + v.map(j).join(',\n      ') + '\n    ]')
+        .join(',\n') + '\n  }\n}\n';
   JSON.parse(txt);
   if (process.argv.includes('--dry')) console.log(txt.slice(0, 1500));
   else fs.writeFileSync(OUT, txt);
   console.log('India', D.meta.total_india, '| global', D.meta.total_global, '| countries', D.meta.countries,
     '| multi-city', D.meta.multi_city, '| cities', D.cities.length, '+', D.cities_single, 'single');
   console.log('Scopes', j(D.scope_totals), '| NCR sum', X.ncr_sum);
+  console.log('Company lists:', Object.keys(D.top_companies).length, 'cities,',
+    Object.values(D.top_companies).reduce((a, v) => a + v.length, 0), 'named centres');
 })().catch(e => { console.error(e); process.exit(1); });

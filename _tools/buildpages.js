@@ -100,6 +100,35 @@ const faqHtml = qa => `<div class="acc">` + qa.map(([q, a], i) =>
   `<details${i === 0 ? ' open' : ''}><summary><h3>${esc(q)}</h3></summary><div class="acc__body"><p>${a}</p></div></details>`).join('') + `</div>`;
 
 /* ================= CITY PAGES ================= */
+/* The named list. Rows come straight from the atlas file; nothing is computed here beyond the
+   wording, so the page and the count above it cannot drift apart. */
+const companySection = (C, n, slug) => {
+  const rows = (D.top_companies || {})[C.scope] || [];
+  if (rows.length < 5) return '';           // too few to be worth a table
+  const cells = rows.map(([name, parent, industry, band]) =>
+    `<tr><th scope="row">${esc(name)}</th><td>${esc(parent || '\u2014'.replace('\u2014','-'))}</td>`
+    + `<td>${esc(industry || '-')}</td><td class="gcc-list__size">${esc(band || '-')}</td></tr>`).join('\n            ');
+  return `
+  <section class="section section--alt" aria-labelledby="ct-list">
+    <div class="shell shell--narrow">
+      <div class="section-head"><span class="eyebrow" data-reveal>The companies</span>
+      <h2 class="h2" id="ct-list" data-reveal style="--d:1">The ${rows.length} largest GCCs in ${esc(C.name)}.</h2>
+      <p class="lede" data-reveal style="--d:2">Ranked by headcount, from the ${fmt(n)} verified centres with a unit in ${esc(C.name)}. Every row is one GCCPROs holds at high confidence, with the parent group it reports to.</p></div>
+      <div class="gcc-list__wrap" data-reveal>
+        <table class="gcc-list">
+          <caption class="sr-only">The ${rows.length} largest Global Capability Centres in ${esc(C.name)} by headcount</caption>
+          <thead><tr><th>Centre</th><th>Parent group</th><th>Industry</th><th>People</th></tr></thead>
+          <tbody>
+            ${cells}
+          </tbody>
+        </table>
+      </div>
+      <p data-reveal style="margin-top:18px">That is the top ${rows.length}. The remaining ${fmt(Math.max(0, n - rows.length))} centres in ${esc(C.name)}, with site leadership, domains, year established and 46 fields each, are in <a href="/data">the GCC database</a>.</p>
+    </div>
+  </section>
+`;
+};
+
 const CITIES = {
   'bengaluru': {
     name: 'Bengaluru', scope: 'Bengaluru', alt: 'Bangalore', state: 'Karnataka',
@@ -224,6 +253,7 @@ function cityPage(slug, C) {
     </div>
   </section>
 
+  ${companySection(C, n, slug)}
   <section class="section section--alt" aria-labelledby="ct-ind">
     <div class="shell shell--narrow">
       <div class="section-head"><span class="eyebrow" data-reveal>Industry</span>
@@ -280,8 +310,8 @@ function cityPage(slug, C) {
       </div>
       <div class="cta-panel" data-reveal style="margin-top:46px">
         <div><span class="eyebrow">The underlying records</span>
-        <h2 class="h3">The list of GCC companies in ${esc(C.name)}</h2>
-        <p>Names, parent company, site leadership, headcount, functions and 46 fields per centre, all searchable, filterable and exportable.</p>
+        <h2 class="h3">Every GCC in ${esc(C.name)}, not just the largest</h2>
+        <p>Site leadership, domains, maturity, year established and 46 fields per centre, all searchable, filterable and exportable.</p>
         <div class="btn-row"><a class="btn btn--primary" href="/data">Open the GCC database</a><a class="btn btn--ghost" href="/consult">Talk to a GCC advisor</a></div></div>
       </div>
     </div>
