@@ -81,5 +81,1844 @@
       "Chennai": [["Before 2000",68],["2000-2009",111],["2010-2014",51],["2015-2019",67],["2020-2022",35],["2023-2026",34],["Not disclosed",4]]
     }
   },
-  "by_year": [[1985,3],[1986,2],[1987,4],[1988,1],[1989,4],[1990,5],[1991,7],[1992,4],[1993,10],[1994,16],[1995,26],[1996,41],[1997,34],[1998,29],[1999,27],[2000,40],[2001,41],[2002,31],[2003,41],[2004,67],[2005,67],[2006,72],[2007,72],[2008,65],[2009,63],[2010,56],[2011,65],[2012,74],[2013,63],[2014,70],[2015,98],[2016,85],[2017,104],[2018,118],[2019,128],[2020,110],[2021,130],[2022,128],[2023,127],[2024,119],[2025,149],[2026,80]]
+  "by_year": [[1985,3],[1986,2],[1987,4],[1988,1],[1989,4],[1990,5],[1991,7],[1992,4],[1993,10],[1994,16],[1995,26],[1996,41],[1997,34],[1998,29],[1999,27],[2000,40],[2001,41],[2002,31],[2003,41],[2004,67],[2005,67],[2006,72],[2007,72],[2008,65],[2009,63],[2010,56],[2011,65],[2012,74],[2013,63],[2014,70],[2015,98],[2016,85],[2017,104],[2018,118],[2019,128],[2020,110],[2021,130],[2022,128],[2023,127],[2024,119],[2025,149],[2026,80]],
+  "top_companies": {
+    "Goa": [
+      ["Visteon","Visteon Corporation","Automotive & Auto Components","1001-5000"]
+    ],
+    "Pune": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bosch Global Software Technologies India","Robert Bosch GmbH","Automotive & Auto Components","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["UBS (formerly Credit Suisse)","UBS Group AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["Deutsche Bank India GCC","Deutsche Bank AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Maersk (A.P. Moller-Maersk)","A.P. Moller-Maersk A/S","Logistics & Supply Chain","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["Arthur J. Gallagher Center of Excellence","Arthur J. Gallagher & Co.","BFSI: Insurance","5000+"],
+      ["NielsenIQ India (NIQ)","Nielsen Consumer LLC (NielsenIQ)","Technology: Data, Analytics & AI","5000+"],
+      ["Fujitsu India GCC","Fujitsu Limited","Professional Services & Consulting","5000+"],
+      ["Google","Alphabet Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["NVIDIA","NVIDIA Corporation","Technology: Semiconductors & Hardware","5000+"],
+      ["VMware (Broadcom)","Broadcom Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["Honeywell Technology Solutions","Honeywell International Inc","Industrial, Engineering & Manufacturing","5000+"],
+      ["Allstate India Pvt Ltd","Allstate Corporation","BFSI: Insurance","5000+"],
+      ["Northern Trust","Northern Trust Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Schneider Electric India GCC","Schneider Electric SE","Energy, Power & Oil & Gas","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["BNY Mellon International Operations India","The Bank of New York Mellon Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Fiserv India","Fiserv, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["MetLife Global Operations Support Center","MetLife Inc","BFSI: Insurance","5000+"],
+      ["Continental AG (Technical Center India)","Continental AG","Automotive & Auto Components","5000+"]
+    ],
+    "Hosur": [
+      ["Alstom India (Engineering Centre)","Alstom SA","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Tenneco India","Tenneco Inc (Apollo Global Management)","Automotive & Auto Components","1001-5000"]
+    ],
+    "Kochi": [
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["KPMG Global Delivery Center Private Limited","KPMG International","Professional Services & Consulting","1001-5000"],
+      ["BDO RISE Private Limited","BDO USA / BDO Global","Professional Services & Consulting","1001-5000"],
+      ["Mantle Solutions Private Limited","LuLu Group International","Retail, Consumer & FMCG","1001-5000"],
+      ["Good Methods Software Solutions Private Limited (CareStack India)","Good Methods Global Inc. (CareStack)","Healthcare & MedTech","1001-5000"],
+      ["DSV","DSV A/S","Logistics & Supply Chain","1001-5000"],
+      ["Zellis HR India","Zellis Group Ltd (Apax Partners)","Technology: SaaS & Software","501-1000"],
+      ["Buck Capability Centre Private Limited","Arthur J. Gallagher & Co.","BFSI: Insurance","501-1000"],
+      ["NOV India (National Oilwell Varco)","NOV Inc.","Energy, Power & Oil & Gas","101-500"],
+      ["FCI GBS India (Amphenol GBS)","Amphenol Corporation","Technology: Semiconductors & Hardware","101-500"],
+      ["Acabes International","Arab Bank plc","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Burndy Technology and Global Business Services India","Hubbell Incorporated","Industrial, Engineering & Manufacturing","1-100"],
+      ["Fragomen Immigration Services India Private Limited","Fragomen, Del Rey, Bernsen & Loewy LLP","Professional Services & Consulting","1001-5000"]
+    ],
+    "Noida": [
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["Microsoft India Development Center","Microsoft Corporation","Technology: SaaS & Software","5000+"],
+      ["Qualcomm India","Qualcomm Incorporated","Technology: Semiconductors & Hardware","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Fujitsu India GCC","Fujitsu Limited","Professional Services & Consulting","5000+"],
+      ["Samsung R&D Institute India, Bengaluru (SRIB) / Samsung R&D Institute India, Delhi (SRIN)","Samsung Electronics Co., Ltd.","Technology: Semiconductors & Hardware","5000+"],
+      ["Adobe India (incl. Adobe Commerce / Magento)","Adobe Inc.","Technology: SaaS & Software","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Fiserv India","Fiserv, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["MetLife Global Operations Support Center","MetLife Inc","BFSI: Insurance","5000+"],
+      ["WSP India","WSP Global Inc.","Professional Services & Consulting","5000+"],
+      ["Synopsys India","Synopsys Inc","Technology: Semiconductors & Hardware","5000+"],
+      ["GE India (JFWTC / GE Aerospace / GE Vernova)","GE Vernova / GE Aerospace","Aerospace, Defense & Aviation","1001-5000"],
+      ["WTW (Willis Towers Watson)","Willis Towers Watson Public Limited Company","BFSI: Insurance","1001-5000"],
+      ["Siemens Energy India","Siemens Energy AG","Energy, Power & Oil & Gas","1001-5000"],
+      ["Technip Energies N.V.","Technip Energies N.V.","Energy, Power & Oil & Gas","1001-5000"],
+      ["Cadence Design Systems India","Cadence Design Systems, Inc.","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Huron Consulting Group India","Huron Consulting Group Inc.","Healthcare & MedTech","1001-5000"],
+      ["AtkinsRealis Global Technology Centre (GTC)","AtkinsRealis Group Inc.","Construction & Real Estate","1001-5000"],
+      ["UKG India","UKG Inc (Ultimate Kronos Group)","Technology: SaaS & Software","1001-5000"],
+      ["Clarivate Analytics India","Clarivate plc","Pharma & Life Sciences","1001-5000"],
+      ["Hewlett Packard Enterprise (HPE)","Hewlett Packard Enterprise Company","Technology: Cloud, Infrastructure & DevTools","1001-5000"],
+      ["Rockwell Automation India","Rockwell Automation Inc","Technology: Semiconductors & Hardware","1001-5000"],
+      ["NXP Semiconductors India","NXP Semiconductors NV","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Lumen Technologies India","Lumen Technologies Inc.","Telecom & Networks","1001-5000"]
+    ],
+    "Surat": [
+      ["HotelKey India Technology Centre","HotelKey, Inc. (Plano, Texas)","Technology: SaaS & Software","101-500"]
+    ],
+    "Thane": [
+      ["Evonik India","Evonik Industries AG","Chemicals, Materials & Mining","101-500"],
+      ["LANXESS India","LANXESS AG","Chemicals, Materials & Mining","501-1000"],
+      ["SS&C Technologies India","SS&C Technologies Holdings Inc","BFSI: Banking, FinTech & Capital Markets","5000+"]
+    ],
+    "Bhopal": [
+      ["Andritz Hydro Private Limited","ANDRITZ AG","Energy, Power & Oil & Gas","501-1000"],
+      ["CoreCard Software India","CoreCard Corporation (wholly acquired by Euronet Worldwide Inc.; merger ANNOUNCED Jul 30, 2025; CLOSED Oct 30, 2025 ~$260M)","BFSI: Banking, FinTech & Capital Markets","501-1000"]
+    ],
+    "Indore": [
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["AVL India","AVL List GmbH","Automotive & Auto Components","501-1000"],
+      ["Stewart Title India","Stewart Information Services Corp","BFSI: Insurance","101-500"],
+      ["Vena Solutions India","Vena Solutions, Inc.","Technology: SaaS & Software","1-100"],
+      ["Rakuten","Rakuten Group, Inc.","Technology: SaaS & Software","1001-5000"]
+    ],
+    "Jaipur": [
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["Deutsche Bank India GCC","Deutsche Bank AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["MetLife Global Operations Support Center","MetLife Inc","BFSI: Insurance","5000+"],
+      ["Huron Consulting Group India","Huron Consulting Group Inc.","Healthcare & MedTech","1001-5000"],
+      ["FEV India","FEV Group GmbH","Automotive & Auto Components","501-1000"]
+    ],
+    "Mohali": [
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Cotiviti India","Cotiviti Inc.","BFSI: Insurance","5000+"],
+      ["Parexel India","Parexel International","Pharma & Life Sciences","1001-5000"],
+      ["Bunge India Business Services Center","Bunge Global SA","Retail, Consumer & FMCG","501-1000"],
+      ["Edifecs Technologies Private Limited","Edifecs, Inc.","Healthcare & MedTech","501-1000"],
+      ["Maropost India","Maropost Inc.","Technology: SaaS & Software","101-500"],
+      ["Congruex Global India","Congruex LLC","Telecom & Networks","501-1000"],
+      ["Zscaler","Zscaler, Inc.","Technology: Cybersecurity","1001-5000"]
+    ],
+    "Mumbai": [
+      ["JPMorgan Chase","JPMorgan Chase & Co.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["UBS (formerly Credit Suisse)","UBS Group AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["Deutsche Bank India GCC","Deutsche Bank AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["LSEG India","London Stock Exchange Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["BNP Paribas India Solutions Pvt Ltd","BNP Paribas S.A.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Maersk (A.P. Moller-Maersk)","A.P. Moller-Maersk A/S","Logistics & Supply Chain","5000+"],
+      ["Morgan Stanley Advantage Services","Morgan Stanley","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["Arthur J. Gallagher Center of Excellence","Arthur J. Gallagher & Co.","BFSI: Insurance","5000+"],
+      ["WPP plc","WPP plc","Media, Advertising & Gaming","5000+"],
+      ["NielsenIQ India (NIQ)","Nielsen Consumer LLC (NielsenIQ)","Technology: Data, Analytics & AI","5000+"],
+      ["Google","Alphabet Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["Novartis","Novartis AG","Pharma & Life Sciences","5000+"],
+      ["Adobe India (incl. Adobe Commerce / Magento)","Adobe Inc.","Technology: SaaS & Software","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["WSP India","WSP Global Inc.","Professional Services & Consulting","5000+"],
+      ["Synopsys India","Synopsys Inc","Technology: Semiconductors & Hardware","5000+"],
+      ["Worley India","Worley Limited","Energy, Power & Oil & Gas","5000+"],
+      ["FactSet","FactSet Research Systems Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Broadridge Financial Solutions (India) Private Limited","Broadridge Financial Solutions, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"]
+    ],
+    "Mysuru": [
+      ["ArisGlobal Software Private Limited","ArisGlobal LLC (Nordic Capital)","Pharma & Life Sciences","1001-5000"],
+      ["Meritor India (Cummins)","Cummins Inc. (Meritor acquired 2022)","Automotive & Auto Components","1001-5000"]
+    ],
+    "Nagpur": [
+      ["T-Systems India","T-Systems International GmbH","Professional Services & Consulting","1001-5000"],
+      ["Zinnia India","Zinnia (Zinnia Corporate Holdings, formerly SE2, Eldridge Industries)","BFSI: Insurance","1001-5000"],
+      ["HotelKey India Technology Centre","HotelKey, Inc. (Plano, Texas)","Technology: SaaS & Software","101-500"],
+      ["C&R Software India","C&R Software (Jonas Software / Constellation Software Inc.)","Technology: SaaS & Software","101-500"],
+      ["Corpay India GCC","Corpay Inc. (formerly FLEETCOR)","BFSI: Banking, FinTech & Capital Markets","101-500"]
+    ],
+    "Nashik": [
+      ["Epiroc India","Epiroc AB","Industrial, Engineering & Manufacturing","1001-5000"]
+    ],
+    "Chennai": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["NatWest Group India","NatWest Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Qualcomm India","Qualcomm Incorporated","Technology: Semiconductors & Hardware","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Shell Business Operations India","Shell plc","Energy, Power & Oil & Gas","5000+"],
+      ["BNP Paribas India Solutions Pvt Ltd","BNP Paribas S.A.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Maersk (A.P. Moller-Maersk)","A.P. Moller-Maersk A/S","Logistics & Supply Chain","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["Ford Motor Company","Ford Motor Company","Automotive & Auto Components","5000+"],
+      ["Société Générale GSC India","Société Générale S.A.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["WPP plc","WPP plc","Media, Advertising & Gaming","5000+"],
+      ["NielsenIQ India (NIQ)","Nielsen Consumer LLC (NielsenIQ)","Technology: Data, Analytics & AI","5000+"],
+      ["Fujitsu India GCC","Fujitsu Limited","Professional Services & Consulting","5000+"],
+      ["VMware (Broadcom)","Broadcom Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["Walmart Global Tech India","Walmart Inc","Retail, Consumer & FMCG","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Applied Materials India (Engineering & R&D Center)","Applied Materials, Inc.","Technology: Semiconductors & Hardware","5000+"],
+      ["BNY Mellon International Operations India","The Bank of New York Mellon Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Boeing India Engineering & Technology Center (BIETC)","The Boeing Company","Aerospace, Defense & Aviation","5000+"],
+      ["Fiserv India","Fiserv, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Omnicom Global Solutions India (Annalect)","Omnicom Group","Technology: Data, Analytics & AI","5000+"]
+    ],
+    "Kolkata": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Worley India","Worley Limited","Energy, Power & Oil & Gas","5000+"],
+      ["KPMG Global Delivery Center Private Limited","KPMG International","Professional Services & Consulting","1001-5000"],
+      ["Hewlett Packard Enterprise (HPE)","Hewlett Packard Enterprise Company","Technology: Cloud, Infrastructure & DevTools","1001-5000"],
+      ["Orange Business India","Orange S.A.","Professional Services & Consulting","1001-5000"],
+      ["Colliers India GCC","Colliers International Group Inc.","Construction & Real Estate","1001-5000"],
+      ["Visteon","Visteon Corporation","Automotive & Auto Components","1001-5000"],
+      ["SYSTRA S.A.","SYSTRA S.A.","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Deloitte Shared Services India LLP","Deloitte Touche Tohmatsu Limited","Professional Services & Consulting","1001-5000"],
+      ["GlobalFoundries","GlobalFoundries Inc.","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Keysight Technologies","Keysight Technologies Inc","Technology: Semiconductors & Hardware","1001-5000"],
+      ["DSV","DSV A/S","Logistics & Supply Chain","1001-5000"],
+      ["FCM Travel Solutions","Flight Centre Travel Group Limited","Travel, Hospitality & Leisure","1001-5000"],
+      ["Bentley Systems India Private Limited","Bentley Systems, Incorporated","Industrial, Engineering & Manufacturing","501-1000"],
+      ["Danieli India Limited","Danieli & C. Officine Meccaniche S.p.A.","Industrial, Engineering & Manufacturing","501-1000"],
+      ["Hyland India","Hyland Software","Technology: SaaS & Software","501-1000"],
+      ["Clinisys","Clinisys, Inc.","Healthcare & MedTech","101-500"],
+      ["Mode Analytics India (ThoughtSpot)","ThoughtSpot Inc.","Technology: Data, Analytics & AI","101-500"],
+      ["Nomura Research Institute Financial Technologies India Private Limited (NRI FT India)","Nomura Research Institute, Ltd.","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Lexmark International (India) Private Limited","Lexmark International (Xerox Holdings Corporation)","Technology: SaaS & Software","101-500"],
+      ["Indorama Ventures","Indorama Ventures Public Company Limited","Chemicals, Materials & Mining","101-500"],
+      ["MOL Information Technology India","Mitsui O.S.K. Lines, Ltd. (MOL)","Logistics & Supply Chain","101-500"],
+      ["Nomura Research Institute Consulting and Solutions India","Nomura Research Institute Ltd (NRI)","Professional Services & Consulting","101-500"],
+      ["Jacobs India","Jacobs Solutions Inc.","Professional Services & Consulting","1001-5000"],
+      ["Motorola Solutions India","Motorola Solutions Inc.","Technology: SaaS & Software","1001-5000"]
+    ],
+    "Madurai": [
+      ["Honeywell Technology Solutions","Honeywell International Inc","Industrial, Engineering & Manufacturing","5000+"],
+      ["Solartis","Solartis, LLC","BFSI: Insurance","501-1000"],
+      ["WEX India Technology Center (incl. WEX India commercial)","WEX Inc.","BFSI: Banking, FinTech & Capital Markets","101-500"]
+    ],
+    "Manesar": [
+      ["Agilent Technologies India","Agilent Technologies Inc.","Healthcare & MedTech","1001-5000"],
+      ["Keysight Technologies","Keysight Technologies Inc","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Toyoda Gosei Technical Center India","Toyoda Gosei Co., Ltd.","Automotive & Auto Components","1-100"],
+      ["Atotech Development Center Private Limited","MKS Instruments, Inc.","Technology: Semiconductors & Hardware","101-500"]
+    ],
+    "Shimoga": [
+      ["Arthur J. Gallagher Center of Excellence","Arthur J. Gallagher & Co.","BFSI: Insurance","5000+"]
+    ],
+    "Dehradun": [
+      ["Hughes Systique Corporation","Hughes Network Systems LLC (EchoStar)","Telecom & Networks","501-1000"]
+    ],
+    "Gurugram": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["NatWest Group India","NatWest Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Carelon Global Solutions India (Elevance Health)","Elevance Health Inc.","BFSI: Insurance","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["WPP plc","WPP plc","Media, Advertising & Gaming","5000+"],
+      ["Google","Alphabet Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["NVIDIA","NVIDIA Corporation","Technology: Semiconductors & Hardware","5000+"],
+      ["Honeywell Technology Solutions","Honeywell International Inc","Industrial, Engineering & Manufacturing","5000+"],
+      ["Schneider Electric India GCC","Schneider Electric SE","Energy, Power & Oil & Gas","5000+"],
+      ["Walmart Global Tech India","Walmart Inc","Retail, Consumer & FMCG","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Fiserv India","Fiserv, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Omnicom Global Solutions India (Annalect)","Omnicom Group","Technology: Data, Analytics & AI","5000+"],
+      ["Continental AG (Technical Center India)","Continental AG","Automotive & Auto Components","5000+"],
+      ["Cisco India Engineering (incl. Cisco Systems India)","Cisco Systems","Telecom & Networks","1001-5000"],
+      ["Collins Aerospace","RTX Corporation","Aerospace, Defense & Aviation","1001-5000"],
+      ["Guidehouse","Guidehouse LLP (Veritas Capital)","Professional Services & Consulting","1001-5000"],
+      ["NAB India (Global Innovation Centre)","National Australia Bank Limited","BFSI: Banking, FinTech & Capital Markets","1001-5000"]
+    ],
+    "Hubballi": [
+      ["Hitachi Construction Machinery Development Center India","Hitachi Construction Machinery Co., Ltd. (TSE: 6305)","Construction & Real Estate","101-500"]
+    ],
+    "Kolhapur": [
+      ["Arthur J. Gallagher Center of Excellence","Arthur J. Gallagher & Co.","BFSI: Insurance","5000+"]
+    ],
+    "Neemrana": [
+      ["Daikin","Daikin Industries, Ltd.","Industrial, Engineering & Manufacturing","1001-5000"]
+    ],
+    "Silvassa": [
+      ["Celanese Corporation","Celanese Corporation","Chemicals, Materials & Mining","101-500"]
+    ],
+    "Tumakuru": [
+      ["MANN+HUMMEL Global Technology & Innovation Center India","Mann+Hummel Group","Automotive & Auto Components","1001-5000"]
+    ],
+    "Vadodara": [
+      ["NielsenIQ India (NIQ)","Nielsen Consumer LLC (NielsenIQ)","Technology: Data, Analytics & AI","5000+"],
+      ["Worley India","Worley Limited","Energy, Power & Oil & Gas","5000+"],
+      ["Infor India","Infor (Koch Industries)","Technology: SaaS & Software","1001-5000"],
+      ["Alstom India (Engineering Centre)","Alstom SA","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Wolters Kluwer India Innovation Hub","Wolters Kluwer N.V.","Technology: SaaS & Software","1001-5000"],
+      ["Magnit Global India","Magnit (formerly PRO Unlimited)","Technology: SaaS & Software","1001-5000"],
+      ["Hitachi Energy (Hitachi Group)","Hitachi Ltd.","Energy, Power & Oil & Gas","1001-5000"],
+      ["Infineon Technologies","Infineon Technologies AG","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Air Products India GCC","Air Products and Chemicals, Inc.","Energy, Power & Oil & Gas","1001-5000"],
+      ["Numerator India Private Limited","Numerator (Kantar/Vista heritage, HQ Chicago)","Technology: Data, Analytics & AI","1001-5000"],
+      ["Linde India Engineering Centre","Linde plc","Chemicals, Materials & Mining","1001-5000"],
+      ["Bechtel India","Bechtel Corporation","Construction & Real Estate","1001-5000"],
+      ["Kent Global Engineering Centre India","Kent plc","Energy, Power & Oil & Gas","501-1000"],
+      ["Veradigm India","Veradigm Inc. (formerly Allscripts)","Healthcare & MedTech","501-1000"],
+      ["Civica India (Civica offshore development centre)","Civica Group Limited (Blackstone)","Technology: SaaS & Software","501-1000"],
+      ["MRI Software India","MRI Software LLC (GI Partners)","Technology: SaaS & Software","501-1000"],
+      ["ITT India","ITT Inc.","Industrial, Engineering & Manufacturing","101-500"],
+      ["Metso India","Metso Corporation","Chemicals, Materials & Mining","1-100"],
+      ["Altera Digital Health","Harris Computer Systems / Constellation Software Inc.","Healthcare & MedTech",null],
+      ["Lucy Electric Technology & Services Centre","Lucy Group Ltd","Energy, Power & Oil & Gas",null],
+      ["Mastercard India Technology Hub","Mastercard Incorporated","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Qlik","QlikTech International AB (Thoma Bravo)","Technology: Data, Analytics & AI","101-500"]
+    ],
+    "Ahmedabad": [
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["BDO RISE Private Limited","BDO USA / BDO Global","Professional Services & Consulting","1001-5000"],
+      ["Cimpress India","Cimpress plc","Technology: SaaS & Software","1001-5000"],
+      ["Infineon Technologies","Infineon Technologies AG","Technology: Semiconductors & Hardware","1001-5000"],
+      ["SYSTRA S.A.","SYSTRA S.A.","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Deloitte Shared Services India LLP","Deloitte Touche Tohmatsu Limited","Professional Services & Consulting","1001-5000"],
+      ["Mott MacDonald India","Mott MacDonald Group Limited","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Sophos India","Sophos Limited (Thoma Bravo)","Technology: Cybersecurity","1001-5000"],
+      ["Tetra Pak India","Tetra Laval International S.A.","Retail, Consumer & FMCG","1001-5000"],
+      ["EisnerAmper (India) Consultants Private Limited","Eisner Advisory Group LLC (EisnerAmper)","Professional Services & Consulting","1001-5000"],
+      ["Citrin Cooperman India LLP","Citrin Cooperman & Company LLP","Professional Services & Consulting","501-1000"],
+      ["Vertafore","Vertafore Inc. (Roper Technologies)","BFSI: Insurance","501-1000"],
+      ["Wipfli India","Wipfli LLP","Professional Services & Consulting","501-1000"],
+      ["OneAdvanced India Product Engineering Centre","Advanced Computer Software Group Limited","Technology: SaaS & Software","501-1000"],
+      ["Meditab Software","Meditab Software, Inc.","Healthcare & MedTech","101-500"],
+      ["Armanino India LLP","Armanino LLP (Armanino Advisory)","Professional Services & Consulting","101-500"],
+      ["SiFive India","SiFive Inc.","Technology: Semiconductors & Hardware","101-500"],
+      ["Asite Solutions","Asite (Asite Solutions Ltd, UK)","Construction & Real Estate","101-500"],
+      ["eClinicalWorks India","eClinicalWorks LLC","Healthcare & MedTech","1001-5000"],
+      ["Jacobs India","Jacobs Solutions Inc.","Professional Services & Consulting","1001-5000"]
+    ],
+    "Bengaluru": [
+      ["JPMorgan Chase","JPMorgan Chase & Co.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Wells Fargo","Wells Fargo & Company","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Bosch Global Software Technologies India","Robert Bosch GmbH","Automotive & Auto Components","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["NatWest Group India","NatWest Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Microsoft India Development Center","Microsoft Corporation","Technology: SaaS & Software","5000+"],
+      ["Qualcomm India","Qualcomm Incorporated","Technology: Semiconductors & Hardware","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Carelon Global Solutions India (Elevance Health)","Elevance Health Inc.","BFSI: Insurance","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["Deutsche Bank India GCC","Deutsche Bank AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["LSEG India","London Stock Exchange Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Shell Business Operations India","Shell plc","Energy, Power & Oil & Gas","5000+"],
+      ["BNP Paribas India Solutions Pvt Ltd","BNP Paribas S.A.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["PricewaterhouseCoopers Service Delivery Center (Bangalore) Private Limited","PwC (PricewaterhouseCoopers International Limited)","Professional Services & Consulting","5000+"],
+      ["Maersk (A.P. Moller-Maersk)","A.P. Moller-Maersk A/S","Logistics & Supply Chain","5000+"],
+      ["Morgan Stanley Advantage Services","Morgan Stanley","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["Arthur J. Gallagher Center of Excellence","Arthur J. Gallagher & Co.","BFSI: Insurance","5000+"],
+      ["Ford Motor Company","Ford Motor Company","Automotive & Auto Components","5000+"]
+    ],
+    "Delhi NCR": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Citigroup India (Solutions Centre)","Citigroup Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Barclays Global Service Centre India","Barclays PLC","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["NatWest Group India","NatWest Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Microsoft India Development Center","Microsoft Corporation","Technology: SaaS & Software","5000+"],
+      ["Qualcomm India","Qualcomm Incorporated","Technology: Semiconductors & Hardware","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Carelon Global Solutions India (Elevance Health)","Elevance Health Inc.","BFSI: Insurance","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["WPP plc","WPP plc","Media, Advertising & Gaming","5000+"],
+      ["Fujitsu India GCC","Fujitsu Limited","Professional Services & Consulting","5000+"],
+      ["Google","Alphabet Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["NVIDIA","NVIDIA Corporation","Technology: Semiconductors & Hardware","5000+"],
+      ["Samsung R&D Institute India, Bengaluru (SRIB) / Samsung R&D Institute India, Delhi (SRIN)","Samsung Electronics Co., Ltd.","Technology: Semiconductors & Hardware","5000+"],
+      ["Adobe India (incl. Adobe Commerce / Magento)","Adobe Inc.","Technology: SaaS & Software","5000+"],
+      ["Honeywell Technology Solutions","Honeywell International Inc","Industrial, Engineering & Manufacturing","5000+"],
+      ["Schneider Electric India GCC","Schneider Electric SE","Energy, Power & Oil & Gas","5000+"],
+      ["Walmart Global Tech India","Walmart Inc","Retail, Consumer & FMCG","5000+"],
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Fiserv India","Fiserv, Inc.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Omnicom Global Solutions India (Annalect)","Omnicom Group","Technology: Data, Analytics & AI","5000+"]
+    ],
+    "Faridabad": [
+      ["SYSTRA S.A.","SYSTRA S.A.","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["Andritz Hydro Private Limited","ANDRITZ AG","Energy, Power & Oil & Gas","501-1000"]
+    ],
+    "Hyderabad": [
+      ["JPMorgan Chase","JPMorgan Chase & Co.","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Wells Fargo","Wells Fargo & Company","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Optum India","UnitedHealth Group Incorporated","Healthcare & MedTech","5000+"],
+      ["Oracle India Development Centre","Oracle Corporation","Technology: SaaS & Software","5000+"],
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Bosch Global Software Technologies India","Robert Bosch GmbH","Automotive & Auto Components","5000+"],
+      ["IBM India (GCC operations)","IBM Corporation","Technology: SaaS & Software","5000+"],
+      ["UBS (formerly Credit Suisse)","UBS Group AG","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Microsoft India Development Center","Microsoft Corporation","Technology: SaaS & Software","5000+"],
+      ["Qualcomm India","Qualcomm Incorporated","Technology: Semiconductors & Hardware","5000+"],
+      ["Salesforce India (Salesforce.com India Private Limited)","Salesforce Inc.","Technology: SaaS & Software","5000+"],
+      ["KPMG Global Services Private Limited","KPMG International Limited","Professional Services & Consulting","5000+"],
+      ["R1 RCM Global Private Limited","R1 RCM Inc.","Healthcare & MedTech","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Carelon Global Solutions India (Elevance Health)","Elevance Health Inc.","BFSI: Insurance","5000+"],
+      ["SAP Labs India","SAP SE","Technology: SaaS & Software","5000+"],
+      ["LSEG India","London Stock Exchange Group plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["ADP PRIVATE LIMITED","Automatic Data Processing, Inc.","Professional Services & Consulting","5000+"],
+      ["AMD India (Technostar R&D Campus)","Advanced Micro Devices, Inc.","Technology: Semiconductors & Hardware","5000+"],
+      ["Intel Corporation","Intel Corporation","Technology: Semiconductors & Hardware","5000+"],
+      ["Fujitsu India GCC","Fujitsu Limited","Professional Services & Consulting","5000+"],
+      ["Google","Alphabet Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["NVIDIA","NVIDIA Corporation","Technology: Semiconductors & Hardware","5000+"],
+      ["Goldman Sachs Services India","Goldman Sachs Group","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Novartis","Novartis AG","Pharma & Life Sciences","5000+"],
+      ["VMware (Broadcom)","Broadcom Inc.","Technology: Cloud, Infrastructure & DevTools","5000+"],
+      ["Adobe India (incl. Adobe Commerce / Magento)","Adobe Inc.","Technology: SaaS & Software","5000+"]
+    ],
+    "Kozhikode": [
+      ["Blackhawk Network India","Blackhawk Network Holdings","BFSI: Banking, FinTech & Capital Markets","501-1000"]
+    ],
+    "Mangaluru": [
+      ["EGDK India Private Limited (EG India)","EG A/S","Technology: SaaS & Software","501-1000"],
+      ["Mangalore Infotech Solutions Private Limited (UniCourt India)","UniCourt Inc.","Professional Services & Consulting","101-500"],
+      ["Bose Professional India","Bose Professional","Technology: Semiconductors & Hardware","1-100"],
+      ["Entrupy India","Entrupy, Inc.","Technology: Data, Analytics & AI","1-100"]
+    ],
+    "New Delhi": [
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Samsung R&D Institute India, Bengaluru (SRIB) / Samsung R&D Institute India, Delhi (SRIN)","Samsung Electronics Co., Ltd.","Technology: Semiconductors & Hardware","5000+"],
+      ["Synopsys India","Synopsys Inc","Technology: Semiconductors & Hardware","5000+"],
+      ["Orange Business India","Orange S.A.","Professional Services & Consulting","1001-5000"],
+      ["Idemia India","Idemia Group (Advent International)","Technology: Cybersecurity","1001-5000"],
+      ["Mott MacDonald India","Mott MacDonald Group Limited","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["MathWorks","MathWorks Inc.","Technology: SaaS & Software","1001-5000"],
+      ["Siemens EDA India (Mentor Graphics)","Siemens AG / Siemens Industry Software","Technology: Semiconductors & Hardware","1001-5000"],
+      ["DSV","DSV A/S","Logistics & Supply Chain","1001-5000"],
+      ["FCM Travel Solutions","Flight Centre Travel Group Limited","Travel, Hospitality & Leisure","1001-5000"],
+      ["Andritz Hydro Private Limited","ANDRITZ AG","Energy, Power & Oil & Gas","501-1000"],
+      ["TMF Services India Private Limited","TMF Group BV","BFSI: Banking, FinTech & Capital Markets","501-1000"],
+      ["Rohde & Schwarz India","Rohde & Schwarz GmbH & Co. KG","Telecom & Networks","501-1000"],
+      ["FEV India","FEV Group GmbH","Automotive & Auto Components","501-1000"],
+      ["Chegg","Chegg, Inc.","Education & EdTech","501-1000"],
+      ["George Institute Services India Private Limited","The George Institute for Global Health","BFSI: Insurance","501-1000"],
+      ["ICF International India","ICF International Inc.","Professional Services & Consulting","501-1000"],
+      ["Progress Software Development Private Limited","Progress Software Corporation","Technology: SaaS & Software","101-500"],
+      ["ShipBob India (Technology Innovation Hub)","ShipBob, Inc.","Technology: Data, Analytics & AI","101-500"],
+      ["Air Liquide Global E&C Solutions India","Air Liquide S.A.","Industrial, Engineering & Manufacturing","101-500"],
+      ["Bloomberg India","Bloomberg L.P.","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Amway Global Services India","Amway Corporation (Alticor Inc.)","Retail, Consumer & FMCG","101-500"],
+      ["Nippon Steel Engineering India","Nippon Steel Corporation","Technology: Cloud, Infrastructure & DevTools","101-500"],
+      ["Safe Security","Safe Security, Inc. (Safe Securities Inc., formerly Lucideus Inc.)","Technology: Cybersecurity","101-500"],
+      ["FTI Consulting India","FTI Consulting Inc.","Professional Services & Consulting","1-100"],
+      ["Kroll India","Kroll LLC (Duff & Phelps)","Professional Services & Consulting","1-100"],
+      ["Cialfo India Product Engineering Center","Cialfo Pte. Ltd.","Education & EdTech","1-100"],
+      ["Murata India","Murata Manufacturing Co., Ltd.","Technology: Semiconductors & Hardware","1-100"],
+      ["OpenAI India","OpenAI, Inc.","Technology: Data, Analytics & AI","1-100"],
+      ["ABBYYSOFTWARE INDIA PRIVATE LIMITED","ABBYY Group","Technology: SaaS & Software","101-500"]
+    ],
+    "Aurangabad": [
+      ["Endress+Hauser India Development Centre","Endress+Hauser Group","Technology: Semiconductors & Hardware","101-500"],
+      ["MAN Energy Solutions","MAN Energy Solutions SE (Volkswagen Group)","Industrial, Engineering & Manufacturing","101-500"]
+    ],
+    "Chandigarh": [
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Parexel India","Parexel International","Pharma & Life Sciences","1001-5000"],
+      ["Oceaneering India Center","Oceaneering International, Inc.","Energy, Power & Oil & Gas","501-1000"],
+      ["Precisely India","Precisely (Clearlake Capital/Insight Partners)","Technology: SaaS & Software","501-1000"],
+      ["Buck Capability Centre Private Limited","Arthur J. Gallagher & Co.","BFSI: Insurance","501-1000"],
+      ["Basware India Pvt Ltd","Basware Oyj","Technology: SaaS & Software","101-500"],
+      ["Zscaler","Zscaler, Inc.","Technology: Cybersecurity","1001-5000"]
+    ],
+    "Coimbatore": [
+      ["Bosch Global Software Technologies India","Robert Bosch GmbH","Automotive & Auto Components","5000+"],
+      ["IQVIA India","IQVIA Holdings","Pharma & Life Sciences","5000+"],
+      ["State Street India","State Street Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Ford Motor Company","Ford Motor Company","Automotive & Auto Components","5000+"],
+      ["Applied Materials India (Engineering & R&D Center)","Applied Materials, Inc.","Technology: Semiconductors & Hardware","5000+"],
+      ["Omnicom Global Solutions India (Annalect)","Omnicom Group","Technology: Data, Analytics & AI","5000+"],
+      ["Cotiviti India","Cotiviti Inc.","BFSI: Insurance","5000+"],
+      ["Blue Yonder India Pvt Ltd","Blue Yonder Group Inc. (Panasonic)","Technology: SaaS & Software","1001-5000"],
+      ["Wolters Kluwer India Innovation Hub","Wolters Kluwer N.V.","Technology: SaaS & Software","1001-5000"],
+      ["Visteon","Visteon Corporation","Automotive & Auto Components","1001-5000"],
+      ["MSCI","MSCI Inc.","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["Zinnia India","Zinnia (Zinnia Corporate Holdings, formerly SE2, Eldridge Industries)","BFSI: Insurance","1001-5000"],
+      ["Commvault","Commvault Systems, Inc.","Technology: Data, Analytics & AI","1001-5000"],
+      ["Dassault Systemes Global Services","Dassault Systèmes SE","Technology: SaaS & Software","1001-5000"],
+      ["Avantor India","Avantor, Inc.","Pharma & Life Sciences","1001-5000"],
+      ["FORVIA HELLA India, Global Development Center (GDC)","Forvia SE","Automotive & Auto Components","1001-5000"],
+      ["Colruyt IT Consultancy India","Colruyt Group","Retail, Consumer & FMCG","501-1000"],
+      ["Solartis","Solartis, LLC","BFSI: Insurance","501-1000"],
+      ["Exterro India Private Limited","Exterro Inc.","Technology: Cybersecurity","501-1000"],
+      ["AppViewX Private Limited","AppViewX Inc.","Technology: Cybersecurity","101-500"],
+      ["Mettler-Toledo Global Business Services India","Mettler-Toledo International Inc.","Technology: Semiconductors & Hardware","101-500"],
+      ["Gradiant India","Gradiant Corporation","Industrial, Engineering & Manufacturing","101-500"],
+      ["Circor Flow Technologies India","CIRCOR International Inc. (KKR Private Equity, acquired Oct 2023 USD 1.6B EV)","Industrial, Engineering & Manufacturing","101-500"],
+      ["Vanenburg Software (India) Private Limited","Vanenburg Group (now Rappit)","Technology: SaaS & Software","101-500"],
+      ["Yield Engineering Systems India (YES)","Yield Engineering Systems, Inc.","Technology: Semiconductors & Hardware","101-500"],
+      ["Meltwater India","Meltwater Group","Technology: Data, Analytics & AI","1-100"],
+      ["Milacron India GCC","Milacron LLC (Hillenbrand Inc.)","Industrial, Engineering & Manufacturing","1-100"],
+      ["Dentsu Global Services India","Dentsu Group Inc.","Media, Advertising & Gaming","1001-5000"],
+      ["Flex Global Business Services India","Flex Ltd","Industrial, Engineering & Manufacturing","501-1000"],
+      ["Getbeamer India","Beamer (getBeamer)","Technology: SaaS & Software","1-100"]
+    ],
+    "Puducherry": [
+      ["Eaton Technologies Private Limited","Eaton Corporation plc","Energy, Power & Oil & Gas","1001-5000"]
+    ],
+    "Bhubaneswar": [
+      ["Chubb Business Services India","Chubb Limited","BFSI: Insurance","1001-5000"],
+      ["Mobileum","Mobileum Inc.","Telecom & Networks","501-1000"],
+      ["Dark Matter Technologies India","Dark Matter Technologies","BFSI: Banking, FinTech & Capital Markets","501-1000"]
+    ],
+    "Gandhinagar": [
+      ["Bank of America India (BA Continuum)","Bank of America Corporation","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["S&P Global India","S&P Global Inc","Technology: Data, Analytics & AI","5000+"],
+      ["Technip Energies N.V.","Technip Energies N.V.","Energy, Power & Oil & Gas","1001-5000"],
+      ["Orange Business India","Orange S.A.","Professional Services & Consulting","1001-5000"],
+      ["Apex Group India","Apex Group Ltd.","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["IQ-EQ Fund Administration Services (India) Private Limited","IQ-EQ Group Holdings (Astorg PE)","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Odoo India","Odoo S.A.","Technology: SaaS & Software","1-100"],
+      ["Tower Research Capital India","Tower Research Capital LLC","BFSI: Banking, FinTech & Capital Markets","1-100"],
+      ["Korean Re IFSC Insurance Office (GIFT City)","Korean Reinsurance Company","BFSI: Insurance","1-100"],
+      ["Peak Re IFSC Insurance Office (GIFT City)","Peak Reinsurance Company Limited","BFSI: Insurance","1-100"],
+      ["SS&C Technologies India","SS&C Technologies Holdings Inc","BFSI: Banking, FinTech & Capital Markets","5000+"]
+    ],
+    "Navi Mumbai": [
+      ["Worley India","Worley Limited","Energy, Power & Oil & Gas","5000+"],
+      ["Morningstar India","Morningstar Inc","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["HERE Technologies India","HERE Technologies (HERE Global B.V.)","Technology: SaaS & Software","1001-5000"],
+      ["MAIRE Tecnimont India","MAIRE S.p.A.","Energy, Power & Oil & Gas","1001-5000"],
+      ["Fortrea India","Fortrea Holdings","Pharma & Life Sciences","1001-5000"],
+      ["Majesco India","Majesco Software","BFSI: Insurance","1001-5000"],
+      ["Henkel","Henkel AG & Co. KGaA","Industrial, Engineering & Manufacturing","1001-5000"],
+      ["FirstRand Services Private Limited","FirstRand Group","BFSI: Banking, FinTech & Capital Markets","501-1000"],
+      ["Medpace India","Medpace Holdings Inc.","Pharma & Life Sciences","501-1000"],
+      ["Holcim Global Hub Business Services (Holcim Global Hub Services Private Limited)","Holcim Ltd","Chemicals, Materials & Mining","101-500"],
+      ["NOV India (National Oilwell Varco)","NOV Inc.","Energy, Power & Oil & Gas","101-500"],
+      ["Momentum Metropolitan Services India (GIC)","Momentum Metropolitan Holdings","BFSI: Insurance","101-500"],
+      ["Columbia Group India GCC","Columbia Group (Columbia Shipmanagement)","Logistics & Supply Chain","101-500"],
+      ["Huntsman India","Huntsman Corporation","Chemicals, Materials & Mining","101-500"],
+      ["Stewart Title India","Stewart Information Services Corp","BFSI: Insurance","101-500"],
+      ["Mizuho Global Services India Private Limited","Mizuho Financial Group","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Fugro India","Fugro N.V.","Industrial, Engineering & Manufacturing","101-500"],
+      ["Covestro","Covestro AG","Chemicals, Materials & Mining","101-500"],
+      ["Holcim Global Digital Hub (Holcim Services (South Asia) Limited)","Holcim Ltd","Chemicals, Materials & Mining","101-500"],
+      ["Dow India GBS","Dow Inc.","Chemicals, Materials & Mining","501-1000"],
+      ["Fuel Cycle India GCC","Fuel Cycle","Technology: SaaS & Software","1-100"],
+      ["Integra LifeSciences India","Integra LifeSciences Holdings Corporation","Healthcare & MedTech","101-500"]
+    ],
+    "Greater Noida": [
+      ["FIS Technology Services India Private Limited","Fidelity National Information Services Inc (FIS)","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["STMicroelectronics India","STMicroelectronics NV","Technology: Semiconductors & Hardware","1001-5000"],
+      ["Covestro","Covestro AG","Chemicals, Materials & Mining","101-500"],
+      ["FPT Industrial India","Iveco Group N.V. (Amsterdam, Netherlands / Turin Italy)","Industrial, Engineering & Manufacturing","101-500"],
+      ["Honda R&D India","Honda Motor Co Ltd","Automotive & Auto Components","501-1000"],
+      ["Yamaha Motor Research and Development India Pvt. Ltd. (YMRI)","Yamaha Motor Co. Ltd.","Automotive & Auto Components","5000+"]
+    ],
+    "Visakhapatnam": [
+      ["HSBC Global Service Centre (GSC)","HSBC Holdings plc","BFSI: Banking, FinTech & Capital Markets","5000+"],
+      ["Franklin Templeton","Franklin Templeton Investments","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["Chegg","Chegg, Inc.","Education & EdTech","501-1000"],
+      ["Phenom India","Phenom People, Inc.","Technology: Data, Analytics & AI","501-1000"],
+      ["Eisai Global Capability Centre Visakhapatnam (EGCC)","Eisai Co., Ltd.","Pharma & Life Sciences","101-500"]
+    ],
+    "Thiruvananthapuram": [
+      ["Guidehouse","Guidehouse LLP (Veritas Capital)","Professional Services & Consulting","1001-5000"],
+      ["Allianz Services India Pvt Ltd","Allianz SE","BFSI: Insurance","1001-5000"],
+      ["ICON plc India","ICON plc","BFSI: Insurance","1001-5000"],
+      ["Allianz Technology India","Allianz Technology SE","BFSI: Insurance","1001-5000"],
+      ["H & R Block (India) Private Limited","H&R Block Inc. (NYSE: HRB)","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["Visteon","Visteon Corporation","Automotive & Auto Components","1001-5000"],
+      ["Finastra","Finastra Group Holdings Limited (Vista Equity)","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["Equifax India Technology Center","Equifax Inc.","BFSI: Banking, FinTech & Capital Markets","1001-5000"],
+      ["Good Methods Software Solutions Private Limited (CareStack India)","Good Methods Global Inc. (CareStack)","Healthcare & MedTech","1001-5000"],
+      ["RM Education Solutions India Private Limited (RMESI)","RM plc","Education & EdTech","501-1000"],
+      ["Zafin Software Centre of Excellence Private Limited","Zafin (Nordic Capital)","BFSI: Banking, FinTech & Capital Markets","101-500"],
+      ["Mode Analytics India (ThoughtSpot)","ThoughtSpot Inc.","Technology: Data, Analytics & AI","101-500"],
+      ["Press Ganey Associates India","Press Ganey Holdings LLC","Healthcare & MedTech","101-500"],
+      ["dSPACE India","dSPACE GmbH","Automotive & Auto Components","101-500"],
+      ["Alamy Images India Private Limited (Alamy India)","Alamy Limited (PA Media Group)","Media, Advertising & Gaming","1-100"],
+      ["Armada (AEDGE AICC India Private Limited)","Armada Intelligence Inc. (Armada AI)","Technology: Data, Analytics & AI","101-500"],
+      ["Nissan Digital India LLP","Nissan Motor Co. Ltd.","Automotive & Auto Components","101-500"]
+    ]
+  },
+  "extra_cities": {
+    "Kochi": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            8
+          ],
+          [
+            "1-100",
+            4
+          ],
+          [
+            "101-500",
+            4
+          ],
+          [
+            "5000+",
+            3
+          ],
+          [
+            "501-1000",
+            3
+          ]
+        ],
+        "domain": [
+          [
+            "Technology",
+            20
+          ],
+          [
+            "Engineering & R&D",
+            12
+          ],
+          [
+            "Data, Analytics & AI",
+            11
+          ],
+          [
+            "Finance & Accounting",
+            8
+          ],
+          [
+            "Operations & Business Excellence",
+            8
+          ],
+          [
+            "Customer Operations",
+            5
+          ],
+          [
+            "HR Shared Services",
+            5
+          ],
+          [
+            "Risk & Compliance",
+            4
+          ],
+          [
+            "Product Management",
+            3
+          ],
+          [
+            "Cybersecurity",
+            2
+          ],
+          [
+            "Clinical & Medical",
+            1
+          ],
+          [
+            "Legal",
+            1
+          ],
+          [
+            "Manufacturing Technology",
+            1
+          ],
+          [
+            "Procurement",
+            1
+          ]
+        ],
+        "vintage": [
+          [
+            "2000-2009",
+            6
+          ],
+          [
+            "2010-2014",
+            6
+          ],
+          [
+            "2015-2019",
+            5
+          ],
+          [
+            "2023-2026",
+            3
+          ],
+          [
+            "2020-2022",
+            2
+          ]
+        ],
+        "industry": [
+          [
+            "Professional Services & Consulting",
+            6
+          ],
+          [
+            "BFSI: Banking, FinTech & Capital Markets",
+            2
+          ],
+          [
+            "Logistics & Supply Chain",
+            2
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            2
+          ],
+          [
+            "Technology: SaaS & Software",
+            2
+          ],
+          [
+            "BFSI: Insurance",
+            1
+          ],
+          [
+            "Energy, Power & Oil & Gas",
+            1
+          ],
+          [
+            "Healthcare & MedTech",
+            1
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            1
+          ],
+          [
+            "Pharma & Life Sciences",
+            1
+          ],
+          [
+            "Retail, Consumer & FMCG",
+            1
+          ],
+          [
+            "Technology: Cybersecurity",
+            1
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Gen 3",
+            7
+          ],
+          [
+            "Gen 2",
+            5
+          ],
+          [
+            "Gen 1",
+            4
+          ],
+          [
+            "Not disclosed",
+            4
+          ],
+          [
+            "Gen 4",
+            2
+          ]
+        ]
+      },
+      "total": 22
+    },
+    "Noida": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            44
+          ],
+          [
+            "101-500",
+            37
+          ],
+          [
+            "5000+",
+            21
+          ],
+          [
+            "501-1000",
+            15
+          ],
+          [
+            "1-100",
+            12
+          ],
+          [
+            "Not disclosed",
+            6
+          ]
+        ],
+        "domain": [
+          [
+            "Technology",
+            109
+          ],
+          [
+            "Engineering & R&D",
+            99
+          ],
+          [
+            "Data, Analytics & AI",
+            63
+          ],
+          [
+            "Product Management",
+            41
+          ],
+          [
+            "Operations & Business Excellence",
+            40
+          ],
+          [
+            "Finance & Accounting",
+            34
+          ],
+          [
+            "Customer Operations",
+            24
+          ],
+          [
+            "Risk & Compliance",
+            17
+          ],
+          [
+            "Cybersecurity",
+            15
+          ],
+          [
+            "HR Shared Services",
+            12
+          ],
+          [
+            "Manufacturing Technology",
+            5
+          ],
+          [
+            "Clinical & Medical",
+            4
+          ],
+          [
+            "Sales & Marketing Operations",
+            4
+          ],
+          [
+            "Legal",
+            3
+          ],
+          [
+            "Procurement",
+            3
+          ]
+        ],
+        "vintage": [
+          [
+            "2000-2009",
+            58
+          ],
+          [
+            "Before 2000",
+            21
+          ],
+          [
+            "2015-2019",
+            20
+          ],
+          [
+            "2010-2014",
+            17
+          ],
+          [
+            "2020-2022",
+            8
+          ],
+          [
+            "2023-2026",
+            6
+          ],
+          [
+            "Not disclosed",
+            5
+          ]
+        ],
+        "industry": [
+          [
+            "Technology: SaaS & Software",
+            20
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            18
+          ],
+          [
+            "BFSI: Banking, FinTech & Capital Markets",
+            15
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            11
+          ],
+          [
+            "Professional Services & Consulting",
+            10
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            9
+          ],
+          [
+            "Media, Advertising & Gaming",
+            7
+          ],
+          [
+            "Construction & Real Estate",
+            6
+          ],
+          [
+            "Telecom & Networks",
+            6
+          ],
+          [
+            "BFSI: Insurance",
+            5
+          ],
+          [
+            "Education & EdTech",
+            5
+          ],
+          [
+            "Energy, Power & Oil & Gas",
+            4
+          ],
+          [
+            "Healthcare & MedTech",
+            4
+          ],
+          [
+            "Technology: Cloud, Infrastructure & DevTools",
+            4
+          ],
+          [
+            "Aerospace, Defense & Aviation",
+            3
+          ],
+          [
+            "Pharma & Life Sciences",
+            3
+          ],
+          [
+            "Technology: Cybersecurity",
+            3
+          ],
+          [
+            "Chemicals, Materials & Mining",
+            1
+          ],
+          [
+            "Logistics & Supply Chain",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Gen 4",
+            38
+          ],
+          [
+            "Gen 3",
+            37
+          ],
+          [
+            "Gen 2",
+            29
+          ],
+          [
+            "Not disclosed",
+            19
+          ],
+          [
+            "Gen 1",
+            12
+          ]
+        ]
+      },
+      "total": 135
+    },
+    "Kolkata": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            19
+          ],
+          [
+            "101-500",
+            11
+          ],
+          [
+            "5000+",
+            5
+          ],
+          [
+            "501-1000",
+            3
+          ],
+          [
+            "1-100",
+            1
+          ]
+        ],
+        "domain": [
+          [
+            "Technology",
+            31
+          ],
+          [
+            "Engineering & R&D",
+            25
+          ],
+          [
+            "Data, Analytics & AI",
+            20
+          ],
+          [
+            "Finance & Accounting",
+            16
+          ],
+          [
+            "Operations & Business Excellence",
+            14
+          ],
+          [
+            "HR Shared Services",
+            7
+          ],
+          [
+            "Product Management",
+            6
+          ],
+          [
+            "Customer Operations",
+            5
+          ],
+          [
+            "Risk & Compliance",
+            5
+          ],
+          [
+            "Manufacturing Technology",
+            4
+          ],
+          [
+            "Cybersecurity",
+            3
+          ],
+          [
+            "Procurement",
+            1
+          ],
+          [
+            "Supply Chain",
+            1
+          ]
+        ],
+        "vintage": [
+          [
+            "2000-2009",
+            13
+          ],
+          [
+            "2015-2019",
+            11
+          ],
+          [
+            "Before 2000",
+            9
+          ],
+          [
+            "2010-2014",
+            5
+          ],
+          [
+            "2020-2022",
+            1
+          ]
+        ],
+        "industry": [
+          [
+            "Professional Services & Consulting",
+            7
+          ],
+          [
+            "Technology: SaaS & Software",
+            6
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            4
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            4
+          ],
+          [
+            "BFSI: Banking, FinTech & Capital Markets",
+            3
+          ],
+          [
+            "Construction & Real Estate",
+            3
+          ],
+          [
+            "Chemicals, Materials & Mining",
+            2
+          ],
+          [
+            "Energy, Power & Oil & Gas",
+            2
+          ],
+          [
+            "Logistics & Supply Chain",
+            2
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            2
+          ],
+          [
+            "Automotive & Auto Components",
+            1
+          ],
+          [
+            "Healthcare & MedTech",
+            1
+          ],
+          [
+            "Technology: Cloud, Infrastructure & DevTools",
+            1
+          ],
+          [
+            "Travel, Hospitality & Leisure",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Gen 3",
+            16
+          ],
+          [
+            "Gen 4",
+            11
+          ],
+          [
+            "Gen 2",
+            9
+          ],
+          [
+            "Gen 1",
+            3
+          ]
+        ]
+      },
+      "total": 39
+    },
+    "Gurugram": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            108
+          ],
+          [
+            "101-500",
+            87
+          ],
+          [
+            "501-1000",
+            41
+          ],
+          [
+            "5000+",
+            40
+          ],
+          [
+            "1-100",
+            37
+          ],
+          [
+            "Not disclosed",
+            7
+          ]
+        ],
+        "domain": [
+          [
+            "Technology",
+            275
+          ],
+          [
+            "Engineering & R&D",
+            204
+          ],
+          [
+            "Data, Analytics & AI",
+            170
+          ],
+          [
+            "Operations & Business Excellence",
+            122
+          ],
+          [
+            "Finance & Accounting",
+            98
+          ],
+          [
+            "Customer Operations",
+            64
+          ],
+          [
+            "Product Management",
+            63
+          ],
+          [
+            "Risk & Compliance",
+            52
+          ],
+          [
+            "HR Shared Services",
+            48
+          ],
+          [
+            "Cybersecurity",
+            24
+          ],
+          [
+            "Manufacturing Technology",
+            21
+          ],
+          [
+            "Supply Chain",
+            20
+          ],
+          [
+            "Procurement",
+            15
+          ],
+          [
+            "Legal",
+            11
+          ],
+          [
+            "Sales & Marketing Operations",
+            11
+          ],
+          [
+            "Clinical & Medical",
+            7
+          ]
+        ],
+        "vintage": [
+          [
+            "2000-2009",
+            96
+          ],
+          [
+            "Before 2000",
+            52
+          ],
+          [
+            "2010-2014",
+            51
+          ],
+          [
+            "2015-2019",
+            50
+          ],
+          [
+            "2020-2022",
+            39
+          ],
+          [
+            "2023-2026",
+            29
+          ],
+          [
+            "Not disclosed",
+            3
+          ]
+        ],
+        "industry": [
+          [
+            "BFSI: Banking, FinTech & Capital Markets",
+            50
+          ],
+          [
+            "Professional Services & Consulting",
+            36
+          ],
+          [
+            "Technology: SaaS & Software",
+            31
+          ],
+          [
+            "Retail, Consumer & FMCG",
+            21
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            20
+          ],
+          [
+            "Automotive & Auto Components",
+            18
+          ],
+          [
+            "BFSI: Insurance",
+            16
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            16
+          ],
+          [
+            "Healthcare & MedTech",
+            15
+          ],
+          [
+            "Telecom & Networks",
+            14
+          ],
+          [
+            "Technology: Cloud, Infrastructure & DevTools",
+            12
+          ],
+          [
+            "Construction & Real Estate",
+            11
+          ],
+          [
+            "Travel, Hospitality & Leisure",
+            11
+          ],
+          [
+            "Energy, Power & Oil & Gas",
+            10
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            9
+          ],
+          [
+            "Chemicals, Materials & Mining",
+            6
+          ],
+          [
+            "Pharma & Life Sciences",
+            6
+          ],
+          [
+            "Aerospace, Defense & Aviation",
+            5
+          ],
+          [
+            "Media, Advertising & Gaming",
+            5
+          ],
+          [
+            "Education & EdTech",
+            4
+          ],
+          [
+            "Logistics & Supply Chain",
+            3
+          ],
+          [
+            "Technology: Cybersecurity",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Gen 3",
+            118
+          ],
+          [
+            "Gen 2",
+            74
+          ],
+          [
+            "Gen 4",
+            63
+          ],
+          [
+            "Gen 1",
+            37
+          ],
+          [
+            "Not disclosed",
+            28
+          ]
+        ]
+      },
+      "total": 320
+    },
+    "Ahmedabad": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            13
+          ],
+          [
+            "101-500",
+            9
+          ],
+          [
+            "501-1000",
+            6
+          ],
+          [
+            "1-100",
+            3
+          ],
+          [
+            "5000+",
+            2
+          ],
+          [
+            "Not disclosed",
+            1
+          ]
+        ],
+        "domain": [
+          [
+            "Engineering & R&D",
+            19
+          ],
+          [
+            "Technology",
+            19
+          ],
+          [
+            "Finance & Accounting",
+            13
+          ],
+          [
+            "Data, Analytics & AI",
+            12
+          ],
+          [
+            "Operations & Business Excellence",
+            9
+          ],
+          [
+            "Product Management",
+            6
+          ],
+          [
+            "Customer Operations",
+            5
+          ],
+          [
+            "Risk & Compliance",
+            4
+          ],
+          [
+            "Cybersecurity",
+            3
+          ],
+          [
+            "Manufacturing Technology",
+            3
+          ],
+          [
+            "Supply Chain",
+            3
+          ],
+          [
+            "HR Shared Services",
+            2
+          ],
+          [
+            "Clinical & Medical",
+            1
+          ],
+          [
+            "Procurement",
+            1
+          ]
+        ],
+        "vintage": [
+          [
+            "2015-2019",
+            9
+          ],
+          [
+            "2000-2009",
+            8
+          ],
+          [
+            "Before 2000",
+            6
+          ],
+          [
+            "2010-2014",
+            5
+          ],
+          [
+            "2023-2026",
+            3
+          ],
+          [
+            "2020-2022",
+            2
+          ],
+          [
+            "Not disclosed",
+            1
+          ]
+        ],
+        "industry": [
+          [
+            "Professional Services & Consulting",
+            9
+          ],
+          [
+            "Technology: SaaS & Software",
+            6
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            4
+          ],
+          [
+            "Construction & Real Estate",
+            3
+          ],
+          [
+            "Healthcare & MedTech",
+            2
+          ],
+          [
+            "Retail, Consumer & FMCG",
+            2
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            2
+          ],
+          [
+            "BFSI: Insurance",
+            1
+          ],
+          [
+            "Chemicals, Materials & Mining",
+            1
+          ],
+          [
+            "Pharma & Life Sciences",
+            1
+          ],
+          [
+            "Technology: Cybersecurity",
+            1
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            1
+          ],
+          [
+            "Telecom & Networks",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Gen 3",
+            10
+          ],
+          [
+            "Gen 2",
+            8
+          ],
+          [
+            "Gen 4",
+            7
+          ],
+          [
+            "Not disclosed",
+            6
+          ],
+          [
+            "Gen 1",
+            3
+          ]
+        ]
+      },
+      "total": 34
+    },
+    "Coimbatore": {
+      "dims": {
+        "size": [
+          [
+            "1001-5000",
+            16
+          ],
+          [
+            "101-500",
+            14
+          ],
+          [
+            "1-100",
+            7
+          ],
+          [
+            "5000+",
+            7
+          ],
+          [
+            "501-1000",
+            4
+          ],
+          [
+            "Not disclosed",
+            3
+          ]
+        ],
+        "domain": [
+          [
+            "Engineering & R&D",
+            37
+          ],
+          [
+            "Technology",
+            34
+          ],
+          [
+            "Data, Analytics & AI",
+            20
+          ],
+          [
+            "Finance & Accounting",
+            12
+          ],
+          [
+            "Operations & Business Excellence",
+            10
+          ],
+          [
+            "Customer Operations",
+            8
+          ],
+          [
+            "Supply Chain",
+            7
+          ],
+          [
+            "Manufacturing Technology",
+            6
+          ],
+          [
+            "Product Management",
+            5
+          ],
+          [
+            "Clinical & Medical",
+            3
+          ],
+          [
+            "Legal",
+            3
+          ],
+          [
+            "Risk & Compliance",
+            3
+          ],
+          [
+            "Sales & Marketing Operations",
+            3
+          ],
+          [
+            "Cybersecurity",
+            2
+          ],
+          [
+            "HR Shared Services",
+            1
+          ],
+          [
+            "Procurement",
+            1
+          ]
+        ],
+        "vintage": [
+          [
+            "2000-2009",
+            13
+          ],
+          [
+            "2023-2026",
+            9
+          ],
+          [
+            "2010-2014",
+            8
+          ],
+          [
+            "2015-2019",
+            8
+          ],
+          [
+            "Before 2000",
+            7
+          ],
+          [
+            "2020-2022",
+            3
+          ],
+          [
+            "Not disclosed",
+            3
+          ]
+        ],
+        "industry": [
+          [
+            "Technology: SaaS & Software",
+            16
+          ],
+          [
+            "Industrial, Engineering & Manufacturing",
+            6
+          ],
+          [
+            "Automotive & Auto Components",
+            4
+          ],
+          [
+            "Technology: Data, Analytics & AI",
+            4
+          ],
+          [
+            "BFSI: Insurance",
+            3
+          ],
+          [
+            "Pharma & Life Sciences",
+            3
+          ],
+          [
+            "Professional Services & Consulting",
+            3
+          ],
+          [
+            "Technology: Semiconductors & Hardware",
+            3
+          ],
+          [
+            "BFSI: Banking, FinTech & Capital Markets",
+            2
+          ],
+          [
+            "Technology: Cybersecurity",
+            2
+          ],
+          [
+            "Chemicals, Materials & Mining",
+            1
+          ],
+          [
+            "Energy, Power & Oil & Gas",
+            1
+          ],
+          [
+            "Healthcare & MedTech",
+            1
+          ],
+          [
+            "Media, Advertising & Gaming",
+            1
+          ],
+          [
+            "Retail, Consumer & FMCG",
+            1
+          ]
+        ],
+        "generation": [
+          [
+            "Not disclosed",
+            17
+          ],
+          [
+            "Gen 3",
+            13
+          ],
+          [
+            "Gen 4",
+            11
+          ],
+          [
+            "Gen 2",
+            7
+          ],
+          [
+            "Gen 1",
+            3
+          ]
+        ]
+      },
+      "total": 51
+    }
+  }
 }
