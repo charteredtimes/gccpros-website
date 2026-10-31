@@ -191,8 +191,18 @@ function cityPage(slug, C) {
   const n = D.scope_totals[C.scope], t = D.meta.total_india;
   const ind = T('industry', C.scope), dom = T('domain', C.scope), gen = T('generation', C.scope);
   const size = T('size', C.scope), vin = T('vintage', C.scope);
-  const title = `GCCs in ${C.name}: List of ${fmt(n)} GCC Companies | GCCPROs`;
-  const desc = `A list of the ${fmt(n)} verified Global Capability Centres in ${C.name}, ${pc(n, t)}% of India\u2019s ${fmt(t)}, by industry, function, maturity, size and year.`;
+  /* The year and a completeness claim, because the three sites outranking these pages carry
+     both and these did not. "List" is gone on purpose: the page is a profile and the list it
+     used to promise lives in the database, one click further on. */
+  const yr = (D.meta.as_of.match(/\d{4}/) || [])[0] || '';
+  const title = `GCCs in ${C.name} ${yr}: All ${fmt(n)} Verified Centres | GCCPROs`;
+  /* every clause below is a heading on the page, so the result does not oversell it */
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
+  // as_of is ISO (2026-10-31); fall back to stripping a leading day if it is ever long form
+  const iso = D.meta.as_of.match(/^(\d{4})-(\d{2})/);
+  const monthYear = iso ? MONTHS[+iso[2] - 1] + ' ' + iso[1] : D.meta.as_of.replace(/^\d+\s+/, '');
+  const desc = `All ${fmt(n)} verified GCCs in ${C.name}, updated ${monthYear}: which industries run them, what work they do, how mature they are and when they arrived.`;
 
   const body = `      <span class="eyebrow eyebrow--pill" data-reveal>GCC city profile &middot; ${esc(C.state)}</span>
       <h1 class="display split-words">GCCs in <em>${esc(C.name)}.</em></h1>
