@@ -34,6 +34,17 @@ const fmt = n => n.toLocaleString('en-US');
   if (!rTop.ok) throw 'atlas_top_companies failed: ' + rTop.status + ' ' + await rTop.text();
   const TOP = await rTop.json();
 
+  // Cities that have their own page but no scope inside atlas_stats(). Same rules, separate
+  // function; see the comment on atlas_city_profile about keeping the two in step.
+  const EXTRA_CITIES = ['Gurugram', 'Noida', 'Kolkata', 'Coimbatore', 'Ahmedabad', 'Kochi'];
+  const rCity = await fetch(SUPA + '/rest/v1/rpc/atlas_city_profile', {
+    method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cities: EXTRA_CITIES })
+  });
+  if (!rCity.ok) throw 'atlas_city_profile failed: ' + rCity.status + ' ' + await rCity.text();
+  const EXTRA = await rCity.json();
+  for (const c of EXTRA_CITIES) if (!EXTRA[c]) throw 'atlas_city_profile returned nothing for ' + c;
+
   // Rows per scope: ordered dims follow their order list; others by count desc, then label.
   const dim = (key, extra) => {
     const out = Object.assign({}, extra);
@@ -77,7 +88,8 @@ const fmt = n => n.toLocaleString('en-US');
       vintage: dim('vintage', { label: 'Year established', order: ORDERS.vintage })
     },
     by_year: X.by_year,
-    top_companies: TOP
+    top_companies: TOP,
+    extra_cities: EXTRA
   };
 
   // Sanity: single-label dimensions must sum to each scope total.
@@ -104,7 +116,8 @@ const fmt = n => n.toLocaleString('en-US');
     + '  "by_year": ' + j(D.by_year) + ',\n'
     + '  "top_companies": {\n' + Object.entries(D.top_companies)
         .map(([k, v]) => `    ${j(k)}: [\n      ` + v.map(j).join(',\n      ') + '\n    ]')
-        .join(',\n') + '\n  }\n}\n';
+        .join(',\n') + '\n  },\n'
+    + '  "extra_cities": ' + JSON.stringify(D.extra_cities, null, 2).replace(/\n/g, '\n  ') + '\n}\n';
   JSON.parse(txt);
   if (process.argv.includes('--dry')) console.log(txt.slice(0, 1500));
   else fs.writeFileSync(OUT, txt);

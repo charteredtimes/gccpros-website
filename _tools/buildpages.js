@@ -11,6 +11,16 @@ const RAMP = ['#0F2A55', '#163566', '#1E4478', '#2F5DA8', '#3C6CB8', '#4A7BC4', 
 const fmt = n => n.toLocaleString('en-IN');
 const pc = (n, d) => Math.round(n / d * 1000) / 10;
 const esc = s => String(s).replace(/&(?!#?\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/* Cities without a scope in atlas_stats() arrive under extra_cities. Folding them into dims and
+   scope_totals here means T(), val() and the whole page template work on them unchanged, instead
+   of every call site learning about two shapes. */
+for (const [city, p] of Object.entries(D.extra_cities || {})) {
+  D.scope_totals[city] = p.total;
+  for (const [dim, rows] of Object.entries(p.dims || {})) {
+    if (D.dims[dim]) D.dims[dim][city] = rows;
+  }
+}
+
 const T = (dim, scope) => D.dims[dim][scope];
 const val = (dim, scope, label) => { const r = (D.dims[dim][scope] || []).find(x => x[0] === label); return r ? r[1] : 0; };
 
@@ -213,7 +223,91 @@ const CITIES = {
       ['What kind of GCCs does Chennai attract?', `Large, established, industrial ones. Banking and capital markets leads at ${val('industry','Chennai','BFSI: Banking, FinTech & Capital Markets')} centres, but industrial engineering and manufacturing (${val('industry','Chennai','Industrial, Engineering & Manufacturing')}), automotive (${val('industry','Chennai','Automotive & Auto Components')}) and energy (${val('industry','Chennai','Energy, Power & Oil & Gas')}) together outweigh it.`],
       ['Are Chennai\u2019s GCCs bigger than average?', `Yes, markedly. ${val('size','Chennai','5000+')} of its ${fmt(D.scope_totals.Chennai)} centres employ more than 5,000 people and ${val('size','Chennai','1001-5000')} employ 1,001\u20135,000, together ${pc(val('size','Chennai','5000+') + val('size','Chennai','1001-5000'), D.scope_totals.Chennai)}% of the city\u2019s base, the highest of any major GCC city.`]
     ]
-  }
+  },
+  'gurugram': {
+    name: 'Gurugram', scope: 'Gurugram', alt: 'Gurgaon', state: 'Haryana',
+    blurb: 'Gurugram is the corporate half of Delhi NCR, and the half where the global banks and the consultancies put their centres.',
+    facts: [
+      () => `Gurugram has ${fmt(D.scope_totals.Gurugram)} GCCs, ${pc(D.scope_totals.Gurugram, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}. It is the largest single city inside Delhi NCR, which this site also counts as one region of ${fmt(D.scope_totals['Delhi NCR'])} centres.`,
+      () => `The money is the story. <strong>Banking, fintech and capital markets run ${val('industry','Gurugram','BFSI: Banking, FinTech & Capital Markets')} of them</strong>, ahead of professional services (${val('industry','Gurugram','Professional Services & Consulting')}) and enterprise software (${val('industry','Gurugram','Technology: SaaS & Software')}).`,
+      () => `These are not small outposts. <strong>${val('size','Gurugram','5000+')} employ more than 5,000 people</strong>, and ${val('generation','Gurugram','Gen 3')} are Gen 3, owning a product, an engineering stack or a global process end to end.`
+    ],
+    faq: [
+      ['How many GCCs are there in Gurugram?', `GCCPROs has ${fmt(D.scope_totals.Gurugram)} verified Global Capability Centres with a unit in Gurugram, which is ${pc(D.scope_totals.Gurugram, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Is Gurugram the same as Delhi NCR?', `No. Gurugram is one city inside the National Capital Region. This site counts Delhi NCR as a region of ${fmt(D.scope_totals['Delhi NCR'])} centres across Gurugram, Noida, New Delhi and the smaller NCR towns, and a centre with units in two of them is counted once in the region. <a href="/gcc-in-delhi-ncr">See the Delhi NCR page</a> for the combined picture.`],
+      ['What work do Gurugram GCCs do?', `Technology is the most common function, run by ${val('domain','Gurugram','Technology')} centres, followed by engineering and R&amp;D (${val('domain','Gurugram','Engineering & R&D')}) and data, analytics and AI (${val('domain','Gurugram','Data, Analytics & AI')}). Most centres run several, so these add up to more than the total.`]
+    ]
+  },
+  'noida': {
+    name: 'Noida', scope: 'Noida', alt: 'Gautam Buddh Nagar', state: 'Uttar Pradesh',
+    blurb: 'Noida is where the hardware sits. It holds a share of semiconductor and hardware centres that no other Indian city of its size comes close to.',
+    facts: [
+      () => `Noida has ${fmt(D.scope_totals.Noida)} GCCs, ${pc(D.scope_totals.Noida, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}. It sits inside Delhi NCR, which this site counts as one region of ${fmt(D.scope_totals['Delhi NCR'])}.`,
+      () => `The mix is unusual. Enterprise software leads with ${val('industry','Noida','Technology: SaaS & Software')} centres, but <strong>semiconductors and hardware run ${val('industry','Noida','Technology: Semiconductors & Hardware')}</strong>, a far higher share than the national pattern, with banking and fintech third on ${val('industry','Noida','BFSI: Banking, FinTech & Capital Markets')}.`,
+      () => `<strong>${val('size','Noida','5000+')} of Noida’s centres employ more than 5,000 people</strong>, and ${val('generation','Noida','Gen 3')} are Gen 3, owning a product or a global process rather than supporting one.`
+    ],
+    faq: [
+      ['How many GCCs are there in Noida?', `GCCPROs has ${fmt(D.scope_totals.Noida)} verified Global Capability Centres with a unit in Noida, ${pc(D.scope_totals.Noida, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Is Noida counted inside Delhi NCR?', `Yes. Noida is one of the cities that make up the National Capital Region on this site, alongside Gurugram, New Delhi and the smaller NCR towns. <a href="/gcc-in-delhi-ncr">The Delhi NCR page</a> holds the combined figure of ${fmt(D.scope_totals['Delhi NCR'])}.`],
+      ['What is Noida known for in GCC terms?', `Hardware. ${val('industry','Noida','Technology: Semiconductors & Hardware')} of its ${fmt(D.scope_totals.Noida)} centres are in semiconductors and hardware, and engineering and R&amp;D is run by ${val('domain','Noida','Engineering & R&D')} centres, second only to technology on ${val('domain','Noida','Technology')}.`]
+    ]
+  },
+  'kolkata': {
+    name: 'Kolkata', scope: 'Kolkata', alt: 'Calcutta', state: 'West Bengal',
+    blurb: 'Kolkata is a small, settled GCC base: few centres, but several of them large and long established.',
+    facts: [
+      () => `Kolkata has ${fmt(D.scope_totals.Kolkata)} GCCs, ${pc(D.scope_totals.Kolkata, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}. It is the largest GCC city in eastern India, and a fraction of the size of the southern and western hubs.`,
+      () => `Professional services lead with ${val('industry','Kolkata','Professional Services & Consulting')} centres, ahead of enterprise software (${val('industry','Kolkata','Technology: SaaS & Software')}) and industrial engineering (${val('industry','Kolkata','Industrial, Engineering & Manufacturing')}).`,
+      () => `Small in number, not in scale. <strong>${val('size','Kolkata','5000+')} of them employ more than 5,000 people</strong> and ${val('generation','Kolkata','Gen 3')} are Gen 3, which is a high proportion for a base this size.`
+    ],
+    faq: [
+      ['How many GCCs are there in Kolkata?', `GCCPROs has ${fmt(D.scope_totals.Kolkata)} verified Global Capability Centres with a unit in Kolkata, ${pc(D.scope_totals.Kolkata, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Is Kolkata growing as a GCC location?', `Not on these records. The database holds no Kolkata centre established from 2023 onward, against ${val('vintage','Kolkata','2000-2009')} established between 2000 and 2009. That is a settled base rather than a growing one, and it is the honest reading of what is recorded.`],
+      ['What work do Kolkata GCCs do?', `Technology is the most common function, run by ${val('domain','Kolkata','Technology')} of the ${fmt(D.scope_totals.Kolkata)} centres, with engineering and R&amp;D on ${val('domain','Kolkata','Engineering & R&D')} and data, analytics and AI on ${val('domain','Kolkata','Data, Analytics & AI')}.`]
+    ]
+  },
+  'coimbatore': {
+    name: 'Coimbatore', scope: 'Coimbatore', alt: 'Kovai', state: 'Tamil Nadu',
+    blurb: 'Coimbatore is the engineering one. More of its centres run engineering and R&D than run anything else, which is true of almost no other Indian city.',
+    facts: [
+      () => `Coimbatore has ${fmt(D.scope_totals.Coimbatore)} GCCs, ${pc(D.scope_totals.Coimbatore, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}, which makes it Tamil Nadu’s second GCC city after Chennai (${fmt(D.scope_totals.Chennai)}).`,
+      () => `<strong>Engineering and R&amp;D is the leading function, run by ${val('domain','Coimbatore','Engineering & R&D')} of its centres</strong>, ahead of technology on ${val('domain','Coimbatore','Technology')}. In most Indian cities that order is the other way round.`,
+      () => `The industries follow the engineering. Enterprise software leads on ${val('industry','Coimbatore','Technology: SaaS & Software')}, then industrial and manufacturing (${val('industry','Coimbatore','Industrial, Engineering & Manufacturing')}) and automotive (${val('industry','Coimbatore','Automotive & Auto Components')}). ${val('vintage','Coimbatore','2023-2026')} centres were established from 2023 onward.`
+    ],
+    faq: [
+      ['How many GCCs are there in Coimbatore?', `GCCPROs has ${fmt(D.scope_totals.Coimbatore)} verified Global Capability Centres with a unit in Coimbatore, ${pc(D.scope_totals.Coimbatore, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Why do companies put a GCC in Coimbatore rather than Chennai?', `The database records what is there, not the reasoning. What it shows is a different mix: engineering and R&amp;D is the most common function in Coimbatore (${val('domain','Coimbatore','Engineering & R&D')} centres), and the industrial and automotive base is proportionally larger than in Chennai.`],
+      ['How large are Coimbatore GCCs?', `${val('size','Coimbatore','5000+')} employ more than 5,000 people and ${val('size','Coimbatore','1001-5000')} sit in the 1,001 to 5,000 band, so the base is mid-sized rather than small.`]
+    ]
+  },
+  'ahmedabad': {
+    name: 'Ahmedabad', scope: 'Ahmedabad', alt: 'Amdavad', state: 'Gujarat',
+    blurb: 'Ahmedabad runs finance and professional services work, and it is the nearest major city to GIFT City without being the same place.',
+    facts: [
+      () => `Ahmedabad has ${fmt(D.scope_totals.Ahmedabad)} GCCs, ${pc(D.scope_totals.Ahmedabad, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}. Centres recorded at GIFT City are counted under Gandhinagar, not here, so this figure is Ahmedabad proper.`,
+      () => `Professional services lead with ${val('industry','Ahmedabad','Professional Services & Consulting')} centres, ahead of enterprise software (${val('industry','Ahmedabad','Technology: SaaS & Software')}) and industrial engineering (${val('industry','Ahmedabad','Industrial, Engineering & Manufacturing')}).`,
+      () => `The functional mix is distinctive: <strong>finance and accounting is run by ${val('domain','Ahmedabad','Finance & Accounting')} of the ${fmt(D.scope_totals.Ahmedabad)} centres</strong>, a high share for a base this size, alongside engineering and R&amp;D on ${val('domain','Ahmedabad','Engineering & R&D')}.`
+    ],
+    faq: [
+      ['How many GCCs are there in Ahmedabad?', `GCCPROs has ${fmt(D.scope_totals.Ahmedabad)} verified Global Capability Centres with a unit in Ahmedabad, ${pc(D.scope_totals.Ahmedabad, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Does this include GIFT City?', `No. GIFT City sits in Gandhinagar and is counted there, so a centre at GIFT City does not appear in the Ahmedabad figure. Keeping them apart is the reason the Ahmedabad number is smaller than some published counts for the region.`],
+      ['What work do Ahmedabad GCCs do?', `Engineering and R&amp;D and technology are level on ${val('domain','Ahmedabad','Engineering & R&D')} centres each, with finance and accounting close behind on ${val('domain','Ahmedabad','Finance & Accounting')}. Most centres run more than one function.`]
+    ]
+  },
+  'kochi': {
+    name: 'Kochi', scope: 'Kochi', alt: 'Cochin', state: 'Kerala',
+    blurb: 'Kochi is Kerala’s GCC base: a small number of centres, and a surprising number of them large.',
+    facts: [
+      () => `Kochi has ${fmt(D.scope_totals.Kochi)} GCCs, ${pc(D.scope_totals.Kochi, D.meta.total_india)}% of India’s ${fmt(D.meta.total_india)}. It is the largest GCC city in Kerala.`,
+      () => `Professional services lead with ${val('industry','Kochi','Professional Services & Consulting')} centres, with banking and fintech and logistics and supply chain behind them on ${val('industry','Kochi','BFSI: Banking, FinTech & Capital Markets')} and ${val('industry','Kochi','Logistics & Supply Chain')}.`,
+      () => `For a base of ${fmt(D.scope_totals.Kochi)}, the scale is notable: <strong>${val('size','Kochi','5000+')} employ more than 5,000 people</strong> and ${val('generation','Kochi','Gen 3')} are Gen 3, owning a product or a global process outright.`
+    ],
+    faq: [
+      ['How many GCCs are there in Kochi?', `GCCPROs has ${fmt(D.scope_totals.Kochi)} verified Global Capability Centres with a unit in Kochi, ${pc(D.scope_totals.Kochi, D.meta.total_india)}% of the ${fmt(D.meta.total_india)} it tracks across India.`],
+      ['Is Kochi a viable GCC location?', `On the records, yes, at a small scale. ${val('size','Kochi','5000+')} of the ${fmt(D.scope_totals.Kochi)} centres employ more than 5,000 people and ${val('vintage','Kochi','2023-2026')} were established from 2023 onward, so the base is small but not static.`],
+      ['What work do Kochi GCCs do?', `Technology is run by ${val('domain','Kochi','Technology')} of the ${fmt(D.scope_totals.Kochi)} centres, with engineering and R&amp;D on ${val('domain','Kochi','Engineering & R&D')} and data, analytics and AI on ${val('domain','Kochi','Data, Analytics & AI')}.`]
+    ]
+  },
 };
 
 function cityPage(slug, C) {
