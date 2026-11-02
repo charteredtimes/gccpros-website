@@ -86,7 +86,7 @@ body.gp{margin:0;background:var(--bg);color:var(--ink-2);font-family:var(--sans)
 @media (max-width:980px){.grid-3,.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:minmax(0,1fr)}}
 
-/* dark band â€” ice-blue accent */
+/* dark band, ice-blue accent */
 .band-dark{background:var(--navy);color:#C9D4E8;position:relative;overflow:hidden;isolation:isolate}
 .band-dark h1,.band-dark h2,.band-dark h3,.band-dark h4{color:#fff}
 .band-dark h1 em,.band-dark h2 em,.band-dark h3 em{color:var(--ice)}
