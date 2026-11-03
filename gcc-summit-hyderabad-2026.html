@@ -53,6 +53,8 @@
 .ev-guest b{display:block;margin-top:14px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.3}
 .ev-guest__role{display:block;margin-top:5px;font-size:13px;color:var(--muted);line-height:1.45;min-height:2.9em}
 .ev-guest__org{display:block;margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-700)}
+.ev-guest__more{margin:26px 0 0;font-size:14.5px;color:var(--ink-2);line-height:1.7;text-align:center}
+.ev-guest__more b{font-weight:700;color:var(--ink)}
 @media(max-width:420px){.ev-guests{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}.ev-guest b{font-size:14.5px}.ev-guest__role{font-size:12px}}
 .ev-ag{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
 .ev-ag li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:18px;align-items:baseline;padding:13px 2px;border-bottom:1px solid var(--line)}
@@ -242,6 +244,15 @@
       <ul class="ev-guests" data-reveal>
         <li class="ev-guest">
           <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/uday-samant-400.webp 400w, /assets/img/guests/uday-samant-800.webp 800w">
+            <img src="/assets/img/guests/uday-samant-400.jpg" srcset="/assets/img/guests/uday-samant-400.jpg 400w, /assets/img/guests/uday-samant-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Dr. Uday Samant, Government of Maharashtra" loading="lazy" decoding="async">
+          </picture>
+          <b>Dr. Uday Samant</b>
+          <span class="ev-guest__role">Industry Minister</span>
+          <span class="ev-guest__org">Government of Maharashtra</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
             <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/abhishek-chauhan-400.webp 400w, /assets/img/guests/abhishek-chauhan-800.webp 800w">
             <img src="/assets/img/guests/abhishek-chauhan-400.jpg" srcset="/assets/img/guests/abhishek-chauhan-400.jpg 400w, /assets/img/guests/abhishek-chauhan-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Abhishek Chauhan, Sonatype" loading="lazy" decoding="async">
           </picture>
@@ -260,12 +271,39 @@
         </li>
         <li class="ev-guest">
           <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/avinash-samrit-400.webp 400w, /assets/img/guests/avinash-samrit-800.webp 800w">
+            <img src="/assets/img/guests/avinash-samrit-400.jpg" srcset="/assets/img/guests/avinash-samrit-400.jpg 400w, /assets/img/guests/avinash-samrit-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Avinash Samrit, Clean Harbors India" loading="lazy" decoding="async">
+          </picture>
+          <b>Avinash Samrit</b>
+          <span class="ev-guest__role">President and Country Manager</span>
+          <span class="ev-guest__org">Clean Harbors India</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
             <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pavan-hemadri-400.webp 400w, /assets/img/guests/pavan-hemadri-800.webp 800w">
             <img src="/assets/img/guests/pavan-hemadri-400.jpg" srcset="/assets/img/guests/pavan-hemadri-400.jpg 400w, /assets/img/guests/pavan-hemadri-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pavan Hemadri, ProPharma Group" loading="lazy" decoding="async">
           </picture>
           <b>Pavan Hemadri</b>
           <span class="ev-guest__role">Director, Business Operations, India</span>
           <span class="ev-guest__org">ProPharma Group</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/divesh-singla-400.webp 400w, /assets/img/guests/divesh-singla-800.webp 800w">
+            <img src="/assets/img/guests/divesh-singla-400.jpg" srcset="/assets/img/guests/divesh-singla-400.jpg 400w, /assets/img/guests/divesh-singla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Divesh Singla, Veradigm" loading="lazy" decoding="async">
+          </picture>
+          <b>Divesh Singla</b>
+          <span class="ev-guest__role"></span>
+          <span class="ev-guest__org">Veradigm</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/sameer-shaikh-400.webp 400w, /assets/img/guests/sameer-shaikh-800.webp 800w">
+            <img src="/assets/img/guests/sameer-shaikh-400.jpg" srcset="/assets/img/guests/sameer-shaikh-400.jpg 400w, /assets/img/guests/sameer-shaikh-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Sameer Shaikh, XPO" loading="lazy" decoding="async">
+          </picture>
+          <b>Sameer Shaikh</b>
+          <span class="ev-guest__role"></span>
+          <span class="ev-guest__org">XPO</span>
         </li>
         <li class="ev-guest">
           <picture>
@@ -277,6 +315,7 @@
           <span class="ev-guest__org">Eastman</span>
         </li>
       </ul>
+      <p class="ev-guest__more" data-reveal>Also confirmed: <b>Ashish Kumar Jha</b>, Alter Domus India; <b>Arvind Chittora</b>, Sonoco; <b>Pawan Sachdeva</b>, Carelon; <b>Rajesh Vaitla</b>, Chart Industries.</p>
     </div>
   </section>
 
