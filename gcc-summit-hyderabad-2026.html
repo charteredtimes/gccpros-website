@@ -46,6 +46,14 @@
 .ev-who{margin:0;padding-left:20px;color:var(--ink-2);line-height:1.75;max-width:720px}
 .ev-who li{margin:8px 0}
 .ev-part{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:26px}
+.ev-guests{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr));gap:26px 20px;margin:28px 0 0;padding:0}
+.ev-guest{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ev-guest picture{display:block;width:100%;max-width:168px}
+.ev-guest img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:1px solid var(--line);background:var(--surface-2)}
+.ev-guest b{display:block;margin-top:14px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.ev-guest__role{display:block;margin-top:5px;font-size:13px;color:var(--muted);line-height:1.45;min-height:2.9em}
+.ev-guest__org{display:block;margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-700)}
+@media(max-width:420px){.ev-guests{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}.ev-guest b{font-size:14.5px}.ev-guest__role{font-size:12px}}
 .ev-ag{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
 .ev-ag li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:18px;align-items:baseline;padding:13px 2px;border-bottom:1px solid var(--line)}
 .ev-ag time{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -221,8 +229,54 @@
       <div class="section-head"><span class="eyebrow" data-reveal>The room</span>
       <h2 class="h2" id="ev-who" data-reveal style="--d:1">Who will be there.</h2></div>
       <ul class="ev-who" data-reveal><li>GCC site heads and country heads</li><li>Function and domain leaders (technology, engineering, finance, operations)</li><li>Leaders setting up a new centre in India</li><li>State and central policy makers</li></ul>
-      <p data-reveal style="margin-top:20px">Attendance is by invitation and confirmed individually. Registering your interest is the first step; we will come back to you with the details.</p>
+      <p data-reveal style="margin-top:20px"><a href="#guests">Some of the confirmed guests are listed below</a>. Attendance is by invitation and confirmed individually. Registering your interest is the first step; we will come back to you with the details.</p>
       <div class="btn-row" data-reveal><a class="btn btn--primary" href="/event?rsvp=Hyderabad%20GCC%20Leadership%20Summit%20(26%20Nov%202026)#rsvp" id="register">Register your interest</a></div>
+    </div>
+  </section>
+
+  <section class="section" id="guests" aria-labelledby="ev-guests">
+    <div class="shell shell--narrow">
+      <div class="section-head"><span class="eyebrow" data-reveal>Confirmed guests</span>
+      <h2 class="h2" id="ev-guests" data-reveal style="--d:1">Some of the leaders in the room.</h2>
+      <p class="lede" data-reveal style="--d:2">Confirmed so far, with more added each week as invitations are accepted.</p></div>
+      <ul class="ev-guests" data-reveal>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/abhishek-chauhan-400.webp 400w, /assets/img/guests/abhishek-chauhan-800.webp 800w">
+            <img src="/assets/img/guests/abhishek-chauhan-400.jpg" srcset="/assets/img/guests/abhishek-chauhan-400.jpg 400w, /assets/img/guests/abhishek-chauhan-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Abhishek Chauhan, Sonatype" loading="lazy" decoding="async">
+          </picture>
+          <b>Abhishek Chauhan</b>
+          <span class="ev-guest__role">Senior Director, Engineering and India Site Leader</span>
+          <span class="ev-guest__org">Sonatype</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/yogesh-more-400.webp 400w, /assets/img/guests/yogesh-more-800.webp 800w">
+            <img src="/assets/img/guests/yogesh-more-400.jpg" srcset="/assets/img/guests/yogesh-more-400.jpg 400w, /assets/img/guests/yogesh-more-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Yogesh More, isolved" loading="lazy" decoding="async">
+          </picture>
+          <b>Yogesh More</b>
+          <span class="ev-guest__role">General Manager, India</span>
+          <span class="ev-guest__org">isolved</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pavan-hemadri-400.webp 400w, /assets/img/guests/pavan-hemadri-800.webp 800w">
+            <img src="/assets/img/guests/pavan-hemadri-400.jpg" srcset="/assets/img/guests/pavan-hemadri-400.jpg 400w, /assets/img/guests/pavan-hemadri-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pavan Hemadri, ProPharma Group" loading="lazy" decoding="async">
+          </picture>
+          <b>Pavan Hemadri</b>
+          <span class="ev-guest__role">Director, Business Operations, India</span>
+          <span class="ev-guest__org">ProPharma Group</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/rajesh-gali-400.webp 400w, /assets/img/guests/rajesh-gali-800.webp 800w">
+            <img src="/assets/img/guests/rajesh-gali-400.jpg" srcset="/assets/img/guests/rajesh-gali-400.jpg 400w, /assets/img/guests/rajesh-gali-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Rajesh Gali, Eastman" loading="lazy" decoding="async">
+          </picture>
+          <b>Rajesh Gali</b>
+          <span class="ev-guest__role"></span>
+          <span class="ev-guest__org">Eastman</span>
+        </li>
+      </ul>
     </div>
   </section>
 
