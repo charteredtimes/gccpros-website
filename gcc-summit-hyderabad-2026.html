@@ -46,8 +46,8 @@
 .ev-who{margin:0;padding-left:20px;color:var(--ink-2);line-height:1.75;max-width:720px}
 .ev-who li{margin:8px 0}
 .ev-part{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:26px}
-.ev-guests{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr));gap:26px 20px;margin:28px 0 0;padding:0}
-.ev-guest{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ev-guests{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:26px 20px;margin:28px 0 0;padding:0}
+.ev-guest{display:flex;flex-direction:column;align-items:center;text-align:center;flex:0 0 180px;max-width:180px}
 .ev-guest picture{display:block;width:100%;max-width:168px}
 .ev-guest img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:1px solid var(--line);background:var(--surface-2)}
 .ev-guest b{display:block;margin-top:14px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.3}
@@ -55,7 +55,7 @@
 .ev-guest__org{display:block;margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-700)}
 .ev-guest__more{margin:26px 0 0;font-size:14.5px;color:var(--ink-2);line-height:1.7;text-align:center}
 .ev-guest__more b{font-weight:700;color:var(--ink)}
-@media(max-width:420px){.ev-guests{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}.ev-guest b{font-size:14.5px}.ev-guest__role{font-size:12px}}
+@media(max-width:420px){.ev-guests{gap:22px 14px}.ev-guest{flex:0 0 calc(50% - 7px);max-width:calc(50% - 7px)}.ev-guest b{font-size:14.5px}.ev-guest__role{font-size:12px}}
 .ev-ag{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
 .ev-ag li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:18px;align-items:baseline;padding:13px 2px;border-bottom:1px solid var(--line)}
 .ev-ag time{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -253,21 +253,39 @@
         </li>
         <li class="ev-guest">
           <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/abhishek-chauhan-400.webp 400w, /assets/img/guests/abhishek-chauhan-800.webp 800w">
-            <img src="/assets/img/guests/abhishek-chauhan-400.jpg" srcset="/assets/img/guests/abhishek-chauhan-400.jpg 400w, /assets/img/guests/abhishek-chauhan-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Abhishek Chauhan, Sonatype" loading="lazy" decoding="async">
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/sandeep-mehta-400.webp 400w, /assets/img/guests/sandeep-mehta-800.webp 800w">
+            <img src="/assets/img/guests/sandeep-mehta-400.jpg" srcset="/assets/img/guests/sandeep-mehta-400.jpg 400w, /assets/img/guests/sandeep-mehta-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Sandeep Mehta, Corteva Agriscience" loading="lazy" decoding="async">
           </picture>
-          <b>Abhishek Chauhan</b>
-          <span class="ev-guest__role">Senior Director, Engineering and India Site Leader</span>
-          <span class="ev-guest__org">Sonatype</span>
+          <b>Sandeep Mehta</b>
+          <span class="ev-guest__role">Leader, Global Services Center</span>
+          <span class="ev-guest__org">Corteva Agriscience</span>
         </li>
         <li class="ev-guest">
           <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/yogesh-more-400.webp 400w, /assets/img/guests/yogesh-more-800.webp 800w">
-            <img src="/assets/img/guests/yogesh-more-400.jpg" srcset="/assets/img/guests/yogesh-more-400.jpg 400w, /assets/img/guests/yogesh-more-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Yogesh More, isolved" loading="lazy" decoding="async">
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/divesh-singla-400.webp 400w, /assets/img/guests/divesh-singla-800.webp 800w">
+            <img src="/assets/img/guests/divesh-singla-400.jpg" srcset="/assets/img/guests/divesh-singla-400.jpg 400w, /assets/img/guests/divesh-singla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Divesh Singla, Veradigm" loading="lazy" decoding="async">
           </picture>
-          <b>Yogesh More</b>
-          <span class="ev-guest__role">General Manager, India</span>
-          <span class="ev-guest__org">isolved</span>
+          <b>Divesh Singla</b>
+          <span class="ev-guest__role">Managing Director, India Operations</span>
+          <span class="ev-guest__org">Veradigm</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pawan-sachdeva-400.webp 400w, /assets/img/guests/pawan-sachdeva-800.webp 800w">
+            <img src="/assets/img/guests/pawan-sachdeva-400.jpg" srcset="/assets/img/guests/pawan-sachdeva-400.jpg 400w, /assets/img/guests/pawan-sachdeva-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pawan Sachdeva, Carelon" loading="lazy" decoding="async">
+          </picture>
+          <b>Pawan Sachdeva</b>
+          <span class="ev-guest__role">Managing Director, Technology</span>
+          <span class="ev-guest__org">Carelon</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/arvind-chittora-400.webp 400w, /assets/img/guests/arvind-chittora-800.webp 800w">
+            <img src="/assets/img/guests/arvind-chittora-400.jpg" srcset="/assets/img/guests/arvind-chittora-400.jpg 400w, /assets/img/guests/arvind-chittora-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Arvind Chittora, Sonoco" loading="lazy" decoding="async">
+          </picture>
+          <b>Arvind Chittora</b>
+          <span class="ev-guest__role">Managing Director</span>
+          <span class="ev-guest__org">Sonoco</span>
         </li>
         <li class="ev-guest">
           <picture>
@@ -280,6 +298,33 @@
         </li>
         <li class="ev-guest">
           <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/yogesh-more-400.webp 400w, /assets/img/guests/yogesh-more-800.webp 800w">
+            <img src="/assets/img/guests/yogesh-more-400.jpg" srcset="/assets/img/guests/yogesh-more-400.jpg 400w, /assets/img/guests/yogesh-more-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Yogesh More, isolved" loading="lazy" decoding="async">
+          </picture>
+          <b>Yogesh More</b>
+          <span class="ev-guest__role">General Manager, India</span>
+          <span class="ev-guest__org">isolved</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/ashish-kumar-jha-400.webp 400w, /assets/img/guests/ashish-kumar-jha-800.webp 800w">
+            <img src="/assets/img/guests/ashish-kumar-jha-400.jpg" srcset="/assets/img/guests/ashish-kumar-jha-400.jpg 400w, /assets/img/guests/ashish-kumar-jha-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Ashish Kumar Jha, Alter Domus India" loading="lazy" decoding="async">
+          </picture>
+          <b>Ashish Kumar Jha</b>
+          <span class="ev-guest__role">Global Head, Future of Work, Digital Strategy and AI</span>
+          <span class="ev-guest__org">Alter Domus India</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/abhishek-chauhan-400.webp 400w, /assets/img/guests/abhishek-chauhan-800.webp 800w">
+            <img src="/assets/img/guests/abhishek-chauhan-400.jpg" srcset="/assets/img/guests/abhishek-chauhan-400.jpg 400w, /assets/img/guests/abhishek-chauhan-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Abhishek Chauhan, Sonatype" loading="lazy" decoding="async">
+          </picture>
+          <b>Abhishek Chauhan</b>
+          <span class="ev-guest__role">Senior Director, Engineering and India Site Leader</span>
+          <span class="ev-guest__org">Sonatype</span>
+        </li>
+        <li class="ev-guest">
+          <picture>
             <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pavan-hemadri-400.webp 400w, /assets/img/guests/pavan-hemadri-800.webp 800w">
             <img src="/assets/img/guests/pavan-hemadri-400.jpg" srcset="/assets/img/guests/pavan-hemadri-400.jpg 400w, /assets/img/guests/pavan-hemadri-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pavan Hemadri, ProPharma Group" loading="lazy" decoding="async">
           </picture>
@@ -289,12 +334,12 @@
         </li>
         <li class="ev-guest">
           <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/divesh-singla-400.webp 400w, /assets/img/guests/divesh-singla-800.webp 800w">
-            <img src="/assets/img/guests/divesh-singla-400.jpg" srcset="/assets/img/guests/divesh-singla-400.jpg 400w, /assets/img/guests/divesh-singla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Divesh Singla, Veradigm" loading="lazy" decoding="async">
+            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/rajesh-vaitla-400.webp 400w, /assets/img/guests/rajesh-vaitla-800.webp 800w">
+            <img src="/assets/img/guests/rajesh-vaitla-400.jpg" srcset="/assets/img/guests/rajesh-vaitla-400.jpg 400w, /assets/img/guests/rajesh-vaitla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Rajesh Vaitla, Chart Industries" loading="lazy" decoding="async">
           </picture>
-          <b>Divesh Singla</b>
+          <b>Rajesh Vaitla</b>
           <span class="ev-guest__role"></span>
-          <span class="ev-guest__org">Veradigm</span>
+          <span class="ev-guest__org">Chart Industries</span>
         </li>
         <li class="ev-guest">
           <picture>
@@ -315,7 +360,7 @@
           <span class="ev-guest__org">Eastman</span>
         </li>
       </ul>
-      <p class="ev-guest__more" data-reveal>Also confirmed: <b>Ashish Kumar Jha</b>, Alter Domus India; <b>Arvind Chittora</b>, Sonoco; <b>Pawan Sachdeva</b>, Carelon; <b>Rajesh Vaitla</b>, Chart Industries.</p>
+      <p class="ev-guest__more" data-reveal>And 50 more leaders have confirmed their presence.</p>
     </div>
   </section>
 
