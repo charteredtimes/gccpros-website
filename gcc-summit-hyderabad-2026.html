@@ -46,16 +46,11 @@
 .ev-who{margin:0;padding-left:20px;color:var(--ink-2);line-height:1.75;max-width:720px}
 .ev-who li{margin:8px 0}
 .ev-part{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:26px}
-.ev-guests{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:26px 20px;margin:28px 0 0;padding:0}
-.ev-guest{display:flex;flex-direction:column;align-items:center;text-align:center;flex:0 0 180px;max-width:180px}
-.ev-guest picture{display:block;width:100%;max-width:168px}
-.ev-guest img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:1px solid var(--line);background:var(--surface-2)}
-.ev-guest b{display:block;margin-top:14px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.3}
-.ev-guest__role{display:block;margin-top:5px;font-size:13px;color:var(--muted);line-height:1.45;min-height:2.9em}
-.ev-guest__org{display:block;margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-700)}
-.ev-guest__more{margin:26px 0 0;font-size:14.5px;color:var(--ink-2);line-height:1.7;text-align:center}
-.ev-guest__more b{font-weight:700;color:var(--ink)}
-@media(max-width:420px){.ev-guests{gap:22px 14px}.ev-guest{flex:0 0 calc(50% - 7px);max-width:calc(50% - 7px)}.ev-guest b{font-size:14.5px}.ev-guest__role{font-size:12px}}
+.ev-wall{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:32px 0 0;padding:0}
+.ev-wall li{font-size:13.5px;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;line-height:1.25;transition:border-color .25s,color .25s,transform .35s var(--ease)}
+.ev-wall li:hover{border-color:var(--brand);color:var(--ink);transform:translateY(-2px)}
+.ev-wall__note{margin:28px auto 0;max-width:62ch;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.65}
+@media(max-width:520px){.ev-wall{gap:6px}.ev-wall li{font-size:12px;padding:7px 12px}}
 .ev-ag{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
 .ev-ag li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:18px;align-items:baseline;padding:13px 2px;border-bottom:1px solid var(--line)}
 .ev-ag time{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -77,7 +72,7 @@
 .ev-shot img{width:100%;height:auto;border-radius:var(--r-lg);display:block;background:var(--bg-2)}
 .ev-shot figcaption{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.6}
 </style>
-<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026&quot;,&quot;name&quot;:&quot;Hyderabad GCC Leadership Summit, 26 November 2026&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage","url":"https://www.gccpros.com/gcc-summit-hyderabad-2026","name":"Hyderabad GCC Leadership Summit, 26 November 2026","inLanguage":"en-IN","dateModified":"2026-11-04","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
+<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026&quot;,&quot;name&quot;:&quot;Hyderabad GCC Leadership Summit, 26 November 2026&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage","url":"https://www.gccpros.com/gcc-summit-hyderabad-2026","name":"Hyderabad GCC Leadership Summit, 26 November 2026","inLanguage":"en-IN","dateModified":"2026-11-05","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
 </head>
 <body class="gp" data-line="events">
 <!-- gp:nav -->
@@ -139,7 +134,7 @@
       <h1 class="display split-words">Hyderabad GCC <em>Leadership Summit.</em></h1>
       <p class="ev-theme" data-reveal style="--d:2">Skills. <em>Customers.</em> Ownership.</p>
       <p class="ev-tag" data-reveal style="--d:2">200 GCC leaders. One room. One day.</p>
-      <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-11-04">4 November 2026</time></p>
+      <p class="byline">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-11-05">5 November 2026</time></p>
       <div class="ev-meta" data-reveal style="--d:2">
         <span><b>Thursday, 26 November 2026</b></span>
         <span>Hyderabad, Telangana</span>
@@ -231,136 +226,18 @@
       <div class="section-head"><span class="eyebrow" data-reveal>The room</span>
       <h2 class="h2" id="ev-who" data-reveal style="--d:1">Who will be there.</h2></div>
       <ul class="ev-who" data-reveal><li>GCC site heads and country heads</li><li>Function and domain leaders (technology, engineering, finance, operations)</li><li>Leaders setting up a new centre in India</li><li>State and central policy makers</li></ul>
-      <p data-reveal style="margin-top:20px"><a href="#guests">Some of the confirmed guests are listed below</a>. Attendance is by invitation and confirmed individually. Registering your interest is the first step; we will come back to you with the details.</p>
+      <p data-reveal style="margin-top:20px">Attendance is by invitation and confirmed individually. Registering your interest is the first step; we will come back to you with the details.</p>
       <div class="btn-row" data-reveal><a class="btn btn--primary" href="/event?rsvp=Hyderabad%20GCC%20Leadership%20Summit%20(26%20Nov%202026)#rsvp" id="register">Register your interest</a></div>
     </div>
   </section>
 
-  <section class="section" id="guests" aria-labelledby="ev-guests">
-    <div class="shell shell--narrow">
-      <div class="section-head"><span class="eyebrow" data-reveal>Confirmed guests</span>
-      <h2 class="h2" id="ev-guests" data-reveal style="--d:1">Some of the leaders in the room.</h2>
-      <p class="lede" data-reveal style="--d:2">Confirmed so far, with more added each week as invitations are accepted.</p></div>
-      <ul class="ev-guests" data-reveal>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/uday-samant-400.webp 400w, /assets/img/guests/uday-samant-800.webp 800w">
-            <img src="/assets/img/guests/uday-samant-400.jpg" srcset="/assets/img/guests/uday-samant-400.jpg 400w, /assets/img/guests/uday-samant-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Dr. Uday Samant, Government of Maharashtra" loading="lazy" decoding="async">
-          </picture>
-          <b>Dr. Uday Samant</b>
-          <span class="ev-guest__role">Industry Minister</span>
-          <span class="ev-guest__org">Government of Maharashtra</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/sandeep-mehta-400.webp 400w, /assets/img/guests/sandeep-mehta-800.webp 800w">
-            <img src="/assets/img/guests/sandeep-mehta-400.jpg" srcset="/assets/img/guests/sandeep-mehta-400.jpg 400w, /assets/img/guests/sandeep-mehta-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Sandeep Mehta, Corteva Agriscience" loading="lazy" decoding="async">
-          </picture>
-          <b>Sandeep Mehta</b>
-          <span class="ev-guest__role">Leader, Global Services Center</span>
-          <span class="ev-guest__org">Corteva Agriscience</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/divesh-singla-400.webp 400w, /assets/img/guests/divesh-singla-800.webp 800w">
-            <img src="/assets/img/guests/divesh-singla-400.jpg" srcset="/assets/img/guests/divesh-singla-400.jpg 400w, /assets/img/guests/divesh-singla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Divesh Singla, Veradigm" loading="lazy" decoding="async">
-          </picture>
-          <b>Divesh Singla</b>
-          <span class="ev-guest__role">Managing Director, India Operations</span>
-          <span class="ev-guest__org">Veradigm</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pawan-sachdeva-400.webp 400w, /assets/img/guests/pawan-sachdeva-800.webp 800w">
-            <img src="/assets/img/guests/pawan-sachdeva-400.jpg" srcset="/assets/img/guests/pawan-sachdeva-400.jpg 400w, /assets/img/guests/pawan-sachdeva-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pawan Sachdeva, Carelon" loading="lazy" decoding="async">
-          </picture>
-          <b>Pawan Sachdeva</b>
-          <span class="ev-guest__role">Managing Director, Technology</span>
-          <span class="ev-guest__org">Carelon</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/arvind-chittora-400.webp 400w, /assets/img/guests/arvind-chittora-800.webp 800w">
-            <img src="/assets/img/guests/arvind-chittora-400.jpg" srcset="/assets/img/guests/arvind-chittora-400.jpg 400w, /assets/img/guests/arvind-chittora-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Arvind Chittora, Sonoco" loading="lazy" decoding="async">
-          </picture>
-          <b>Arvind Chittora</b>
-          <span class="ev-guest__role">Managing Director</span>
-          <span class="ev-guest__org">Sonoco</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/avinash-samrit-400.webp 400w, /assets/img/guests/avinash-samrit-800.webp 800w">
-            <img src="/assets/img/guests/avinash-samrit-400.jpg" srcset="/assets/img/guests/avinash-samrit-400.jpg 400w, /assets/img/guests/avinash-samrit-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Avinash Samrit, Clean Harbors India" loading="lazy" decoding="async">
-          </picture>
-          <b>Avinash Samrit</b>
-          <span class="ev-guest__role">President and Country Manager</span>
-          <span class="ev-guest__org">Clean Harbors India</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/yogesh-more-400.webp 400w, /assets/img/guests/yogesh-more-800.webp 800w">
-            <img src="/assets/img/guests/yogesh-more-400.jpg" srcset="/assets/img/guests/yogesh-more-400.jpg 400w, /assets/img/guests/yogesh-more-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Yogesh More, isolved" loading="lazy" decoding="async">
-          </picture>
-          <b>Yogesh More</b>
-          <span class="ev-guest__role">General Manager, India</span>
-          <span class="ev-guest__org">isolved</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/ashish-kumar-jha-400.webp 400w, /assets/img/guests/ashish-kumar-jha-800.webp 800w">
-            <img src="/assets/img/guests/ashish-kumar-jha-400.jpg" srcset="/assets/img/guests/ashish-kumar-jha-400.jpg 400w, /assets/img/guests/ashish-kumar-jha-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Ashish Kumar Jha, Alter Domus India" loading="lazy" decoding="async">
-          </picture>
-          <b>Ashish Kumar Jha</b>
-          <span class="ev-guest__role">Global Head, Future of Work, Digital Strategy and AI</span>
-          <span class="ev-guest__org">Alter Domus India</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/abhishek-chauhan-400.webp 400w, /assets/img/guests/abhishek-chauhan-800.webp 800w">
-            <img src="/assets/img/guests/abhishek-chauhan-400.jpg" srcset="/assets/img/guests/abhishek-chauhan-400.jpg 400w, /assets/img/guests/abhishek-chauhan-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Abhishek Chauhan, Sonatype" loading="lazy" decoding="async">
-          </picture>
-          <b>Abhishek Chauhan</b>
-          <span class="ev-guest__role">Senior Director, Engineering and India Site Leader</span>
-          <span class="ev-guest__org">Sonatype</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/pavan-hemadri-400.webp 400w, /assets/img/guests/pavan-hemadri-800.webp 800w">
-            <img src="/assets/img/guests/pavan-hemadri-400.jpg" srcset="/assets/img/guests/pavan-hemadri-400.jpg 400w, /assets/img/guests/pavan-hemadri-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Pavan Hemadri, ProPharma Group" loading="lazy" decoding="async">
-          </picture>
-          <b>Pavan Hemadri</b>
-          <span class="ev-guest__role">Director, Business Operations, India</span>
-          <span class="ev-guest__org">ProPharma Group</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/rajesh-vaitla-400.webp 400w, /assets/img/guests/rajesh-vaitla-800.webp 800w">
-            <img src="/assets/img/guests/rajesh-vaitla-400.jpg" srcset="/assets/img/guests/rajesh-vaitla-400.jpg 400w, /assets/img/guests/rajesh-vaitla-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Rajesh Vaitla, Chart Industries" loading="lazy" decoding="async">
-          </picture>
-          <b>Rajesh Vaitla</b>
-          <span class="ev-guest__role">Site Leader, Global Capability Centre</span>
-          <span class="ev-guest__org">Chart Industries</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/sameer-shaikh-400.webp 400w, /assets/img/guests/sameer-shaikh-800.webp 800w">
-            <img src="/assets/img/guests/sameer-shaikh-400.jpg" srcset="/assets/img/guests/sameer-shaikh-400.jpg 400w, /assets/img/guests/sameer-shaikh-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Sameer Shaikh, XPO" loading="lazy" decoding="async">
-          </picture>
-          <b>Sameer Shaikh</b>
-          <span class="ev-guest__role">Senior Director, Technology and Financial Shared Services</span>
-          <span class="ev-guest__org">XPO</span>
-        </li>
-        <li class="ev-guest">
-          <picture>
-            <source type="image/webp" sizes="(max-width:420px) 40vw, 168px" srcset="/assets/img/guests/rajesh-gali-400.webp 400w, /assets/img/guests/rajesh-gali-800.webp 800w">
-            <img src="/assets/img/guests/rajesh-gali-400.jpg" srcset="/assets/img/guests/rajesh-gali-400.jpg 400w, /assets/img/guests/rajesh-gali-800.jpg 800w" sizes="(max-width:420px) 40vw, 168px" width="400" height="400" alt="Rajesh Gali, Eastman" loading="lazy" decoding="async">
-          </picture>
-          <b>Rajesh Gali</b>
-          <span class="ev-guest__role">Senior Digital and Technology Executive</span>
-          <span class="ev-guest__org">Eastman</span>
-        </li>
-      </ul>
-      <p class="ev-guest__more" data-reveal>And 50 more leaders have confirmed their presence.</p>
+  <section class="section" id="invited" aria-labelledby="ev-invited">
+    <div class="shell">
+      <div class="section-head"><span class="eyebrow" data-reveal>Who is invited</span>
+      <h2 class="h2" id="ev-invited" data-reveal style="--d:1">132 companies invited <em>to the room.</em></h2>
+      <p class="lede" data-reveal style="--d:2">122 of them are already profiled in <a href="/data">our India database</a>, and 109 run <a href="/gcc-in-hyderabad">a centre in Hyderabad</a>.</p></div>
+      <ul class="ev-wall" data-reveal><li>ADAMA</li><li>Advance Auto Parts</li><li>AIR Worldwide</li><li>AppZen</li><li>Aqua Security</li><li>ArcelorMittal</li><li>Ares Management</li><li>Avaya</li><li>AVI-SPL</li><li>Backbase</li><li>BASF</li><li>Bekaert</li><li>Berkadia</li><li>Billtrust</li><li>Blupace Technologies</li><li>BNY</li><li>Bosch</li><li>Bristol Myers Squibb</li><li>Carelon</li><li>Carrier</li><li>Chart Industries</li><li>Citco</li><li>Citizens</li><li>Citrin Cooperman</li><li>Clarivate</li><li>Clean Harbors</li><li>ClearRoute</li><li>CMA CGM</li><li>Colruyt Group</li><li>Corteva</li><li>D. E. Shaw</li><li>Daicel Chiral</li><li>Diebold Nixdorf</li><li>DISH</li><li>Domo</li><li>DoorDash</li><li>Dr. Reddy’s</li><li>DTCC</li><li>DuPont</li><li>Eastman</li><li>Ensemble Health Partners</li><li>Entain</li><li>FactSet</li><li>Fanatics</li><li>FEG</li><li>Ferring</li><li>Ficosa</li><li>First American</li><li>Flutter</li><li>Freshworks</li><li>Gainsight</li><li>GlobalData</li><li>Globant</li><li>Guardant Health</li><li>HCA Healthcare</li><li>Health Catalyst</li><li>HealthEdge</li><li>Hexagon</li><li>Indeed</li><li>Infineon</li><li>Infor</li><li>Inspire Brands</li><li>Interactive Brokers</li><li>InvoiceCloud</li><li>IQ-EQ</li><li>IQVIA</li><li>isolved</li><li>JLL</li><li>Kantar</li><li>KeyPoint Technologies</li><li>Kroll</li><li>Lloyds Banking Group</li><li>MachineMax</li><li>Marsh</li><li>Marvell</li><li>MathWorks</li><li>Mattel</li><li>McDonald’s</li><li>Merkle</li><li>MetLife</li><li>Microchip</li><li>Micron</li><li>Nasuni</li><li>NCR Atleos</li><li>Nextpower</li><li>Niantic</li><li>Novartis</li><li>Opella</li><li>OPPO</li><li>Orange</li><li>Park Place Technologies</li><li>PKF O’Connor Davies</li><li>Planful</li><li>Polaris</li><li>Progress</li><li>ProPharma</li><li>QNX</li><li>Randstad</li><li>RealPage</li><li>Reckitt</li><li>Renault</li><li>Revolut</li><li>Rockwell Automation</li><li>Ryan</li><li>S&amp;P Global</li><li>Salesforce</li><li>Sandoz</li><li>Semtech</li><li>Siemens</li><li>Solera</li><li>Sonatype</li><li>Sonoco</li><li>Southwest Airlines</li><li>State Street</li><li>Stripe</li><li>Syneos Health</li><li>TechnipFMC</li><li>Tesco</li><li>Thomson Reuters</li><li>TJX</li><li>TriNet</li><li>Uber</li><li>Veeva</li><li>Veradigm</li><li>Viatris</li><li>Vitech</li><li>Western Union</li><li>WiseTech Global</li><li>Workato</li><li>XPO</li><li>Zentiva</li><li>Zoetis</li></ul>
+      <p class="ev-wall__note" data-reveal>Companies on the summit invitation list, 5 November 2026. An invitation is not confirmation of attendance.</p>
     </div>
   </section>
 
