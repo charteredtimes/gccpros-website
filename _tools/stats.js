@@ -58,7 +58,7 @@ async function siteStats() {
     v[s + '_dataai_pct'] = pc(val('domain', scope, 'Data, Analytics & AI'), n) + '%';
     v[s + '_pharma'] = fmt(val('industry', scope, 'Pharma & Life Sciences'));
   }
-  for (const c of ['Noida', 'Gurugram', 'Greater Noida', 'Coimbatore', 'Ahmedabad', 'Kolkata']) {
+  for (const c of ['Noida', 'Gurugram', 'Greater Noida', 'Coimbatore', 'Ahmedabad', 'Kolkata', 'Kochi']) {
     const r = A.cities.find(x => x[0] === c); if (r) v['city_' + c.toLowerCase().replace(/\s+/g, '_')] = fmt(r[1]);
   }
   // the six-city ranking line used in copy, largest first
