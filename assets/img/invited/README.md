@@ -1,0 +1,1 @@
+Company marks for the invited-companies wall on the Hyderabad summit page. 64px WebP, one per company, fetched once and served from our own domain so the page makes no third-party requests. Rebuilt by _work/fetch-logos.js and _work/process-logos.js.
