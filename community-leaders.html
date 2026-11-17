@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Moved | GCCPROs</title>
-<link rel="canonical" href="https://www.gccpros.com/council-signup">
+<!-- No canonical here, deliberately. This page redirects to /council-signup, which is itself
+     noindex because the leaders' community is gated. Google cannot honour a canonical that
+     points at a page it has been told not to index, so the old URL would simply sit in the
+     index with no valid target. noindex,follow retires it properly and still passes the links
+     on through the redirect below. -->
+<meta name="robots" content="noindex,follow">
 <meta http-equiv="refresh" content="0; url=/council-signup">
 <script>location.replace('/council-signup'+location.search+(location.hash||''))</script>
 <style>body{font-family:system-ui,sans-serif;background:#FFFFFF;color:#07122B;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#2F5DA8;font-weight:700}</style>
