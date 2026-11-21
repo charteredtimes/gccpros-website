@@ -203,23 +203,39 @@
       .ev-ag li[data-k=launch] span{font-weight:650;color:var(--brand)}
       .ev-ag li[data-k=launch] time{color:var(--brand)}
 .ev-cxp{margin-top:26px;background:var(--ink);border-radius:24px;padding:34px 30px;text-align:center}
-.ev-cxp__row{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}
-.ev-cxp__one{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:16px;padding:4px 8px}
-.ev-cxp__one+.ev-cxp__one::before{content:"";position:absolute;left:-15px;top:4px;bottom:4px;width:1px;background:rgba(157,192,238,.2)}
-.ev-cxp__logo{display:flex;align-items:center;justify-content:center;min-height:48px;line-height:0;border-radius:6px}
+.ev-cxp__row{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:26px 18px}
+.ev-cxp__one{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:13px;padding:4px 6px}
+/* Every tile carries the hairline, and whichever tile starts a row has it taken away again.
+   The column count changes four times, so the rule has to be re-stated at each width; the
+   :nth-child(n) in the narrow blocks is there only to match the specificity of the
+   :nth-child(5n+1) above it, otherwise the hidden dividers stay hidden when the grid rewraps. */
+.ev-cxp__one::before{content:"";position:absolute;left:-9px;top:4px;bottom:4px;width:1px;background:rgba(157,192,238,.2)}
+.ev-cxp__one:nth-child(5n+1)::before{display:none}
+.ev-cxp__logo{display:flex;align-items:center;justify-content:center;min-height:50px;line-height:0;border-radius:6px}
 .ev-cxp__logo img{display:block;width:auto;max-width:100%;height:var(--lh,32px)}
-.ev-cxp__k{margin:0;font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ice)}
+.ev-cxp__k{margin:0;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:1.1px;line-height:1.45;text-transform:uppercase;color:var(--ice)}
 .ev-cxp__note{margin:28px auto 0;font-size:13.5px;color:rgba(255,255,255,.72);max-width:54ch}
+@media(max-width:1080px){
+.ev-cxp__row{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 20px}
+.ev-cxp__one:nth-child(n)::before{display:block}
+.ev-cxp__one:nth-child(3n+1)::before{display:none}
+}
 @media(max-width:760px){
 .ev-cxp{padding:28px 22px}
-.ev-cxp__row{grid-template-columns:1fr;gap:26px}
-.ev-cxp__one+.ev-cxp__one::before{left:18%;right:18%;top:-13px;bottom:auto;width:auto;height:1px}
+.ev-cxp__row{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 18px}
+.ev-cxp__one:nth-child(n)::before{display:block}
+.ev-cxp__one:nth-child(2n+1)::before{display:none}
 .ev-cxp__logo img{height:calc(var(--lh,32px) * .92)}
+}
+@media(max-width:520px){
+.ev-cxp__row{grid-template-columns:1fr;gap:24px}
+.ev-cxp__one:nth-child(n)::before{display:block;left:18%;right:18%;top:-12px;bottom:auto;width:auto;height:1px}
+.ev-cxp__one:nth-child(1)::before{display:none}
 }
 .ev-shot{margin:34px 0 0}
 .ev-shot figcaption{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.6}
 </style>
-<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026&quot;,&quot;name&quot;:&quot;Hyderabad GCC Leadership Summit, 26 November 2026&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage","url":"https://www.gccpros.com/gcc-summit-hyderabad-2026","name":"Hyderabad GCC Leadership Summit, 26 November 2026","inLanguage":"en-IN","dateModified":"2026-11-17","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
+<script type="application/ld+json" data-stat-tpl="{&quot;@context&quot;:&quot;https://schema.org&quot;,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@id&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage&quot;,&quot;url&quot;:&quot;https://www.gccpros.com/gcc-summit-hyderabad-2026&quot;,&quot;name&quot;:&quot;Hyderabad GCC Leadership Summit, 26 November 2026&quot;,&quot;inLanguage&quot;:&quot;en-IN&quot;,&quot;dateModified&quot;:&quot;{{updated_iso}}&quot;,&quot;isPartOf&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#website&quot;},&quot;publisher&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;},&quot;author&quot;:{&quot;@id&quot;:&quot;https://www.gccpros.com/#org&quot;}}">{"@context":"https://schema.org","@type":"WebPage","@id":"https://www.gccpros.com/gcc-summit-hyderabad-2026#webpage","url":"https://www.gccpros.com/gcc-summit-hyderabad-2026","name":"Hyderabad GCC Leadership Summit, 26 November 2026","inLanguage":"en-IN","dateModified":"2026-11-21","isPartOf":{"@id":"https://www.gccpros.com/#website"},"publisher":{"@id":"https://www.gccpros.com/#org"},"author":{"@id":"https://www.gccpros.com/#org"}}</script>
 </head>
 <body class="gp" data-line="events">
 <!-- gp:nav -->
@@ -428,13 +444,25 @@
             <p class="ev-cxp__k">Africa partner</p>
           </li>
           <li class="ev-cxp__one">
+            <a class="ev-cxp__logo" href="https://www.zs.com/" target="_blank" rel="noopener" aria-label="ZS, AI enablement partner of the Hyderabad GCC Leadership Summit">
+              <img src="/assets/img/partners/zs.png" alt="ZS" width="167" height="132" loading="lazy" decoding="async" style="--lh:54px">
+            </a>
+            <p class="ev-cxp__k">AI enablement partner</p>
+          </li>
+          <li class="ev-cxp__one">
+            <a class="ev-cxp__logo" href="https://www.hardskills.com/" target="_blank" rel="noopener" aria-label="Hardskills, human skills partner of the Hyderabad GCC Leadership Summit">
+              <img src="/assets/img/partners/hardskills.png" alt="Hardskills" width="867" height="132" loading="lazy" decoding="async" style="--lh:27px">
+            </a>
+            <p class="ev-cxp__k">Human skills partner</p>
+          </li>
+          <li class="ev-cxp__one">
             <a class="ev-cxp__logo" href="https://www.michaelpage.co.in/" target="_blank" rel="noopener" aria-label="Michael Page, talent partner of the Hyderabad GCC Leadership Summit">
               <img src="/assets/img/partners/michael-page.png" alt="Michael Page" width="747" height="132" loading="lazy" decoding="async" style="--lh:36px">
             </a>
             <p class="ev-cxp__k">Talent partner</p>
           </li>
         </ul>
-        <p class="ev-cxp__note">Three partners confirmed for the Hyderabad edition, each aligned to one thing the room is working on.</p>
+        <p class="ev-cxp__note">Five partners confirmed for the Hyderabad edition, each aligned to one thing the room is working on.</p>
       </div>
       <div class="ev-part">
         <div class="card" data-reveal><h3>Summit partner</h3><p>Headline association with the edition, a speaking or chairing role, and presence across the programme.</p></div>
@@ -492,7 +520,7 @@
         <p>The full events programme, the Pune 2026 recap with the Chief Minister of Maharashtra, and what leaders said afterwards.</p>
         <div class="btn-row"><a class="btn btn--primary" href="/event">See all events</a><a class="btn btn--ghost" href="/gcc-in-hyderabad">All <span data-stat="hyderabad">548</span> GCCs in Hyderabad</a></div></div>
       </div>
-      <p class="byline ev-stamp">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-11-17">17 November 2026</time></p>
+      <p class="byline ev-stamp">By the <a href="/about">GCCPROs research team</a> &middot; Updated <time data-updated datetime="2026-11-21">21 November 2026</time></p>
     </div>
   </section>
 </main>
