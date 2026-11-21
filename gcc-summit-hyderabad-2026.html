@@ -214,6 +214,15 @@
 .ev-cxp__logo{display:flex;align-items:center;justify-content:center;min-height:50px;line-height:0;border-radius:6px}
 .ev-cxp__logo img{display:block;width:auto;max-width:100%;height:var(--lh,32px)}
 .ev-cxp__k{margin:0;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:1.1px;line-height:1.45;text-transform:uppercase;color:var(--ice)}
+/* Second line: the state partner. These two marks are the only ones that cannot be reversed,
+   the emblem being black line art and Invest UP a full-colour gradient, so they sit on a white
+   plate rather than on the navy. That also reads as the official treatment a government mark
+   usually gets, so the odd one out looks deliberate. */
+.ev-cxp__state{margin-top:28px;padding-top:26px;border-top:1px solid rgba(157,192,238,.2);display:flex;flex-direction:column;align-items:center;gap:14px}
+.ev-cxp__plate{display:inline-flex;align-items:center;justify-content:center;gap:clamp(24px,4vw,48px);background:#fff;border-radius:18px;padding:18px 38px;line-height:0}
+.ev-cxp__plate img{display:block;width:auto}
+.ev-cxp__plate img:first-child{height:92px}
+.ev-cxp__plate img:last-child{height:108px}
 .ev-cxp__note{margin:28px auto 0;font-size:13.5px;color:rgba(255,255,255,.72);max-width:54ch}
 @media(max-width:1080px){
 .ev-cxp__row{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 20px}
@@ -231,6 +240,9 @@
 .ev-cxp__row{grid-template-columns:1fr;gap:24px}
 .ev-cxp__one:nth-child(n)::before{display:block;left:18%;right:18%;top:-12px;bottom:auto;width:auto;height:1px}
 .ev-cxp__one:nth-child(1)::before{display:none}
+.ev-cxp__plate{padding:14px 20px;gap:18px}
+.ev-cxp__plate img:first-child{height:64px}
+.ev-cxp__plate img:last-child{height:76px}
 }
 .ev-shot{margin:34px 0 0}
 .ev-shot figcaption{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.6}
@@ -462,7 +474,14 @@
             <p class="ev-cxp__k">Talent partner</p>
           </li>
         </ul>
-        <p class="ev-cxp__note">Five partners confirmed for the Hyderabad edition, each aligned to one thing the room is working on.</p>
+        <div class="ev-cxp__state">
+          <a class="ev-cxp__plate" href="https://invest.up.gov.in/" target="_blank" rel="noopener" aria-label="Invest UP and the Government of Uttar Pradesh, state partner of the Hyderabad GCC Leadership Summit">
+            <img src="/assets/img/partners/up-government.png" alt="Government of Uttar Pradesh" width="264" height="264" loading="lazy" decoding="async">
+            <img src="/assets/img/partners/invest-up.png" alt="Invest UP, the investment promotion and facilitation agency of the Government of Uttar Pradesh" width="240" height="264" loading="lazy" decoding="async">
+          </a>
+          <p class="ev-cxp__k">State partner</p>
+        </div>
+        <p class="ev-cxp__note">Six partners confirmed for the Hyderabad edition, each aligned to one thing the room is working on.</p>
       </div>
       <div class="ev-part">
         <div class="card" data-reveal><h3>Summit partner</h3><p>Headline association with the edition, a speaking or chairing role, and presence across the programme.</p></div>
