@@ -203,46 +203,52 @@
       .ev-ag li[data-k=launch] span{font-weight:650;color:var(--brand)}
       .ev-ag li[data-k=launch] time{color:var(--brand)}
 .ev-cxp{margin-top:26px;background:var(--ink);border-radius:24px;padding:34px 30px;text-align:center}
-.ev-cxp__row{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:26px 18px}
+.ev-cxp__row{list-style:none;margin:0;padding:0;display:grid;gap:26px 18px}
+.ev-cxp__row--lead{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ev-cxp__row--rest{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:26px;padding-top:26px;border-top:1px solid rgba(157,192,238,.2)}
 .ev-cxp__one{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:13px;padding:4px 6px}
 /* Every tile carries the hairline, and whichever tile starts a row has it taken away again.
    The column count changes four times, so the rule has to be re-stated at each width; the
    :nth-child(n) in the narrow blocks is there only to match the specificity of the
    :nth-child(5n+1) above it, otherwise the hidden dividers stay hidden when the grid rewraps. */
 .ev-cxp__one::before{content:"";position:absolute;left:-9px;top:4px;bottom:4px;width:1px;background:rgba(157,192,238,.2)}
-.ev-cxp__one:nth-child(5n+1)::before{display:none}
+.ev-cxp__row--lead .ev-cxp__one:nth-child(2n+1)::before{display:none}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(4n+1)::before{display:none}
 .ev-cxp__logo{display:flex;align-items:center;justify-content:center;min-height:50px;line-height:0;border-radius:6px}
+.ev-cxp__row--rest .ev-cxp__logo{min-height:72px}
 .ev-cxp__logo img{display:block;width:auto;max-width:100%;height:var(--lh,32px)}
 .ev-cxp__k{margin:0;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:1.1px;line-height:1.45;text-transform:uppercase;color:var(--ice)}
 /* Second line: the state partner. These two marks are the only ones that cannot be reversed,
    the emblem being black line art and Invest UP a full-colour gradient, so they sit on a white
    plate rather than on the navy. That also reads as the official treatment a government mark
    usually gets, so the odd one out looks deliberate. */
-.ev-cxp__state{margin-top:28px;padding-top:26px;border-top:1px solid rgba(157,192,238,.2);display:flex;flex-direction:column;align-items:center;gap:14px}
-.ev-cxp__plate{display:inline-flex;align-items:center;justify-content:center;gap:clamp(24px,4vw,48px);background:#fff;border-radius:18px;padding:18px 38px;line-height:0}
+.ev-cxp__plate{gap:16px;background:#fff;border-radius:12px;padding:10px 16px}
 .ev-cxp__plate img{display:block;width:auto}
-.ev-cxp__plate img:first-child{height:92px}
-.ev-cxp__plate img:last-child{height:108px}
+.ev-cxp__plate img:first-child{height:44px}
+.ev-cxp__plate img:last-child{height:50px}
 .ev-cxp__note{margin:28px auto 0;font-size:13.5px;color:rgba(255,255,255,.72);max-width:54ch}
 @media(max-width:1080px){
-.ev-cxp__row{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 20px}
-.ev-cxp__one:nth-child(n)::before{display:block}
-.ev-cxp__one:nth-child(3n+1)::before{display:none}
+.ev-cxp__row--rest{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(n)::before{display:block}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(2n+1)::before{display:none}
 }
 @media(max-width:760px){
 .ev-cxp{padding:28px 22px}
-.ev-cxp__row{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 18px}
-.ev-cxp__one:nth-child(n)::before{display:block}
-.ev-cxp__one:nth-child(2n+1)::before{display:none}
+.ev-cxp__row--rest{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 18px}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(n)::before{display:block}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(2n+1)::before{display:none}
 .ev-cxp__logo img{height:calc(var(--lh,32px) * .92)}
+.ev-cxp__plate img:first-child{height:33px}
+.ev-cxp__plate img:last-child{height:39px}
 }
 @media(max-width:520px){
-.ev-cxp__row{grid-template-columns:1fr;gap:24px}
-.ev-cxp__one:nth-child(n)::before{display:block;left:18%;right:18%;top:-12px;bottom:auto;width:auto;height:1px}
-.ev-cxp__one:nth-child(1)::before{display:none}
-.ev-cxp__plate{padding:14px 20px;gap:18px}
-.ev-cxp__plate img:first-child{height:64px}
-.ev-cxp__plate img:last-child{height:76px}
+.ev-cxp__row--lead,.ev-cxp__row--rest{grid-template-columns:1fr;gap:24px}
+.ev-cxp__row--lead .ev-cxp__one:nth-child(n)::before,.ev-cxp__row--rest .ev-cxp__one:nth-child(n)::before{display:block;left:18%;right:18%;top:-12px;bottom:auto;width:auto;height:1px}
+.ev-cxp__row--lead .ev-cxp__one:nth-child(1)::before{display:none}
+.ev-cxp__row--rest .ev-cxp__one:nth-child(1)::before{display:none}
+.ev-cxp__plate{padding:8px 12px;gap:12px}
+.ev-cxp__plate img:first-child{height:31px}
+.ev-cxp__plate img:last-child{height:36px}
 }
 .ev-shot{margin:34px 0 0}
 .ev-shot figcaption{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.6}
@@ -444,45 +450,47 @@
       <h2 class="h2" id="ev-part" data-reveal style="--d:1">Partner with the Hyderabad summit.</h2>
       <p class="lede" data-reveal style="--d:2">A concentrated room of the people who decide where capability work goes, who owns it and what it is trusted to do. If your business sells to GCC leadership, this is the shortest path to a real conversation with them.</p></div>
       <div class="ev-cxp" data-reveal style="--d:3">
-        <ul class="ev-cxp__row">
+        <ul class="ev-cxp__row ev-cxp__row--lead">
           <li class="ev-cxp__one">
             <a class="ev-cxp__logo" href="https://www.genesys.com/" target="_blank" rel="noopener" aria-label="Genesys, customer success partner of the Hyderabad GCC Leadership Summit">
-              <img src="/assets/img/partners/genesys.png" alt="Genesys" width="600" height="118" loading="lazy" decoding="async" style="--lh:44px">
+              <img src="/assets/img/partners/genesys.png" alt="Genesys" width="600" height="118" loading="lazy" decoding="async" style="--lh:41px">
             </a>
             <p class="ev-cxp__k">Customer success partner</p>
           </li>
           <li class="ev-cxp__one">
-            <a class="ev-cxp__logo" href="https://www.outworx.co.za/" target="_blank" rel="noopener" aria-label="Outworx, Africa partner of the Hyderabad GCC Leadership Summit">
-              <img src="/assets/img/partners/outworx.png" alt="Outworx" width="665" height="132" loading="lazy" decoding="async" style="--lh:36px">
+            <a class="ev-cxp__logo" href="https://www.outworx.co.za/" target="_blank" rel="noopener" aria-label="Outworx, africa partner of the Hyderabad GCC Leadership Summit">
+              <img src="/assets/img/partners/outworx.png" alt="Outworx" width="665" height="132" loading="lazy" decoding="async" style="--lh:34px">
             </a>
             <p class="ev-cxp__k">Africa partner</p>
           </li>
+        </ul>
+        <ul class="ev-cxp__row ev-cxp__row--rest">
           <li class="ev-cxp__one">
-            <a class="ev-cxp__logo" href="https://www.zs.com/" target="_blank" rel="noopener" aria-label="ZS, AI enablement partner of the Hyderabad GCC Leadership Summit">
-              <img src="/assets/img/partners/zs.png" alt="ZS" width="167" height="132" loading="lazy" decoding="async" style="--lh:43px">
+            <a class="ev-cxp__logo" href="https://www.zs.com/" target="_blank" rel="noopener" aria-label="ZS, ai enablement partner of the Hyderabad GCC Leadership Summit">
+              <img src="/assets/img/partners/zs.png" alt="ZS" width="167" height="132" loading="lazy" decoding="async" style="--lh:41px">
             </a>
             <p class="ev-cxp__k">AI enablement partner</p>
           </li>
           <li class="ev-cxp__one">
             <a class="ev-cxp__logo" href="https://www.hardskills.com/" target="_blank" rel="noopener" aria-label="Hardskills, human skills partner of the Hyderabad GCC Leadership Summit">
-              <img src="/assets/img/partners/hardskills.png" alt="Hardskills" width="867" height="132" loading="lazy" decoding="async" style="--lh:22px">
+              <img src="/assets/img/partners/hardskills.png" alt="Hardskills" width="867" height="132" loading="lazy" decoding="async" style="--lh:20px">
             </a>
             <p class="ev-cxp__k">Human skills partner</p>
           </li>
           <li class="ev-cxp__one">
             <a class="ev-cxp__logo" href="https://www.michaelpage.co.in/" target="_blank" rel="noopener" aria-label="Michael Page, talent partner of the Hyderabad GCC Leadership Summit">
-              <img src="/assets/img/partners/michael-page.png" alt="Michael Page" width="747" height="132" loading="lazy" decoding="async" style="--lh:29px">
+              <img src="/assets/img/partners/michael-page.png" alt="Michael Page" width="747" height="132" loading="lazy" decoding="async" style="--lh:23px">
             </a>
             <p class="ev-cxp__k">Talent partner</p>
           </li>
+          <li class="ev-cxp__one">
+            <a class="ev-cxp__logo ev-cxp__plate" href="https://invest.up.gov.in/" target="_blank" rel="noopener" aria-label="Invest UP and the Government of Uttar Pradesh, state partner of the Hyderabad GCC Leadership Summit">
+              <img src="/assets/img/partners/up-government.png" alt="Government of Uttar Pradesh" width="264" height="264" loading="lazy" decoding="async">
+              <img src="/assets/img/partners/invest-up.png" alt="Invest UP, the investment promotion and facilitation agency of the Government of Uttar Pradesh" width="240" height="264" loading="lazy" decoding="async">
+            </a>
+            <p class="ev-cxp__k">State partner</p>
+          </li>
         </ul>
-        <div class="ev-cxp__state">
-          <a class="ev-cxp__plate" href="https://invest.up.gov.in/" target="_blank" rel="noopener" aria-label="Invest UP and the Government of Uttar Pradesh, state partner of the Hyderabad GCC Leadership Summit">
-            <img src="/assets/img/partners/up-government.png" alt="Government of Uttar Pradesh" width="264" height="264" loading="lazy" decoding="async">
-            <img src="/assets/img/partners/invest-up.png" alt="Invest UP, the investment promotion and facilitation agency of the Government of Uttar Pradesh" width="240" height="264" loading="lazy" decoding="async">
-          </a>
-          <p class="ev-cxp__k">State partner</p>
-        </div>
         <p class="ev-cxp__note">Six partners confirmed for the Hyderabad edition, each aligned to one thing the room is working on.</p>
       </div>
       <div class="ev-part">
